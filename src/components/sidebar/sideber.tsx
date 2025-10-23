@@ -6,7 +6,8 @@ import {
     Clock,
     Settings,
     ChevronsUpDown,
-    Package,
+    Briefcase,
+    BadgeInfo,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,10 +41,14 @@ const sidebarItems: {
     },
     { title: 'Logs', icon: <Clock size={22} />, path: '/logs' },
     {
+        title: 'Manage',
+    },
+    { title: 'Team', icon: <Briefcase size={22} />, path: '/team' },
+    { title: 'Settings', icon: <Settings size={22} />, path: '/settings' },
+    {
         title: 'Other',
     },
-    { title: 'Team', icon: <Package size={22} />, path: '/team' },
-    { title: 'Settings', icon: <Settings size={22} />, path: '/settings' },
+    { title: 'About', icon: <BadgeInfo size={22} />, path: '/about' },
 ];
 
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {

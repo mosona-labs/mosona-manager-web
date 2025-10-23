@@ -7,6 +7,8 @@ import { useTheme } from './components/theme-provider';
 import Sidebar from './components/sidebar/sideber';
 import NotFound from './page/notfound';
 import Dashboard from './page/dashboard/index';
+import Terminal from './page/terminal';
+import About from './page/about';
 
 function App() {
     // Theme
@@ -43,7 +45,8 @@ function App() {
                 </div>
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
-                    <Route path="/monitor" element={<div>Status Monitor</div>} />
+                    <Route path="/terminal" element={<Terminal />} />
+                    <Route path="/about" element={<About />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
