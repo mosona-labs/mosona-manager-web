@@ -5,7 +5,8 @@ import './style.css';
 
 import { ThemeProvider } from './components/theme-provider.tsx';
 import App from './App.tsx';
-import SignIn from './page/signin.tsx';
+import SignIn from './page/auth/signin.tsx';
+import { Toaster } from './components/ui/sonner.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
@@ -16,5 +17,6 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="*" element={<App />} />
             </Routes>
         </BrowserRouter>
+        <Toaster />
     </ThemeProvider>
 );
