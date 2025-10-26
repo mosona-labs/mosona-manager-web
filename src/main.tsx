@@ -4,9 +4,10 @@ import './index.css';
 import './style.css';
 
 import { ThemeProvider } from './components/theme-provider.tsx';
-import App from './App.tsx';
+import App from './app/index.tsx';
 import SignIn from './page/auth/signin.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
+import { UserProvider } from './context/useUser.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
@@ -14,7 +15,14 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
                 <Route path="/auth" element={<SignIn />} />
                 <Route path="/admin/" element={<div>empty</div>} />
-                <Route path="*" element={<App />} />
+                <Route
+                    path="*"
+                    element={
+                        <UserProvider>
+                            <App />
+                        </UserProvider>
+                    }
+                />
             </Routes>
         </BrowserRouter>
         <Toaster />

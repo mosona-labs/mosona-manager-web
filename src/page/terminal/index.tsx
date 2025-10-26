@@ -24,7 +24,7 @@ const Terminal = () => {
                     <Button
                         className="lg:flex hidden"
                         variant={'outline'}
-                        onClick={() => navigator('/terminal')}
+                        onClick={() => navigator('/')}
                     >
                         <ArrowLeftRight />
                         Monitor Mode

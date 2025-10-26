@@ -2,6 +2,7 @@ import { KeyRound, Loader, LoaderCircle } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 import PasswordCheck from './components/PasswordCheck';
 
@@ -15,6 +16,8 @@ import useAuthKeys from '@/hooks/useAuthKeys';
 import ApiAuth from '@/api/auth';
 
 const SignIn = () => {
+    const navigate = useNavigate();
+
     const [mode, setMode] = useState<'signin' | 'signup'>('signin');
 
     // Captcha
@@ -49,7 +52,7 @@ const SignIn = () => {
                     toast.success('Success', {
                         description: 'Signed in successfully.',
                     });
-                    // Redirect or update UI accordingly
+                    navigate('/');
                 })
                 .catch((err) => {
                     const status = err.response.data.code as string;
@@ -132,7 +135,9 @@ const SignIn = () => {
             <Card className="md:w-md py-4">
                 <CardContent className="px-4">
                     <CardHeader className="px-0">
-                        <CardTitle>{mode === 'signin' ? 'Sign In' : 'Sign Up'}</CardTitle>
+                        <CardTitle>
+                            {mode === 'signin' ? 'Welcome back !' : 'Welcome here !'}
+                        </CardTitle>
                         <CardDescription>
                             {mode === 'signin'
                                 ? 'Sign in to your account to continue'

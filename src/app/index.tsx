@@ -2,13 +2,17 @@ import { Moon, SidebarIcon, Sun } from 'lucide-react';
 import { Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 
-import { Button } from './components/ui/button';
-import { useTheme } from './components/theme-provider';
-import Sidebar from './components/sidebar/sideber';
-import NotFound from './page/notfound';
-import Dashboard from './page/dashboard/index';
-import Terminal from './page/terminal';
-import About from './page/about';
+import { Button } from '../components/ui/button';
+import { useTheme } from '../components/theme-provider';
+import Sidebar from '../components/sidebar/sideber';
+import NotFound from '../page/notfound';
+import Dashboard from '../page/dashboard/index';
+import Terminal from '../page/terminal';
+import About from '../page/about';
+import CreateTeam from '../page/createTeam';
+
+import ConnectChecker from './connect-checker';
+import User from './user';
 
 function App() {
     // Theme
@@ -40,13 +44,17 @@ function App() {
                         >
                             {theme === 'light' ? <Moon /> : <Sun />}
                         </Button>
-                        <Button>Sign In</Button>
+                        <ConnectChecker />
+                        <User />
                     </div>
                 </div>
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/terminal" element={<Terminal />} />
                     <Route path="/about" element={<About />} />
+                    {/* Create Team */}
+                    <Route path="/create-team" element={<CreateTeam />} />
+                    {/* Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>

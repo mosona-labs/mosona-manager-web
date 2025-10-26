@@ -32,6 +32,10 @@ class ApiAuthClass extends baseAPI {
             }>
         >('/auth/keys', false);
     }
+
+    async ping() {
+        return this.getData<string>('/auth/ping', false);
+    }
 }
 
 const ApiAuth = new ApiAuthClass();
