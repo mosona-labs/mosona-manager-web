@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import {
     Container,
     Terminal,
@@ -21,11 +21,13 @@ import {
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
 import Logo from '../logo';
+import TeamAvatar from '../team-avatar';
 
 import SidebarItem from './sidebarItem';
 import TeamItem from './teamItem';
 
 import { cn } from '@/lib/utils';
+import { useUser } from '@/context/useUser';
 
 const sidebarItems: {
     title: string;
@@ -53,6 +55,9 @@ const sidebarItems: {
 
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {
     const navigator = useNavigate();
+    const { team, teams } = useUser();
+
+    const [showTeams, setShowTeams] = useState(false);
 
     return (
         <>
@@ -89,15 +94,19 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
 
                 <div className="flex-1" />
 
-                <DropdownMenu>
+                <DropdownMenu open={showTeams} onOpenChange={setShowTeams}>
                     <DropdownMenuTrigger className="focus-visible:ring-0" asChild>
                         <Button variant={'ghost'} className="w-full justify-between h-14 px-3">
                             <div className="flex flex-row justify-center items-center gap-2">
                                 <div>
-                                    <div className="w-8 h-8 bg-orange-200 rounded-md" />
+                                    <TeamAvatar
+                                        color={team?.color || ''}
+                                        imageUrl={team?.image || ''}
+                                        name={team?.name || 'Loading...'}
+                                    />
                                 </div>
                                 <div className="text-start">
-                                    <p>Company Name LLC</p>
+                                    <p>{team?.name}</p>
                                     <p className="font-normal text-xs opacity-65">Team</p>
                                 </div>
                             </div>
@@ -110,13 +119,29 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     >
                         <DropdownMenuLabel>Teams</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <TeamItem color="#ffd7a8" name="Other Company LLC" role="Team" />
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <TeamItem color="#9AB7A1" name="This Company LLC" role="Team" />
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        {teams.map((t) => (
+                            <DropdownMenuItem
+                                key={t.id}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                }}
+                            >
+                                <TeamItem
+                                    id={t.id}
+                                    color={t.color}
+                                    image={t.image}
+                                    name={t.name}
+                                    role={'Team'}
+                                    isCurrent={t.id === team?.id}
+                                    onClose={() => setShowTeams(false)}
+                                />
+                            </DropdownMenuItem>
+                        ))}
+                        <DropdownMenuItem
+                            onClick={() => {
+                                navigator('/create-team');
+                            }}
+                        >
                             <div className="flex flex-row w-full justify-center items-center gap-2 cursor-pointer">
                                 <div className="w-8 h-8 border-2 border-dashed border-zinc-500 rounded-md" />
                                 <div className="text-start">

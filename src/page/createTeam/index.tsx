@@ -4,10 +4,11 @@ import type { TeamPlanType } from '@/api/team';
 import { Plus, Terminal } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
-import TeamPlanCard from './card';
-import AvatarEditor from './avatar';
-import Member from './member';
+import TeamPlanCard from './components/card';
+import AvatarEditor from './components/avatar';
+import Member from './components/member';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
@@ -22,7 +23,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/context/useUser';
 
 const CreateTeam = () => {
-    const { user } = useUser();
+    const navigator = useNavigate();
+    const { user, refresh } = useUser();
 
     const avatarColorRef = useRef('#61390b');
     const avatarImageRef = useRef<File | null>(null);
@@ -32,6 +34,7 @@ const CreateTeam = () => {
 
     // Form
     const [name, setName] = useState('');
+    const [description, setDescription] = useState('');
     const [selectedPlan, setSelectedPlan] = useState<number>();
 
     useEffect(() => {
@@ -43,6 +46,37 @@ const CreateTeam = () => {
     useEffect(() => {
         if (user) setMembers([user]);
     }, [user]);
+
+    const [isLoading, setIsLoading] = useState(false);
+    const handleCreateTeam = () => {
+        if (!name || !selectedPlan) {
+            toast.error('Error', { description: 'Please fill in all required fields.' });
+            return;
+        }
+        setIsLoading(true);
+        ApiTeam.create(
+            name,
+            description,
+            avatarColorRef.current,
+            avatarImageRef.current,
+            members.map((m) => ('id' in m ? m.id : 0)).join(','),
+            selectedPlan
+        )
+            .then(() => {
+                toast.success('Success', { description: 'Team created successfully.' });
+                refresh();
+                navigator('/');
+            })
+            .catch((err) => {
+                const status = err.response.data.code as string;
+                toast.error(status.substring(0, 1).toUpperCase() + status.substring(1), {
+                    description: err.response.data.msg,
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -87,7 +121,13 @@ const CreateTeam = () => {
                         </div>
                         <div className="grid gap-3">
                             <Label htmlFor="description">Description</Label>
-                            <Textarea id="description" placeholder="Some text..." />
+                            <Textarea
+                                id="description"
+                                placeholder="Some text..."
+                                onChange={(e) => {
+                                    setDescription(e.target.value);
+                                }}
+                            />
                         </div>
                     </div>
                 </div>
@@ -162,7 +202,9 @@ const CreateTeam = () => {
                 </div>
             )}
             <div className="mt-4 flex flex-row justify-end items-center gap-3">
-                <Button>Create Team</Button>
+                <Button disabled={isLoading} onClick={handleCreateTeam}>
+                    Create Team
+                </Button>
             </div>
         </div>
     );
