@@ -18,7 +18,6 @@ const TeamAvatar = ({
 
     useEffect(() => {
         const bgRgb = hexToRgb(color);
-        console.log(color, color === '#61390b', bgRgb, hexToRgb('#61390b'));
         if (!bgRgb) {
             setTextColor('#000000');
             return;

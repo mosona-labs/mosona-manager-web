@@ -1,5 +1,5 @@
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Input } from './ui/input';
 import { Button } from './ui/button';
@@ -19,13 +19,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Switch } from './ui/switch';
 import { Card, CardContent } from './ui/card';
 import { DatePicker } from './date-picker';
+import AddCategory from './category/add';
+
+import { useUser } from '@/context/useUser';
 
 const AddServer = () => {
+    const { categories } = useUser();
+
     const [authType, setAuthType] = useState<'password' | 'key'>('password');
 
     // Billing Information
+    const [category, setCategory] = useState<number>();
     const [startTime, setStartTime] = useState<Date>();
     const [endTime, setEndTime] = useState<Date>();
+
+    useEffect(() => {
+        if (categories && categories.length > 0) {
+            setCategory(categories[0].id);
+        }
+    }, [categories]);
 
     return (
         <Dialog>
@@ -35,8 +47,8 @@ const AddServer = () => {
                     Add Server
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-4xl">
-                <DialogHeader>
+            <DialogContent className="sm:max-w-4xl px-4">
+                <DialogHeader className="px-2">
                     <DialogTitle>Add Server</DialogTitle>
                     <DialogDescription>
                         To add a new server for monitoring, please enter its details below.
@@ -44,9 +56,40 @@ const AddServer = () => {
                         but this is optional.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="flex flex-col max-h-[60vh] overflow-y-auto md:max-h-none md:flex-row">
-                    <div className="flex-1 max-h-[70vh] overflow-y-auto">
+                <div className="md:flex flex-col max-h-[60vh] overflow-y-auto md:max-h-none md:flex-row">
+                    <div className="flex-1 md:max-h-[75vh] overflow-y-auto px-2">
                         <div className="grid gap-4">
+                            <div className="grid gap-3">
+                                <Label htmlFor="name">Categories</Label>
+                                <div className="flex flex-row gap-2">
+                                    <Select
+                                        value={category ? category.toString() : undefined}
+                                        onValueChange={(e) => {
+                                            setCategory(parseInt(e));
+                                        }}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Select Category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {categories &&
+                                                categories.map((category) => (
+                                                    <SelectItem
+                                                        key={category.id}
+                                                        value={category.id.toString()}
+                                                    >
+                                                        {category.name}
+                                                    </SelectItem>
+                                                ))}
+                                        </SelectContent>
+                                    </Select>
+                                    <AddCategory>
+                                        <Button variant={'outline'}>
+                                            <Plus />
+                                        </Button>
+                                    </AddCategory>
+                                </div>
+                            </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="name">Name</Label>
                                 <Input id="name" placeholder="LAX1" />
@@ -79,7 +122,6 @@ const AddServer = () => {
                                 defaultValue="password"
                                 value={authType}
                                 onValueChange={(e) => {
-                                    console.log(e);
                                     setAuthType(e === 'password' ? 'password' : 'key');
                                 }}
                             >
@@ -89,6 +131,9 @@ const AddServer = () => {
                                 </TabsList>
                                 <TabsContent value="password">
                                     <Input id="password" placeholder="Password" />
+                                    <p className="mt-1 text-xs text-muted-foreground">
+                                        We will use encrypted storage to protect your password.
+                                    </p>
                                 </TabsContent>
                                 <TabsContent value="key">
                                     <Input id="password" placeholder="Password" />
@@ -117,8 +162,8 @@ const AddServer = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="border-s border-b md:mx-3 mb-4 mt-5 md:my-0" />
-                    <div className="flex-2 max-h-[70vh] overflow-y-auto">
+                    <div className="border-s border-b md:mx-1 mb-4 mt-5 md:my-0 mx-2" />
+                    <div className="flex-2 md:max-h-[75vh] overflow-y-auto mx-2">
                         <div className="flex flex-col gap-3">
                             <Label>Display</Label>
                             <Card className="py-4">
@@ -136,11 +181,7 @@ const AddServer = () => {
                                     </div>
                                     <div className="grid gap-3">
                                         <Label htmlFor="note">Note (Private)</Label>
-                                        <Input id="note" />
-                                    </div>
-                                    <div className="flex flex-row mt-1 justify-between md:col-span-2">
-                                        <Label htmlFor="hidden">Hidden for monitor</Label>
-                                        <Switch id="hidden" defaultChecked />
+                                        <Input id="note" max={255} maxLength={255} />
                                     </div>
                                 </CardContent>
                             </Card>
@@ -152,6 +193,7 @@ const AddServer = () => {
                                         <Input
                                             id="data-center"
                                             placeholder="AWS, DigitalOcean, etc."
+                                            maxLength={255}
                                         />
                                     </div>
                                     <div className="grid gap-3">
@@ -228,7 +270,11 @@ const AddServer = () => {
                                                 Pay as you go
                                             </Button>
                                         </Label>
-                                        <Input id="bill-amount" placeholder="€100" />
+                                        <Input
+                                            id="bill-amount"
+                                            placeholder="€100"
+                                            maxLength={255}
+                                        />
                                     </div>
                                     <div className="grid gap-3">
                                         <Label htmlFor="bill-auto-renew">Auto Renew</Label>

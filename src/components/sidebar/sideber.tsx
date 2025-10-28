@@ -88,7 +88,9 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                             path={item.path}
                         />
                     ) : (
-                        <p className="text-sm mt-3 mx-1 opacity-65">{item.title}</p>
+                        <p key={item.title} className="text-sm mt-3 mx-1 opacity-65">
+                            {item.title}
+                        </p>
                     )
                 )}
 

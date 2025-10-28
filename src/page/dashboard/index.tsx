@@ -1,4 +1,14 @@
-import { ArrowLeftRight, Cpu, HardDrive, LayoutGrid, Monitor, Server, SortAsc } from 'lucide-react';
+import {
+    ArrowLeftRight,
+    Cpu,
+    HardDrive,
+    LayoutGrid,
+    Monitor,
+    Plus,
+    Server,
+    Settings,
+    SortAsc,
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import ServerStatusCard from './card';
@@ -7,9 +17,13 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import AddServer from '@/components/add-server';
+import { useUser } from '@/context/useUser';
+import AddCategory from '@/components/category/add';
+import ManageCategory from '@/components/category/manage';
 
 const Dashboard = () => {
     const navigator = useNavigate();
+    const { categories } = useUser();
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -82,26 +96,53 @@ const Dashboard = () => {
                 </div>
 
                 {/* Config */}
-                <div className="mt-4 flex flex-row justify-between items-center">
-                    <div className="flex flex-row gap-3">
+                <div className="mt-4 flex flex-col gap-2 lg:flex-row justify-between lg:items-center">
+                    <div className="flex flex-row justify-between lg:justify-start gap-2">
                         <ButtonGroup className="border rounded-lg">
                             <Button variant={'ghost'} className="bg-accent">
                                 All
                             </Button>
-                            <Button variant={'ghost'} className="border-e">
-                                Category 1
-                            </Button>
-                            <Button variant={'ghost'}>Category 2</Button>
+                            {categories
+                                ?.slice(1)
+                                .slice(0, 3)
+                                ?.map((category, index) => (
+                                    <Button
+                                        key={category.id}
+                                        variant={'ghost'}
+                                        className={
+                                            index < categories.length - 1 ? 'border-e' : undefined
+                                        }
+                                    >
+                                        {category.name}
+                                    </Button>
+                                ))}
+                            {categories && categories.length > 4 && (
+                                <Button variant={'ghost'}>...</Button>
+                            )}
+                        </ButtonGroup>
+                        <ButtonGroup className="border rounded-lg">
+                            <ManageCategory>
+                                <Button variant={'ghost'} className="border-e">
+                                    <Settings />
+                                </Button>
+                            </ManageCategory>
+                            <AddCategory>
+                                <Button variant={'ghost'}>
+                                    <Plus />
+                                </Button>
+                            </AddCategory>
                         </ButtonGroup>
                     </div>
-                    <ButtonGroup>
-                        <Button variant="outline">
-                            <LayoutGrid />
-                        </Button>
-                        <Button variant="outline">
-                            <SortAsc />
-                        </Button>
-                    </ButtonGroup>
+                    <div className="flex flex-row justify-end gap-2">
+                        <ButtonGroup>
+                            <Button variant="outline">
+                                <LayoutGrid />
+                            </Button>
+                            <Button variant="outline">
+                                <SortAsc />
+                            </Button>
+                        </ButtonGroup>
+                    </div>
                 </div>
 
                 {/* Server */}

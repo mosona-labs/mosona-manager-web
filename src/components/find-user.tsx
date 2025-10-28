@@ -2,7 +2,6 @@ import type { UserType } from '@/api/user';
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { LoaderCircle, Search } from 'lucide-react';
-import { toast } from 'sonner';
 import md5 from 'md5';
 
 import { Button } from './ui/button';
@@ -21,6 +20,7 @@ import { Card } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 import ApiUser from '@/api/user';
+import { ToastError } from '@/utils/toast';
 
 const FindUser = ({
     children,
@@ -50,12 +50,7 @@ const FindUser = ({
             .then((data) => {
                 setUserResults(data.data);
             })
-            .catch((err) => {
-                const status = err.response.data.code as string;
-                toast.error(status.substring(0, 1).toUpperCase() + status.substring(1), {
-                    description: err.response.data.msg,
-                });
-            })
+            .catch(ToastError)
             .finally(() => {
                 setLoading(false);
             });

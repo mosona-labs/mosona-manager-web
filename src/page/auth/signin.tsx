@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import useAuthKeys from '@/hooks/useAuthKeys';
 import ApiAuth from '@/api/auth';
+import { ToastError } from '@/utils/toast';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -54,12 +55,7 @@ const SignIn = () => {
                     });
                     navigate('/');
                 })
-                .catch((err) => {
-                    const status = err.response.data.code as string;
-                    toast.error(status.substring(0, 1).toUpperCase() + status.substring(1), {
-                        description: err.response.data.msg,
-                    });
-                })
+                .catch(ToastError)
                 .finally(() => {
                     setLoading(false);
                 });
@@ -108,12 +104,7 @@ const SignIn = () => {
                     formRef.current?.reset();
                     setMode('signin');
                 })
-                .catch((err) => {
-                    const status = err.response.data.code as string;
-                    toast.error(status.substring(0, 1).toUpperCase() + status.substring(1), {
-                        description: err.response.data.msg,
-                    });
-                })
+                .catch(ToastError)
                 .finally(() => {
                     setLoading(false);
                     captchaRef.current?.reset();
@@ -132,7 +123,7 @@ const SignIn = () => {
                 <h1 className="text-3xl font-bold mt-2">Mosona Manager</h1>
                 <p className="text-muted-foreground">Server Monitor & Management</p>
             </div>
-            <Card className="md:w-md py-4">
+            <Card className="w-[90vw] md:w-md py-4">
                 <CardContent className="px-4">
                     <CardHeader className="px-0">
                         <CardTitle>
@@ -258,7 +249,7 @@ const SignIn = () => {
                         <span className="text-sm text-muted-foreground">OR</span>
                         <div className="border-t flex-1" />
                     </div>
-                    <Card className="md:w-md py-0">
+                    <Card className="w-[90vw] md:w-md py-0">
                         <CardContent className="px-0">
                             <Button
                                 variant={'ghost'}
@@ -289,11 +280,7 @@ const SignIn = () => {
                             </Button>
                         </CardContent>
                     </Card>
-                    <Button
-                        variant={'ghost'}
-                        size={'sm'}
-                        className="w-md rounded-xl absolute bottom-4"
-                    >
+                    <Button variant={'ghost'} className="fixed bottom-4">
                         Forget my password
                     </Button>
                 </>

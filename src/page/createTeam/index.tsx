@@ -21,6 +21,7 @@ import FindUser from '@/components/find-user';
 import ApiTeam from '@/api/team';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/context/useUser';
+import { ToastError } from '@/utils/toast';
 
 const CreateTeam = () => {
     const navigator = useNavigate();
@@ -67,12 +68,7 @@ const CreateTeam = () => {
                 refresh();
                 navigator('/');
             })
-            .catch((err) => {
-                const status = err.response.data.code as string;
-                toast.error(status.substring(0, 1).toUpperCase() + status.substring(1), {
-                    description: err.response.data.msg,
-                });
-            })
+            .catch(ToastError)
             .finally(() => {
                 setIsLoading(false);
             });
