@@ -24,7 +24,7 @@ const ConnectChecker = () => {
         const interval = setInterval(async () => {
             const start = Date.now();
             await ping(start);
-        }, 10000);
+        }, 15000);
 
         return () => clearInterval(interval);
     }, []);

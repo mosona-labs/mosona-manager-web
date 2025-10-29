@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import { NetUnit } from '@/utils/unit';
 
 interface Server {
     id: number;
@@ -11,7 +12,7 @@ interface Server {
     os: string;
     location: string;
     locationName: string;
-    status: 'online' | 'warning' | 'error';
+    status: 'online' | 'warning' | 'offline';
     cpu: number;
     memory: number;
     disk: number;
@@ -30,7 +31,7 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
     const statusColors = {
         online: 'bg-green-500/30 text-success-foreground',
         warning: 'bg-orange-500/30 text-background',
-        error: 'bg-red-500/30 text-destructive-foreground',
+        offline: 'bg-red-500/30 text-destructive-foreground',
     };
 
     const getProgressColor = (value: number) => {
@@ -38,6 +39,9 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
         if (value >= 60) return 'bg-orange-500/60';
         return 'bg-green-500/60';
     };
+
+    const { value: rxValue, unit: rxUnit } = NetUnit(server.networkDown, 'kib');
+    const { value: txValue, unit: txUnit } = NetUnit(server.networkUp, 'kib');
 
     return (
         <Card className="border-border bg-card p-5 transition-all hover:border-primary/50 cursor-pointer">
@@ -58,12 +62,12 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
                             <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                                 <Badge className="bg-accent/50 text-accent-foreground">
                                     <img
-                                        src={`https://flagcdn.com/${server.location.toLowerCase()}.svg`}
+                                        src={`https://flagcdn.com/${(server.location || 'UN').toLowerCase()}.svg`}
                                         width="16"
                                         height="12"
                                         alt={server.location}
                                     />
-                                    {server.locationName}
+                                    {server.locationName || 'Unknown'}
                                 </Badge>
                             </div>
                         </div>
@@ -139,13 +143,13 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1 text-success">
                             <ArrowUp className="h-3 w-3" />
-                            <span className="font-mono">{server.networkUp}</span>
-                            <span className="text-muted-foreground">MB/s</span>
+                            <span className="font-mono">{txValue}</span>
+                            <span className="text-muted-foreground">{txUnit}/s</span>
                         </div>
                         <div className="flex items-center gap-1 text-info">
                             <ArrowDown className="h-3 w-3" />
-                            <span className="font-mono">{server.networkDown}</span>
-                            <span className="text-muted-foreground">MB/s</span>
+                            <span className="font-mono">{rxValue}</span>
+                            <span className="text-muted-foreground">{rxUnit}/s</span>
                         </div>
                     </div>
                 </div>

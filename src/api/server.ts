@@ -50,6 +50,12 @@ class ApiServerClass extends baseAPI {
             note_public,
         });
     }
+
+    async setCategory(serverId: number, categoryId: number) {
+        return this.putData<ResponseInterface<null>>('/v1/server/' + serverId + '/category', {
+            category_id: categoryId,
+        });
+    }
 }
 
 const ApiServer = new ApiServerClass();

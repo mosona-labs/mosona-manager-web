@@ -3,6 +3,7 @@ import {
     Cpu,
     HardDrive,
     LayoutGrid,
+    LoaderCircle,
     Monitor,
     Plus,
     Server,
@@ -10,8 +11,9 @@ import {
     SortAsc,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
-import ServerStatusCard from './card';
+import CategoryCard from './category';
 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,10 +22,77 @@ import AddServer from '@/components/add-server';
 import { useUser } from '@/context/useUser';
 import AddCategory from '@/components/category/add';
 import ManageCategory from '@/components/category/manage';
+import ApiMonitor, { type MonitorType, type ServerStatusType } from '@/api/monitor';
+import { ToastError } from '@/utils/toast';
+import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
     const navigator = useNavigate();
     const { categories } = useUser();
+
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
+
+    const [time, setTime] = useState<Date>(new Date());
+    const [servers, setServers] = useState<MonitorType[]>([]);
+    const [statuses, setStatuses] = useState<Record<number, ServerStatusType>>({});
+
+    const [total, setTotal] = useState(0);
+    const [online, setOnline] = useState(0);
+    const [avgCpu, setAvgCpu] = useState(0);
+    const [avgMemory, setAvgMemory] = useState(0);
+
+    const [categoryServerMap, setCategoryServerMap] = useState<Record<number, MonitorType[]>>({});
+    useEffect(() => {
+        const map: Record<number, MonitorType[]> = {};
+        servers.forEach((server) => {
+            if (!map[server.category]) map[server.category] = [];
+            map[server.category].push(server);
+        });
+        setCategoryServerMap(map);
+    }, [servers]);
+
+    const fetchData = () => {
+        ApiMonitor.list()
+            .then((data) => {
+                setTime(new Date(data.data.now * 1000));
+                setServers(data.data.servers);
+                setStatuses(data.data.status);
+
+                let total = 0,
+                    online = 0,
+                    avgCpu = 0,
+                    avgMemory = 0;
+                for (const server of data.data.servers) {
+                    const status = data.data.status[server.id];
+                    if (status) {
+                        total++;
+                        if (data.data.now * 1000 - new Date(status.time).getTime() < 5 * 1000) {
+                            online++;
+                            avgCpu = avgCpu + status.cpu / data.data.servers.length;
+                            avgMemory =
+                                avgMemory +
+                                ((status.mem_used_mb / status.mem_total_mb) * 100) /
+                                    data.data.servers.length;
+                        }
+                    }
+                }
+                setTotal(total);
+                setOnline(online);
+                setAvgCpu(avgCpu);
+                setAvgMemory(avgMemory);
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
+    useEffect(() => {
+        fetchData();
+        const i = setInterval(fetchData, 3000);
+        return () => clearInterval(i);
+    }, []);
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -54,7 +123,9 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Total Servers</p>
-                                <p className="text-2xl font-semibold text-card-foreground">NaN</p>
+                                <p className="text-2xl font-semibold text-card-foreground">
+                                    {isLoading ? '--' : total}
+                                </p>
                             </div>
                         </div>
                     </Card>
@@ -65,7 +136,9 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Online</p>
-                                <p className="text-2xl font-semibold text-card-foreground">NaN</p>
+                                <p className="text-2xl font-semibold text-card-foreground">
+                                    {isLoading ? '--' : online}
+                                </p>
                             </div>
                         </div>
                     </Card>
@@ -77,7 +150,7 @@ const Dashboard = () => {
                             <div>
                                 <p className="text-sm text-muted-foreground">Avg CPU</p>
                                 <p className="text-2xl font-semibold text-card-foreground">
-                                    {Math.round(NaN)}%
+                                    {isLoading ? '--' : avgCpu.toFixed(2) + '%'}
                                 </p>
                             </div>
                         </div>
@@ -89,7 +162,9 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <p className="text-sm text-muted-foreground">Avg Memory</p>
-                                <p className="text-2xl font-semibold text-card-foreground">NaN %</p>
+                                <p className="text-2xl font-semibold text-card-foreground">
+                                    {isLoading ? '--' : avgMemory.toFixed(2) + '%'}
+                                </p>
                             </div>
                         </div>
                     </Card>
@@ -99,7 +174,11 @@ const Dashboard = () => {
                 <div className="mt-4 flex flex-col gap-2 lg:flex-row justify-between lg:items-center">
                     <div className="flex flex-row justify-between lg:justify-start gap-2">
                         <ButtonGroup className="border rounded-lg">
-                            <Button variant={'ghost'} className="bg-accent">
+                            <Button
+                                variant={'ghost'}
+                                className={categoryFilter == null ? 'bg-accent' : ''}
+                                onClick={() => setCategoryFilter(null)}
+                            >
                                 All
                             </Button>
                             {categories
@@ -109,9 +188,11 @@ const Dashboard = () => {
                                     <Button
                                         key={category.id}
                                         variant={'ghost'}
-                                        className={
-                                            index < categories.length - 1 ? 'border-e' : undefined
-                                        }
+                                        className={cn(
+                                            index < categories.length - 1 ? 'border-e' : undefined,
+                                            categoryFilter == category.id ? 'bg-accent' : ''
+                                        )}
+                                        onClick={() => setCategoryFilter(category.id)}
                                     >
                                         {category.name}
                                     </Button>
@@ -146,27 +227,59 @@ const Dashboard = () => {
                 </div>
 
                 {/* Server */}
-                <div className="mt-4">
-                    <p className="mt-4 opacity-65">Category 1</p>
-                </div>
-                <div className="mt-2 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-                    <ServerStatusCard
-                        server={{
-                            id: 1,
-                            name: 'web-prod-01',
-                            os: 'ubuntu',
-                            location: 'US',
-                            locationName: 'San Francisco',
-                            status: 'online',
-                            cpu: 45,
-                            memory: 68,
-                            disk: 52,
-                            uptime: '45d 12h 34m',
-                            networkUp: 125.4,
-                            networkDown: 89.2,
-                        }}
-                    />
-                </div>
+                {isLoading ? (
+                    <div className="mt-4">
+                        <LoaderCircle className="animate-spin text-muted-foreground" size={48} />
+                    </div>
+                ) : categoryFilter == null ? (
+                    categories?.map((category) =>
+                        categoryServerMap[category.id] ? (
+                            <CategoryCard
+                                key={category.id}
+                                category={category}
+                                categoryServerMap={categoryServerMap}
+                                statuses={statuses}
+                                time={time}
+                            />
+                        ) : (
+                            <div key={category.id}>
+                                <div className="mt-4">
+                                    <p className="mt-4 opacity-65">{category.name}</p>
+                                </div>
+                                <div className="mt-2">
+                                    <p className="text-sm text-muted-foreground/50">
+                                        No servers in this category.
+                                    </p>
+                                </div>
+                            </div>
+                        )
+                    )
+                ) : (
+                    categories
+                        ?.filter((c) => c.id === categoryFilter)
+                        .map((category) =>
+                            categoryServerMap[category.id] ? (
+                                <CategoryCard
+                                    key={category.id}
+                                    category={category}
+                                    categoryServerMap={categoryServerMap}
+                                    statuses={statuses}
+                                    time={time}
+                                />
+                            ) : (
+                                <div key={category.id}>
+                                    <div className="mt-4">
+                                        <p className="mt-4 opacity-65">{category.name}</p>
+                                    </div>
+                                    <div className="mt-2">
+                                        <p className="text-sm text-muted-foreground/50">
+                                            No servers in this category.
+                                        </p>
+                                    </div>
+                                </div>
+                            )
+                        )
+                )}
             </div>
         </div>
     );
