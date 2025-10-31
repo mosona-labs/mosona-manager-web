@@ -14,6 +14,8 @@ import CreateTeam from '../page/createTeam';
 import ConnectChecker from './connect-checker';
 import User from './user';
 
+import Monitor from '@/page/monitor';
+
 function App() {
     // Theme
     const { theme, setTheme } = useTheme();
@@ -50,6 +52,7 @@ function App() {
                 </div>
                 <Routes>
                     <Route path="/" element={<Dashboard />} />
+                    <Route path="/:id/monitor" element={<Monitor />} />
                     <Route path="/terminal" element={<Terminal />} />
                     <Route path="/about" element={<About />} />
                     {/* Create Team */}

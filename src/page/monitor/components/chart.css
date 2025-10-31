@@ -1,0 +1,39 @@
+.blue {
+    --chart-1: #8ec5ff;
+    --chart-2: #2b7fff;
+}
+
+.red {
+    --chart-1: #ff7b7b;
+    --chart-2: #ff0000;
+}
+
+.green {
+    --chart-1: #7bf1a8;
+    --chart-2: #00c950;
+}
+
+.yellow {
+    --chart-1: #ffdf20;
+    --chart-2: #f0b100;
+}
+
+.orange {
+    --chart-1: #ffb86a;
+    --chart-2: #ff6900;
+}
+
+.violet {
+    --chart-1: #c4b4ff;
+    --chart-2: #8e51ff;
+}
+
+.blue-yellow {
+    --chart-1: #f0b100;
+    --chart-2: #8ec5ff;
+}
+
+.violet-red {
+    --chart-1: #ff7b7b;
+    --chart-2: #c4b4ff;
+}

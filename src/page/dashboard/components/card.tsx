@@ -1,10 +1,12 @@
 import { Cpu, HardDrive, Database, Clock, ArrowUp, ArrowDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import { NetUnit } from '@/utils/unit';
+import { osIcons } from '@/utils/icon';
 
 interface Server {
     id: number;
@@ -25,9 +27,9 @@ interface ServerCardProps {
     server: Server;
 }
 
-const osIcons = ['arch', 'centos', 'debian', 'redhat', 'ubuntu', 'rockylinux', 'windows'];
-
 const ServerStatusCard = ({ server }: ServerCardProps) => {
+    const navigator = useNavigate();
+
     const statusColors = {
         online: 'bg-green-500/30 text-success-foreground',
         warning: 'bg-orange-500/30 text-background',
@@ -40,18 +42,23 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
         return 'bg-green-500/60';
     };
 
-    const { value: rxValue, unit: rxUnit } = NetUnit(server.networkDown, 'kib');
-    const { value: txValue, unit: txUnit } = NetUnit(server.networkUp, 'kib');
+    const { value: rxValue, unit: rxUnit } = NetUnit(server.networkDown, 'kb');
+    const { value: txValue, unit: txUnit } = NetUnit(server.networkUp, 'kb');
 
     return (
-        <Card className="border-border bg-card p-5 transition-all hover:border-primary/50 cursor-pointer">
+        <Card
+            className="border-border bg-card p-5 transition-all hover:border-primary/50 cursor-pointer"
+            onClick={() => {
+                navigator(`/${server.id}/monitor`);
+            }}
+        >
             <div className="space-y-4">
                 {/* Header */}
                 <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                         <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl">
                             <img
-                                src={`/icons/${osIcons.includes(server.os) ? server.os : 'linux'}.svg`}
+                                src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
                                 className="p-2"
                             />
                         </div>
@@ -143,13 +150,13 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1 text-success">
                             <ArrowUp className="h-3 w-3" />
-                            <span className="font-mono">{txValue}</span>
-                            <span className="text-muted-foreground">{txUnit}/s</span>
+                            <span className="font-mono">{rxValue}</span>
+                            <span className="text-muted-foreground">{rxUnit}/s</span>
                         </div>
                         <div className="flex items-center gap-1 text-info">
                             <ArrowDown className="h-3 w-3" />
-                            <span className="font-mono">{rxValue}</span>
-                            <span className="text-muted-foreground">{rxUnit}/s</span>
+                            <span className="font-mono">{txValue}</span>
+                            <span className="text-muted-foreground">{txUnit}/s</span>
                         </div>
                     </div>
                 </div>

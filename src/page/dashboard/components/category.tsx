@@ -10,6 +10,8 @@ import { formatUptime } from '@/utils/time';
 import { ContextMenu } from '@/components/context-menu';
 import EditCategory from '@/components/edit-category';
 
+import '../components/category.css';
+
 const MonitorCard = ({
     server,
     statuses,
@@ -68,7 +70,7 @@ const MonitorCard = ({
                 <ServerStatusCard
                     key={server.id}
                     server={{
-                        id: 1,
+                        id: server.id,
                         name: server.name,
                         os: server.os,
                         location: server.county,
@@ -84,7 +86,7 @@ const MonitorCard = ({
                         disk:
                             Math.floor((info.disk_used_gb / info.disk_total_gb) * 100 * 100) /
                                 100 || 0,
-                        uptime: formatUptime(server.open_time, time),
+                        uptime: formatUptime(server.open_time),
                         networkUp: info.rx_kib_s || 0,
                         networkDown: info.tx_kib_s || 0,
                     }}
@@ -116,7 +118,7 @@ const CategoryCard = ({
             <div className="mt-4">
                 <p className="mt-4 opacity-65">{category.name}</p>
             </div>
-            <div className="mt-2 grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+            <div className="category-grid">
                 {categoryServerMap[category.id]?.map((server) => (
                     <MonitorCard key={server.id} server={server} statuses={statuses} time={time} />
                 ))}

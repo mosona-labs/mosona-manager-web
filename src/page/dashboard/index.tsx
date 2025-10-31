@@ -11,9 +11,10 @@ import {
     SortAsc,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import CategoryCard from './category';
+import CategoryCard from './components/category';
+import useMonitors from './hook';
 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,77 +23,16 @@ import AddServer from '@/components/add-server';
 import { useUser } from '@/context/useUser';
 import AddCategory from '@/components/category/add';
 import ManageCategory from '@/components/category/manage';
-import ApiMonitor, { type MonitorType, type ServerStatusType } from '@/api/monitor';
-import { ToastError } from '@/utils/toast';
 import { cn } from '@/lib/utils';
 
 const Dashboard = () => {
     const navigator = useNavigate();
     const { categories } = useUser();
 
-    const [isLoading, setIsLoading] = useState(true);
-
     const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
 
-    const [time, setTime] = useState<Date>(new Date());
-    const [servers, setServers] = useState<MonitorType[]>([]);
-    const [statuses, setStatuses] = useState<Record<number, ServerStatusType>>({});
-
-    const [total, setTotal] = useState(0);
-    const [online, setOnline] = useState(0);
-    const [avgCpu, setAvgCpu] = useState(0);
-    const [avgMemory, setAvgMemory] = useState(0);
-
-    const [categoryServerMap, setCategoryServerMap] = useState<Record<number, MonitorType[]>>({});
-    useEffect(() => {
-        const map: Record<number, MonitorType[]> = {};
-        servers.forEach((server) => {
-            if (!map[server.category]) map[server.category] = [];
-            map[server.category].push(server);
-        });
-        setCategoryServerMap(map);
-    }, [servers]);
-
-    const fetchData = () => {
-        ApiMonitor.list()
-            .then((data) => {
-                setTime(new Date(data.data.now * 1000));
-                setServers(data.data.servers);
-                setStatuses(data.data.status);
-
-                let total = 0,
-                    online = 0,
-                    avgCpu = 0,
-                    avgMemory = 0;
-                for (const server of data.data.servers) {
-                    const status = data.data.status[server.id];
-                    if (status) {
-                        total++;
-                        if (data.data.now * 1000 - new Date(status.time).getTime() < 5 * 1000) {
-                            online++;
-                            avgCpu = avgCpu + status.cpu / data.data.servers.length;
-                            avgMemory =
-                                avgMemory +
-                                ((status.mem_used_mb / status.mem_total_mb) * 100) /
-                                    data.data.servers.length;
-                        }
-                    }
-                }
-                setTotal(total);
-                setOnline(online);
-                setAvgCpu(avgCpu);
-                setAvgMemory(avgMemory);
-            })
-            .catch(ToastError)
-            .finally(() => {
-                setIsLoading(false);
-            });
-    };
-    useEffect(() => {
-        fetchData();
-        const i = setInterval(fetchData, 3000);
-        return () => clearInterval(i);
-    }, []);
+    const { isLoading, time, statuses, total, online, avgCpu, avgMemory, categoryServerMap } =
+        useMonitors();
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">

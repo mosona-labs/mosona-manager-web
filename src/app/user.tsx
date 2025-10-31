@@ -1,14 +1,22 @@
 import md5 from 'md5';
 import { memo } from 'react';
 import { LogOut, User2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/context/useUser';
+import ApiAuth from '@/api/auth';
 
 const User = () => {
+    const navigator = useNavigate();
     const { user } = useUser();
+
+    const signOut = () => {
+        ApiAuth.logout();
+        navigator('/auth');
+    };
 
     return (
         <Popover>
@@ -37,6 +45,7 @@ const User = () => {
                     <Button
                         variant={'ghost'}
                         className="w-full rounded-none py-3 justify-start text-red-500"
+                        onClick={signOut}
                     >
                         <LogOut />
                         Sign Out
