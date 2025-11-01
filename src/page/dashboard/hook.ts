@@ -13,48 +13,7 @@ export default function useMonitors(pollInterval = 3000) {
     const [avgCpu, setAvgCpu] = useState(0);
     const [avgMemory, setAvgMemory] = useState(0);
 
-    const fetchData = useCallback(() => {
-        ApiMonitor.list()
-            .then((data) => {
-                setTime(new Date(data.data.now * 1000));
-                setServers(data.data.servers);
-                setStatuses(data.data.status);
-
-                let totalCount = 0,
-                    onlineCount = 0,
-                    cpuAcc = 0,
-                    memAcc = 0;
-
-                for (const server of data.data.servers) {
-                    const status = data.data.status[server.id];
-                    if (status) {
-                        totalCount++;
-                        const nowMs = data.data.now * 1000;
-                        if (nowMs - new Date(status.time).getTime() < 5 * 1000) {
-                            onlineCount++;
-                            cpuAcc = cpuAcc + status.cpu / data.data.servers.length;
-                            memAcc =
-                                memAcc +
-                                ((status.mem_used_mb / status.mem_total_mb) * 100) /
-                                    data.data.servers.length;
-                        }
-                    }
-                }
-
-                setTotal(totalCount);
-                setOnline(onlineCount);
-                setAvgCpu(cpuAcc);
-                setAvgMemory(memAcc);
-            })
-            .catch(ToastError)
-            .finally(() => setIsLoading(false));
-    }, []);
-
-    useEffect(() => {
-        fetchData();
-        const id = window.setInterval(fetchData, pollInterval);
-        return () => window.clearInterval(id);
-    }, [fetchData, pollInterval]);
+    const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
 
     const categoryServerMap = useMemo(() => {
         const map: Record<number, MonitorType[]> = {};
@@ -64,6 +23,54 @@ export default function useMonitors(pollInterval = 3000) {
         }
         return map;
     }, [servers]);
+
+    const fetchData = useCallback(() => {
+        ApiMonitor.list()
+            .then((data) => {
+                setTime(new Date(data.data.now * 1000));
+                setServers(data.data.servers);
+                setStatuses(data.data.status);
+            })
+            .catch(ToastError)
+            .finally(() => setIsLoading(false));
+    }, []);
+
+    useEffect(() => {
+        let totalCount = 0,
+            onlineCount = 0,
+            cpuAcc = 0,
+            memAcc = 0;
+
+        for (const server of servers) {
+            if (categoryFilter !== null && server.category !== categoryFilter) {
+                continue;
+            }
+
+            const status = statuses[server.id];
+            if (status) {
+                totalCount++;
+                const nowMs = time.getTime();
+                if (nowMs - new Date(status.time).getTime() < 5 * 1000) {
+                    onlineCount++;
+                    cpuAcc = cpuAcc + status.cpu / servers.length;
+                    memAcc =
+                        memAcc +
+                        ((status.mem_used_mb / status.mem_total_mb) * 100) / servers.length;
+                }
+            }
+        }
+
+        setTotal(totalCount);
+        setOnline(onlineCount);
+        setAvgCpu(cpuAcc);
+        setAvgMemory(memAcc);
+    }, [servers, categoryFilter]);
+
+    useEffect(() => {
+        fetchData();
+        const id = window.setInterval(fetchData, pollInterval);
+        return () => window.clearInterval(id);
+    }, [fetchData, pollInterval]);
 
     return {
         isLoading,
@@ -75,6 +82,8 @@ export default function useMonitors(pollInterval = 3000) {
         avgCpu,
         avgMemory,
         categoryServerMap,
+        categoryFilter,
+        setCategoryFilter,
         refresh: fetchData,
     } as const;
 }

@@ -8,10 +8,8 @@ import {
     Plus,
     Server,
     Settings,
-    SortAsc,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
 
 import CategoryCard from './components/category';
 import useMonitors from './hook';
@@ -29,10 +27,18 @@ const Dashboard = () => {
     const navigator = useNavigate();
     const { categories } = useUser();
 
-    const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
-
-    const { isLoading, time, statuses, total, online, avgCpu, avgMemory, categoryServerMap } =
-        useMonitors();
+    const {
+        isLoading,
+        time,
+        statuses,
+        total,
+        online,
+        avgCpu,
+        avgMemory,
+        categoryServerMap,
+        categoryFilter,
+        setCategoryFilter,
+    } = useMonitors();
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -158,9 +164,6 @@ const Dashboard = () => {
                         <ButtonGroup>
                             <Button variant="outline">
                                 <LayoutGrid />
-                            </Button>
-                            <Button variant="outline">
-                                <SortAsc />
                             </Button>
                         </ButtonGroup>
                     </div>

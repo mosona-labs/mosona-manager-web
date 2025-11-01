@@ -1,5 +1,12 @@
 import { baseAPI, type ResponseInterface } from './base';
 
+export type ServerMinimalType = {
+    id: number;
+    name: string;
+    weight: number;
+    category: number;
+};
+
 class ApiServerClass extends baseAPI {
     async add(
         name: string,

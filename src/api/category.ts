@@ -3,6 +3,7 @@ import { baseAPI, type ResponseInterface } from './base';
 export type CategoryType = {
     id: number;
     name: string;
+    sort: number;
 };
 
 class ApiCategoryClass extends baseAPI {
@@ -20,6 +21,10 @@ class ApiCategoryClass extends baseAPI {
 
     async delete(id: number) {
         return this.deleteData<ResponseInterface<null>>('/v1/category/' + id);
+    }
+
+    async sort(ids: number[]) {
+        return this.putData<ResponseInterface<null>>('/v1/category/sort', ids, false);
     }
 }
 
