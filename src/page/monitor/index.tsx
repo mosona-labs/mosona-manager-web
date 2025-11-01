@@ -189,7 +189,7 @@ const Monitor = () => {
                     </Badge>
                     <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm">
                         <img
-                            src={`https://flagcdn.com/${(server?.county || 'UN').toLowerCase()}.svg`}
+                            src={`/flags/${(server?.county || 'UN').toLowerCase()}.svg`}
                             width="16"
                             height="12"
                             alt={'UN'}

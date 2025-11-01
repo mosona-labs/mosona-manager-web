@@ -69,7 +69,7 @@ const ServerStatusCard = ({ server }: ServerCardProps) => {
                             <div className="mt-1 flex items-center gap-2 text-xs text-muted-foreground">
                                 <Badge className="bg-accent/50 text-accent-foreground">
                                     <img
-                                        src={`https://flagcdn.com/${(server.location || 'UN').toLowerCase()}.svg`}
+                                        src={`/flags/${(server.location || 'UN').toLowerCase()}.svg`}
                                         width="16"
                                         height="12"
                                         alt={server.location}
