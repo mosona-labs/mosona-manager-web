@@ -57,19 +57,40 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
 const CategoryCard = ({
     category,
     categoryServerMap,
+    filter,
 }: {
     category: CategoryType;
     categoryServerMap: Record<number, TerminalType[]>;
+    filter: string;
 }) => {
+    const filterServer = (server: TerminalType): boolean => {
+        if (!filter) return true;
+        const lowerFilter = filter.toLowerCase();
+        return (
+            server.name.toLowerCase().includes(lowerFilter) ||
+            server.address.toLowerCase().includes(lowerFilter)
+        );
+    };
+
+    const filteredServers = categoryServerMap[category.id]?.filter(filterServer) || [];
+
     return (
         <div key={category.id}>
             <div className="mt-4">
                 <p className="mt-4 opacity-65">{category.name}</p>
             </div>
             <div className="category-grid">
-                {categoryServerMap[category.id]?.map((server) => (
-                    <TerminalCard key={server.id} server={server} />
-                ))}
+                {filteredServers.length ? (
+                    filteredServers.map((server) => (
+                        <TerminalCard key={server.id} server={server} />
+                    ))
+                ) : (
+                    <div className="col-span-full">
+                        <p className="text-sm text-muted-foreground/50">
+                            No servers in this category.
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

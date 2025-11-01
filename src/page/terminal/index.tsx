@@ -1,5 +1,6 @@
 import { ArrowLeftRight, LayoutGrid, LoaderCircle, Plus, Settings, SortAsc } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 import useTerminals from './hook';
 import CategoryCard from './components/category';
@@ -18,8 +19,9 @@ const Terminal = () => {
 
     const navigator = useNavigate();
 
-    const { isLoading, servers, categoryServerMap, categoryFilter, setCategoryFilter, refresh } =
-        useTerminals();
+    const { isLoading, categoryServerMap, categoryFilter, setCategoryFilter } = useTerminals();
+
+    const [filter, setFilter] = useState<string>('');
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -45,8 +47,10 @@ const Terminal = () => {
             <div className="relative">
                 <p className="absolute h-full flex items-center px-2">$</p>
                 <Input
-                    placeholder="Find a host or SSH (e.g., user@hostname)"
+                    placeholder="Search server name or address..."
                     className="border-0 ps-6"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
                 />
             </div>
 
@@ -116,6 +120,7 @@ const Terminal = () => {
                             key={category.id}
                             category={category}
                             categoryServerMap={categoryServerMap}
+                            filter={filter}
                         />
                     ) : (
                         <div key={category.id}>
@@ -139,6 +144,7 @@ const Terminal = () => {
                                 key={category.id}
                                 category={category}
                                 categoryServerMap={categoryServerMap}
+                                filter={filter}
                             />
                         ) : (
                             <div key={category.id}>

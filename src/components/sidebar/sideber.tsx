@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import {
     Container,
     Terminal,
@@ -8,6 +8,7 @@ import {
     ChevronsUpDown,
     Briefcase,
     BadgeInfo,
+    X,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -28,6 +29,8 @@ import TeamItem from './teamItem';
 
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/useUser';
+import { useSession } from '@/context/useSession';
+import { osIcons } from '@/utils/icon';
 
 const sidebarItems: {
     title: string;
@@ -56,6 +59,9 @@ const sidebarItems: {
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {
     const navigator = useNavigate();
     const { team, teams } = useUser();
+    const { sessions, closeSession } = useSession();
+
+    const sessionList = useMemo(() => Array.from(sessions.values()), [sessions]);
 
     const [showTeams, setShowTeams] = useState(false);
 
@@ -92,6 +98,39 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                             {item.title}
                         </p>
                     )
+                )}
+
+                {/* sessions */}
+                {sessionList.length > 0 && (
+                    <>
+                        <div className="border-t my-1" />
+                        <p className="text-sm mt-1 mx-1 opacity-65">Sessions</p>
+                        {sessionList.map((session) => (
+                            <SidebarItem
+                                key={session.id}
+                                title={session.name}
+                                icon={
+                                    <img
+                                        src={`/icons/${osIcons.includes(session.os.toLowerCase() || '') ? session.os.toLowerCase() : 'linux'}.svg`}
+                                        alt=""
+                                        className="w-6"
+                                    />
+                                }
+                                path={'/session/' + session.id}
+                                btn={
+                                    <div
+                                        className="p-1"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            closeSession(session.id);
+                                        }}
+                                    >
+                                        <X size={16} />
+                                    </div>
+                                }
+                            />
+                        ))}
+                    </>
                 )}
 
                 <div className="flex-1" />

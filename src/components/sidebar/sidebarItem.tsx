@@ -4,7 +4,17 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 import { cn } from '@/lib/utils';
 
-const SidebarItem = ({ title, icon, path }: { title: string; icon: ReactNode; path: string }) => {
+const SidebarItem = ({
+    title,
+    icon,
+    path,
+    btn,
+}: {
+    title: string;
+    icon: ReactNode;
+    path: string;
+    btn?: ReactNode;
+}) => {
     const navigate = useNavigate();
     const location = useLocation();
     const isActive = location.pathname === path;
@@ -19,6 +29,8 @@ const SidebarItem = ({ title, icon, path }: { title: string; icon: ReactNode; pa
         >
             {icon}
             {title}
+            <div className="flex-1" />
+            {btn}
         </div>
     );
 };

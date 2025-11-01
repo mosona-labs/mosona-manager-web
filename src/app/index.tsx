@@ -15,6 +15,7 @@ import ConnectChecker from './connect-checker';
 import User from './user';
 
 import Monitor from '@/page/monitor';
+import Session from '@/page/session';
 
 function App() {
     // Theme
@@ -54,6 +55,7 @@ function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/:id/monitor" element={<Monitor />} />
                     <Route path="/terminal" element={<Terminal />} />
+                    <Route path="/session/:id" element={<Session />} />
                     <Route path="/about" element={<About />} />
                     {/* Create Team */}
                     <Route path="/create-team" element={<CreateTeam />} />
