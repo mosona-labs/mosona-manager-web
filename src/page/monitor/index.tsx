@@ -6,18 +6,17 @@ import {
     ChevronLeft,
     ClockArrowUp,
     CpuIcon,
-    Grid2X2,
-    Grid3x2,
     MonitorIcon,
     RefreshCw,
     RefreshCwOff,
-    Rows2,
+    Settings,
     Shell,
     Triangle,
     WorkflowIcon,
 } from 'lucide-react';
 
 import { MonitorChart } from './components/monitor-chart';
+import LayoutBtn from './components/layout-btn';
 
 import ApiMonitor, { type MonitorDetailType, type ServerStatusType } from '@/api/monitor';
 import { cn } from '@/lib/utils';
@@ -36,9 +35,13 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { ToastError } from '@/utils/toast';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useUser } from '@/context/useUser';
 
 const Monitor = () => {
     const { id } = useParams<{ id: string }>();
+
+    const { config, updateConfig } = useUser();
 
     const [server, setServer] = useState<MonitorDetailType>();
     const [stale, setStale] = useState<boolean>(true);
@@ -47,13 +50,25 @@ const Monitor = () => {
     const [statuses, setStatuses] = useState<ServerStatusType[]>();
     const [status, setStatus] = useState<ServerStatusType>();
 
-    const [layout, setLayout] = useState<'grid-2' | 'grid-3' | 'list'>('grid-2');
+    const [layout, setLayout] = useState<'grid-2' | 'grid-3' | 'list'>(config.defaultLayout);
 
-    const [autoRefresh, setAutoRefresh] = useState<boolean>(true);
+    const [autoRefresh, setAutoRefresh] = useState<boolean>(config.autoRefresh);
     const autoRefreshRef = useRef<number>(0);
 
-    const [timeFrame, setTimeFrame] = useState<string>('1h');
-    const [defaultMode, setDefaultMode] = useState<'avg' | 'max' | 'raw'>('avg');
+    const [timeFrame, setTimeFrame] = useState<string>(config.defaultTimeFrame);
+    const [defaultMode, setDefaultMode] = useState<'avg' | 'max' | 'raw'>(
+        config.defaultMonitorMode
+    );
+
+    // Config
+    useEffect(() => {
+        if (config) {
+            setLayout(config.defaultLayout);
+            setAutoRefresh(config.autoRefresh);
+            setTimeFrame(config.defaultTimeFrame);
+            setDefaultMode(config.defaultMonitorMode);
+        }
+    }, [config]);
 
     const realtime = (id: string) => {
         ApiMonitor.realtime(parseInt(id))
@@ -111,6 +126,7 @@ const Monitor = () => {
                 clearInterval(autoRefreshRef.current);
             }
         } else {
+            setDefaultMode(config.defaultMonitorMode);
             chart(id, timeFrame);
             if (autoRefresh) {
                 autoRefreshRef.current = setInterval(() => {
@@ -120,6 +136,9 @@ const Monitor = () => {
         }
         return () => {
             if (interval) clearInterval(interval);
+            if (autoRefreshRef.current) {
+                clearInterval(autoRefreshRef.current);
+            }
         };
     }, [id, timeFrame]);
 
@@ -259,8 +278,13 @@ const Monitor = () => {
                 </div>
             </Card>
             <div className="flex flex-row justify-between">
-                <Select value={timeFrame} onValueChange={setTimeFrame}>
-                    <SelectTrigger className="w-[220px]">
+                <Select
+                    value={timeFrame}
+                    onValueChange={(e) => {
+                        updateConfig({ defaultTimeFrame: e });
+                    }}
+                >
+                    <SelectTrigger className="w-[180px]">
                         <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -276,44 +300,44 @@ const Monitor = () => {
                     </SelectContent>
                 </Select>
                 <div className="space-x-2">
-                    <Button variant={'outline'} onClick={() => setAutoRefresh(!autoRefresh)}>
-                        {autoRefresh ? (
-                            <RefreshCw size={16} className="text-green-500" />
-                        ) : (
-                            <RefreshCwOff size={16} />
-                        )}
+                    <Button variant={'outline'}>
+                        <Settings size={16} />
                     </Button>
-                    <Button
-                        variant={'outline'}
-                        className="hidden md:inline"
-                        onClick={() =>
-                            setLayout(
-                                layout === 'grid-2'
-                                    ? 'grid-3'
-                                    : layout === 'grid-3'
-                                      ? 'list'
-                                      : 'grid-2'
-                            )
-                        }
-                    >
-                        {layout === 'grid-2' ? (
-                            <Grid3x2 size={16} />
-                        ) : layout === 'grid-3' ? (
-                            <Rows2 size={16} />
-                        ) : (
-                            <Grid2X2 size={16} />
-                        )}
-                    </Button>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant={'outline'}
+                                onClick={() => {
+                                    updateConfig({ autoRefresh: !autoRefresh });
+                                }}
+                            >
+                                {autoRefresh ? (
+                                    <RefreshCw size={16} className="text-green-500" />
+                                ) : (
+                                    <RefreshCwOff size={16} />
+                                )}
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="me-2">
+                            {autoRefresh ? <p>Auto-refresh is ON</p> : <p>Auto-refresh is OFF</p>}
+                        </TooltipContent>
+                    </Tooltip>
+                    <LayoutBtn
+                        layout={layout}
+                        setLayout={(l) => {
+                            updateConfig({ defaultLayout: l });
+                        }}
+                    />
                 </div>
             </div>
             <div
                 className={cn(
                     'grid gap-4',
-                    layout === 'grid-2'
-                        ? 'md:grid-cols-3'
-                        : layout === 'grid-3'
-                          ? 'grid-cols-1'
-                          : 'md:grid-cols-2'
+                    layout === 'grid-3'
+                        ? 'xl:grid-cols-3 lg:grid-cols-2'
+                        : layout === 'grid-2'
+                          ? 'lg:grid-cols-2'
+                          : 'grid-cols-1'
                 )}
             >
                 <MonitorChart
@@ -368,7 +392,7 @@ const Monitor = () => {
                     keyUnit={['/s', '/s']}
                     autoUnit={'kb'}
                     keyObj={['disk_read_kib_s', 'disk_write_kib_s']}
-                    yWidth={44}
+                    yWidth={46}
                     colorClass={'blue-yellow'}
                 />
                 <MonitorChart
@@ -383,7 +407,7 @@ const Monitor = () => {
                     keyUnit={['/s', '/s']}
                     autoUnit={'kb'}
                     keyObj={['rx_kib_s', 'tx_kib_s']}
-                    yWidth={44}
+                    yWidth={46}
                     colorClass={'violet-red'}
                 />
                 <MonitorChart

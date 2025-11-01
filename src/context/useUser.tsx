@@ -12,6 +12,15 @@ type UserContextType = {
     categories?: CategoryType[];
     setUser: (u?: UserType) => void;
     refresh: () => Promise<void>;
+    config: UserConfigType;
+    updateConfig: (newConfig: Partial<UserConfigType>) => void;
+};
+
+type UserConfigType = {
+    defaultTimeFrame: string;
+    autoRefresh: boolean;
+    defaultMonitorMode: 'avg' | 'max' | 'raw';
+    defaultLayout: 'grid-3' | 'grid-2' | 'list';
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -35,12 +44,33 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
     };
 
+    // Config
+    const [config, setConfig] = useState<UserConfigType>(
+        localStorage.getItem('mosona-config')
+            ? (JSON.parse(localStorage.getItem('mosona-config') || '{}') as UserConfigType)
+            : {
+                  defaultTimeFrame: '1h',
+                  autoRefresh: true,
+                  defaultMonitorMode: 'avg',
+                  defaultLayout: 'grid-2',
+              }
+    );
+    const updateConfig = (newConfig: Partial<UserConfigType>) => {
+        setConfig((prev) => {
+            const updated = { ...prev, ...newConfig };
+            localStorage.setItem('mosona-config', JSON.stringify(updated));
+            return updated;
+        });
+    };
+
     useEffect(() => {
         void refresh();
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, team, teams, categories, setUser, refresh }}>
+        <UserContext.Provider
+            value={{ user, team, teams, categories, setUser, refresh, config, updateConfig }}
+        >
             {children}
         </UserContext.Provider>
     );
