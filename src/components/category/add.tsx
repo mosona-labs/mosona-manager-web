@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Loader } from 'lucide-react';
 
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -83,6 +84,10 @@ const AddCategory = ({ children }: { children?: React.ReactNode }) => {
                         disabled={isCategoryNameExists || !categoryName || isLoading}
                         onClick={handleCreate}
                     >
+                        <Loader
+                            className="animate-spin"
+                            style={{ display: isLoading ? 'inline-block' : 'none' }}
+                        />
                         Create
                     </Button>
                 </DialogFooter>

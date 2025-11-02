@@ -9,6 +9,7 @@ import SignIn from './page/auth/signin.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import { UserProvider } from './context/useUser.tsx';
 import { SessionProvider } from './context/useSession.tsx';
+import Init from './page/init/index.tsx';
 
 createRoot(document.getElementById('root')!).render(
     <ThemeProvider>
@@ -16,6 +17,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
                 <Route path="/auth" element={<SignIn />} />
                 <Route path="/admin/" element={<div>empty</div>} />
+                <Route path="/init" element={<Init />} />
                 <Route
                     path="*"
                     element={

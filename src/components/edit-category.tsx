@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Loader } from 'lucide-react';
 
 import {
     Dialog,
@@ -92,6 +93,10 @@ const EditCategory = ({
                         <Button variant="outline">Cancel</Button>
                     </DialogClose>
                     <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
+                        <Loader
+                            className="animate-spin"
+                            style={{ display: isLoading ? 'inline-block' : 'none' }}
+                        />
                         Save changes
                     </Button>
                 </DialogFooter>

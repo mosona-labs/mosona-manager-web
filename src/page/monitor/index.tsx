@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 import {
     ArrowBigDownDash,
@@ -40,6 +40,8 @@ import { useUser } from '@/context/useUser';
 
 const Monitor = () => {
     const { id } = useParams<{ id: string }>();
+
+    const navigate = useNavigate();
 
     const { config, updateConfig } = useUser();
 
@@ -173,7 +175,14 @@ const Monitor = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24 flex flex-col gap-4">
             <div className="flex flex-col gap-3 items-start md:flex-row justify-between md:items-center">
                 <div className="flex flex-row gap-3 items-center">
-                    <Button className="w-10 h-10" variant={'ghost'}>
+                    <Button
+                        className="w-10 h-10"
+                        variant={'ghost'}
+                        onClick={() => {
+                            if (window.history.length > 1) navigate(-1);
+                            else navigate('/');
+                        }}
+                    >
                         <ChevronLeft size={100} />
                     </Button>
                     <h1 className="text-2xl font-bold">{server?.name}</h1>
@@ -187,7 +196,7 @@ const Monitor = () => {
                     >
                         {!stale ? 'online' : 'offline'}
                     </Badge>
-                    <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm">
+                    <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm gap-1.5">
                         <img
                             src={`/flags/${(server?.county || 'UN').toLowerCase()}.svg`}
                             width="16"

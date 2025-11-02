@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { Loader, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -431,6 +431,10 @@ const AddServer = () => {
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
                         <Button type="submit" disabled={isLoading}>
+                            <Loader
+                                className="animate-spin"
+                                style={{ display: isLoading ? 'inline-block' : 'none' }}
+                            />
                             Add Server
                         </Button>
                     </DialogFooter>

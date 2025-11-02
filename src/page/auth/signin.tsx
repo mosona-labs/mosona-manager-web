@@ -121,7 +121,7 @@ const SignIn = () => {
             <div className="w-full mb-4 flex flex-col gap-2 items-center">
                 <Logo />
                 <h1 className="text-3xl font-bold mt-2">Mosona Manager</h1>
-                <p className="text-muted-foreground">Server Monitor & Management</p>
+                <p className="text-muted-foreground">Server Monitor & Remote Management</p>
             </div>
             <Card className="w-[90vw] md:w-md py-4">
                 <CardContent className="px-4">

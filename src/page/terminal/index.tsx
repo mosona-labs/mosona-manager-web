@@ -1,4 +1,4 @@
-import { ArrowLeftRight, LayoutGrid, LoaderCircle, Plus, Settings, SortAsc } from 'lucide-react';
+import { ArrowLeftRight, LayoutGrid, LoaderCircle, Plus, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 
@@ -101,9 +101,6 @@ const Terminal = () => {
                 <ButtonGroup>
                     <Button variant="outline">
                         <LayoutGrid />
-                    </Button>
-                    <Button variant="outline">
-                        <SortAsc />
                     </Button>
                 </ButtonGroup>
             </div>

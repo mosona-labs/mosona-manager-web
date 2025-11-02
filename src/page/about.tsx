@@ -1,12 +1,37 @@
 const About = () => (
-    <div className="w-full p-5 h-full overflow-y-auto pb-24">
-        <div className="flex flex-row justify-between items-center mb-3">
-            <div>
-                <h1 className="text-2xl font-bold">About</h1>
-                <p className="opacity-65">
-                    Mosona Manager - Infrastructure Monitoring & Management Tool
+    <div className="w-full p-5 h-full overflow-y-auto pb-24  font-mono">
+        <div className="w-full flex flex-col items-center gap-1">
+            <div
+                className="rounded-full p-4"
+                style={{
+                    background: 'radial-gradient(circle, #0cf8b922 0%, transparent 70%)',
+                }}
+            >
+                <img src="/images/about.webp" className="h-82 w-82" />
+            </div>
+            <h1 className="text-3xl font-bold font-mono">Mosona Manager</h1>
+            <p className="text-muted-foreground text-sm">Server Monitor & Remote Management</p>
+
+            <div className="py-4 max-w-2xl">
+                <p>
+                    Designed as a team-oriented project management server monitor and terminal
+                    management tool, featuring comprehensive project permission control and
+                    SSH-driven remote management protocol.
                 </p>
             </div>
+
+            <p className="text-muted-foreground text-sm">
+                © 2024{' '}
+                <a
+                    className="underline"
+                    href="https://github.com/mosona-network"
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    Mosona Team
+                </a>
+                . All rights reserved.
+            </p>
         </div>
     </div>
 );
