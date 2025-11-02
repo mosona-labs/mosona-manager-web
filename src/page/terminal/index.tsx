@@ -5,7 +5,7 @@ import { useState } from 'react';
 import useTerminals from './hook';
 import CategoryCard from './components/category';
 
-import AddServer from '@/components/add-server';
+import AddServer from '@/components/server/add';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ButtonGroup } from '@/components/ui/button-group';

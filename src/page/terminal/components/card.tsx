@@ -8,7 +8,13 @@ import { Card } from '@/components/ui/card';
 import { osIcons } from '@/utils/icon';
 import { useSession } from '@/context/useSession';
 
-const ServerTerminalCard = ({ server }: { server: TerminalType }) => {
+const ServerTerminalCard = ({
+    server,
+    openEdit,
+}: {
+    server: TerminalType;
+    openEdit: () => void;
+}) => {
     const navigator = useNavigate();
     const { createSession } = useSession();
 
@@ -45,7 +51,14 @@ const ServerTerminalCard = ({ server }: { server: TerminalType }) => {
                 <p className="text-xs text-muted-foreground">{server.username}</p>
             </div>
             <div className="flex-1" />
-            <Button variant="ghost" className="bg-accent">
+            <Button
+                variant="ghost"
+                className="bg-accent"
+                onClick={(e) => {
+                    e.stopPropagation();
+                    openEdit();
+                }}
+            >
                 <Pencil />
             </Button>
         </Card>

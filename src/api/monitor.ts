@@ -5,6 +5,7 @@ export type MonitorType = {
     name: string;
     weight: number;
     category: number;
+    allow_terminal: boolean;
     // Information
     os: string;
     county: string;

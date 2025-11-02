@@ -1,14 +1,17 @@
 import type { CategoryType } from '@/api/category';
 import type { MonitorType, ServerStatusType } from '@/api/monitor';
 
-import { Trash2, Settings, Package } from 'lucide-react';
+import { Trash2, Settings, Package, Terminal, Eye } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ServerStatusCard from './card';
 
 import { formatUptime } from '@/utils/time';
 import { ContextMenu } from '@/components/context-menu';
-import EditCategory from '@/components/edit-category';
+import EditCategory from '@/components/category/edit';
+import EditServer from '@/components/server/edit';
+import { useSession } from '@/context/useSession';
 
 import '../components/category.css';
 
@@ -21,6 +24,9 @@ const MonitorCard = ({
     statuses: Record<number, ServerStatusType>;
     time: Date;
 }) => {
+    const navigator = useNavigate();
+    const { createSession } = useSession();
+
     let info;
     if (server.id in statuses) info = statuses[server.id];
     else
@@ -38,15 +44,52 @@ const MonitorCard = ({
         };
 
     const [openCategory, setOpenCategory] = useState<boolean>(false);
+    const [openEdit, setOpenEdit] = useState<boolean>(false);
 
     return (
         <div key={server.id}>
             <ContextMenu
                 items={[
                     {
+                        label: 'View Details',
+                        icon: <Eye className="h-4 w-4" />,
+                        onClick: () => navigator(`/${server.id}/monitor`),
+                    },
+                    ...(server.allow_terminal
+                        ? [
+                              {
+                                  label: 'Terminal',
+                                  icon: <Terminal className="h-4 w-4" />,
+                                  onClick: () => {
+                                      createSession(
+                                          {
+                                              serverId: server.id,
+                                              name: server.name,
+                                              os: server.os,
+                                              terminalConfig: {
+                                                  cols: 80,
+                                                  rows: 24,
+                                                  term: 'xterm-256color',
+                                              },
+                                          },
+                                          (sessionId) => {
+                                              navigator(`/session/${sessionId}`);
+                                          }
+                                      );
+                                  },
+                              },
+                          ]
+                        : []),
+                    {
+                        separator: true,
+                        label: '',
+                    },
+                    {
                         label: 'Edit',
                         icon: <Settings className="h-4 w-4" />,
-                        onClick: () => console.log('編輯'),
+                        onClick: () => {
+                            setOpenEdit(true);
+                        },
                     },
                     {
                         label: 'Category',
@@ -98,6 +141,7 @@ const MonitorCard = ({
                 category_id={server.category}
                 server_id={server.id}
             />
+            <EditServer open={openEdit} onOpenChange={setOpenEdit} server_id={server.id} />
         </div>
     );
 };

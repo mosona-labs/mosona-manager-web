@@ -114,6 +114,12 @@ export function ContextMenu({
         }
     }, [isOpen, position]);
 
+    useEffect(() => {
+        if (isOpen && menuRef.current) {
+            menuRef.current.focus();
+        }
+    }, [isOpen]);
+
     return (
         <>
             <div onContextMenu={handleContextMenu} onClick={handleClick} className={className}>

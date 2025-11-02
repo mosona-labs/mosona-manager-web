@@ -1,3 +1,5 @@
+import { Card } from '@/components/ui/card';
+
 const About = () => (
     <div className="w-full p-5 h-full overflow-y-auto pb-24  font-mono">
         <div className="w-full flex flex-col items-center gap-1">
@@ -19,6 +21,14 @@ const About = () => (
                     SSH-driven remote management protocol.
                 </p>
             </div>
+
+            <Card className="w-2xl border-none mb-4 px-6 py-4 gap-2">
+                <h2 className="font-bold space-x-2">Version: v0.0.1</h2>
+                <p className="text-muted-foreground">
+                    Automatic updates are currently not supported. Please visit the GitHub
+                    repository for the latest releases and update instructions.
+                </p>
+            </Card>
 
             <p className="text-muted-foreground text-sm">
                 © 2024{' '}

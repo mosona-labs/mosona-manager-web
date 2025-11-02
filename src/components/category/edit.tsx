@@ -10,9 +10,9 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from './ui/dialog';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
+} from '../ui/dialog';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
 import {
     Select,
     SelectContent,
@@ -20,7 +20,7 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from './ui/select';
+} from '../ui/select';
 
 import { useUser } from '@/context/useUser';
 import ApiServer from '@/api/server';

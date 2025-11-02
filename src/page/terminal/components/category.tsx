@@ -7,12 +7,15 @@ import { useState } from 'react';
 import ServerTerminalCard from './card';
 
 import { ContextMenu } from '@/components/context-menu';
-import EditCategory from '@/components/edit-category';
+import EditCategory from '@/components/category/edit';
+import EditServer from '@/components/server/edit';
 
 import '../components/category.css';
 
 const TerminalCard = ({ server }: { server: TerminalType }) => {
     const [openCategory, setOpenCategory] = useState<boolean>(false);
+
+    const [openEdit, setOpenEdit] = useState<boolean>(false);
 
     return (
         <div key={server.id}>
@@ -21,7 +24,9 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
                     {
                         label: 'Edit',
                         icon: <Settings className="h-4 w-4" />,
-                        onClick: () => console.log('編輯'),
+                        onClick: () => {
+                            setOpenEdit(true);
+                        },
                     },
                     {
                         label: 'Category',
@@ -42,7 +47,11 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
                     },
                 ]}
             >
-                <ServerTerminalCard key={server.id} server={server} />
+                <ServerTerminalCard
+                    key={server.id}
+                    server={server}
+                    openEdit={() => setOpenEdit(true)}
+                />
             </ContextMenu>
             <EditCategory
                 open={openCategory}
@@ -50,6 +59,7 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
                 category_id={server.category}
                 server_id={server.id}
             />
+            <EditServer open={openEdit} onOpenChange={setOpenEdit} server_id={server.id} />
         </div>
     );
 };

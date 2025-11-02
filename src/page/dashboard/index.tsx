@@ -17,7 +17,7 @@ import useMonitors from './hook';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
-import AddServer from '@/components/add-server';
+import AddServer from '@/components/server/add';
 import { useUser } from '@/context/useUser';
 import AddCategory from '@/components/category/add';
 import ManageCategory from '@/components/category/manage';
