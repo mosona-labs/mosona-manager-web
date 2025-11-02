@@ -376,7 +376,11 @@ const AddServer = () => {
                                         </div>
                                         <div className="grid gap-3">
                                             <Label htmlFor="bill-auto-renew">Auto Renew</Label>
-                                            <Switch id="bill-auto-renew" name="auto_renew" />
+                                            <Switch
+                                                id="bill-auto-renew"
+                                                name="auto_renew"
+                                                defaultChecked
+                                            />
                                         </div>
                                     </CardContent>
                                 </Card>

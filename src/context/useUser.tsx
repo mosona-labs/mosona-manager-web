@@ -21,6 +21,8 @@ type UserConfigType = {
     autoRefresh: boolean;
     defaultMonitorMode: 'avg' | 'max' | 'raw';
     defaultLayout: 'grid-3' | 'grid-2' | 'list';
+    dashboardLayout: 'grid' | 'list';
+    dashboardShowDetails: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -53,6 +55,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                   autoRefresh: true,
                   defaultMonitorMode: 'avg',
                   defaultLayout: 'grid-2',
+                  dashboardLayout: 'grid',
+                  dashboardShowDetails: false,
               }
     );
     const updateConfig = (newConfig: Partial<UserConfigType>) => {

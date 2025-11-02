@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import CategoryCard from './components/category';
 import useMonitors from './hook';
+import DetailBtn from './components/detail-btn';
 
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -165,6 +166,7 @@ const Dashboard = () => {
                             <Button variant="outline">
                                 <LayoutGrid />
                             </Button>
+                            <DetailBtn />
                         </ButtonGroup>
                     </div>
                 </div>

@@ -48,4 +48,36 @@ const NetUnit = (value: number, base: 'kb' | 'mb' | 'gb') => {
     };
 };
 
-export { NetUnit };
+const MemoryUnit = (value: number, base: 'kb' | 'mb' | 'gb') => {
+    let v: string;
+    switch (base) {
+        case 'kb':
+            if (value < 1024) {
+                v = value.toFixed(2) + 'KB';
+            } else if (value < 1024 * 1024) {
+                v = (value / 1024).toFixed(2) + 'MB';
+            } else {
+                v = (value / (1024 * 1024)).toFixed(2) + 'GB';
+            }
+            break;
+        case 'mb':
+            if (value < 1024) {
+                v = value.toFixed(2) + 'MB';
+            } else if (value < 1024 * 1024) {
+                v = (value / 1024).toFixed(2) + 'GB';
+            } else {
+                v = (value / (1024 * 1024)).toFixed(2) + 'TB';
+            }
+            break;
+        case 'gb':
+            if (value < 1024) {
+                v = value.toFixed(2) + 'GB';
+            } else {
+                v = (value / 1024).toFixed(2) + 'TB';
+            }
+            break;
+    }
+    return v;
+};
+
+export { NetUnit, MemoryUnit };

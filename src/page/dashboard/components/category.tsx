@@ -126,12 +126,42 @@ const MonitorCard = ({
                         memory:
                             Math.floor((info.mem_used_mb / info.mem_total_mb) * 100 * 100) / 100 ||
                             0,
+                        memory_used: info.mem_used_mb || 0,
+                        memory_total: info.mem_total_mb || 0,
+                        swap:
+                            info.swap_total_mb && info.swap_used_mb
+                                ? Math.floor(
+                                      ((info.swap_total_mb - info.swap_used_mb) /
+                                          info.swap_total_mb) *
+                                          100 *
+                                          100
+                                  ) / 100
+                                : 0 || 0,
+                        swap_used: info.swap_used_mb || 0,
+                        swap_total: info.swap_total_mb || 0,
                         disk:
                             Math.floor((info.disk_used_gb / info.disk_total_gb) * 100 * 100) /
                                 100 || 0,
+                        disk_used: info.disk_used_gb || 0,
+                        disk_total: info.disk_total_gb || 0,
                         uptime: formatUptime(server.open_time),
                         networkUp: info.rx_kib_s || 0,
                         networkDown: info.tx_kib_s || 0,
+                        networkUpTotal: info.rx_total_mb || 0,
+                        networkDownTotal: info.tx_total_mb || 0,
+                        diskReadKibS: info.disk_read_kib_s || 0,
+                        diskWriteKibS: info.disk_write_kib_s || 0,
+                        diskReadIOPS: info.disk_read_iops || 0,
+                        diskWriteIOPS: info.disk_write_iops || 0,
+
+                        provider: server.provider || null,
+                        cycle: server.cycle || null,
+                        start_time: server.start_time || null,
+                        end_time: server.end_time || null,
+                        amount: server.amount || null,
+                        bandwidth: server.bandwidth || null,
+                        traffic: server.traffic || null,
+                        note_public: server.note_public || null,
                     }}
                 />
             </ContextMenu>
