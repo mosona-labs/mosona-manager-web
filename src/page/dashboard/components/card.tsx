@@ -183,12 +183,17 @@ const ServerStatusCard = ({ server }: { server: Server }) => {
                                 )}
                                 {server.amount && (
                                     <Badge className="bg-indigo-500/20 text-accent-foreground">
-                                        {server.amount}
-                                        {server.cycle
-                                            ? cycleMap[server.cycle]
-                                                ? '/' + cycleMap[server.cycle]
-                                                : ''
-                                            : ''}
+                                        {server.amount === '0'
+                                            ? 'Free'
+                                            : server.amount === '-1'
+                                              ? 'PAYG'
+                                              : server.amount +
+                                                (server.cycle
+                                                    ? cycleMap[server.cycle]
+                                                        ? '/' + cycleMap[server.cycle]
+                                                        : ''
+                                                    : '')}
+                                        {}
                                     </Badge>
                                 )}
                                 {server.bandwidth && (
