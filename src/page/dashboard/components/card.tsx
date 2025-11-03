@@ -414,7 +414,7 @@ const ServerStatusCard = ({ server }: { server: Server }) => {
                         <div
                             className={cn(
                                 'bg-accent-foreground rounded-full transition-all overflow-hidden',
-                                showMoreBtn ? 'w-4 p-0.5 ms-3' : 'w-0 p-0'
+                                showMoreBtn ? 'w-3 ms-3' : 'w-0 p-0'
                             )}
                         >
                             {showMore ? (

@@ -3,10 +3,18 @@ import { useEffect, useRef, useState } from 'react';
 import {
     ArrowBigDownDash,
     ArrowBigUpDash,
+    ArrowDown,
+    ArrowUp,
     ChevronLeft,
     ClockArrowUp,
     CpuIcon,
+    EthernetPort,
+    HardDrive,
+    HardDriveDownload,
+    HardDriveUpload,
+    MemoryStick,
     MonitorIcon,
+    PercentCircle,
     RefreshCw,
     RefreshCwOff,
     Settings,
@@ -25,7 +33,7 @@ import { formatUptimeDays } from '@/utils/time';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { osIcons } from '@/utils/icon';
-import { NetUnit } from '@/utils/unit';
+import { MemoryUnit, NetUnit } from '@/utils/unit';
 import {
     Select,
     SelectContent,
@@ -47,6 +55,7 @@ const Monitor = () => {
 
     const [server, setServer] = useState<MonitorDetailType>();
     const [stale, setStale] = useState<boolean>(true);
+    const [realTimeStatus, setRealTimeStatus] = useState<ServerStatusType>();
     const [nowTime, setNowTime] = useState<Date>(new Date());
 
     const [statuses, setStatuses] = useState<ServerStatusType[]>();
@@ -72,18 +81,22 @@ const Monitor = () => {
         }
     }, [config]);
 
+    const realTimeChart = useRef<boolean>(false);
     const realtime = (id: string) => {
         ApiMonitor.realtime(parseInt(id))
             .then((data) => {
-                setStatuses((prev) => {
-                    if (!prev) return [data.data];
-                    const newStatuses = [...prev, data.data];
-                    if (newStatuses.length > 60) {
-                        newStatuses.shift();
-                    }
-                    setStatus(data.data);
-                    return newStatuses;
-                });
+                setRealTimeStatus(data.data);
+
+                if (realTimeChart.current)
+                    setStatuses((prev) => {
+                        if (!prev) return [data.data];
+                        const newStatuses = [...prev, data.data];
+                        if (newStatuses.length > 60) {
+                            newStatuses.shift();
+                        }
+                        setStatus(data.data);
+                        return newStatuses;
+                    });
             })
             .catch((err) => {
                 console.error('Failed to fetch monitor real-time data:', err);
@@ -116,18 +129,22 @@ const Monitor = () => {
             })
             .catch(ToastError);
 
+        realtime(id);
         let interval: number;
+        interval = setInterval(() => {
+            realtime(id);
+        }, 3000);
+
         if (timeFrame === 'real-time') {
             setDefaultMode('raw');
             setStatuses(undefined);
-            realtime(id);
-            interval = setInterval(() => {
-                realtime(id);
-            }, 3000);
+
+            realTimeChart.current = true;
             if (autoRefreshRef.current) {
                 clearInterval(autoRefreshRef.current);
             }
         } else {
+            realTimeChart.current = false;
             setDefaultMode(config.defaultMonitorMode);
             chart(id, timeFrame);
             if (autoRefresh) {
@@ -159,13 +176,13 @@ const Monitor = () => {
     }, [autoRefresh]);
 
     const rx = status
-        ? NetUnit(status.rx_total_mb, 'mb')
+        ? NetUnit(realTimeStatus ? realTimeStatus.rx_total_mb : status.rx_total_mb, 'mb')
         : {
               value: 0,
               unit: 'MB',
           };
     const tx = status
-        ? NetUnit(status.tx_total_mb, 'mb')
+        ? NetUnit(realTimeStatus ? realTimeStatus.tx_total_mb : status.tx_total_mb, 'mb')
         : {
               value: 0,
               unit: 'MB',
@@ -272,17 +289,89 @@ const Monitor = () => {
                         <ArrowBigUpDash size={16} />
                         <span>Upload Total</span>
                     </div>
-                    <div className="font-mono text-lg">
-                        {statuses && statuses?.length > 0 ? `${tx.value} ${tx.unit}` : 'N/A'}
-                    </div>
+                    <div className="font-mono text-lg">{tx ? `${tx.value} ${tx.unit}` : 'N/A'}</div>
                 </div>
                 <div className="flex flex-col col-span-6 xl:col-span-2">
                     <div className="flex flex-row gap-2 items-center text-muted-foreground">
                         <ArrowBigDownDash size={16} />
                         <span>Download Total</span>
                     </div>
+                    <div className="font-mono text-lg">{rx ? `${rx.value} ${rx.unit}` : 'N/A'}</div>
+                </div>
+                <div className="hidden xl:block xl:col-span-1" />
+                <div className="flex flex-col col-span-6 xl:col-span-2">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <PercentCircle size={16} />
+                        <span>CPU Usage</span>
+                    </div>
                     <div className="font-mono text-lg">
-                        {statuses && statuses?.length > 0 ? `${rx.value} ${rx.unit}` : 'N/A'}
+                        {realTimeStatus ? realTimeStatus.cpu + '%' : 'N/A'}
+                    </div>
+                </div>
+                <div className="flex flex-col col-span-6 xl:col-span-4">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <MemoryStick size={16} />
+                        <span>Memory</span>
+                    </div>
+                    <div className="font-mono text-lg">
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.mem_used_mb, 'mb') : 'N/A'} /{' '}
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.mem_total_mb, 'mb') : 'N/A'} (
+                        {realTimeStatus
+                            ? parseFloat(
+                                  (
+                                      (realTimeStatus.mem_used_mb / realTimeStatus.mem_total_mb) *
+                                      100
+                                  ).toFixed(2)
+                              ) + '%'
+                            : 'N/A'}
+                        )
+                    </div>
+                </div>
+                <div className="flex flex-col col-span-6 xl:col-span-4">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <HardDrive size={16} />
+                        <span>Disk</span>
+                    </div>
+                    <div className="font-mono text-lg">
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.disk_used_gb, 'gb') : 'N/A'} /{' '}
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.disk_total_gb, 'gb') : 'N/A'} (
+                        {realTimeStatus
+                            ? parseFloat(
+                                  (
+                                      (realTimeStatus.disk_used_gb / realTimeStatus.disk_total_gb) *
+                                      100
+                                  ).toFixed(2)
+                              ) + '%'
+                            : 'N/A'}
+                        )
+                    </div>
+                </div>
+                <div className="flex flex-col col-span-6 xl:col-span-4 2xl:col-span-3">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <HardDrive size={16} />
+                        <span>I/O</span>
+                    </div>
+                    <div className="font-mono text-lg flex items-center gap-2">
+                        <HardDriveUpload className="h-3 w-3" />
+                        {realTimeStatus
+                            ? MemoryUnit(realTimeStatus.disk_read_kib_s, 'kb') + '/s'
+                            : 'N/A'}
+                        <HardDriveDownload className="h-3 w-3" />
+                        {realTimeStatus
+                            ? MemoryUnit(realTimeStatus.disk_write_kib_s, 'kb') + '/s'
+                            : 'N/A'}
+                    </div>
+                </div>
+                <div className="flex flex-col col-span-6 xl:col-span-4 2xl:col-span-2">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <EthernetPort size={16} />
+                        <span>Network</span>
+                    </div>
+                    <div className="font-mono text-lg flex items-center gap-2">
+                        <ArrowUp className="h-3 w-3" />
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s' : 'N/A'}
+                        <ArrowDown className="h-3 w-3" />
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s' : 'N/A'}
                     </div>
                 </div>
             </Card>
