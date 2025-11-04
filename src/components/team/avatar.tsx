@@ -1,26 +1,31 @@
-import { Edit2 } from 'lucide-react';
+import { Edit2, X } from 'lucide-react';
 import { HexColorPicker } from 'react-colorful';
-import { useEffect, useState, type RefObject } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { hexToRgb, rgbToLuminance, hexToHsl, hslToHex, contrastRatio } from '@/utils/color';
+import { Button } from '@/components/ui/button';
 
 const AvatarEditor = ({
     colorRef,
     imageFileRef,
     name,
+    defaultColor,
+    defaultImageFile,
 }: {
+    defaultColor?: string;
+    defaultImageFile?: string | null;
     colorRef: RefObject<string>;
-    imageFileRef: RefObject<File | null>;
+    imageFileRef: RefObject<File | string | null>;
     name: string;
 }) => {
     const [tab, setTab] = useState<'color' | 'photo'>('color');
 
     const [color, setColor] = useState(colorRef.current);
     const [textColor, setTextColor] = useState('#000000');
-    const [imageFile, setImageFile] = useState<File | null>(imageFileRef.current);
+    const [imageFile, setImageFile] = useState<File | string | null>(imageFileRef.current);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     useEffect(() => {
@@ -28,14 +33,28 @@ const AvatarEditor = ({
             setPreviewUrl(null);
             return;
         }
-        const url = URL.createObjectURL(imageFile);
+        const url = typeof imageFile === 'string' ? imageFile : URL.createObjectURL(imageFile);
         setPreviewUrl(url);
         setColor('#ffffff');
         colorRef.current = '#ffffff';
         return () => {
             URL.revokeObjectURL(url);
         };
-    }, [imageFile]);
+    }, [imageFile, imageFileRef]);
+
+    useEffect(() => {
+        if (!defaultImageFile) {
+            setPreviewUrl(null);
+        } else {
+            setImageFile('/avatars/' + defaultImageFile);
+            setPreviewUrl('/avatars/' + defaultImageFile);
+            setTab('photo');
+        }
+        if (defaultColor) {
+            setColor(defaultColor);
+            colorRef.current = defaultColor;
+        }
+    }, [defaultImageFile, defaultColor]);
 
     useEffect(() => {
         const bgRgb = hexToRgb(color);
@@ -74,6 +93,8 @@ const AvatarEditor = ({
             setTextColor(found);
         }
     }, [color]);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     return (
         <Popover>
@@ -144,8 +165,23 @@ const AvatarEditor = ({
                                 }}
                             />
                         </TabsContent>
-                        <TabsContent value="photo">
+                        <TabsContent value="photo" className="space-y-2">
+                            <Button
+                                variant={'outline'}
+                                className="w-full"
+                                onClick={() => {
+                                    setImageFile(null);
+                                    imageFileRef.current = null;
+                                    if (fileInputRef.current) {
+                                        fileInputRef.current.value = '';
+                                    }
+                                }}
+                            >
+                                <X />
+                                Remove Photo
+                            </Button>
                             <Input
+                                ref={fileInputRef}
                                 type="file"
                                 accept="image/*"
                                 className="cursor-pointer"

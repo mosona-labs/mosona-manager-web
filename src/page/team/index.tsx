@@ -1,83 +1,82 @@
-import type { TeamMemberType, TeamPlanType } from '@/api/team';
+import type { TeamMemberType } from '@/api/team';
 
-import { Plus, Terminal } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { Terminal, Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
 
 import AvatarEditor from '../../components/team/avatar';
 import Member from '../../components/team/member';
 
-import TeamPlanCard from './components/card';
-
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
-import FindUser from '@/components/find-user';
-import ApiTeam from '@/api/team';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/context/useUser';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import FindUser from '@/components/find-user';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import ApiTeam from '@/api/team';
 import { ToastError } from '@/utils/toast';
 
-const CreateTeam = () => {
-    const navigator = useNavigate();
-    const { user, refresh } = useUser();
-
-    const avatarColorRef = useRef('#61390b');
-    const avatarImageRef = useRef<File | null>(null);
-
-    const [members, setMembers] = useState<Array<TeamMemberType>>([]);
-    const [plans, setPlans] = useState<TeamPlanType[]>([]);
-
-    // Form
-    const [name, setName] = useState('');
-    const [description, setDescription] = useState('');
-    const [selectedPlan, setSelectedPlan] = useState<number>();
-
-    useEffect(() => {
-        ApiTeam.plans().then((data) => {
-            setPlans(data.data);
-            setSelectedPlan(data.data[0]?.id);
-        });
-    }, []);
-    useEffect(() => {
-        if (user)
-            setMembers([
-                {
-                    ...user,
-                    role: 0,
-                },
-            ]);
-    }, [user]);
+const Team = () => {
+    const { user, team, refresh } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
-    const handleCreateTeam = () => {
-        if (!name || !selectedPlan) {
-            toast.error('Error', { description: 'Please fill in all required fields.' });
-            return;
+
+    const [members, setMembers] = useState<Array<TeamMemberType>>([]);
+
+    const [teamName, setTeamName] = useState(team?.name || '');
+    const [teamDescription, setTeamDescription] = useState(team?.description || '');
+    const [teamAvatarUrl, setTeamAvatarUrl] = useState<string | null>(team?.image || null);
+    const [teamColor, setTeamColor] = useState(team?.color || '#61390b');
+
+    const avatarColorRef = useRef(team?.color || '#61390b');
+    const avatarImageRef = useRef<File | string | null>(null);
+
+    useEffect(() => {
+        if (!team) return;
+        setTeamName(team.name);
+        setTeamDescription(team.description);
+        setTeamColor(team.color || '#61390b');
+        setTeamAvatarUrl(team.image || null);
+        if (team.image) {
+            avatarImageRef.current = '/avatars/' + team.image;
         }
+    }, [team]);
+
+    useEffect(() => {
+        if (!team) return;
         setIsLoading(true);
-        ApiTeam.create(
-            name,
-            description,
+        ApiTeam.info()
+            .then((data) => {
+                setMembers(data.data.members);
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, [team]);
+
+    const onSubmit = () => {
+        setIsLoading(true);
+        ApiTeam.edit(
+            team!.id,
+            teamName,
+            teamDescription,
             avatarColorRef.current,
-            avatarImageRef.current,
+            avatarImageRef.current instanceof File ? avatarImageRef.current : null,
             JSON.stringify(
                 members.map((m) => ({
                     id: m.id,
+                    email: m.email,
                     role: m.role,
                 }))
-            ),
-            selectedPlan
+            )
         )
             .then(() => {
-                toast.success('Success', { description: 'Team created successfully.' });
+                toast.success('Success', { description: 'Team updated successfully.' });
                 refresh();
-                navigator('/');
             })
             .catch(ToastError)
             .finally(() => {
@@ -86,21 +85,29 @@ const CreateTeam = () => {
     };
 
     return (
-        <div className="w-full p-5 h-full overflow-y-auto pb-24">
+        <div className="w-full p-5 h-full overflow-y-auto pb-24 relative">
+            <div
+                className="absolute w-full h-full bg-background/60 -m-5 z-10 flex justify-center transition-opacity"
+                style={{ opacity: isLoading ? 1 : 0, pointerEvents: isLoading ? 'all' : 'none' }}
+            >
+                <Loader2 className="animate-spin mt-[30vh]" size={32} />
+            </div>
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">New Team</h1>
-                    <p className="opacity-65">
-                        Create a new team to collaborate with your colleagues
-                    </p>
+                    <h1 className="text-2xl font-bold">Current Team</h1>
+                    <p className="opacity-65">Manage your team settings and members here</p>
                 </div>
             </div>
             <Alert variant="default">
                 <Terminal />
-                <AlertTitle>Hey There !</AlertTitle>
+                <AlertTitle>Team Plan</AlertTitle>
                 <AlertDescription>
-                    Mosona Manager manages servers by team. As long as you don’t invite anyone else
-                    to your team, it can also be private!
+                    Now you plan includes:
+                    <div className="ms-3.5">
+                        <li>{team?.max_server === -1 ? 'Unlimited' : team?.max_server} Servers</li>
+                        <li>{team?.max_member === -1 ? 'Unlimited' : team?.max_member} Members</li>
+                        <li>{team?.max_alert} Alert Items</li>
+                    </div>
                 </AlertDescription>
             </Alert>
             <div className="mt-4 flex flex-row gap-3">
@@ -108,9 +115,11 @@ const CreateTeam = () => {
                     <div className="grid gap-3">
                         <Label>Team Avatar</Label>
                         <AvatarEditor
-                            name={name}
+                            name={teamName}
                             colorRef={avatarColorRef}
                             imageFileRef={avatarImageRef}
+                            defaultColor={teamColor}
+                            defaultImageFile={teamAvatarUrl}
                         />
                     </div>
                 </div>
@@ -121,8 +130,9 @@ const CreateTeam = () => {
                             <Input
                                 id="name"
                                 placeholder="Mosona Team"
+                                value={teamName}
                                 onChange={(e) => {
-                                    setName(e.target.value);
+                                    setTeamName(e.target.value);
                                 }}
                             />
                         </div>
@@ -131,8 +141,9 @@ const CreateTeam = () => {
                             <Textarea
                                 id="description"
                                 placeholder="Some text..."
+                                value={teamDescription}
                                 onChange={(e) => {
-                                    setDescription(e.target.value);
+                                    setTeamDescription(e.target.value);
                                 }}
                             />
                         </div>
@@ -146,8 +157,8 @@ const CreateTeam = () => {
                         <Member
                             key={index}
                             item={item}
-                            myUID={user?.id!}
                             index={index}
+                            myUID={user?.id!}
                             onRemove={() => {
                                 if (members[index].id === user?.id) {
                                     toast.warning('Warning', {
@@ -196,39 +207,14 @@ const CreateTeam = () => {
                     </FindUser>
                 </Card>
             </div>
-            <Label className="mt-4 text-md">Plans</Label>
-            {plans.length === 0 ? (
-                <div className="mt-2 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <Skeleton key={i} className="h-38" />
-                    ))}
-                </div>
-            ) : (
-                <div className="mt-2 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                    {plans.map((plan, index) => (
-                        <TeamPlanCard
-                            key={index}
-                            name={plan.name}
-                            price={plan.price}
-                            description={plan.description}
-                            server={plan.max_server}
-                            member={plan.max_member}
-                            alert={plan.max_alert}
-                            isSelected={selectedPlan === plan.id}
-                            onClick={() => {
-                                setSelectedPlan(plan.id);
-                            }}
-                        />
-                    ))}
-                </div>
-            )}
+
             <div className="mt-4 flex flex-row justify-end items-center gap-3">
-                <Button disabled={isLoading} onClick={handleCreateTeam}>
-                    Create Team
+                <Button disabled={isLoading} onClick={onSubmit}>
+                    Saved Change
                 </Button>
             </div>
         </div>
     );
 };
 
-export default CreateTeam;
+export default Team;

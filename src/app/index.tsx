@@ -16,6 +16,7 @@ import User from './user';
 
 import Monitor from '@/page/monitor';
 import Session from '@/page/session';
+import Team from '@/page/team';
 
 function App() {
     // Theme
@@ -55,10 +56,12 @@ function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/:id/monitor" element={<Monitor />} />
                     <Route path="/terminal" element={<Terminal />} />
-                    <Route path="/session/:id" element={<Session />} />
+                    <Route path="/team" element={<Team />} />
                     <Route path="/about" element={<About />} />
                     {/* Create Team */}
                     <Route path="/create-team" element={<CreateTeam />} />
+                    {/* Session */}
+                    <Route path="/session/:id" element={<Session />} />
                     {/* Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>

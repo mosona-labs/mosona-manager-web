@@ -15,9 +15,9 @@ const TeamPlanCard = ({
     name: string;
     price: number | string;
     description: string;
-    server: number | string;
-    member: number | string;
-    alert: number | string;
+    server: number;
+    member: number;
+    alert: number;
     isSelected: boolean;
     onClick: () => void;
 }) => {
@@ -37,9 +37,9 @@ const TeamPlanCard = ({
             </div>
             <p className="text-sm text-muted-foreground">{description}</p>
             <ul className="text-sm text-muted-foreground">
-                <li>• {server} Target servers</li>
-                <li>• {member} Members</li>
-                <li>• {alert} Alert Items</li>
+                <li>• {server == -1 ? 'Unlimited' : server} Target servers</li>
+                <li>• {member == -1 ? 'Unlimited' : member} Members</li>
+                <li>• {alert == -1 ? 'Unlimited' : alert} Alert Items</li>
             </ul>
         </Card>
     );
