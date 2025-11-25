@@ -10,7 +10,12 @@ const ConnectChecker = () => {
     useEffect(() => {
         const ping = async (start: number) => {
             try {
-                await fetch('/api/ping', { method: 'GET', cache: 'no-cache' });
+                const res = await fetch('/api/ping', { method: 'GET', cache: 'no-cache' });
+                if (!res.ok) {
+                    setIsConnected(false);
+                    setPingHistory((prev) => [...prev.slice(-9), -1]);
+                    return;
+                }
                 const latency = Date.now() - start;
                 setIsConnected(true);
                 setPingHistory((prev) => [...prev.slice(-9), latency]);
