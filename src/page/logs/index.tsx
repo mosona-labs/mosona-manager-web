@@ -1,6 +1,7 @@
 import type { LogType } from '@/api/logs';
 
 import { useEffect, useState } from 'react';
+import { LoaderCircle } from 'lucide-react';
 
 import OS from './components/os';
 import Browser from './components/browser';
@@ -36,6 +37,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { ToastError } from '@/utils/toast.ts';
 
 const Logs = () => {
     const [page, setPage] = useState(1);
@@ -44,12 +46,41 @@ const Logs = () => {
     const [logs, setLogs] = useState<Array<LogType>>([]);
     const [count, setCount] = useState(0);
 
+    const [category, setCategory] = useState('all');
+    const [level, setLevel] = useState('all');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+
+    const [inputEmail, setInputEmail] = useState('');
+    const [inputMessage, setInputMessage] = useState('');
     useEffect(() => {
-        ApiLogs.list(page, perPage).then((data) => {
-            setLogs(data.data.logs);
-            setCount(data.data.total);
-        });
-    }, [page, perPage]);
+        const delayDebounceFn = setTimeout(() => {
+            setEmail(inputEmail);
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [inputEmail]);
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            setMessage(inputMessage);
+        }, 500);
+
+        return () => clearTimeout(delayDebounceFn);
+    }, [inputMessage]);
+
+    const [isLoading, setIsLoading] = useState(false);
+    useEffect(() => {
+        setIsLoading(true);
+        ApiLogs.list(page, perPage, category, level, email, message)
+            .then((data) => {
+                setLogs(data.data.logs);
+                setCount(data.data.total);
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsLoading(false);
+            });
+    }, [page, perPage, category, level, email, message]);
 
     const maxPage = Math.ceil(count / perPage);
 
@@ -64,18 +95,29 @@ const Logs = () => {
                 </div>
             </div>
             <div className="flex flex-row gap-3">
-                <Select>
+                <Select
+                    value={category}
+                    onValueChange={(e) => {
+                        setCategory(e);
+                    }}
+                >
                     <SelectTrigger className="w-[180px] border-0">
                         <SelectValue placeholder="All Categories" />
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Categories</SelectItem>
-                        <SelectItem value="authentication">Authentication</SelectItem>
-                        <SelectItem value="management">Management</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
+                        <SelectItem value="team">Team</SelectItem>
+                        <SelectItem value="server">Server</SelectItem>
+                        <SelectItem value="terminal">Terminal</SelectItem>
+                        <SelectItem value="category">Category</SelectItem>
                     </SelectContent>
                 </Select>
-                <Select>
+                <Select
+                    value={level}
+                    onValueChange={(e) => {
+                        setLevel(e);
+                    }}
+                >
                     <SelectTrigger className="w-[180px] border-0">
                         <SelectValue placeholder="All Level" />
                     </SelectTrigger>
@@ -92,76 +134,106 @@ const Logs = () => {
                         </SelectItem>
                     </SelectContent>
                 </Select>
-                <Input placeholder="Search user email..." className="border-0 w-64" />
-                <Input placeholder="Search message..." className="border-0 w-64" />
+                <Input
+                    placeholder="Search user email..."
+                    className="border-0 w-64"
+                    value={inputEmail}
+                    onChange={(e) => {
+                        setInputEmail(e.target.value);
+                    }}
+                />
+                <Input
+                    placeholder="Search message..."
+                    className="border-0 w-64"
+                    value={inputMessage}
+                    onChange={(e) => {
+                        setInputMessage(e.target.value);
+                    }}
+                />
             </div>
             <Card className="p-2 border-none mt-3">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[180px]">Time</TableHead>
-                            <TableHead className="w-[220px]">User</TableHead>
-                            <TableHead className="w-[140px]">Category</TableHead>
+                            <TableHead className="w-[50px]">Level</TableHead>
+                            <TableHead className="min-w-[180px]">Time</TableHead>
+                            <TableHead className="min-w-[220px]">User</TableHead>
+                            <TableHead className="min-w-[140px]">Category</TableHead>
                             <TableHead>Message</TableHead>
-                            <TableHead className="w-[180px]">IP Address</TableHead>
-                            <TableHead className="w-[200px]">Location</TableHead>
-                            <TableHead className="w-[100px]">Device</TableHead>
-                            <TableHead className="text-right w-[50px]">Level</TableHead>
+                            <TableHead className="min-w-[180px]">IP Address</TableHead>
+                            <TableHead className="min-w-[160px]">Location</TableHead>
+                            <TableHead className="text-right min-w-[60px]">Device</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {logs.map((log) => {
-                            const { os, browser } = GetUAInfo(log.user_agent);
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={8} className="text-center py-10">
+                                    <LoaderCircle className={'mx-auto mb-2 animate-spin'} />
+                                    Loading
+                                </TableCell>
+                            </TableRow>
+                        ) : logs.length === 0 ? (
+                            <TableRow>
+                                <TableCell colSpan={8} className="text-center py-10">
+                                    No logs found.
+                                </TableCell>
+                            </TableRow>
+                        ) : (
+                            logs.map((log) => {
+                                const { os, browser } = GetUAInfo(log.user_agent);
 
-                            const levelColor =
-                                log.level === 'low'
-                                    ? 'text-green-600'
-                                    : log.level === 'medium'
-                                      ? 'text-yellow-600'
-                                      : 'text-red-600';
+                                const levelColor =
+                                    log.level === 'low'
+                                        ? 'text-green-600'
+                                        : log.level === 'medium'
+                                          ? 'text-yellow-600'
+                                          : 'text-red-600';
 
-                            return (
-                                <TableRow key={log.time}>
-                                    <TableCell className="font-medium">
-                                        {new Date(log.time).toLocaleString()}
-                                    </TableCell>
-                                    <TableCell>
-                                        {log.email}{' '}
-                                        <span className="text-muted-foreground">
-                                            ({log.username})
-                                        </span>
-                                    </TableCell>
-                                    <TableCell>{log.category}</TableCell>
-                                    <TableCell>{log.message}</TableCell>
-                                    <TableCell>{log.ip}</TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-row gap-1.5 items-center">
-                                            <img
-                                                src={`/flags/${log.ip_country_code.toLowerCase()}.svg`}
-                                                className="h-4"
-                                            />{' '}
-                                            {log.ip_country}
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Tooltip>
-                                            <TooltipTrigger asChild>
-                                                <div className="flex flex-row gap-1 items-center">
-                                                    <OS os={os} />
-                                                    <Browser browser={browser} />
-                                                </div>
-                                            </TooltipTrigger>
-                                            <TooltipContent className="me-2" side="bottom">
-                                                <p>{log.user_agent}</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TableCell>
-                                    <TableCell className={cn('text-right', levelColor)}>
-                                        {log.level}
-                                    </TableCell>
-                                </TableRow>
-                            );
-                        })}
+                                return (
+                                    <TableRow key={log.time}>
+                                        <TableCell className={cn(levelColor)}>
+                                            {log.level}
+                                        </TableCell>
+                                        <TableCell className="font-medium">
+                                            {new Date(log.time).toLocaleString()}
+                                        </TableCell>
+                                        <TableCell>
+                                            {log.email}{' '}
+                                            <span className="text-muted-foreground">
+                                                ({log.username})
+                                            </span>
+                                        </TableCell>
+                                        <TableCell>{log.category}</TableCell>
+                                        <TableCell>{log.message}</TableCell>
+                                        <TableCell>{log.ip}</TableCell>
+                                        <TableCell>
+                                            <div className="flex flex-row gap-1.5 items-center">
+                                                <img
+                                                    src={`/flags/${log.ip_country_code.toLowerCase()}.svg`}
+                                                    alt={'flag'}
+                                                    className="h-4"
+                                                />{' '}
+                                                {log.ip_country}
+                                            </div>
+                                        </TableCell>
+                                        <TableCell className={'text-right'}>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <div className="flex flex-row gap-1 items-center">
+                                                        <OS os={os} />
+                                                        <Browser browser={browser} />
+                                                    </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent className="me-2" side="bottom">
+                                                    <p>{log.user_agent}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })
+                        )}
                     </TableBody>
                 </Table>
             </Card>

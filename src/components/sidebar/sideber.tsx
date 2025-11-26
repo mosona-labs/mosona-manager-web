@@ -4,11 +4,11 @@ import {
     Terminal,
     KeyRound,
     Clock,
-    Settings,
     ChevronsUpDown,
     Briefcase,
     BadgeInfo,
     X,
+    UserRoundCog,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -49,7 +49,7 @@ const sidebarItems: {
         title: 'Manage',
     },
     { title: 'Team', icon: <Briefcase size={22} />, path: '/team' },
-    { title: 'Settings', icon: <Settings size={22} />, path: '/settings' },
+    { title: 'Profile', icon: <UserRoundCog size={22} />, path: '/profile' },
     {
         title: 'Other',
     },
@@ -85,27 +85,27 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     </div>
                 </div>
 
-                {sidebarItems.map((item) =>
-                    item.path ? (
-                        <SidebarItem
-                            key={item.title}
-                            title={item.title}
-                            icon={item.icon}
-                            path={item.path}
-                        />
-                    ) : (
-                        <p key={item.title} className="text-sm mt-3 mx-1 opacity-65">
-                            {item.title}
-                        </p>
-                    )
-                )}
+                <div className={'flex flex-col gap-2 overflow-y-auto -mx-3 px-3 flex-1'}>
+                    {sidebarItems.map((item) =>
+                        item.path ? (
+                            <SidebarItem
+                                key={item.title}
+                                title={item.title}
+                                icon={item.icon}
+                                path={item.path}
+                            />
+                        ) : (
+                            <p key={item.title} className="text-sm mt-3 mx-1 opacity-65">
+                                {item.title}
+                            </p>
+                        )
+                    )}
 
-                {/* sessions */}
-                {sessionList.length > 0 && (
-                    <>
-                        <div className="border-t my-1" />
-                        <p className="text-sm mt-1 mx-1 opacity-65">Sessions</p>
-                        {sessionList.map((session) => (
+                    {/* sessions */}
+                    <div className="border-t my-0.5" />
+                    <p className="text-sm mt-1 mx-1 opacity-65">Sessions</p>
+                    {sessionList.length > 0 ? (
+                        sessionList.map((session) => (
                             <SidebarItem
                                 key={session.id}
                                 title={session.name}
@@ -129,11 +129,13 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                                     </div>
                                 }
                             />
-                        ))}
-                    </>
-                )}
-
-                <div className="flex-1" />
+                        ))
+                    ) : (
+                        <p className="text-sm mt-1 mb-4 mx-1 opacity-50 italic">
+                            No active sessions
+                        </p>
+                    )}
+                </div>
 
                 <DropdownMenu open={showTeams} onOpenChange={setShowTeams}>
                     <DropdownMenuTrigger className="focus-visible:ring-0" asChild>

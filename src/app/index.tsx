@@ -30,7 +30,7 @@ function App() {
         <div className="flex flex-row h-screen overflow-hidden">
             <Sidebar open={openSidebar} setOpen={setOpenSidebar} />
             {/* Content Area */}
-            <div className="flex-1 transition-all duration-300 ease-in-out">
+            <div className="flex-1 transition-all duration-300 ease-in-out w-full min-w-0">
                 <div className="border-b h-18 flex items-center justify-between px-6">
                     <Button
                         variant="outline"

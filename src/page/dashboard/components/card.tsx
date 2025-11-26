@@ -154,19 +154,20 @@ const ServerStatusCard = ({ server }: { server: Server }) => {
         >
             <div className="space-y-4">
                 {/* Header */}
-                <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl">
+                <div className="flex items-start justify-between w-full">
+                    <div className="flex items-center gap-3 flex-1">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
                             <img
                                 src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
-                                className="p-2"
+                                alt={'OS'}
+                                className="h-6 w-6"
                             />
                         </div>
                         <div>
                             <h3 className="font-mono text-sm font-semibold text-card-foreground">
                                 {server.name}
                             </h3>
-                            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground">
+                            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
                                 <Badge className="bg-accent/70 text-accent-foreground gap-1.5">
                                     <img
                                         src={`/flags/${(server.location || 'UN').toLowerCase()}.svg`}
