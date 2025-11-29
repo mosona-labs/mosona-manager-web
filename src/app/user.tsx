@@ -1,6 +1,6 @@
 import md5 from 'md5';
 import { memo, useState } from 'react';
-import { LogOut, User2 } from 'lucide-react';
+import { LogOut, Settings, Terminal, User2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -11,7 +11,7 @@ import { useUser } from '@/context/useUser';
 import ApiAuth from '@/api/auth.ts';
 import { ToastError } from '@/utils/toast.ts';
 
-const User = () => {
+const User = ({ adminMode = false }: { adminMode?: boolean }) => {
     const navigator = useNavigate();
     const { user } = useUser();
 
@@ -72,6 +72,32 @@ const User = () => {
                         <User2 />
                         Profile
                     </Button>
+                    {!adminMode && user?.is_admin && (
+                        <Button
+                            variant={'ghost'}
+                            className="w-full rounded-none py-3 justify-start"
+                            onClick={() => {
+                                navigator('/admin/');
+                                setIsOpen(false);
+                            }}
+                        >
+                            <Settings />
+                            Admin Dashboard
+                        </Button>
+                    )}
+                    {adminMode && (
+                        <Button
+                            variant={'ghost'}
+                            className="w-full rounded-none py-3 justify-start"
+                            onClick={() => {
+                                navigator('/');
+                                setIsOpen(false);
+                            }}
+                        >
+                            <Terminal />
+                            Back to Manager
+                        </Button>
+                    )}
                     <Button
                         variant={'ghost'}
                         className="w-full rounded-none py-3 justify-start text-red-500"
