@@ -1,5 +1,5 @@
 import md5 from 'md5';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { LogOut, Settings, Terminal, User2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -40,6 +40,12 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
 
         setIsOpen(false);
     };
+
+    useEffect(() => {
+        if (adminMode && user && user?.id > 0 && !user?.is_admin) {
+            navigator('/');
+        }
+    }, [adminMode, user]);
 
     return (
         <Popover open={isOpen} onOpenChange={setIsOpen}>

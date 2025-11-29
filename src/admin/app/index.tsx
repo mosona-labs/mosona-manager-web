@@ -7,6 +7,7 @@ import { useTheme } from '@/components/theme-provider.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import User from '@/app/user.tsx';
 import Sidebar from '@/admin/app/sidebar.tsx';
+import Dashboard from '@/admin/page/dashboard';
 
 function AdminApp() {
     // Theme
@@ -42,6 +43,7 @@ function AdminApp() {
                     </div>
                 </div>
                 <Routes>
+                    <Route path={'/'} element={<Dashboard />} />
                     {/* Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>

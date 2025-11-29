@@ -41,7 +41,7 @@ import { ToastError } from '@/utils/toast.ts';
 
 const Logs = () => {
     const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(100);
+    const [perPage, setPerPage] = useState(50);
 
     const [logs, setLogs] = useState<Array<LogType>>([]);
     const [count, setCount] = useState(0);

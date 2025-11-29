@@ -31,10 +31,11 @@ const windowMax = (values: any[], key: string, window: number) => {
     for (let i = 0; i <= values.length; i += window) {
         const windowSlice = values.slice(i, i + window);
         const max = Math.max(...windowSlice.map((item) => item[key]));
-        result.push({
-            time: String(windowSlice[0]?.time),
-            value: max,
-        });
+        if (windowSlice[0]?.time)
+            result.push({
+                time: String(windowSlice[0]?.time),
+                value: max,
+            });
     }
     return result;
 };

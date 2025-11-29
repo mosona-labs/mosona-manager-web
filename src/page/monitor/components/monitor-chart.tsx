@@ -23,6 +23,7 @@ export function MonitorChart({
     defaultMode,
     enableModeSwitch = true,
     timeFrame,
+    windowSize,
     nowTime,
     title,
     description,
@@ -33,10 +34,11 @@ export function MonitorChart({
     yWidth = 30,
     colorClass = 'blue',
 }: {
-    data: ServerStatusType[];
+    data: any[];
     defaultMode: 'avg' | 'max' | 'raw';
     enableModeSwitch?: boolean;
     timeFrame: string;
+    windowSize?: number;
     nowTime: Date;
     title: string;
     description: string;
@@ -61,7 +63,10 @@ export function MonitorChart({
     const chartData = useMemo(() => {
         if (!data || data.length === 0) return [];
 
-        const windowCount = Math.max(1, Math.floor(data.length / timeFrameWindowSize(timeFrame)));
+        const windowCount = Math.max(
+            1,
+            Math.floor(data.length / (windowSize ? windowSize : timeFrameWindowSize(timeFrame)))
+        );
 
         const seriesByKey: Record<string, { time: number | string; value: number }[]> = {};
         for (const k of keys) {
@@ -69,6 +74,7 @@ export function MonitorChart({
                 seriesByKey[k] = windowAverage(data, k, windowCount);
             } else if (mode === 'max') {
                 seriesByKey[k] = windowMax(data, k, windowCount);
+                console.log('max', seriesByKey[k]);
             } else {
                 seriesByKey[k] = data.map((d) => ({
                     time: d.time,
@@ -77,7 +83,7 @@ export function MonitorChart({
             }
         }
         let maxValue = 0;
-        const map = new Map<number, Record<string, number | number>>();
+        const map = new Map<number, Record<string, number>>();
         for (const k of keys) {
             const series = seriesByKey[k] || [];
             for (const item of series) {
@@ -112,7 +118,7 @@ export function MonitorChart({
         const now = nowTime.getTime();
         switch (timeFrame) {
             case '1h':
-                return now - 1 * 60 * 60 * 1000;
+                return now - 60 * 60 * 1000;
             case '12h':
                 return now - 12 * 60 * 60 * 1000;
             case '24h':

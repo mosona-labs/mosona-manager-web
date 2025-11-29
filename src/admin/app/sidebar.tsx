@@ -38,7 +38,7 @@ const sidebarItems: {
         icon: <Server size={22} />,
         path: '/admin/servers',
     },
-    { title: 'Plans' },
+    { title: 'Billing' },
     {
         title: 'Plans',
         icon: <SquareChartGantt size={22} />,

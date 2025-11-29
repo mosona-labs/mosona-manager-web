@@ -442,7 +442,7 @@ const Monitor = () => {
                     data={statuses || []}
                     defaultMode={defaultMode}
                     timeFrame={timeFrame}
-                    enableModeSwitch={timeFrame === 'real-time' ? false : true}
+                    enableModeSwitch={timeFrame !== 'real-time'}
                     nowTime={nowTime}
                     title="CPU Usage"
                     description="System-wide CPU utilization overview"
@@ -481,7 +481,7 @@ const Monitor = () => {
                 <MonitorChart
                     data={statuses || []}
                     defaultMode={defaultMode}
-                    enableModeSwitch={timeFrame === 'real-time' ? false : true}
+                    enableModeSwitch={timeFrame !== 'real-time'}
                     timeFrame={timeFrame}
                     nowTime={nowTime}
                     title="Disk I/O"
@@ -496,7 +496,7 @@ const Monitor = () => {
                 <MonitorChart
                     data={statuses || []}
                     defaultMode={defaultMode}
-                    enableModeSwitch={timeFrame === 'real-time' ? false : true}
+                    enableModeSwitch={timeFrame !== 'real-time'}
                     timeFrame={timeFrame}
                     nowTime={nowTime}
                     title="Bandwidth"
