@@ -23,6 +23,7 @@ import { useUser } from '@/context/useUser';
 import AddCategory from '@/components/category/add';
 import ManageCategory from '@/components/category/manage';
 import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 
 const Dashboard = () => {
     const navigator = useNavigate();
@@ -145,7 +146,40 @@ const Dashboard = () => {
                                     </Button>
                                 ))}
                             {categories && categories.length > 4 && (
-                                <Button variant={'ghost'}>...</Button>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <Button
+                                            variant={'ghost'}
+                                            className={cn(
+                                                categoryFilter &&
+                                                    categories
+                                                        .slice(4)
+                                                        .some((c) => c.id === categoryFilter)
+                                                    ? 'bg-accent'
+                                                    : ''
+                                            )}
+                                        >
+                                            ...
+                                        </Button>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-40 mt-2 p-0 bg-background">
+                                        <div className="space-y-2">
+                                            {categories.slice(4).map((item) => (
+                                                <Button
+                                                    key={item.id}
+                                                    variant={'ghost'}
+                                                    className={cn(
+                                                        'w-full justify-start',
+                                                        categoryFilter == item.id ? 'bg-accent' : ''
+                                                    )}
+                                                    onClick={() => setCategoryFilter(item.id)}
+                                                >
+                                                    {item.name}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </PopoverContent>
+                                </Popover>
                             )}
                         </ButtonGroup>
                         <ButtonGroup className="border rounded-lg">
