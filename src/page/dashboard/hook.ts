@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
-import ApiMonitor, { type MonitorType, type ServerStatusType } from '@/api/monitor';
-import { ToastError } from '@/utils/toast';
+import { type MonitorType, type ServerStatusType } from '@/api/monitor';
 
-export default function useMonitors(pollInterval = 3000) {
+export default function useMonitors() {
     const [isLoading, setIsLoading] = useState(true);
     const [time, setTime] = useState<Date>(new Date());
     const [servers, setServers] = useState<MonitorType[]>([]);
@@ -23,17 +23,6 @@ export default function useMonitors(pollInterval = 3000) {
         }
         return map;
     }, [servers]);
-
-    const fetchData = useCallback(() => {
-        ApiMonitor.list()
-            .then((data) => {
-                setTime(new Date(data.data.now * 1000));
-                setServers(data.data.servers);
-                setStatuses(data.data.status);
-            })
-            .catch(ToastError)
-            .finally(() => setIsLoading(false));
-    }, []);
 
     useEffect(() => {
         let totalCount = 0,
@@ -66,11 +55,36 @@ export default function useMonitors(pollInterval = 3000) {
         setAvgMemory(memAcc);
     }, [servers, categoryFilter]);
 
-    useEffect(() => {
-        fetchData();
-        const id = window.setInterval(fetchData, pollInterval);
-        return () => window.clearInterval(id);
-    }, [fetchData, pollInterval]);
+    const reconnectInterval = useRef<number | null>(null);
+
+    const subscribe = useCallback(() => {
+        const eventSource = new EventSource('/api/v1/server/monitor/sse');
+        eventSource.addEventListener('update', (event) => {
+            const data = JSON.parse(event.data);
+
+            setTime(new Date(data.now * 1000));
+            setServers(data.servers);
+            setStatuses(data.status);
+
+            if (isLoading) setIsLoading(false);
+        });
+        eventSource.addEventListener('error', () => {
+            toast.error('Connection lost', {
+                description: 'Client will try to reconnect at 3 seconds interval.',
+            });
+            setIsLoading(true);
+            reconnectInterval.current = setTimeout(() => {
+                subscribe();
+            }, 3000);
+        });
+        return () => {
+            eventSource.close();
+            if (reconnectInterval.current) {
+                clearTimeout(reconnectInterval.current);
+            }
+        };
+    }, []);
+    useEffect(subscribe, []);
 
     return {
         isLoading,
@@ -84,6 +98,5 @@ export default function useMonitors(pollInterval = 3000) {
         categoryServerMap,
         categoryFilter,
         setCategoryFilter,
-        refresh: fetchData,
     } as const;
 }
