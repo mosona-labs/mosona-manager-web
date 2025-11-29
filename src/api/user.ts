@@ -7,6 +7,7 @@ export type UserType = {
     username: string;
     email: string;
     is_admin: boolean;
+    totp_enabled?: boolean;
     created_at: string;
     updated_at: string;
 };

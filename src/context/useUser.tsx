@@ -61,16 +61,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Config
     const [config, setConfig] = useState<UserConfigType>(
-        localStorage.getItem('mosona-config')
-            ? (JSON.parse(localStorage.getItem('mosona-config') || '{}') as UserConfigType)
-            : {
-                  defaultTimeFrame: '1h',
-                  autoRefresh: true,
-                  defaultMonitorMode: 'avg',
-                  defaultLayout: 'grid-2',
-                  dashboardLayout: 'grid',
-                  dashboardShowDetails: false,
-              }
+        (() => {
+            const conf = localStorage.getItem('mosona-config');
+            return conf
+                ? (JSON.parse(conf || '{}') as UserConfigType)
+                : {
+                      defaultTimeFrame: '1h',
+                      autoRefresh: true,
+                      defaultMonitorMode: 'avg',
+                      defaultLayout: 'grid-2',
+                      dashboardLayout: 'grid',
+                      dashboardShowDetails: false,
+                  };
+        })()
     );
     const updateConfig = (newConfig: Partial<UserConfigType>) => {
         setConfig((prev) => {
@@ -81,7 +84,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     useEffect(() => {
-        refresh();
+        refresh().then(() => {
+            console.log('User info refreshed');
+        });
     }, []);
 
     return (
