@@ -217,10 +217,10 @@ const Logs = () => {
                                                 {log.ip_country}
                                             </div>
                                         </TableCell>
-                                        <TableCell className={'text-right'}>
+                                        <TableCell>
                                             <Tooltip>
                                                 <TooltipTrigger asChild>
-                                                    <div className="flex flex-row gap-1 items-center">
+                                                    <div className="flex flex-row gap-1 items-center justify-end">
                                                         <OS os={os} />
                                                         <Browser browser={browser} />
                                                     </div>
