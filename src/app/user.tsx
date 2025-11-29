@@ -1,25 +1,50 @@
 import md5 from 'md5';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { LogOut, User2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/context/useUser';
-import ApiAuth from '@/api/auth';
+import ApiAuth from '@/api/auth.ts';
+import { ToastError } from '@/utils/toast.ts';
 
 const User = () => {
     const navigator = useNavigate();
     const { user } = useUser();
 
+    const [isOpen, setIsOpen] = useState(false);
+
     const signOut = () => {
-        ApiAuth.logout();
-        navigator('/auth');
+        toast.promise<boolean>(
+            () =>
+                new Promise((resolve, reject) => {
+                    ApiAuth.logout()
+                        .then(() => {
+                            resolve(true);
+                            setTimeout(() => {
+                                navigator('/auth');
+                            }, 500);
+                        })
+                        .catch((err) => {
+                            ToastError(err);
+                            reject(err);
+                        });
+                }),
+            {
+                loading: 'Signing out in progress...',
+                success: 'Signed out successfully',
+                error: 'Error',
+            }
+        );
+
+        setIsOpen(false);
     };
 
     return (
-        <Popover>
+        <Popover open={isOpen} onOpenChange={setIsOpen}>
             <PopoverTrigger asChild>
                 <Avatar className="w-9 h-9 cursor-pointer hover:opacity-80 transition-opacity">
                     <AvatarImage
@@ -38,7 +63,14 @@ const User = () => {
                     <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
                 </div>
                 <div className="mt-1.5">
-                    <Button variant={'ghost'} className="w-full rounded-none py-3 justify-start">
+                    <Button
+                        variant={'ghost'}
+                        className="w-full rounded-none py-3 justify-start"
+                        onClick={() => {
+                            navigator('/profile');
+                            setIsOpen(false);
+                        }}
+                    >
                         <User2 />
                         Profile
                     </Button>

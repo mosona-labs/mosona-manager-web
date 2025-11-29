@@ -25,7 +25,13 @@ const NotFound = () => (
             </EmptyHeader>
             <EmptyContent>
                 <EmptyDescription>
-                    Need help? <a href="#">Contact support</a>
+                    Need help?{' '}
+                    <a
+                        href="https://github.com/mosona-network/mosona-manager/issues"
+                        target={'_blank'}
+                    >
+                        Contact support
+                    </a>
                 </EmptyDescription>
             </EmptyContent>
         </Empty>

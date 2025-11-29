@@ -5,19 +5,20 @@ import { useState } from 'react';
 import { Button } from '../components/ui/button';
 import { useTheme } from '../components/theme-provider';
 import Sidebar from '../components/sidebar/sideber';
-import NotFound from '../page/notfound';
-import Dashboard from '../page/dashboard/index';
-import Terminal from '../page/terminal';
-import About from '../page/about';
-import CreateTeam from '../page/createTeam';
 
 import ConnectChecker from './connect-checker';
 import User from './user';
 
+import NotFound from '@/page/notfound';
+import Dashboard from '@/page/dashboard/index';
+import Terminal from '@/page/terminal';
+import About from '@/page/about';
+import CreateTeam from '@/page/createTeam';
 import Monitor from '@/page/monitor';
 import Session from '@/page/session';
 import Team from '@/page/team';
 import Logs from '@/page/logs';
+import Profile from '@/page/profile';
 
 function App() {
     // Theme
@@ -59,6 +60,7 @@ function App() {
                     <Route path="/terminal" element={<Terminal />} />
                     <Route path="/logs" element={<Logs />} />
                     <Route path="/team" element={<Team />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/about" element={<About />} />
                     {/* Create Team */}
                     <Route path="/create-team" element={<CreateTeam />} />

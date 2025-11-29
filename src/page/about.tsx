@@ -9,7 +9,7 @@ const About = () => (
                     background: 'radial-gradient(circle, #0cf8b922 0%, transparent 70%)',
                 }}
             >
-                <img src="/images/about.webp" className="h-82 w-82" />
+                <img src="/images/about.webp" alt={'logo'} className="h-72 w-72" />
             </div>
             <h1 className="text-3xl font-bold font-mono">Mosona Manager</h1>
             <p className="text-muted-foreground text-sm">Server Monitor & Remote Management</p>
@@ -31,14 +31,14 @@ const About = () => (
             </Card>
 
             <p className="text-muted-foreground text-sm">
-                © 2024{' '}
+                © 2025{' '}
                 <a
                     className="underline"
                     href="https://github.com/mosona-network"
                     target="_blank"
                     rel="noreferrer"
                 >
-                    Mosona Team
+                    Mosona Network
                 </a>
                 . All rights reserved.
             </p>

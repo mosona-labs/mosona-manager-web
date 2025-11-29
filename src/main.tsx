@@ -16,8 +16,8 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <Routes>
                 <Route path="/auth" element={<SignIn />} />
-                <Route path="/admin/" element={<div>empty</div>} />
                 <Route path="/init" element={<Init />} />
+                <Route path="/admin/" element={<div>empty</div>} />
                 <Route
                     path="*"
                     element={

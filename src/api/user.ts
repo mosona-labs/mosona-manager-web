@@ -11,6 +11,14 @@ export type UserType = {
     updated_at: string;
 };
 
+export type UserSessionType = {
+    id: string;
+    uid: number;
+    tid: number;
+    user_agent: string;
+    time: number;
+};
+
 class ApiUserClass extends baseAPI {
     async me() {
         return this.getData<
@@ -28,6 +36,19 @@ class ApiUserClass extends baseAPI {
 
     async setActiveTeam(team_id: number) {
         return this.postData<ResponseInterface<null>>('/v1/user/config/active-team/' + team_id, {});
+    }
+
+    async sessions() {
+        return this.getData<
+            ResponseInterface<{
+                current: string;
+                list: UserSessionType[];
+            }>
+        >('/v1/user/sessions');
+    }
+
+    async revokeSession(session_id: string) {
+        return this.deleteData<ResponseInterface<null>>('/v1/user/sessions/' + session_id);
     }
 }
 
