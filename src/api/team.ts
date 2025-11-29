@@ -85,6 +85,10 @@ class ApiTeamClass extends baseAPI {
 
         return this.postData<ResponseInterface<number>>('/v1/team', formData, false);
     }
+
+    async leave(team_id: number) {
+        return this.deleteData<ResponseInterface<null>>('/v1/team/leave/' + team_id);
+    }
 }
 
 const ApiTeam = new ApiTeamClass();

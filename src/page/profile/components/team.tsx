@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { type TeamType } from '@/api/team.ts';
+import ApiTeam, { type TeamType } from '@/api/team.ts';
 import TeamAvatar from '@/components/team-avatar.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import {
@@ -16,8 +16,12 @@ import {
 } from '@/components/ui/dialog.tsx';
 import { Input } from '@/components/ui/input.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
+import { ToastError } from '@/utils/toast.ts';
+import { useUser } from '@/context/useUser.tsx';
 
 const TeamCard = ({ team }: { team: TeamType }) => {
+    const { refresh } = useUser();
+
     const [isLoading, setIsLoading] = useState(false);
     const [confirmText, setConfirmText] = useState('');
 
@@ -29,6 +33,20 @@ const TeamCard = ({ team }: { team: TeamType }) => {
         }
 
         setIsLoading(true);
+        ApiTeam.leave(team.id)
+            .then(() => {
+                toast.success('Successful', {
+                    description: `You have left the team "${team.name}".`,
+                });
+
+                refresh().finally(() => {
+                    setIsLoading(false);
+                });
+            })
+            .catch((err) => {
+                ToastError(err);
+                setIsLoading(false);
+            });
     };
 
     return (
@@ -60,7 +78,7 @@ const TeamCard = ({ team }: { team: TeamType }) => {
                             <DialogTrigger asChild>
                                 <Button variant={'destructive'}>Leave Team</Button>
                             </DialogTrigger>
-                            <DialogContent className="sm:max-w-[425px]">
+                            <DialogContent className="sm:max-w-lg">
                                 <DialogHeader>
                                     <DialogTitle>Confirm Leaving Team "{team.name}"</DialogTitle>
                                     <DialogDescription>

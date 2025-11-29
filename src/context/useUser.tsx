@@ -1,6 +1,7 @@
 import type { TeamType } from '@/api/team';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import ApiUser, { type UserType } from '@/api/user';
 import ApiCategory, { type CategoryType } from '@/api/category';
@@ -28,22 +29,34 @@ type UserConfigType = {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const navigator = useNavigate();
+
     const [user, setUser] = useState<UserType | undefined>(undefined);
     const [team, setTeam] = useState<TeamType | undefined>(undefined);
     const [teams, setTeams] = useState<TeamType[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
 
     const refresh = async () => {
-        try {
-            const [userRes, categoryRes] = await Promise.all([ApiUser.me(), ApiCategory.list()]);
-            setUser(userRes.data?.user);
-            setTeam(userRes.data?.team);
-            setTeams(userRes.data?.teams || []);
-            setCategories(categoryRes.data || []);
-        } catch (err) {
-            console.error('Failed to load current user', err);
-            setUser(undefined);
-        }
+        ApiUser.me()
+            .then((res) => {
+                if (!res.data?.team) {
+                    navigator('/create-team');
+                }
+
+                setUser(res.data?.user);
+                setTeam(res.data?.team);
+                setTeams(res.data?.teams || []);
+            })
+            .catch(() => {
+                setUser(undefined);
+            });
+        ApiCategory.list()
+            .then((res) => {
+                setCategories(res.data || []);
+            })
+            .catch(() => {
+                setCategories([]);
+            });
     };
 
     // Config
@@ -68,7 +81,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     useEffect(() => {
-        void refresh();
+        refresh();
     }, []);
 
     return (

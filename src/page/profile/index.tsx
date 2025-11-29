@@ -1,7 +1,6 @@
-import { Briefcase, Cable, Key, Shield, User } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { Briefcase, Shield } from 'lucide-react';
+import { useState } from 'react';
 
-import ApiUser, { type UserSessionType } from '@/api/user.ts';
 import { useUser } from '@/context/useUser.tsx';
 import {
     Card,
@@ -10,43 +9,16 @@ import {
     CardHeader,
     CardTitle,
 } from '@/components/ui/card.tsx';
-import GravatarDialog from '@/page/profile/components/gravatar.tsx';
-import { Label } from '@/components/ui/label.tsx';
-import { Button } from '@/components/ui/button.tsx';
-import { Input } from '@/components/ui/input.tsx';
 import { Switch } from '@/components/ui/switch.tsx';
-import { Separator } from '@/components/ui/separator.tsx';
-import { ToastError } from '@/utils/toast.ts';
-import SessionCard from '@/page/profile/components/session.tsx';
+import GravatarDialog from '@/page/profile/components/gravatar.tsx';
 import TeamCard from '@/page/profile/components/team.tsx';
+import AccountInfoCard from '@/page/profile/components/info.tsx';
+import SessionsCard from '@/page/profile/components/session.tsx';
 
 const Profile = () => {
-    const { user, teams, refresh } = useUser();
-
-    const [isLoading, setIsLoading] = useState(false);
+    const { user, teams } = useUser();
 
     const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-
-    // Session
-    const [currentSession, setCurrentSession] = useState<string>('');
-    const [sessions, setSessions] = useState<Array<UserSessionType>>([]);
-
-    const reloadSession = () => {
-        setIsLoading(true);
-        ApiUser.sessions()
-            .then((res) => {
-                setCurrentSession(res.data.current);
-                setSessions(res.data.list);
-            })
-            .catch(ToastError)
-            .finally(() => {
-                setIsLoading(false);
-            });
-    };
-
-    useEffect(() => {
-        reloadSession();
-    }, []);
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -73,55 +45,7 @@ const Profile = () => {
                 </Card>
 
                 {/* Account Information */}
-                <Card className="border-border bg-card">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-medium flex items-center gap-2">
-                            <User className="h-5 w-5 text-primary" />
-                            Account Information
-                        </CardTitle>
-                        <CardDescription>
-                            Update your account details and credentials.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-6">
-                        {/* Username */}
-                        <div className="space-y-2">
-                            <Label
-                                htmlFor="username"
-                                className="text-sm font-medium text-foreground"
-                            >
-                                Username
-                            </Label>
-                            <p className="text-xs text-muted-foreground">
-                                Your unique identifier on the platform.
-                            </p>
-                            <div className="flex gap-2">
-                                <Input
-                                    id="username"
-                                    defaultValue="arsfy"
-                                    className="bg-input flex-1 border-border pr-10"
-                                />
-                                <Button>Save</Button>
-                            </div>
-                        </div>
-
-                        <Separator className="bg-border" />
-
-                        {/* Password */}
-                        <div className="flex items-center justify-between">
-                            <div className="space-y-1">
-                                <Label className="text-sm font-medium text-foreground flex items-center gap-2">
-                                    <Key className="h-4 w-4 text-muted-foreground" />
-                                    Password
-                                </Label>
-                                <p className="text-xs text-muted-foreground">
-                                    Last changed 3 months ago
-                                </p>
-                            </div>
-                            <Button variant="outline">Change Password</Button>
-                        </div>
-                    </CardContent>
-                </Card>
+                <AccountInfoCard />
 
                 {/* Security */}
                 <Card className="border-border bg-card">
@@ -177,33 +101,7 @@ const Profile = () => {
                 </Card>
 
                 {/*Sessions*/}
-                <Card className="border-border bg-card">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-medium flex items-center gap-2">
-                            <Cable className="h-5 w-5 text-primary" />
-                            Sessions
-                        </CardTitle>
-                        <CardDescription>
-                            View and manage your active sessions across different devices.
-                        </CardDescription>
-                    </CardHeader>
-                    <CardContent className="space-y-2">
-                        {isLoading ? (
-                            <p className="text-sm text-center py-3 text-muted-foreground">
-                                Loading sessions...
-                            </p>
-                        ) : (
-                            sessions.map((session) => (
-                                <SessionCard
-                                    key={session.id}
-                                    session={session}
-                                    isCurrent={session.id === currentSession}
-                                    reload={reloadSession}
-                                />
-                            ))
-                        )}
-                    </CardContent>
-                </Card>
+                <SessionsCard />
             </div>
         </div>
     );

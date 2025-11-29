@@ -22,6 +22,7 @@ import ApiTeam from '@/api/team';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/context/useUser';
 import { ToastError } from '@/utils/toast';
+import ApiUser from '@/api/user.ts';
 
 const CreateTeam = () => {
     const navigator = useNavigate();
@@ -74,10 +75,14 @@ const CreateTeam = () => {
             ),
             selectedPlan
         )
-            .then(() => {
+            .then((res) => {
                 toast.success('Success', { description: 'Team created successfully.' });
-                refresh();
-                navigator('/');
+
+                ApiUser.setActiveTeam(res.data).finally(() => {
+                    refresh().finally(() => {
+                        navigator('/');
+                    });
+                });
             })
             .catch(ToastError)
             .finally(() => {

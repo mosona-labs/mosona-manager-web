@@ -34,10 +34,17 @@ class ApiUserClass extends baseAPI {
         return this.postData<ResponseInterface<UserType | null>>('/v1/user/find', { email });
     }
 
+    // Info
+    async changeUsername(username: string) {
+        return this.putData<ResponseInterface<null>>('/v1/user/edit/username', { username });
+    }
+
+    // Team
     async setActiveTeam(team_id: number) {
         return this.postData<ResponseInterface<null>>('/v1/user/config/active-team/' + team_id, {});
     }
 
+    // Session
     async sessions() {
         return this.getData<
             ResponseInterface<{
@@ -46,7 +53,6 @@ class ApiUserClass extends baseAPI {
             }>
         >('/v1/user/sessions');
     }
-
     async revokeSession(session_id: string) {
         return this.deleteData<ResponseInterface<null>>('/v1/user/sessions/' + session_id);
     }

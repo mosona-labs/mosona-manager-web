@@ -24,9 +24,7 @@ const User = () => {
                     ApiAuth.logout()
                         .then(() => {
                             resolve(true);
-                            setTimeout(() => {
-                                navigator('/auth');
-                            }, 500);
+                            navigator('/auth');
                         })
                         .catch((err) => {
                             ToastError(err);

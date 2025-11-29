@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Cable } from 'lucide-react';
 
 import ApiUser, { type UserSessionType } from '@/api/user.ts';
 import GetUAInfo from '@/utils/ua.ts';
@@ -18,6 +19,13 @@ import {
 } from '@/components/ui/dialog.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
 import { ToastError } from '@/utils/toast.ts';
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+} from '@/components/ui/card.tsx';
 
 const SessionCard = ({
     session,
@@ -96,4 +104,58 @@ const SessionCard = ({
     );
 };
 
-export default SessionCard;
+const SessionsCard = () => {
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [currentSession, setCurrentSession] = useState<string>('');
+    const [sessions, setSessions] = useState<Array<UserSessionType>>([]);
+
+    const reloadSession = () => {
+        setIsLoading(true);
+        ApiUser.sessions()
+            .then((res) => {
+                setCurrentSession(res.data.current);
+                setSessions(res.data.list);
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsLoading(false);
+            });
+    };
+
+    useEffect(() => {
+        reloadSession();
+    }, []);
+
+    return (
+        <Card className="border-border bg-card">
+            <CardHeader>
+                <CardTitle className="text-lg font-medium flex items-center gap-2">
+                    <Cable className="h-5 w-5 text-primary" />
+                    Sessions
+                </CardTitle>
+                <CardDescription>
+                    View and manage your active sessions across different devices.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+                {isLoading ? (
+                    <p className="text-sm text-center py-3 text-muted-foreground">
+                        Loading sessions...
+                    </p>
+                ) : (
+                    sessions.map((session) => (
+                        <SessionCard
+                            key={session.id}
+                            session={session}
+                            isCurrent={session.id === currentSession}
+                            reload={reloadSession}
+                        />
+                    ))
+                )}
+            </CardContent>
+        </Card>
+    );
+};
+
+export default SessionsCard;

@@ -143,14 +143,16 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                             <div className="flex flex-row justify-center items-center gap-2">
                                 <div>
                                     <TeamAvatar
-                                        color={team?.color || ''}
+                                        color={team ? team?.color || '' : '#FFF'}
                                         imageUrl={team?.image || ''}
-                                        name={team?.name || 'Loading...'}
+                                        name={team ? team?.name || 'Loading...' : 'N'}
                                     />
                                 </div>
                                 <div className="text-start">
-                                    <p>{team?.name}</p>
-                                    <p className="font-normal text-xs opacity-65">Team</p>
+                                    <p>{team ? team?.name : 'Click here'}</p>
+                                    <p className="font-normal text-xs opacity-65">
+                                        {team ? 'Team' : 'Create your first team now'}
+                                    </p>
                                 </div>
                             </div>
                             <ChevronsUpDown size={16} />
