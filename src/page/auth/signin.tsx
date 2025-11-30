@@ -1,5 +1,5 @@
 import { KeyRound, Loader, LoaderCircle } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -25,13 +25,23 @@ const SignIn = () => {
     const captchaRef = useRef<TurnstileInstance | null>(null);
     const [captchaToken, setCaptchaToken] = useState<string>('');
 
+    // Jump
+    const [jumpTarget, setJumpTarget] = useState<string>('');
+    useEffect(() => {
+        if (window.location.search) {
+            const params = new URLSearchParams(window.location.search);
+            const target = params.get('jump');
+            if (target) setJumpTarget(target);
+        }
+    }, [window.location.search]);
+
     // Form
     const formRef = useRef<HTMLFormElement | null>(null);
     const [password, setPassword] = useState<string>('');
 
     // Submit
     const [loading, setLoading] = useState<boolean>(false);
-    const onSubmit = (e: React.FormEvent) => {
+    const onSubmit = (e: FormEvent) => {
         e.preventDefault();
 
         const form = e.target as HTMLFormElement;
@@ -53,7 +63,7 @@ const SignIn = () => {
                     toast.success('Success', {
                         description: 'Signed in successfully.',
                     });
-                    navigate('/');
+                    navigate(jumpTarget ? jumpTarget : '/');
                 })
                 .catch(ToastError)
                 .finally(() => {

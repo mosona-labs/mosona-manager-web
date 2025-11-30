@@ -57,6 +57,9 @@ class ApiUserClass extends baseAPI {
     async revokeSession(session_id: string) {
         return this.deleteData<ResponseInterface<null>>('/v1/user/sessions/' + session_id);
     }
+    async revokeAllSessions() {
+        return this.deleteData<ResponseInterface<null>>('/v1/user/sessions');
+    }
 }
 
 const ApiUser = new ApiUserClass();
