@@ -1,0 +1,65 @@
+import type { UserType } from '@/api/user.ts';
+
+import { EditIcon, MoreHorizontal, Trash } from 'lucide-react';
+import { useState } from 'react';
+
+import { TableCell, TableRow } from '@/components/ui/table.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
+import { Button } from '@/components/ui/button.tsx';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu.tsx';
+import Edit from '@/admin/page/users/edit.tsx';
+
+const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) => {
+    const [openEdit, setOpenEdit] = useState(false);
+
+    return (
+        <>
+            <TableRow key={user.id}>
+                <TableCell>{user.id}</TableCell>
+                <TableCell className="font-medium">{user.username}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>
+                    <Badge variant={user.verified ? 'default' : 'outline'}>
+                        {user.verified ? 'Verified' : 'Unverified'}
+                    </Badge>
+                </TableCell>
+                <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
+                <TableCell>{user.login_at && new Date(user.login_at).toLocaleString()}</TableCell>
+                <TableCell className={'p-0 text-end'}>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant={'ghost'}
+                                className={'rounded-none'}
+                                style={{
+                                    boxShadow: 'none',
+                                }}
+                            >
+                                <MoreHorizontal />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-46 me-5" align="start">
+                            <DropdownMenuItem onClick={() => setOpenEdit(true)}>
+                                <EditIcon className={'text-foreground'} />
+                                Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem variant={'destructive'}>
+                                <Trash />
+                                Delete
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </TableCell>
+            </TableRow>
+            {/*Edit Dialog*/}
+            <Edit user={user} refresh={refresh} open={openEdit} setOpen={setOpenEdit} />
+        </>
+    );
+};
+
+export default UserItem;

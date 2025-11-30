@@ -6,15 +6,6 @@ import { LoaderCircle } from 'lucide-react';
 import OS from './components/os';
 import Browser from './components/browser';
 
-import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination';
 import { Card } from '@/components/ui/card';
 import {
     Table,
@@ -30,7 +21,6 @@ import { cn } from '@/lib/utils';
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
     SelectTrigger,
     SelectValue,
@@ -38,6 +28,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ToastError } from '@/utils/toast.ts';
+import BottomPagination from '@/components/bottom-pagination.tsx';
 
 const Logs = () => {
     const [page, setPage] = useState(1);
@@ -81,8 +72,6 @@ const Logs = () => {
                 setIsLoading(false);
             });
     }, [page, perPage, category, level, email, message]);
-
-    const maxPage = Math.ceil(count / perPage);
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
@@ -237,84 +226,14 @@ const Logs = () => {
                     </TableBody>
                 </Table>
             </Card>
-            <div className="mt-3 select-none flex flex-row justify-between items-center">
-                <div className="w-[180px]">All {count} logs</div>
-                <Pagination>
-                    <PaginationContent>
-                        <PaginationItem
-                            onClick={() => setPage((p) => Math.max(1, p - 1))}
-                            className={page === 1 ? 'opacity-40 pointer-events-none' : ''}
-                        >
-                            <PaginationPrevious />
-                        </PaginationItem>
-
-                        {(() => {
-                            const pages: Array<number | 'ellipsis'> = [];
-                            const delta = 2;
-                            const left = Math.max(1, page - delta);
-                            const right = Math.min(maxPage, page + delta);
-
-                            if (left > 1) {
-                                pages.push(1);
-                                if (left > 2) pages.push('ellipsis');
-                            }
-
-                            for (let i = left; i <= right; i++) pages.push(i);
-
-                            if (right < maxPage) {
-                                if (right < maxPage - 1) pages.push('ellipsis');
-                                pages.push(maxPage);
-                            }
-
-                            return pages.map((p, idx) =>
-                                p === 'ellipsis' ? (
-                                    <PaginationItem key={`e-${idx}`}>
-                                        <PaginationEllipsis />
-                                    </PaginationItem>
-                                ) : (
-                                    <PaginationItem key={p}>
-                                        <PaginationLink
-                                            href="#"
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                setPage(p);
-                                            }}
-                                            className={cn(page === p ? 'bg-primary/10' : '')}
-                                        >
-                                            {p}
-                                        </PaginationLink>
-                                    </PaginationItem>
-                                )
-                            );
-                        })()}
-
-                        <PaginationItem
-                            onClick={() => setPage((p) => Math.min(maxPage, p + 1))}
-                            className={page === maxPage ? 'opacity-40 pointer-events-none' : ''}
-                        >
-                            <PaginationNext href="#" />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
-                <Select
-                    value={perPage.toString()}
-                    onValueChange={(e) => {
-                        setPerPage(parseInt(e));
-                    }}
-                >
-                    <SelectTrigger className="w-[180px] border-0">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="20">20 Per Page</SelectItem>
-                            <SelectItem value="50">50 Per Page</SelectItem>
-                            <SelectItem value="100">100 Per Page</SelectItem>
-                            <SelectItem value="500">500 Per Page</SelectItem>
-                            <SelectItem value="1000">1000 Per Page</SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+            <div className={'mt-3'}>
+                <BottomPagination
+                    count={count}
+                    page={page}
+                    perPage={perPage}
+                    setPerPage={setPerPage}
+                    setPage={setPage}
+                />
             </div>
         </div>
     );

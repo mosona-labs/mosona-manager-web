@@ -74,7 +74,6 @@ export function MonitorChart({
                 seriesByKey[k] = windowAverage(data, k, windowCount);
             } else if (mode === 'max') {
                 seriesByKey[k] = windowMax(data, k, windowCount);
-                console.log('max', seriesByKey[k]);
             } else {
                 seriesByKey[k] = data.map((d) => ({
                     time: d.time,

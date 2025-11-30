@@ -1,6 +1,6 @@
 import md5 from 'md5';
 import { memo, useEffect, useState } from 'react';
-import { LogOut, Settings, Terminal, User2 } from 'lucide-react';
+import { BookTextIcon, BugIcon, Cable, LogOut, Settings, Terminal, User2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -10,6 +10,8 @@ import { Button } from '@/components/ui/button';
 import { useUser } from '@/context/useUser';
 import ApiAuth from '@/api/auth.ts';
 import { ToastError } from '@/utils/toast.ts';
+import { DropdownMenuSeparator } from '@/components/ui/dropdown-menu.tsx';
+import GithubIcon from '@/components/icons/github.tsx';
 
 const User = ({ adminMode = false }: { adminMode?: boolean }) => {
     const navigator = useNavigate();
@@ -59,7 +61,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                 </Avatar>
             </PopoverTrigger>
             <PopoverContent
-                className="w-48 me-3 pt-3 pb-0 px-0 mt-1"
+                className="w-48 me-3 pt-3 pb-0 px-0 mt-1 overflow-hidden"
                 onOpenAutoFocus={(e) => e.preventDefault()}
             >
                 <div className="px-3">
@@ -78,32 +80,94 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         <User2 />
                         Profile
                     </Button>
-                    {!adminMode && user?.is_admin && (
+                    <Button
+                        variant={'ghost'}
+                        className="w-full rounded-none py-3 justify-start"
+                        onClick={() => {
+                            navigator('/api');
+                            setIsOpen(false);
+                        }}
+                    >
+                        <Cable />
+                        API
+                    </Button>
+                    <Button
+                        variant={'ghost'}
+                        className="w-full rounded-none py-3 justify-start"
+                        onClick={() => {
+                            navigator('/settings/');
+                            setIsOpen(false);
+                        }}
+                    >
+                        <Settings />
+                        Settings
+                    </Button>
+                    <DropdownMenuSeparator />
+                    <a href={'https://github.com/mosona-network/mosona-manager'} target={'_blank'}>
                         <Button
                             variant={'ghost'}
                             className="w-full rounded-none py-3 justify-start"
-                            onClick={() => {
-                                navigator('/admin/');
-                                setIsOpen(false);
-                            }}
                         >
-                            <Settings />
-                            Admin Dashboard
+                            <GithubIcon />
+                            Github
                         </Button>
+                    </a>
+                    <a href={'manager.mosona.cc'} target={'_blank'}>
+                        <Button
+                            variant={'ghost'}
+                            className="w-full rounded-none py-3 justify-start"
+                        >
+                            <BookTextIcon />
+                            Documentation
+                        </Button>
+                    </a>
+                    <a
+                        href={
+                            'https://github.com/mosona-network/mosona-manager/issues/new?template=bug-report.yml'
+                        }
+                        target={'_blank'}
+                    >
+                        <Button
+                            variant={'ghost'}
+                            className="w-full rounded-none py-3 justify-start"
+                        >
+                            <BugIcon />
+                            Report Issue
+                        </Button>
+                    </a>
+                    {!adminMode && user?.is_admin && (
+                        <>
+                            <DropdownMenuSeparator />
+                            <Button
+                                variant={'ghost'}
+                                className="w-full rounded-none py-3 justify-start"
+                                onClick={() => {
+                                    navigator('/admin/');
+                                    setIsOpen(false);
+                                }}
+                            >
+                                <Settings />
+                                Admin Dashboard
+                            </Button>
+                        </>
                     )}
                     {adminMode && (
-                        <Button
-                            variant={'ghost'}
-                            className="w-full rounded-none py-3 justify-start"
-                            onClick={() => {
-                                navigator('/');
-                                setIsOpen(false);
-                            }}
-                        >
-                            <Terminal />
-                            Back to Manager
-                        </Button>
+                        <>
+                            <DropdownMenuSeparator />
+                            <Button
+                                variant={'ghost'}
+                                className="w-full rounded-none py-3 justify-start"
+                                onClick={() => {
+                                    navigator('/');
+                                    setIsOpen(false);
+                                }}
+                            >
+                                <Terminal />
+                                Back to Manager
+                            </Button>
+                        </>
                     )}
+                    <DropdownMenuSeparator />
                     <Button
                         variant={'ghost'}
                         className="w-full rounded-none py-3 justify-start text-red-500"

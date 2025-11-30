@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { useUser } from '@/context/useUser.tsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
-import ApiAdmin, { type SystemUsageStats } from '@/api/admin.ts';
+import ApiAdmin, { type SystemUsageStats } from '@/api/admin/admin.ts';
 import { MonitorChart } from '@/page/monitor/components/monitor-chart.tsx';
 import { ToastError } from '@/utils/toast.ts';
 
@@ -115,11 +115,11 @@ const Dashboard = () => {
                         </CardContent>
                     </Card>
                 </div>
-                <div className={'grid gap-4 md:grid-cols-1 lg:grid-cols-2'}>
+                <div className={'grid gap-4 md:grid-cols-1 xl:grid-cols-2'}>
                     <div className={'relative'}>
                         <div
                             className={
-                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/10 top-0 left-0 pointer-events-none'
+                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/20 top-0 left-0 pointer-events-none'
                             }
                         >
                             {system.length > 0 ? system[system.length - 1].cpu_usage : '0.00'}%
@@ -129,10 +129,10 @@ const Dashboard = () => {
                             defaultMode={config.defaultMonitorMode}
                             enableModeSwitch={true}
                             timeFrame={'24h'}
-                            windowSize={10}
+                            windowSize={60}
                             nowTime={nowTime}
                             title="CPU Usage"
-                            description="System-wide CPU utilization overview"
+                            description="System-wide CPU overview"
                             keyName="Usage"
                             keyUnit="%"
                             keyObj="cpu_usage"
@@ -141,7 +141,7 @@ const Dashboard = () => {
                     <div className={'relative'}>
                         <div
                             className={
-                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/10 top-0 left-0 pointer-events-none'
+                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/20 top-0 left-0 pointer-events-none'
                             }
                         >
                             {system.length > 0 ? system[system.length - 1].memory : '0.00'}%

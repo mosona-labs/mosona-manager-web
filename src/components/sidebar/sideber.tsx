@@ -70,7 +70,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
             {/* Sidebar */}
             <div
                 className={cn(
-                    'absolute z-10 bg-background h-screen border-e px-3 py-4 transition-all w-[300px] duration-300 ease-in-out shrink-0 gap-2 flex flex-col select-none',
+                    'overflow-hidden absolute z-10 bg-background h-screen border-e px-3 py-4 transition-all w-[300px] duration-300 ease-in-out shrink-0 gap-2 flex flex-col select-none',
                     open ? 'translate-x-0' : '-translate-x-full'
                 )}
             >
@@ -86,6 +86,45 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                 </div>
 
                 <div className={'flex flex-col gap-2 overflow-y-auto -mx-3 px-3 flex-1'}>
+                    {/* sessions */}
+                    {sessionList.length > 0 && (
+                        <>
+                            <div className="border-t my-0.5" />
+                            <p className="text-sm mt-1 mx-1 opacity-65">Sessions</p>
+                            {sessionList.length > 0 ? (
+                                sessionList.map((session) => (
+                                    <SidebarItem
+                                        key={session.id}
+                                        title={session.name}
+                                        icon={
+                                            <img
+                                                src={`/icons/${osIcons.includes(session.os.toLowerCase() || '') ? session.os.toLowerCase() : 'linux'}.svg`}
+                                                alt=""
+                                                className="w-6"
+                                            />
+                                        }
+                                        path={'/session/' + session.id}
+                                        btn={
+                                            <div
+                                                className="p-1"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    closeSession(session.id);
+                                                }}
+                                            >
+                                                <X size={16} />
+                                            </div>
+                                        }
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-sm mt-1 mb-4 mx-1 opacity-50 italic">
+                                    No active sessions
+                                </p>
+                            )}
+                        </>
+                    )}
+
                     {sidebarItems.map((item) =>
                         item.path ? (
                             <SidebarItem
@@ -100,42 +139,9 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                             </p>
                         )
                     )}
-
-                    {/* sessions */}
-                    <div className="border-t my-0.5" />
-                    <p className="text-sm mt-1 mx-1 opacity-65">Sessions</p>
-                    {sessionList.length > 0 ? (
-                        sessionList.map((session) => (
-                            <SidebarItem
-                                key={session.id}
-                                title={session.name}
-                                icon={
-                                    <img
-                                        src={`/icons/${osIcons.includes(session.os.toLowerCase() || '') ? session.os.toLowerCase() : 'linux'}.svg`}
-                                        alt=""
-                                        className="w-6"
-                                    />
-                                }
-                                path={'/session/' + session.id}
-                                btn={
-                                    <div
-                                        className="p-1"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            closeSession(session.id);
-                                        }}
-                                    >
-                                        <X size={16} />
-                                    </div>
-                                }
-                            />
-                        ))
-                    ) : (
-                        <p className="text-sm mt-1 mb-4 mx-1 opacity-50 italic">
-                            No active sessions
-                        </p>
-                    )}
                 </div>
+
+                <div className="absolute bottom-[5rem] start-0 w-full h-8 bg-gradient-to-t from-background via-background/80 to-transparent pointer-events-none" />
 
                 <DropdownMenu open={showTeams} onOpenChange={setShowTeams}>
                     <DropdownMenuTrigger className="focus-visible:ring-0" asChild>

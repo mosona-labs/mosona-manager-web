@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button.tsx';
 import User from '@/app/user.tsx';
 import Sidebar from '@/admin/app/sidebar.tsx';
 import Dashboard from '@/admin/page/dashboard';
+import Users from '@/admin/page/users';
 
 function AdminApp() {
     // Theme
@@ -44,6 +45,7 @@ function AdminApp() {
                 </div>
                 <Routes>
                     <Route path={'/'} element={<Dashboard />} />
+                    <Route path={'/users'} element={<Users />} />
                     {/* Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>
