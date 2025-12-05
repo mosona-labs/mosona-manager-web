@@ -9,6 +9,10 @@ import User from '@/app/user.tsx';
 import Sidebar from '@/admin/app/sidebar.tsx';
 import Dashboard from '@/admin/page/dashboard';
 import Users from '@/admin/page/users';
+import Register from '@/admin/page/settings/register';
+import OAuth from '@/admin/page/settings/oauth';
+import { SettingsProvider } from '@/admin/page/settings/useSettings.tsx';
+import General from '@/admin/page/settings/general';
 
 function AdminApp() {
     // Theme
@@ -43,12 +47,18 @@ function AdminApp() {
                         <User adminMode={true} />
                     </div>
                 </div>
-                <Routes>
-                    <Route path={'/'} element={<Dashboard />} />
-                    <Route path={'/users'} element={<Users />} />
-                    {/* Not Found */}
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
+                <SettingsProvider>
+                    <Routes>
+                        <Route path={'/'} element={<Dashboard />} />
+                        <Route path={'/users'} element={<Users />} />
+                        {/*Settings*/}
+                        <Route path={'/settings/general'} element={<General />} />
+                        <Route path={'/settings/register'} element={<Register />} />
+                        <Route path={'/settings/oauth'} element={<OAuth />} />
+                        {/* Not Found */}
+                        <Route path="*" element={<NotFound />} />
+                    </Routes>
+                </SettingsProvider>
             </div>
         </div>
     );

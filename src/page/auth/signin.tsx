@@ -1,4 +1,4 @@
-import { KeyRound, Loader, LoaderCircle } from 'lucide-react';
+import { Loader, LoaderCircle } from 'lucide-react';
 import { type FormEvent, useEffect, useRef, useState } from 'react';
 import { Turnstile, type TurnstileInstance } from '@marsidev/react-turnstile';
 import { toast } from 'sonner';
@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label';
 import useAuthKeys from '@/hooks/useAuthKeys';
 import ApiAuth from '@/api/auth';
 import { ToastError } from '@/utils/toast';
+import OAuthBtn from '@/page/auth/components/oauth.tsx';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -261,33 +262,9 @@ const SignIn = () => {
                     </div>
                     <Card className="w-[90vw] md:w-md py-0">
                         <CardContent className="px-0">
-                            <Button
-                                variant={'ghost'}
-                                size={'lg'}
-                                className="flex flex-row gap-3 w-full justify-start px-4 rounded-b-none"
-                            >
-                                <KeyRound />
-                                Continue with SSO
-                            </Button>
-                            <Button
-                                variant={'ghost'}
-                                size={'lg'}
-                                className="flex flex-row gap-3 w-full justify-start px-4 rounded-none"
-                            >
-                                <img src={'/icons/google.svg'} className="w-4.5" />
-                                Continue with Google
-                            </Button>
-                            <Button
-                                variant={'ghost'}
-                                size={'lg'}
-                                className="flex flex-row gap-3 w-full justify-start px-4 rounded-t-none"
-                            >
-                                <img
-                                    src={'/icons/github.svg'}
-                                    className="w-4.5 bg-white rounded-full"
-                                />
-                                Continue with GitHub
-                            </Button>
+                            {keys?.oauth.map((item) => (
+                                <OAuthBtn key={item.id} info={item} />
+                            ))}
                         </CardContent>
                     </Card>
                     <Button variant={'ghost'} className="fixed bottom-4">

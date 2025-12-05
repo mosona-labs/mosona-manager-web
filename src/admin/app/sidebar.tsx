@@ -5,6 +5,7 @@ import {
     FingerprintIcon,
     Mail,
     Server,
+    Settings,
     SquareChartGantt,
     User,
     UserRoundPlus,
@@ -46,19 +47,24 @@ const sidebarItems: {
     },
     { title: 'Settings' },
     {
+        title: 'General',
+        icon: <Settings size={22} />,
+        path: '/admin/settings/general',
+    },
+    {
         title: 'Email',
         icon: <Mail size={22} />,
         path: '/admin/settings/email',
     },
     {
+        title: 'OAuth2',
+        icon: <FingerprintIcon size={22} />,
+        path: '/admin/settings/oauth',
+    },
+    {
         title: 'Register',
         icon: <UserRoundPlus size={22} />,
         path: '/admin/settings/register',
-    },
-    {
-        title: 'OAuth',
-        icon: <FingerprintIcon size={22} />,
-        path: '/admin/settings/oauth',
     },
 ];
 

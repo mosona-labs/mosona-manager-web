@@ -149,7 +149,7 @@ const Logs = () => {
                             <TableHead className="min-w-[220px]">User</TableHead>
                             <TableHead className="min-w-[140px]">Category</TableHead>
                             <TableHead>Message</TableHead>
-                            <TableHead className="min-w-[180px]">IP Address</TableHead>
+                            <TableHead className="min-w-[100px]">IP Address</TableHead>
                             <TableHead className="min-w-[160px]">Location</TableHead>
                             <TableHead className="text-right min-w-[60px]">Device</TableHead>
                         </TableRow>
@@ -195,7 +195,16 @@ const Logs = () => {
                                         </TableCell>
                                         <TableCell>{log.category}</TableCell>
                                         <TableCell>{log.message}</TableCell>
-                                        <TableCell>{log.ip}</TableCell>
+                                        <TableCell>
+                                            <Tooltip>
+                                                <TooltipTrigger asChild>
+                                                    <p>{log.ip}</p>
+                                                </TooltipTrigger>
+                                                <TooltipContent className="me-2" side="bottom">
+                                                    <p>{log.ip}</p>
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TableCell>
                                         <TableCell>
                                             <div className="flex flex-row gap-1.5 items-center">
                                                 <img

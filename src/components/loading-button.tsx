@@ -8,6 +8,7 @@ const LoadingButton = ({
     isLoading = false,
     type,
     variant = 'default',
+    size,
     children,
     className,
     onClick,
@@ -15,12 +16,14 @@ const LoadingButton = ({
     isLoading?: boolean;
     type?: 'button' | 'submit' | 'reset';
     variant?: 'link' | 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | null;
+    size?: 'default' | 'sm' | 'lg' | 'icon' | 'icon-sm' | 'icon-lg' | null;
     children?: ReactNode;
     className?: string;
     onClick?: () => void;
 }) => {
     return (
         <Button
+            size={size}
             disabled={isLoading}
             variant={variant}
             className={className}

@@ -16,8 +16,8 @@ const About = () => (
 
             <div className="py-4 max-w-2xl">
                 <p>
-                    Designed as a team-oriented project management server monitor and terminal
-                    management tool, featuring comprehensive project permission control and
+                    Designed as a team-oriented / personal project management server monitor and
+                    terminal management tool, featuring comprehensive project permission control and
                     SSH-driven remote management protocol.
                 </p>
             </div>
@@ -30,17 +30,22 @@ const About = () => (
                 </p>
             </Card>
 
-            <p className="text-muted-foreground text-sm">
-                © 2025{' '}
+            <p className="text-sm flex flex-row items-center gap-2">
                 <a
-                    className="underline"
-                    href="https://github.com/mosona-network"
+                    className="underline text-green-600"
+                    href="https://github.com/mosona-network/mosona-manager"
                     target="_blank"
-                    rel="noreferrer"
                 >
-                    Mosona Network
+                    Github
                 </a>
-                . All rights reserved.
+                <div className={'rounded-full w-1 h-1 bg-muted-foreground'} />
+                <a
+                    className="underline text-green-600"
+                    href="https://manager.mosona.cc"
+                    target="_blank"
+                >
+                    Documentation
+                </a>
             </p>
         </div>
     </div>

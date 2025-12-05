@@ -3,14 +3,16 @@ import { lazy } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 import { ThemeProvider } from './components/theme-provider.tsx';
-import SignIn from './page/auth/signin.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import { UserProvider } from './context/useUser.tsx';
 import { SessionProvider } from './context/useSession.tsx';
 import Init from './page/init/index.tsx';
 
+import SignIn from '@/page/auth/signin.tsx';
+
 const App = lazy(() => import('@/app/index.tsx'));
 const AdminApp = lazy(() => import('@/admin/app/index.tsx'));
+const OAuth = lazy(() => import('@/page/oauth/index.tsx'));
 
 import './index.css';
 import './style.css';
@@ -20,6 +22,7 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <Routes>
                 <Route path="/auth" element={<SignIn />} />
+                <Route path={'/oauth/:provider_id'} element={<OAuth />} />
                 <Route path="/init" element={<Init />} />
                 <Route
                     path="/admin/*"

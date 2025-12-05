@@ -129,7 +129,7 @@ const Dashboard = () => {
                             defaultMode={config.defaultMonitorMode}
                             enableModeSwitch={true}
                             timeFrame={'24h'}
-                            windowSize={60}
+                            windowSize={90}
                             nowTime={nowTime}
                             title="CPU Usage"
                             description="System-wide CPU overview"

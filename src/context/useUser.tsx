@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import ApiUser, { type UserType } from '@/api/user';
 import ApiCategory, { type CategoryType } from '@/api/category';
+import { ToastError } from '@/utils/toast.ts';
 
 type UserContextType = {
     user?: UserType;
@@ -47,7 +48,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setTeam(res.data?.team);
                 setTeams(res.data?.teams || []);
             })
-            .catch(() => {
+            .catch((err) => {
+                ToastError(err);
                 setUser(undefined);
             });
         ApiCategory.list()

@@ -1,8 +1,8 @@
 import { useEffect, useState, useCallback } from 'react';
 
-import ApiAuth from '@/api/auth';
+import ApiAuth, { type OAuthPublicType } from '@/api/auth';
 
-type Keys = { google: string; captcha: string; github: string } | null;
+type Keys = { captcha: string; oauth: OAuthPublicType[] } | null;
 
 const STORAGE_KEY = 'authKeys';
 const TTL_MS = 1000 * 60 * 60 * 6; // 6 hour

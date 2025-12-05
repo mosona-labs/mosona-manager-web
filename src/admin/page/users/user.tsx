@@ -13,9 +13,11 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu.tsx';
 import Edit from '@/admin/page/users/edit.tsx';
+import Del from '@/admin/page/users/del.tsx';
 
 const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) => {
     const [openEdit, setOpenEdit] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
 
     return (
         <>
@@ -48,7 +50,10 @@ const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) =>
                                 <EditIcon className={'text-foreground'} />
                                 Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem variant={'destructive'}>
+                            <DropdownMenuItem
+                                variant={'destructive'}
+                                onClick={() => setOpenDelete(true)}
+                            >
                                 <Trash />
                                 Delete
                             </DropdownMenuItem>
@@ -58,6 +63,8 @@ const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) =>
             </TableRow>
             {/*Edit Dialog*/}
             <Edit user={user} refresh={refresh} open={openEdit} setOpen={setOpenEdit} />
+            {/*Delete Dialog*/}
+            <Del user={user} refresh={refresh} open={openDelete} setOpen={setOpenDelete} />
         </>
     );
 };

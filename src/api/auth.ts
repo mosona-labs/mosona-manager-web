@@ -1,5 +1,11 @@
 import { baseAPI, type ResponseInterface } from './base';
 
+export type OAuthPublicType = {
+    id: number;
+    icon: string;
+    name: string;
+};
+
 class ApiAuthClass extends baseAPI {
     async login(email: string, password: string, remember_me: boolean, otp?: string) {
         return this.postData<ResponseInterface<string>>('/auth/login', {
@@ -27,14 +33,29 @@ class ApiAuthClass extends baseAPI {
         return this.getData<
             ResponseInterface<{
                 captcha: string;
-                google: string;
-                github: string;
+                oauth: OAuthPublicType[];
             }>
         >('/auth/keys', false);
     }
 
     async ping() {
         return this.getData<string>('/auth/ping', false);
+    }
+
+    async oauthLogin(id: number) {
+        return this.getData<
+            ResponseInterface<{
+                url: string;
+                state: string;
+            }>
+        >('/auth/oauth/' + id, false);
+    }
+
+    async oauthCallback(id: number, code: string, state: string) {
+        return this.postData<ResponseInterface<string>>('/auth/oauth/' + id, {
+            code,
+            state,
+        });
     }
 }
 
