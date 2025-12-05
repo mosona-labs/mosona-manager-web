@@ -87,7 +87,7 @@ class ApiTeamClass extends baseAPI {
     }
 
     async leave(team_id: number) {
-        return this.deleteData<ResponseInterface<null>>('/v1/team/leave/' + team_id);
+        return this.deleteData<ResponseInterface>('/v1/team/leave/' + team_id);
     }
 }
 

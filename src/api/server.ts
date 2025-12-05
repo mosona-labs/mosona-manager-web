@@ -111,7 +111,7 @@ class ApiServerClass extends baseAPI {
         traffic_type: number,
         note_public: string
     ) {
-        return this.putData<ResponseInterface<null>>(
+        return this.putData<ResponseInterface>(
             '/v1/server/' + serverId,
             {
                 name,
@@ -142,7 +142,7 @@ class ApiServerClass extends baseAPI {
     }
 
     async setCategory(serverId: number, categoryId: number) {
-        return this.putData<ResponseInterface<null>>('/v1/server/' + serverId + '/category', {
+        return this.putData<ResponseInterface>('/v1/server/' + serverId + '/category', {
             category_id: categoryId,
         });
     }

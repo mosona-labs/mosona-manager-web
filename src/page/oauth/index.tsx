@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 import ApiAuth from '@/api/auth.ts';
 import { ToastError } from '@/utils/toast.ts';
 import { Button } from '@/components/ui/button.tsx';
+import ApiUser from '@/api/user.ts';
 
 const OAuth = () => {
     const navigate = useNavigate();
@@ -18,17 +19,37 @@ const OAuth = () => {
 
     useEffect(() => {
         if (!provider_id || isNaN(Number(provider_id)) || !code || !state) return;
-        ApiAuth.oauthCallback(Number(provider_id), code, state)
-            .then(() => {
-                toast.success('Success', {
-                    description: 'Signed in successfully.',
+
+        if (window.localStorage.getItem('oauth_link') == 'true') {
+            window.localStorage.removeItem('oauth_link');
+            ApiUser.linkOAuthIdentity(Number(provider_id), code, state)
+                .then(() => {
+                    toast.success('Success', {
+                        description: 'OAuth identity linked successfully.',
+                    });
+
+                    navigate('/profile');
+                })
+                .catch((err) => {
+                    ToastError(err);
+                    setError(
+                        err?.response?.data?.msg || 'An error occurred during OAuth processing.'
+                    );
                 });
-                navigate('/');
-            })
-            .catch((err) => {
-                ToastError(err);
-                setError(err?.response?.data?.msg || 'An error occurred during OAuth processing.');
-            });
+        } else
+            ApiAuth.oauthCallback(Number(provider_id), code, state)
+                .then(() => {
+                    toast.success('Success', {
+                        description: 'Signed in successfully.',
+                    });
+                    navigate('/');
+                })
+                .catch((err) => {
+                    ToastError(err);
+                    setError(
+                        err?.response?.data?.msg || 'An error occurred during OAuth processing.'
+                    );
+                });
     }, [provider_id, code, state]);
 
     return (

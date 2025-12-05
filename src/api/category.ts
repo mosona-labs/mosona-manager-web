@@ -20,11 +20,11 @@ class ApiCategoryClass extends baseAPI {
     }
 
     async delete(id: number) {
-        return this.deleteData<ResponseInterface<null>>('/v1/category/' + id);
+        return this.deleteData<ResponseInterface>('/v1/category/' + id);
     }
 
     async sort(ids: number[]) {
-        return this.putData<ResponseInterface<null>>('/v1/category/sort', ids, false);
+        return this.putData<ResponseInterface>('/v1/category/sort', ids, false);
     }
 }
 

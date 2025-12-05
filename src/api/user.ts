@@ -22,6 +22,17 @@ export type UserSessionType = {
     time: number;
 };
 
+export type AuthIdentityType = {
+    id: number;
+    name: string;
+    icon: string;
+    linked: {
+        name: string;
+        email: string;
+        last_login_at: string;
+    };
+};
+
 class ApiUserClass extends baseAPI {
     async me() {
         return this.getData<
@@ -39,12 +50,12 @@ class ApiUserClass extends baseAPI {
 
     // Info
     async changeUsername(username: string) {
-        return this.putData<ResponseInterface<null>>('/v1/user/edit/username', { username });
+        return this.putData<ResponseInterface>('/v1/user/edit/username', { username });
     }
 
     // Team
     async setActiveTeam(team_id: number) {
-        return this.postData<ResponseInterface<null>>('/v1/user/config/active-team/' + team_id, {});
+        return this.postData<ResponseInterface>('/v1/user/config/active-team/' + team_id, {});
     }
 
     // Session
@@ -57,10 +68,24 @@ class ApiUserClass extends baseAPI {
         >('/v1/user/sessions');
     }
     async revokeSession(session_id: string) {
-        return this.deleteData<ResponseInterface<null>>('/v1/user/sessions/' + session_id);
+        return this.deleteData<ResponseInterface>('/v1/user/sessions/' + session_id);
     }
     async revokeAllSessions() {
-        return this.deleteData<ResponseInterface<null>>('/v1/user/sessions');
+        return this.deleteData<ResponseInterface>('/v1/user/sessions');
+    }
+
+    // OAuth
+    async oauthIdentities() {
+        return this.getData<ResponseInterface<AuthIdentityType[]>>('/v1/user/oauth');
+    }
+    async revokeOAuthIdentity(provider_id: number) {
+        return this.deleteData<ResponseInterface>('/v1/user/oauth/' + provider_id);
+    }
+    async linkOAuthIdentity(id: number, code: string, state: string) {
+        return this.postData<ResponseInterface>('/v1/user/oauth/' + id, {
+            code,
+            state,
+        });
     }
 }
 

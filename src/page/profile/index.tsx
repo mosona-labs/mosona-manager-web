@@ -13,6 +13,7 @@ import TeamCard from '@/page/profile/components/team.tsx';
 import AccountInfoCard from '@/page/profile/components/info.tsx';
 import SessionsCard from '@/page/profile/components/session.tsx';
 import TOTPCard from '@/page/profile/components/totp.tsx';
+import OAuthCard from '@/page/profile/components/oauth.tsx';
 
 const Profile = () => {
     const { user, teams } = useUser();
@@ -60,6 +61,9 @@ const Profile = () => {
                         <TOTPCard />
                     </CardContent>
                 </Card>
+
+                {/*OAuth*/}
+                <OAuthCard />
 
                 {/*Teams*/}
                 <Card className="border-border bg-card">
