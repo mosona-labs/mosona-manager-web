@@ -1,4 +1,4 @@
-import { EditIcon, GripVerticalIcon, LoaderCircle } from 'lucide-react';
+import { GripVerticalIcon, LoaderCircle } from 'lucide-react';
 import {
     DndContext,
     closestCenter,
@@ -27,11 +27,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table.tsx';
-import { Button } from '@/components/ui/button.tsx';
 import ApiAdminOAuth, { type OAuthProviderType } from '@/api/admin/oauth.ts';
 import { ToastError } from '@/utils/toast.ts';
+import Edit from '@/admin/page/settings/oauth/components/edit.tsx';
+import Delete from '@/admin/page/settings/oauth/components/delete.tsx';
 
-const OAuthItem = ({ item }: { item: OAuthProviderType }) => {
+const OAuthItem = ({ item, refresh }: { item: OAuthProviderType; refresh: () => void }) => {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: item.id,
     });
@@ -50,18 +51,25 @@ const OAuthItem = ({ item }: { item: OAuthProviderType }) => {
             <TableCell>{item.id}</TableCell>
             <TableCell>{item.name}</TableCell>
             <TableCell>{item.is_enabled ? 'Yes' : 'No'}</TableCell>
-            <TableCell>{item.updated_at}</TableCell>
-            <TableCell>{item.created_at}</TableCell>
+            <TableCell>{new Date(item.updated_at).toLocaleString()}</TableCell>
+            <TableCell>{new Date(item.created_at).toLocaleString()}</TableCell>
             <TableCell className={'p-0 text-end'}>
-                <Button variant={'ghost'} className={'rounded-none'}>
-                    <EditIcon />
-                </Button>
+                <Edit item={item} refresh={refresh} />
+                <Delete item={item} refresh={refresh} />
             </TableCell>
         </TableRow>
     );
 };
 
-const OAuthItems = ({ items, isLoading }: { items: OAuthProviderType[]; isLoading: boolean }) => {
+const OAuthItems = ({
+    items,
+    isLoading,
+    refresh,
+}: {
+    items: OAuthProviderType[];
+    isLoading: boolean;
+    refresh: () => void;
+}) => {
     const [sortedItems, setSortedItems] = useState(items);
     useEffect(() => {
         setSortedItems(items);
@@ -129,7 +137,9 @@ const OAuthItems = ({ items, isLoading }: { items: OAuthProviderType[]; isLoadin
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            sortedItems.map((item) => <OAuthItem key={item.id} item={item} />)
+                            sortedItems.map((item) => (
+                                <OAuthItem key={item.id} item={item} refresh={refresh} />
+                            ))
                         )}
                     </TableBody>
                 </Table>

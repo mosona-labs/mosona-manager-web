@@ -6,7 +6,6 @@ import {
     Mail,
     Server,
     Settings,
-    SquareChartGantt,
     User,
     UserRoundPlus,
 } from 'lucide-react';
@@ -38,12 +37,6 @@ const sidebarItems: {
         title: 'Servers',
         icon: <Server size={22} />,
         path: '/admin/servers',
-    },
-    { title: 'Billing' },
-    {
-        title: 'Plans',
-        icon: <SquareChartGantt size={22} />,
-        path: '/admin/plans',
     },
     { title: 'Settings' },
     {

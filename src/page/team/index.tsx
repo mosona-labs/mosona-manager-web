@@ -1,6 +1,6 @@
 import type { TeamMemberType } from '@/api/team';
 
-import { Terminal, Plus, Loader2 } from 'lucide-react';
+import { Plus, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useEffect, useRef, useState } from 'react';
 
@@ -8,7 +8,6 @@ import AvatarEditor from '../../components/team/avatar';
 import Member from '../../components/team/member';
 
 import { Card } from '@/components/ui/card';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/useUser';
 import { Textarea } from '@/components/ui/textarea';
@@ -98,18 +97,6 @@ const Team = () => {
                     <p className="opacity-65">Manage your team settings and members here</p>
                 </div>
             </div>
-            <Alert variant="default">
-                <Terminal />
-                <AlertTitle>Team Plan</AlertTitle>
-                <AlertDescription>
-                    Now you plan includes:
-                    <div className="ms-3.5">
-                        <li>{team?.max_server === -1 ? 'Unlimited' : team?.max_server} Servers</li>
-                        <li>{team?.max_member === -1 ? 'Unlimited' : team?.max_member} Members</li>
-                        <li>{team?.max_alert} Alert Items</li>
-                    </div>
-                </AlertDescription>
-            </Alert>
             <div className="mt-4 flex flex-row gap-3">
                 <div>
                     <div className="grid gap-3">

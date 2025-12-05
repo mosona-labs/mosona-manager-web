@@ -43,7 +43,7 @@ const OAuth = () => {
             </div>
             <div className={'flex flex-col gap-3'}>
                 <Card className="p-2 border-none">
-                    <OAuthItems items={oauth} isLoading={isLoading} />
+                    <OAuthItems items={oauth} isLoading={isLoading} refresh={refresh} />
                 </Card>
                 <BottomPagination
                     count={count}

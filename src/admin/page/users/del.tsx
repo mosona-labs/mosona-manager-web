@@ -51,9 +51,7 @@ const Del = ({
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent
                     className="sm:max-w-[425px]"
-                    onOpenAutoFocus={(e) => {
-                        e.preventDefault();
-                    }}
+                    onOpenAutoFocus={(e) => e.preventDefault()}
                 >
                     <DialogHeader>
                         <DialogTitle>Delete User "{user.username}"</DialogTitle>

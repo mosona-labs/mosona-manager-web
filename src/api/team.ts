@@ -7,9 +7,6 @@ export type TeamPlanType = {
     name: string;
     description: string;
     price: number;
-    max_server: number;
-    max_member: number;
-    max_alert: number;
     created_at: string;
     updated_at: string;
 };
@@ -20,9 +17,6 @@ export type TeamType = {
     description: string;
     color: string;
     image: string;
-    max_server: number;
-    max_member: number;
-    max_alert: number;
     created_at: string;
     updated_at: string;
 };
@@ -61,17 +55,12 @@ class ApiTeamClass extends baseAPI {
         return this.putData<ResponseInterface>('/v1/team/' + id, formData, false);
     }
 
-    async plans() {
-        return this.getData<ResponseInterface<TeamPlanType[]>>('/v1/team/plans');
-    }
-
     async create(
         name: string,
         description: string,
         avatar_color: string,
         avatar_image: File | null,
-        members: string, // JSON
-        plan_id: number
+        members: string // JSON
     ) {
         const formData = new FormData();
         formData.append('name', name);
@@ -81,7 +70,6 @@ class ApiTeamClass extends baseAPI {
             formData.append('avatar_image', avatar_image);
         }
         formData.append('members', members);
-        formData.append('plan_id', plan_id.toString());
 
         return this.postData<ResponseInterface<number>>('/v1/team', formData, false);
     }

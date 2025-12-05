@@ -1,4 +1,4 @@
-import type { TeamMemberType, TeamPlanType } from '@/api/team';
+import type { TeamMemberType } from '@/api/team';
 
 import { Plus, Terminal } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -7,8 +7,6 @@ import { useNavigate } from 'react-router-dom';
 
 import AvatarEditor from '../../components/team/avatar';
 import Member from '../../components/team/member';
-
-import TeamPlanCard from './components/card';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
@@ -19,7 +17,6 @@ import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import FindUser from '@/components/find-user';
 import ApiTeam from '@/api/team';
-import { Skeleton } from '@/components/ui/skeleton';
 import { useUser } from '@/context/useUser';
 import { ToastError } from '@/utils/toast';
 import ApiUser from '@/api/user.ts';
@@ -32,19 +29,11 @@ const CreateTeam = () => {
     const avatarImageRef = useRef<File | null>(null);
 
     const [members, setMembers] = useState<Array<TeamMemberType>>([]);
-    const [plans, setPlans] = useState<TeamPlanType[]>([]);
 
     // Form
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [selectedPlan, setSelectedPlan] = useState<number>();
 
-    useEffect(() => {
-        ApiTeam.plans().then((data) => {
-            setPlans(data.data);
-            setSelectedPlan(data.data[0]?.id);
-        });
-    }, []);
     useEffect(() => {
         if (user)
             setMembers([
@@ -57,7 +46,7 @@ const CreateTeam = () => {
 
     const [isLoading, setIsLoading] = useState(false);
     const handleCreateTeam = () => {
-        if (!name || !selectedPlan) {
+        if (!name) {
             toast.error('Error', { description: 'Please fill in all required fields.' });
             return;
         }
@@ -72,8 +61,7 @@ const CreateTeam = () => {
                     id: m.id,
                     role: m.role,
                 }))
-            ),
-            selectedPlan
+            )
         )
             .then((res) => {
                 toast.success('Success', { description: 'Team created successfully.' });
@@ -201,32 +189,6 @@ const CreateTeam = () => {
                     </FindUser>
                 </Card>
             </div>
-            <Label className="mt-4 text-md">Plans</Label>
-            {plans.length === 0 ? (
-                <div className="mt-2 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                        <Skeleton key={i} className="h-38" />
-                    ))}
-                </div>
-            ) : (
-                <div className="mt-2 grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-3">
-                    {plans.map((plan, index) => (
-                        <TeamPlanCard
-                            key={index}
-                            name={plan.name}
-                            price={plan.price}
-                            description={plan.description}
-                            server={plan.max_server}
-                            member={plan.max_member}
-                            alert={plan.max_alert}
-                            isSelected={selectedPlan === plan.id}
-                            onClick={() => {
-                                setSelectedPlan(plan.id);
-                            }}
-                        />
-                    ))}
-                </div>
-            )}
             <div className="mt-4 flex flex-row justify-end items-center gap-3">
                 <Button disabled={isLoading} onClick={handleCreateTeam}>
                     Create Team
