@@ -28,6 +28,11 @@ class ApiAdminSettingsClass extends baseAPI {
     async set(data: { key: string; value: string }[]) {
         return this.postData<ResponseInterface>('/admin/settings', data, false);
     }
+
+    // Test
+    async testEmail() {
+        return this.postData<ResponseInterface>('/admin/settings/test/email', {}, false);
+    }
 }
 
 const ApiAdminSettings = new ApiAdminSettingsClass();

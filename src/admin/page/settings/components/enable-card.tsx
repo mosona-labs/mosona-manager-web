@@ -8,17 +8,20 @@ const EnableCard = ({
     title,
     description,
     disabled = false,
+    className,
 }: {
     value: boolean;
     onChange: (v: boolean) => void;
     title: string;
     description: string;
     disabled?: boolean;
+    className?: string;
 }) => (
     <Label
         className={cn(
             disabled ? 'opacity-50 pointer-events-none' : 'cursor-pointer',
-            'hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950'
+            'hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950',
+            className
         )}
     >
         <Checkbox

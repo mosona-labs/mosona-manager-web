@@ -10,7 +10,7 @@ import {
     SelectValue,
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import EnableCard from '@/admin/page/settings/register/components/enable-card.tsx';
+import EnableCard from '@/admin/page/settings/components/enable-card.tsx';
 import { useSettings } from '@/admin/page/settings/useSettings.tsx';
 import ApiAdminSettings from '@/api/admin/settings.ts';
 import { ToastError } from '@/utils/toast.ts';

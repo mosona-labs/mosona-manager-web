@@ -13,6 +13,7 @@ import Register from '@/admin/page/settings/register';
 import OAuth from '@/admin/page/settings/oauth';
 import { SettingsProvider } from '@/admin/page/settings/useSettings.tsx';
 import General from '@/admin/page/settings/general';
+import Email from '@/admin/page/settings/email';
 
 function AdminApp() {
     // Theme
@@ -53,6 +54,7 @@ function AdminApp() {
                         <Route path={'/users'} element={<Users />} />
                         {/*Settings*/}
                         <Route path={'/settings/general'} element={<General />} />
+                        <Route path={'/settings/email'} element={<Email />} />
                         <Route path={'/settings/register'} element={<Register />} />
                         <Route path={'/settings/oauth'} element={<OAuth />} />
                         {/* Not Found */}
