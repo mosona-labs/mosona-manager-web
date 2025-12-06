@@ -38,10 +38,7 @@ class ApiAuthClass extends baseAPI {
         >('/auth/keys', false);
     }
 
-    async ping() {
-        return this.getData<string>('/auth/ping', false);
-    }
-
+    // OAuth
     async oauthLogin(id: number) {
         return this.getData<
             ResponseInterface<{
@@ -50,12 +47,32 @@ class ApiAuthClass extends baseAPI {
             }>
         >('/auth/oauth/' + id, false);
     }
-
     async oauthCallback(id: number, code: string, state: string) {
         return this.postData<ResponseInterface<string>>('/auth/oauth/' + id, {
             code,
             state,
         });
+    }
+
+    // 2FA
+    async twoFAStatus() {
+        return this.getData<
+            ResponseInterface<{
+                verified: boolean;
+                totp: boolean;
+                login_2fa: boolean;
+                cooling: number;
+            }>
+        >('/auth/2fa/status');
+    }
+    async twoFASendMFA(mode: 'activation' | '2fa') {
+        return this.postData<ResponseInterface>('/auth/2fa/send_code', { mode });
+    }
+    async twoFAVerifyMFA(code: string) {
+        return this.postData<ResponseInterface>('/auth/2fa/verify_code', { code });
+    }
+    async twoFAVerifyTOTP(code: string) {
+        return this.postData<ResponseInterface>('/auth/2fa/verify_totp', { code });
     }
 }
 

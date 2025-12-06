@@ -55,9 +55,9 @@ const sidebarItems: {
         path: '/admin/settings/oauth',
     },
     {
-        title: 'Register',
+        title: 'Register & Login',
         icon: <UserRoundPlus size={22} />,
-        path: '/admin/settings/register',
+        path: '/admin/settings/register_login',
     },
 ];
 

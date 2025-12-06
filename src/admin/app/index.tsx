@@ -55,7 +55,7 @@ function AdminApp() {
                         {/*Settings*/}
                         <Route path={'/settings/general'} element={<General />} />
                         <Route path={'/settings/email'} element={<Email />} />
-                        <Route path={'/settings/register'} element={<Register />} />
+                        <Route path={'/settings/register_login'} element={<Register />} />
                         <Route path={'/settings/oauth'} element={<OAuth />} />
                         {/* Not Found */}
                         <Route path="*" element={<NotFound />} />

@@ -65,6 +65,29 @@ const Register = () => {
             });
     };
 
+    // Login Verify Email
+    const [loginVerifyEmail, setLoginVerifyEmail] = useState(false);
+    const [loginVerifyEmailLoading, setLoginVerifyEmailLoading] = useState(false);
+    const changeLoginVerifyEmail = (enabled: boolean) => {
+        setLoginVerifyEmailLoading(true);
+        ApiAdminSettings.set([
+            {
+                key: 'email_verify_login',
+                value: String(enabled),
+            },
+        ])
+            .then(() => {
+                setLoginVerifyEmail(enabled);
+                refresh().then(() => {
+                    setLoginVerifyEmailLoading(false);
+                });
+            })
+            .catch((err) => {
+                ToastError(err);
+                setLoginVerifyEmailLoading(false);
+            });
+    };
+
     // const [captchaProvider, setCaptchaProvider] = useState('turnstile');
     const [captchaSiteKey, setCaptchaSiteKey] = useState('');
     const [captchaSecretKey, setCaptchaSecretKey] = useState('');
@@ -97,6 +120,7 @@ const Register = () => {
         if (settings) {
             setRegistrationEnabled(settings.registration_enabled);
             setRegistrationVerifyEmail(settings.registration_verify_email);
+            setLoginVerifyEmail(settings.email_verify_login);
             setCaptchaSiteKey(settings.captcha_site_key);
             setCaptchaSecretKey(settings.captcha_secret_key);
         }
@@ -106,8 +130,10 @@ const Register = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">Register</h1>
-                    <p className="opacity-65">Manage registration settings for new users.</p>
+                    <h1 className="text-2xl font-bold">Register & Login</h1>
+                    <p className="opacity-65">
+                        Manage registration & login settings for all users.
+                    </p>
                 </div>
             </div>
             <div className={'flex flex-col gap-3'}>
@@ -128,11 +154,18 @@ const Register = () => {
                 <EnableCard
                     value={registrationVerifyEmail}
                     onChange={changeRegistrationVerifyEmail}
-                    title={'Require Email Verification'}
+                    title={'Registration Require Email Verification'}
                     description={
                         'Require users to verify their email addresses during registration.'
                     }
                     disabled={registrationVerifyEmailLoading}
+                />
+                <EnableCard
+                    value={loginVerifyEmail}
+                    onChange={changeLoginVerifyEmail}
+                    title={'Login Require Email Verification'}
+                    description={'Require users to verify their email addresses during login.'}
+                    disabled={loginVerifyEmailLoading}
                 />
                 <div className={'border-t my-2'} />
                 <div>

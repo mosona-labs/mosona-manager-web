@@ -12,7 +12,8 @@ import SignIn from '@/page/auth/signin.tsx';
 
 const App = lazy(() => import('@/app/index.tsx'));
 const AdminApp = lazy(() => import('@/admin/app/index.tsx'));
-const OAuth = lazy(() => import('@/page/oauth/index.tsx'));
+const OAuth = lazy(() => import('@/page/oauth.tsx'));
+const TwoFA = lazy(() => import('@/page/2fa.tsx'));
 
 import './index.css';
 import './style.css';
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
             <Routes>
                 <Route path="/auth" element={<SignIn />} />
                 <Route path={'/oauth/:provider_id'} element={<OAuth />} />
+                <Route path={'/2fa'} element={<TwoFA />} />
                 <Route path="/init" element={<Init />} />
                 <Route
                     path="/admin/*"

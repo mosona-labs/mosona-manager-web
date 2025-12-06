@@ -16,6 +16,10 @@ export class baseAPI {
                 API_BASE_URL + path,
                 isForm ? qs.stringify(data) : data
             );
+            if (response.data.code === '2fa_required') {
+                window.location.href = '/2fa';
+                return null as T;
+            }
             return response.data;
         } catch (error: any) {
             if (error.response.data.code === 'login') {
@@ -30,6 +34,10 @@ export class baseAPI {
     async getData<T>(path: string, needLogin: boolean = true): Promise<T> {
         try {
             const response = await axios.get(API_BASE_URL + path);
+            if (response.data.code === '2fa_required') {
+                window.location.href = '/2fa';
+                return null as T;
+            }
             return response.data;
         } catch (error: any) {
             if (needLogin && error.response.data.code === 'login') {

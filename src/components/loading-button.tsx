@@ -12,6 +12,7 @@ const LoadingButton = ({
     children,
     className,
     onClick,
+    disabled,
 }: {
     isLoading?: boolean;
     type?: 'button' | 'submit' | 'reset';
@@ -20,11 +21,12 @@ const LoadingButton = ({
     children?: ReactNode;
     className?: string;
     onClick?: () => void;
+    disabled?: boolean;
 }) => {
     return (
         <Button
             size={size}
-            disabled={isLoading}
+            disabled={isLoading || disabled}
             variant={variant}
             className={className}
             onClick={onClick}

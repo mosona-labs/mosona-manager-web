@@ -13,6 +13,9 @@ export type AdminSettingsType = {
     smtp_password: string;
     smtp_tls: boolean;
 
+    // Login
+    email_verify_login: boolean;
+
     // Registration
     registration_enabled: boolean;
     registration_verify_email: boolean;

@@ -60,11 +60,13 @@ const SignIn = () => {
             // Sign In logic
             setLoading(true);
             ApiAuth.login(String(data.email), String(data.password), Boolean(data.remember))
-                .then(() => {
+                .then((res) => {
                     toast.success('Success', {
                         description: 'Signed in successfully.',
                     });
-                    navigate(jumpTarget ? jumpTarget : '/');
+                    if (res.code === '2fa_required') {
+                        navigate('/2fa');
+                    } else navigate(jumpTarget ? jumpTarget : '/');
                 })
                 .catch(ToastError)
                 .finally(() => {
