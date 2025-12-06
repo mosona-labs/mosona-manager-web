@@ -56,9 +56,40 @@ export default function useMonitors() {
     }, [servers, categoryFilter]);
 
     const reconnectInterval = useRef<number | null>(null);
+    const eventSourceRef = useRef<EventSource | null>(null);
 
     const subscribe = useCallback(() => {
+        if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+        }
+        if (reconnectInterval.current) {
+            clearTimeout(reconnectInterval.current);
+            reconnectInterval.current = null;
+        }
+
         const eventSource = new EventSource('/api/v1/server/monitor/sse');
+        eventSourceRef.current = eventSource;
+
+        let heartbeatTimeout: number | null = null;
+
+        const resetHeartbeat = () => {
+            if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+            heartbeatTimeout = setTimeout(() => {
+                toast.error('Connection lost', {
+                    description: 'Client will try to reconnect at 3 seconds interval.',
+                });
+                setIsLoading(true);
+                eventSource.close();
+                reconnectInterval.current = setTimeout(() => {
+                    subscribe();
+                }, 3000);
+            }, 10000);
+        };
+
+        eventSource.addEventListener('open', () => {
+            resetHeartbeat();
+        });
+
         eventSource.addEventListener('update', (event) => {
             const data = JSON.parse(event.data);
 
@@ -67,24 +98,33 @@ export default function useMonitors() {
             setStatuses(data.status);
 
             if (isLoading) setIsLoading(false);
+            resetHeartbeat();
         });
+
         eventSource.addEventListener('error', () => {
+            if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
             toast.error('Connection lost', {
                 description: 'Client will try to reconnect at 3 seconds interval.',
             });
             setIsLoading(true);
+            eventSource.close();
             reconnectInterval.current = setTimeout(() => {
                 subscribe();
             }, 3000);
         });
+
         return () => {
+            if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
             eventSource.close();
             if (reconnectInterval.current) {
                 clearTimeout(reconnectInterval.current);
             }
         };
-    }, []);
-    useEffect(subscribe, []);
+    }, [isLoading]);
+
+    useEffect(() => {
+        return subscribe();
+    }, [subscribe]);
 
     return {
         isLoading,

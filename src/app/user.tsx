@@ -84,7 +84,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         variant={'ghost'}
                         className="w-full rounded-none py-3 justify-start"
                         onClick={() => {
-                            navigator('/api');
+                            navigator('/token');
                             setIsOpen(false);
                         }}
                     >
