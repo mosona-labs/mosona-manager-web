@@ -64,7 +64,7 @@ const SignIn = () => {
                     toast.success('Success', {
                         description: 'Signed in successfully.',
                     });
-                    if (res.code === '2fa_required') {
+                    if (res.code === '2fa_required' || res.code === 'verify') {
                         navigate('/2fa');
                     } else navigate(jumpTarget ? jumpTarget : '/');
                 })

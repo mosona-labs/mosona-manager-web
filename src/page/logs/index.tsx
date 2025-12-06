@@ -32,7 +32,7 @@ import BottomPagination from '@/components/bottom-pagination.tsx';
 
 const Logs = () => {
     const [page, setPage] = useState(1);
-    const [perPage, setPerPage] = useState(50);
+    const [perPage, setPerPage] = useState(20);
 
     const [logs, setLogs] = useState<Array<LogType>>([]);
     const [count, setCount] = useState(0);
