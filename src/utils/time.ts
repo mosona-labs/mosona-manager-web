@@ -16,8 +16,15 @@ const formatUptimeDays = (openTime: string | Date): number => {
     const start = new Date(openTime);
     if (isNaN(start.getTime())) return 0;
     let diffMs = Math.max(0, new Date().getTime() - start.getTime());
-    const days = parseFloat((diffMs / (24 * 3600 * 1000)).toFixed(1));
-    return days;
+    return parseFloat((diffMs / (24 * 3600 * 1000)).toFixed(1));
 };
 
-export { formatUptime, formatUptimeDays };
+const getRemainingTime = (endTime: string | Date): number => {
+    if (!endTime) return 0;
+    const end = new Date(endTime);
+    if (isNaN(end.getTime())) return 0;
+    let diffMs = end.getTime() - new Date().getTime();
+    return Math.floor(diffMs / (24 * 3600 * 1000));
+};
+
+export { formatUptime, formatUptimeDays, getRemainingTime };

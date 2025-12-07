@@ -172,7 +172,7 @@ export function MonitorChart({
     };
 
     return (
-        <Card>
+        <Card className={'min-w-0'}>
             <CardHeader className="flex flex-row justify-between">
                 <div className="flex flex-col gap-1">
                     <CardTitle>{title}</CardTitle>

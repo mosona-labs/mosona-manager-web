@@ -12,6 +12,8 @@ import { ContextMenu } from '@/components/context-menu';
 import EditCategory from '@/components/category/edit';
 import EditServer from '@/components/server/edit';
 import { useSession } from '@/context/useSession';
+import { useUser } from '@/context/useUser.tsx';
+import { cn } from '@/lib/utils.ts';
 
 import '../components/category.css';
 
@@ -26,6 +28,8 @@ const MonitorCard = ({
 }) => {
     const navigator = useNavigate();
     const { createSession } = useSession();
+
+    const { config } = useUser();
 
     let info;
     if (server.id in statuses) info = statuses[server.id];
@@ -47,8 +51,9 @@ const MonitorCard = ({
     const [openEdit, setOpenEdit] = useState<boolean>(false);
 
     return (
-        <div key={server.id}>
+        <div key={server.id} className={'h-full'}>
             <ContextMenu
+                className={'h-full'}
                 items={[
                     {
                         label: 'View Details',
@@ -112,6 +117,7 @@ const MonitorCard = ({
             >
                 <ServerStatusCard
                     key={server.id}
+                    layout={config.dashboardLayout}
                     server={{
                         id: server.id,
                         name: server.name,
@@ -153,6 +159,8 @@ const MonitorCard = ({
                         diskWriteKibS: info.disk_write_kib_s || 0,
                         diskReadIOPS: info.disk_read_iops || 0,
                         diskWriteIOPS: info.disk_write_iops || 0,
+                        tcpTotal: info.tcp_total || 0,
+                        udpTotal: info.udp_total || 0,
 
                         provider: server.provider || null,
                         cycle: server.cycle || null,
@@ -187,12 +195,22 @@ const CategoryCard = ({
     statuses: Record<number, ServerStatusType>;
     time: Date;
 }) => {
+    const { config } = useUser();
+
     return (
         <div key={category.id}>
             <div className="mt-4">
                 <p className="mt-4 opacity-65">{category.name}</p>
             </div>
-            <div className="category-grid">
+            <div
+                className={cn(
+                    config.dashboardLayout === 'list'
+                        ? 'grid mt-2 gap-4 grid-cols-1'
+                        : config.dashboardLayout === 'list2'
+                          ? 'grid mt-2 gap-4 grid-cols-1 md:grid-cols-2'
+                          : 'category-grid'
+                )}
+            >
                 {categoryServerMap[category.id]?.map((server) => (
                     <MonitorCard key={server.id} server={server} statuses={statuses} time={time} />
                 ))}

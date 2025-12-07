@@ -20,6 +20,7 @@ import {
     Settings,
     Shell,
     Triangle,
+    Unplug,
     WorkflowIcon,
 } from 'lucide-react';
 
@@ -308,7 +309,7 @@ const Monitor = () => {
                         {realTimeStatus ? realTimeStatus.cpu + '%' : 'N/A'}
                     </div>
                 </div>
-                <div className="flex flex-col col-span-6 xl:col-span-4">
+                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
                     <div className="flex flex-row gap-2 items-center text-muted-foreground">
                         <MemoryStick size={16} />
                         <span>Memory</span>
@@ -327,7 +328,7 @@ const Monitor = () => {
                         )
                     </div>
                 </div>
-                <div className="flex flex-col col-span-6 xl:col-span-4">
+                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
                     <div className="flex flex-row gap-2 items-center text-muted-foreground">
                         <HardDrive size={16} />
                         <span>Disk</span>
@@ -346,7 +347,7 @@ const Monitor = () => {
                         )
                     </div>
                 </div>
-                <div className="flex flex-col col-span-6 xl:col-span-4 2xl:col-span-3">
+                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
                     <div className="flex flex-row gap-2 items-center text-muted-foreground">
                         <HardDrive size={16} />
                         <span>I/O</span>
@@ -362,7 +363,7 @@ const Monitor = () => {
                             : 'N/A'}
                     </div>
                 </div>
-                <div className="flex flex-col col-span-6 xl:col-span-4 2xl:col-span-2">
+                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
                     <div className="flex flex-row gap-2 items-center text-muted-foreground">
                         <EthernetPort size={16} />
                         <span>Network</span>
@@ -372,6 +373,24 @@ const Monitor = () => {
                         {realTimeStatus ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s' : 'N/A'}
                         <ArrowDown className="h-3 w-3" />
                         {realTimeStatus ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s' : 'N/A'}
+                    </div>
+                </div>
+                <div className="flex flex-col col-span-6 xl:col-span-2">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <Unplug size={16} />
+                        <span>TCP Connections</span>
+                    </div>
+                    <div className="font-mono text-lg">
+                        {realTimeStatus?.tcp_total ? realTimeStatus?.tcp_total : 'N/A'}
+                    </div>
+                </div>
+                <div className="flex flex-col col-span-6 xl:col-span-2">
+                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                        <Unplug size={16} />
+                        <span>UDP Connections</span>
+                    </div>
+                    <div className="font-mono text-lg">
+                        {realTimeStatus?.udp_total ? realTimeStatus?.udp_total : 'N/A'}
                     </div>
                 </div>
             </Card>

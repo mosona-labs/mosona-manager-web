@@ -89,7 +89,7 @@ const CategoryCard = ({
             <div className="mt-4">
                 <p className="mt-4 opacity-65">{category.name}</p>
             </div>
-            <div className="category-grid">
+            <div className="category-terminal-grid">
                 {filteredServers.length ? (
                     filteredServers.map((server) => (
                         <TerminalCard key={server.id} server={server} />

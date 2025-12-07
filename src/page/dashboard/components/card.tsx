@@ -1,3 +1,5 @@
+import type { Server } from '@/page/dashboard/components/type.ts';
+
 import {
     Cpu,
     HardDrive,
@@ -12,9 +14,10 @@ import {
     MemoryStick,
     ArrowUpDown,
     ChevronUp,
+    Unplug,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,43 +26,7 @@ import { cn } from '@/lib/utils';
 import { MemoryUnit, NetUnit } from '@/utils/unit';
 import { osIcons } from '@/utils/icon';
 import { useUser } from '@/context/useUser';
-
-interface Server {
-    id: number;
-    name: string;
-    os: string;
-    location: string;
-    locationName: string;
-    status: 'online' | 'warning' | 'offline';
-    cpu: number;
-    memory: number;
-    memory_used: number;
-    memory_total: number;
-    swap: number;
-    swap_used: number;
-    swap_total: number;
-    disk: number;
-    disk_used: number;
-    disk_total: number;
-    uptime: string;
-    networkUp: number;
-    networkDown: number;
-    networkUpTotal: number;
-    networkDownTotal: number;
-    diskReadKibS: number;
-    diskWriteKibS: number;
-    diskReadIOPS: number;
-    diskWriteIOPS: number;
-
-    provider?: string | null;
-    cycle?: number | null;
-    start_time?: string | null;
-    end_time?: string | null;
-    amount?: string | null;
-    bandwidth?: string | null;
-    traffic?: string | null;
-    note_public?: string | null;
-}
+import { getRemainingTime } from '@/utils/time.ts';
 
 const cycleMap: Record<number, string> = {
     1: 'Mo',
@@ -80,7 +47,13 @@ const getProgressColor = (value: number) => {
     return 'bg-green-500/60';
 };
 
-const ServerStatusCard = ({ server }: { server: Server }) => {
+const ServerStatusCard = ({
+    server,
+    layout,
+}: {
+    server: Server;
+    layout: 'list' | 'list2' | 'grid';
+}) => {
     const navigator = useNavigate();
 
     const { config } = useUser();
@@ -140,293 +113,479 @@ const ServerStatusCard = ({ server }: { server: Server }) => {
         () => navigator(`/${server.id}/monitor`),
         [navigator, server.id]
     );
-    const handleToggleMore = useCallback((e?: React.MouseEvent) => {
+    const handleToggleMore = useCallback((e?: MouseEvent) => {
         if (e) e.stopPropagation();
         setShowMore((s) => !s);
     }, []);
 
+    const Tags = () => (
+        <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+            <Badge className="bg-accent/70 text-accent-foreground gap-1.5">
+                <img
+                    src={`/flags/${(server.location || 'UN').toLowerCase()}.svg`}
+                    width="16"
+                    height="12"
+                    alt={server.location}
+                />
+                {server.locationName || 'Unknown'}
+            </Badge>
+            {server.provider && (
+                <Badge className="bg-emerald-500/20 text-accent-foreground">
+                    {server.provider}
+                </Badge>
+            )}
+            {server.amount && (
+                <Badge className="bg-indigo-500/20 text-accent-foreground">
+                    {server.amount === '0'
+                        ? 'Free'
+                        : server.amount === '-1'
+                          ? 'PAYG'
+                          : server.amount +
+                            (server.cycle
+                                ? cycleMap[server.cycle]
+                                    ? '/' + cycleMap[server.cycle]
+                                    : ''
+                                : '')}
+                    {}
+                </Badge>
+            )}
+            {server.bandwidth && (
+                <Badge className="bg-violet-500/20 text-accent-foreground">
+                    {server.bandwidth}
+                </Badge>
+            )}
+            {server.end_time &&
+                (() => {
+                    const remainingDays = getRemainingTime(server.end_time);
+                    return (
+                        <Badge
+                            className={cn(
+                                'text-accent-foreground',
+                                remainingDays > 7
+                                    ? 'bg-green-500/20'
+                                    : remainingDays > 3
+                                      ? 'bg-orange-500/20'
+                                      : 'bg-red-500/20'
+                            )}
+                        >
+                            {remainingDays < 0 ? 'Expired' : `Expired: ${remainingDays}d`}
+                        </Badge>
+                    );
+                })()}
+            {server.note_public && (
+                <Badge className="bg-yellow-500/20 text-accent-foreground">
+                    {server.note_public}
+                </Badge>
+            )}
+        </div>
+    );
+
+    const Details = () => (
+        <div
+            className={cn(
+                'border-t border-border pt-2.5 -mb-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300',
+                showMore ? 'h-24' : 'h-0 border-0 p-0'
+            )}
+        >
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <HardDrive className="h-3.5 w-3.5" />
+                    <span>I/O</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <HardDriveUpload className="h-3 w-3" />
+                        <span className="font-mono">{diskRead.value}</span>
+                        <span className="text-muted-foreground">{diskRead.unit}/s</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <HardDriveDownload className="h-3 w-3" />
+                        <span className="font-mono">{diskWrite.value}</span>
+                        <span className="text-muted-foreground">{diskWrite.unit}/s</span>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <HardDrive className="h-3.5 w-3.5" />
+                    <span>IOPS</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <HardDriveUpload className="h-3 w-3" />
+                        <span className="font-mono">{server.diskReadIOPS}</span>
+                        <span className="text-muted-foreground">ps</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <HardDriveDownload className="h-3 w-3" />
+                        <span className="font-mono">{server.diskWriteIOPS}</span>
+                        <span className="text-muted-foreground">ps</span>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Unplug className="h-3.5 w-3.5" />
+                    <span>Connections</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <span className="font-mono text-muted-foreground">TCP</span>
+                        <span className="font-mono">{server.tcpTotal}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <span className="font-mono text-muted-foreground">UDP</span>
+                        <span className="font-mono">{server.udpTotal}</span>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <ArrowUpDown className="h-3.5 w-3.5" />
+                    <span>Bandwidth (Total)</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <ArrowUp className="h-3 w-3" />
+                        <span className="font-mono">{rxTotal.value}</span>
+                        <span className="text-muted-foreground">{rxTotal.unit}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <ArrowDown className="h-3 w-3" />
+                        <span className="font-mono">{txTotal.value}</span>
+                        <span className="text-muted-foreground">{txTotal.unit}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <Card
-            className="border-border bg-card p-5 transition-all hover:border-primary/50 cursor-pointer"
+            className={cn(
+                'border-border bg-card p-5 transition-all hover:border-primary/50 cursor-pointer h-full',
+                layout !== 'grid' && 'py-3.5 gap-3.5'
+            )}
             onClick={handleCardClick}
             onMouseEnter={() => setShowMoreBtn(true)}
             onMouseLeave={() => setShowMoreBtn(false)}
         >
-            <div className="space-y-4">
-                {/* Header */}
-                <div className="flex items-start justify-between w-full">
-                    <div className="flex items-center gap-3 flex-1">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
-                            <img
-                                src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
-                                alt={'OS'}
-                                className="h-6 w-6"
+            {layout === 'grid' ? (
+                <div className="flex flex-col gap-4 h-full">
+                    {/* Header */}
+                    <div className="flex items-start justify-between w-full">
+                        <div className="flex items-center gap-3 flex-1">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
+                                <img
+                                    src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
+                                    alt={'OS'}
+                                    className="h-6 w-6"
+                                />
+                            </div>
+                            <div>
+                                <h3 className="font-mono text-sm font-semibold text-card-foreground">
+                                    {server.name}
+                                </h3>
+                                <Tags />
+                            </div>
+                        </div>
+                        <Badge className={cn('text-xs font-medium', STATUS_COLORS[server.status])}>
+                            {server.status}
+                        </Badge>
+                    </div>
+
+                    {/* Metrics */}
+                    <div className="space-y-3 mt-auto">
+                        {/* CPU */}
+                        <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-xs">
+                                <div className="flex items-center gap-1.5 text-muted-foreground">
+                                    <Cpu className="h-3.5 w-3.5" />
+                                    <span>CPU</span>
+                                </div>
+                                <span className="font-mono font-medium text-card-foreground">
+                                    {server.cpu}%
+                                </span>
+                            </div>
+                            <Progress
+                                value={server.cpu}
+                                className={'h-1.5'}
+                                color={getProgressColor(server.cpu)}
                             />
                         </div>
-                        <div>
-                            <h3 className="font-mono text-sm font-semibold text-card-foreground">
-                                {server.name}
-                            </h3>
-                            <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
-                                <Badge className="bg-accent/70 text-accent-foreground gap-1.5">
-                                    <img
-                                        src={`/flags/${(server.location || 'UN').toLowerCase()}.svg`}
-                                        width="16"
-                                        height="12"
-                                        alt={server.location}
-                                    />
-                                    {server.locationName || 'Unknown'}
-                                </Badge>
-                                {server.provider && (
-                                    <Badge className="bg-emerald-500/20 text-accent-foreground">
-                                        {server.provider}
-                                    </Badge>
-                                )}
-                                {server.amount && (
-                                    <Badge className="bg-indigo-500/20 text-accent-foreground">
-                                        {server.amount === '0'
-                                            ? 'Free'
-                                            : server.amount === '-1'
-                                              ? 'PAYG'
-                                              : server.amount +
-                                                (server.cycle
-                                                    ? cycleMap[server.cycle]
-                                                        ? '/' + cycleMap[server.cycle]
-                                                        : ''
-                                                    : '')}
-                                        {}
-                                    </Badge>
-                                )}
-                                {server.bandwidth && (
-                                    <Badge className="bg-violet-500/20 text-accent-foreground">
-                                        {server.bandwidth}
-                                    </Badge>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                    <Badge className={cn('text-xs font-medium', STATUS_COLORS[server.status])}>
-                        {server.status}
-                    </Badge>
-                </div>
 
-                {/* Metrics */}
-                <div className="space-y-3">
-                    {/* CPU */}
-                    <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <Cpu className="h-3.5 w-3.5" />
-                                <span>CPU</span>
-                            </div>
-                            <span className="font-mono font-medium text-card-foreground">
-                                {server.cpu}%
-                            </span>
-                        </div>
-                        <Progress
-                            value={server.cpu}
-                            className={'h-1.5'}
-                            color={getProgressColor(server.cpu)}
-                        />
-                    </div>
-
-                    {/* Memory */}
-                    <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <MemoryStick className="h-3.5 w-3.5" />
-                                <span>Memory</span>
-                            </div>
-                            <span className="font-mono font-medium text-card-foreground">
-                                {server.memory}%
-                                {showMore && (
-                                    <span className="text-muted-foreground">
-                                        {' '}
-                                        ({MemoryUnit(server.memory_used, 'mb')}/
-                                        {MemoryUnit(server.memory_total, 'mb')})
-                                    </span>
-                                )}
-                            </span>
-                        </div>
-                        <Progress
-                            value={server.memory}
-                            className={'h-1.5 text-red-500'}
-                            color={getProgressColor(server.memory)}
-                        />
-                    </div>
-
-                    {/* SWAP */}
-                    {showMore && server.swap_total > 0 && (
+                        {/* Memory */}
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-1.5 text-muted-foreground">
                                     <MemoryStick className="h-3.5 w-3.5" />
-                                    <span>SWAP</span>
+                                    <span>Memory</span>
                                 </div>
                                 <span className="font-mono font-medium text-card-foreground">
-                                    {server.swap}%
-                                    <span className="text-muted-foreground">
-                                        {' '}
-                                        ({MemoryUnit(server.swap_used, 'mb')}/
-                                        {MemoryUnit(server.swap_total, 'mb')})
-                                    </span>
+                                    {server.memory}%
+                                    {showMore && (
+                                        <span className="text-muted-foreground">
+                                            {' '}
+                                            ({MemoryUnit(server.memory_used, 'mb')}/
+                                            {MemoryUnit(server.memory_total, 'mb')})
+                                        </span>
+                                    )}
                                 </span>
                             </div>
                             <Progress
-                                value={server.swap}
+                                value={server.memory}
                                 className={'h-1.5 text-red-500'}
-                                color={getProgressColor(server.swap)}
+                                color={getProgressColor(server.memory)}
                             />
                         </div>
-                    )}
 
-                    {/* Disk */}
-                    <div className="space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <Database className="h-3.5 w-3.5" />
-                                <span>Disk</span>
-                            </div>
-                            <span className="font-mono font-medium text-card-foreground">
-                                {server.disk}%
-                                {showMore && (
-                                    <span className="text-muted-foreground">
-                                        {' '}
-                                        ({MemoryUnit(server.disk_used, 'gb')}/
-                                        {MemoryUnit(server.disk_total, 'gb')})
+                        {/* SWAP */}
+                        {showMore && server.swap_total > 0 && (
+                            <div className="space-y-1.5">
+                                <div className="flex items-center justify-between text-xs">
+                                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                                        <MemoryStick className="h-3.5 w-3.5" />
+                                        <span>SWAP</span>
+                                    </div>
+                                    <span className="font-mono font-medium text-card-foreground">
+                                        {server.swap}%
+                                        <span className="text-muted-foreground">
+                                            {' '}
+                                            ({MemoryUnit(server.swap_used, 'mb')}/
+                                            {MemoryUnit(server.swap_total, 'mb')})
+                                        </span>
                                     </span>
-                                )}
-                            </span>
-                        </div>
-                        <Progress
-                            value={server.disk}
-                            className="h-1.5"
-                            color={getProgressColor(server.disk)}
-                        />
-                    </div>
+                                </div>
+                                <Progress
+                                    value={server.swap}
+                                    className={'h-1.5 text-red-500'}
+                                    color={getProgressColor(server.swap)}
+                                />
+                            </div>
+                        )}
 
-                    {remainingTime.time !== '' && (
+                        {/* Disk */}
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-xs">
                                 <div className="flex items-center gap-1.5 text-muted-foreground">
-                                    <ReceiptText className="h-3.5 w-3.5" />
-                                    <span>Remaining</span>
+                                    <Database className="h-3.5 w-3.5" />
+                                    <span>Disk</span>
                                 </div>
                                 <span className="font-mono font-medium text-card-foreground">
-                                    {remainingTime.time}
+                                    {server.disk}%
+                                    {showMore && (
+                                        <span className="text-muted-foreground">
+                                            {' '}
+                                            ({MemoryUnit(server.disk_used, 'gb')}/
+                                            {MemoryUnit(server.disk_total, 'gb')})
+                                        </span>
+                                    )}
                                 </span>
                             </div>
                             <Progress
-                                value={remainingTime.progress}
+                                value={server.disk}
                                 className="h-1.5"
-                                color={getProgressColor(100 - remainingTime.progress)}
+                                color={getProgressColor(server.disk)}
                             />
                         </div>
-                    )}
 
-                    <div
-                        className={cn(
-                            'border-t border-border pt-2.5 -mb-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300',
-                            showMore ? 'h-18' : 'h-0 border-0 p-0'
-                        )}
-                    >
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <HardDrive className="h-3.5 w-3.5" />
-                                <span>I/O</span>
-                            </div>
-                            <div className="flex items-center">
-                                <div className="flex items-center gap-1 text-success">
-                                    <HardDriveUpload className="h-3 w-3" />
-                                    <span className="font-mono">{diskRead.value}</span>
-                                    <span className="text-muted-foreground">{diskRead.unit}/s</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-info ms-3">
-                                    <HardDriveDownload className="h-3 w-3" />
-                                    <span className="font-mono">{diskWrite.value}</span>
-                                    <span className="text-muted-foreground">
-                                        {diskWrite.unit}/s
+                        {remainingTime.time !== '' && (
+                            <div className="space-y-1.5">
+                                <div className="flex items-center justify-between text-xs">
+                                    <div className="flex items-center gap-1.5 text-muted-foreground">
+                                        <ReceiptText className="h-3.5 w-3.5" />
+                                        <span>Remaining</span>
+                                    </div>
+                                    <span className="font-mono font-medium text-card-foreground">
+                                        {remainingTime.time}
                                     </span>
                                 </div>
+                                <Progress
+                                    value={remainingTime.progress}
+                                    className="h-1.5"
+                                    color={getProgressColor(100 - remainingTime.progress)}
+                                />
+                            </div>
+                        )}
+
+                        <Details />
+                    </div>
+                    {/* Footer Info */}
+                    <div
+                        className={cn(
+                            'flex items-center justify-between border-t border-border pt-3 text-xs transition-all duration-300`',
+                            showMore ? '' : '-mt-3'
+                        )}
+                        onClick={handleToggleMore}
+                    >
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                            <Clock className="h-3.5 w-3.5" />
+                            <span className="font-mono">{server.uptime}</span>
+                        </div>
+                        <div className="flex items-center">
+                            <div className="flex items-center gap-1 text-success">
+                                <ArrowUp className="h-3 w-3" />
+                                <span className="font-mono">{rx.value}</span>
+                                <span className="text-muted-foreground">{rx.unit}/s</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-info ms-3">
+                                <ArrowDown className="h-3 w-3" />
+                                <span className="font-mono">{tx.value}</span>
+                                <span className="text-muted-foreground">{tx.unit}/s</span>
+                            </div>
+                            <div
+                                className={cn(
+                                    'bg-accent-foreground rounded-full transition-all overflow-hidden',
+                                    showMoreBtn ? 'w-3 ms-3' : 'w-0 p-0'
+                                )}
+                            >
+                                {showMore ? (
+                                    <ChevronUp strokeWidth={4} size={12} className="text-accent" />
+                                ) : (
+                                    <ChevronDown
+                                        strokeWidth={4}
+                                        size={12}
+                                        className="text-accent"
+                                    />
+                                )}
                             </div>
                         </div>
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <HardDrive className="h-3.5 w-3.5" />
-                                <span>IOPS</span>
+                    </div>
+                </div>
+            ) : (
+                <>
+                    <div
+                        className={cn(
+                            'flex flex-col items-center gap-4',
+                            layout === 'list' && 'lg:flex-row'
+                        )}
+                    >
+                        {/* Header */}
+                        <div className="flex items-center gap-3 w-full lg:flex-1">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
+                                <img
+                                    src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
+                                    alt={'OS'}
+                                    className="h-6 w-6"
+                                />
                             </div>
-                            <div className="flex items-center">
-                                <div className="flex items-center gap-1 text-success">
-                                    <HardDriveUpload className="h-3 w-3" />
-                                    <span className="font-mono">{server.diskReadIOPS}</span>
-                                    <span className="text-muted-foreground">ps</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-info ms-3">
-                                    <HardDriveDownload className="h-3 w-3" />
-                                    <span className="font-mono">{server.diskWriteIOPS}</span>
-                                    <span className="text-muted-foreground">ps</span>
-                                </div>
+                            <div>
+                                <h3 className="flex flex-row items-center gap-2 font-mono text-sm font-semibold text-card-foreground">
+                                    {server.name}
+                                    <div className="relative flex items-center justify-center w-3 h-3 mb-0.5">
+                                        <div
+                                            className={cn(
+                                                'absolute w-2 h-2 rounded-full animate-ping',
+                                                server.status === 'online'
+                                                    ? 'bg-green-500/50'
+                                                    : server.status === 'warning'
+                                                      ? 'bg-orange-500/50'
+                                                      : 'bg-red-500/50'
+                                            )}
+                                        ></div>
+                                        <div
+                                            className={cn(
+                                                'relative w-2 h-2 rounded-full',
+                                                server.status === 'online'
+                                                    ? 'bg-green-500'
+                                                    : server.status === 'warning'
+                                                      ? 'bg-orange-500'
+                                                      : 'bg-red-500'
+                                            )}
+                                        ></div>
+                                    </div>
+                                </h3>
+                                <Tags />
                             </div>
                         </div>
-                        <div className="flex items-center justify-between text-xs">
-                            <div className="flex items-center gap-1.5 text-muted-foreground">
-                                <ArrowUpDown className="h-3.5 w-3.5" />
-                                <span>Bandwidth (Total)</span>
+                        <div className={'flex flex-row w-full items-center gap-4 flex-3'}>
+                            {/* CPU */}
+                            <div className="space-y-1 flex-1">
+                                <div className="flex flex-col gap-1">
+                                    <div className="text-sm flex items-center gap-1.5 text-muted-foreground">
+                                        <Cpu className="h-3.5 w-3.5" />
+                                        <span>CPU</span>
+                                    </div>
+                                    <span className="font-mono font-medium text-card-foreground">
+                                        {server.cpu}%
+                                        {showMore && (
+                                            <div className="text-muted-foreground">
+                                                ({server.os})
+                                            </div>
+                                        )}
+                                    </span>
+                                </div>
+                                <Progress
+                                    value={server.cpu}
+                                    className={'h-1'}
+                                    color={getProgressColor(server.cpu)}
+                                />
                             </div>
-                            <div className="flex items-center">
-                                <div className="flex items-center gap-1 text-success">
+                            {/* Memory */}
+                            <div className="space-y-1 flex-1">
+                                <div className="flex flex-col gap-1">
+                                    <div className="text-sm flex items-center gap-1.5 text-muted-foreground">
+                                        <MemoryStick className="h-3.5 w-3.5" />
+                                        <span>Memory</span>
+                                    </div>
+                                    <span className="font-mono font-medium text-card-foreground">
+                                        {server.memory}%
+                                        {showMore && (
+                                            <div className="text-muted-foreground">
+                                                {' '}
+                                                ({MemoryUnit(server.memory_used, 'mb')}/
+                                                {MemoryUnit(server.memory_total, 'mb')})
+                                            </div>
+                                        )}
+                                    </span>
+                                </div>
+                                <Progress
+                                    value={server.memory}
+                                    className={'h-1 text-red-500'}
+                                    color={getProgressColor(server.memory)}
+                                />
+                            </div>
+                            {/* Disk */}
+                            <div className="space-y-1 flex-1">
+                                <div className="flex flex-col gap-1">
+                                    <div className="text-sm flex items-center gap-1.5 text-muted-foreground">
+                                        <Database className="h-3.5 w-3.5" />
+                                        <span>Disk</span>
+                                    </div>
+                                    <span className="font-mono font-medium text-card-foreground">
+                                        {server.disk}%
+                                        {showMore && (
+                                            <div className="text-muted-foreground">
+                                                {' '}
+                                                ({MemoryUnit(server.disk_used, 'gb')}/
+                                                {MemoryUnit(server.disk_total, 'gb')})
+                                            </div>
+                                        )}
+                                    </span>
+                                </div>
+                                <Progress
+                                    value={server.disk}
+                                    className="h-1"
+                                    color={getProgressColor(server.disk)}
+                                />
+                            </div>
+                            <div className="flex text-sm items-end flex-col justify-end w-28">
+                                <div className="flex items-center justify-center gap-1 text-success">
                                     <ArrowUp className="h-3 w-3" />
-                                    <span className="font-mono">{rxTotal.value}</span>
-                                    <span className="text-muted-foreground">{rxTotal.unit}</span>
+                                    <span className="font-mono">{rx.value}</span>
+                                    <span className="text-muted-foreground">{rx.unit}/s</span>
                                 </div>
                                 <div className="flex items-center gap-1 text-info ms-3">
                                     <ArrowDown className="h-3 w-3" />
-                                    <span className="font-mono">{txTotal.value}</span>
-                                    <span className="text-muted-foreground">{txTotal.unit}</span>
+                                    <span className="font-mono">{tx.value}</span>
+                                    <span className="text-muted-foreground">{tx.unit}/s</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {/* Footer Info */}
-                <div
-                    className={cn(
-                        'flex items-center justify-between border-t border-border pt-3 text-xs transition-all duration-300`',
-                        showMore ? '' : '-mt-3'
-                    )}
-                    onClick={handleToggleMore}
-                >
-                    <div className="flex items-center gap-1.5 text-muted-foreground">
-                        <Clock className="h-3.5 w-3.5" />
-                        <span className="font-mono">{server.uptime}</span>
-                    </div>
-                    <div className="flex items-center">
-                        <div className="flex items-center gap-1 text-success">
-                            <ArrowUp className="h-3 w-3" />
-                            <span className="font-mono">{rx.value}</span>
-                            <span className="text-muted-foreground">{rx.unit}/s</span>
-                        </div>
-                        <div className="flex items-center gap-1 text-info ms-3">
-                            <ArrowDown className="h-3 w-3" />
-                            <span className="font-mono">{tx.value}</span>
-                            <span className="text-muted-foreground">{tx.unit}/s</span>
-                        </div>
-                        <div
-                            className={cn(
-                                'bg-accent-foreground rounded-full transition-all overflow-hidden',
-                                showMoreBtn ? 'w-3 ms-3' : 'w-0 p-0'
-                            )}
-                        >
-                            {showMore ? (
-                                <ChevronUp strokeWidth={4} size={12} className="text-accent" />
-                            ) : (
-                                <ChevronDown strokeWidth={4} size={12} className="text-accent" />
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    <Details />
+                </>
+            )}
         </Card>
     );
 };

@@ -2,7 +2,6 @@ import {
     ArrowLeftRight,
     Cpu,
     HardDrive,
-    LayoutGrid,
     LoaderCircle,
     Monitor,
     Plus,
@@ -24,6 +23,7 @@ import AddCategory from '@/components/category/add';
 import ManageCategory from '@/components/category/manage';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
+import LayoutBtn from '@/page/dashboard/components/layout-btn.tsx';
 
 const Dashboard = () => {
     const navigator = useNavigate();
@@ -120,7 +120,7 @@ const Dashboard = () => {
 
                 {/* Config */}
                 <div className="mt-4 flex flex-col gap-2 lg:flex-row justify-between lg:items-center">
-                    <div className="flex flex-row justify-between lg:justify-start gap-2">
+                    <div className="flex flex-col sm:flex-row justify-between lg:justify-start gap-2">
                         <ButtonGroup className="border rounded-lg">
                             <Button
                                 variant={'ghost'}
@@ -182,24 +182,28 @@ const Dashboard = () => {
                                 </Popover>
                             )}
                         </ButtonGroup>
-                        <ButtonGroup className="border rounded-lg">
-                            <ManageCategory>
-                                <Button variant={'ghost'} className="border-e">
-                                    <Settings />
-                                </Button>
-                            </ManageCategory>
-                            <AddCategory>
-                                <Button variant={'ghost'}>
-                                    <Plus />
-                                </Button>
-                            </AddCategory>
-                        </ButtonGroup>
+                        <div className={'flex flex-row justify-between'}>
+                            <ButtonGroup className="border rounded-lg">
+                                <ManageCategory>
+                                    <Button variant={'ghost'} className="border-e">
+                                        <Settings />
+                                    </Button>
+                                </ManageCategory>
+                                <AddCategory>
+                                    <Button variant={'ghost'}>
+                                        <Plus />
+                                    </Button>
+                                </AddCategory>
+                            </ButtonGroup>
+                            <ButtonGroup className={'sm:hidden'}>
+                                <LayoutBtn />
+                                <DetailBtn />
+                            </ButtonGroup>
+                        </div>
                     </div>
-                    <div className="flex flex-row justify-end gap-2">
+                    <div className="flex-row justify-end gap-2 hidden sm:flex">
                         <ButtonGroup>
-                            <Button variant="outline">
-                                <LayoutGrid />
-                            </Button>
+                            <LayoutBtn />
                             <DetailBtn />
                         </ButtonGroup>
                     </div>

@@ -23,7 +23,7 @@ type UserConfigType = {
     autoRefresh: boolean;
     defaultMonitorMode: 'avg' | 'max' | 'raw';
     defaultLayout: 'grid-3' | 'grid-2' | 'list';
-    dashboardLayout: 'grid' | 'list';
+    dashboardLayout: 'grid' | 'list' | 'list2';
     dashboardShowDetails: boolean;
 };
 

@@ -30,7 +30,7 @@ const About = () => (
                 </p>
             </Card>
 
-            <p className="text-sm flex flex-row items-center gap-2">
+            <div className="text-sm flex flex-row items-center gap-2">
                 <a
                     className="underline text-green-600"
                     href="https://github.com/mosona-network/mosona-manager"
@@ -46,7 +46,7 @@ const About = () => (
                 >
                     Documentation
                 </a>
-            </p>
+            </div>
         </div>
     </div>
 );

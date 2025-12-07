@@ -50,6 +50,8 @@ export type ServerStatusType = {
     tx_kib_s: number;
     rx_total_mb: number;
     tx_total_mb: number;
+    tcp_total: number;
+    udp_total: number;
     time: string;
 };
 
