@@ -71,8 +71,13 @@ const ServerStatusCard = ({
     const diskWrite = useMemo(() => NetUnit(server.diskWriteKibS, 'kb'), [server.diskWriteKibS]);
 
     const remainingTime = useMemo(() => {
-        if (server.start_time && server.end_time) {
-            const startTime = new Date(server.start_time).getTime();
+        if ((server.start_time || (server.cycle && server.cycle > 0)) && server.end_time) {
+            const startTime = server.cycle
+                ? new Date(server.end_time).getTime() -
+                  (server.cycle === 1 ? 1 : (server.cycle - 1) * 3) * 30 * 24 * 60 * 60 * 1000
+                : server.start_time
+                  ? new Date(server.start_time).getTime()
+                  : 0;
             const endTime = new Date(server.end_time).getTime();
             const currentTime = Date.now();
 
@@ -118,148 +123,6 @@ const ServerStatusCard = ({
         setShowMore((s) => !s);
     }, []);
 
-    const Tags = () => (
-        <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
-            <Badge className="bg-accent/70 text-accent-foreground gap-1.5">
-                <img
-                    src={`/flags/${(server.location || 'UN').toLowerCase()}.svg`}
-                    width="16"
-                    height="12"
-                    alt={server.location}
-                />
-                {server.locationName || 'Unknown'}
-            </Badge>
-            {server.provider && (
-                <Badge className="bg-emerald-500/20 text-accent-foreground">
-                    {server.provider}
-                </Badge>
-            )}
-            {server.amount && (
-                <Badge className="bg-indigo-500/20 text-accent-foreground">
-                    {server.amount === '0'
-                        ? 'Free'
-                        : server.amount === '-1'
-                          ? 'PAYG'
-                          : server.amount +
-                            (server.cycle
-                                ? cycleMap[server.cycle]
-                                    ? '/' + cycleMap[server.cycle]
-                                    : ''
-                                : '')}
-                    {}
-                </Badge>
-            )}
-            {server.bandwidth && (
-                <Badge className="bg-violet-500/20 text-accent-foreground">
-                    {server.bandwidth}
-                </Badge>
-            )}
-            {server.end_time &&
-                (() => {
-                    const remainingDays = getRemainingTime(server.end_time);
-                    return (
-                        <Badge
-                            className={cn(
-                                'text-accent-foreground',
-                                remainingDays > 7
-                                    ? 'bg-green-500/20'
-                                    : remainingDays > 3
-                                      ? 'bg-orange-500/20'
-                                      : 'bg-red-500/20'
-                            )}
-                        >
-                            {remainingDays < 0 ? 'Expired' : `Expired: ${remainingDays}d`}
-                        </Badge>
-                    );
-                })()}
-            {server.note_public && (
-                <Badge className="bg-yellow-500/20 text-accent-foreground">
-                    {server.note_public}
-                </Badge>
-            )}
-        </div>
-    );
-
-    const Details = () => (
-        <div
-            className={cn(
-                'border-t border-border pt-2.5 -mb-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300',
-                showMore ? 'h-24' : 'h-0 border-0 p-0'
-            )}
-        >
-            <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <HardDrive className="h-3.5 w-3.5" />
-                    <span>I/O</span>
-                </div>
-                <div className="flex items-center">
-                    <div className="flex items-center gap-1 text-success">
-                        <HardDriveUpload className="h-3 w-3" />
-                        <span className="font-mono">{diskRead.value}</span>
-                        <span className="text-muted-foreground">{diskRead.unit}/s</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-info ms-3">
-                        <HardDriveDownload className="h-3 w-3" />
-                        <span className="font-mono">{diskWrite.value}</span>
-                        <span className="text-muted-foreground">{diskWrite.unit}/s</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <HardDrive className="h-3.5 w-3.5" />
-                    <span>IOPS</span>
-                </div>
-                <div className="flex items-center">
-                    <div className="flex items-center gap-1 text-success">
-                        <HardDriveUpload className="h-3 w-3" />
-                        <span className="font-mono">{server.diskReadIOPS}</span>
-                        <span className="text-muted-foreground">ps</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-info ms-3">
-                        <HardDriveDownload className="h-3 w-3" />
-                        <span className="font-mono">{server.diskWriteIOPS}</span>
-                        <span className="text-muted-foreground">ps</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <Unplug className="h-3.5 w-3.5" />
-                    <span>Connections</span>
-                </div>
-                <div className="flex items-center">
-                    <div className="flex items-center gap-1 text-success">
-                        <span className="font-mono text-muted-foreground">TCP</span>
-                        <span className="font-mono">{server.tcpTotal}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-info ms-3">
-                        <span className="font-mono text-muted-foreground">UDP</span>
-                        <span className="font-mono">{server.udpTotal}</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-1.5 text-muted-foreground">
-                    <ArrowUpDown className="h-3.5 w-3.5" />
-                    <span>Bandwidth (Total)</span>
-                </div>
-                <div className="flex items-center">
-                    <div className="flex items-center gap-1 text-success">
-                        <ArrowUp className="h-3 w-3" />
-                        <span className="font-mono">{rxTotal.value}</span>
-                        <span className="text-muted-foreground">{rxTotal.unit}</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-info ms-3">
-                        <ArrowDown className="h-3 w-3" />
-                        <span className="font-mono">{txTotal.value}</span>
-                        <span className="text-muted-foreground">{txTotal.unit}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
     return (
         <Card
             className={cn(
@@ -286,7 +149,7 @@ const ServerStatusCard = ({
                                 <h3 className="font-mono text-sm font-semibold text-card-foreground">
                                     {server.name}
                                 </h3>
-                                <Tags />
+                                <Tags server={server} />
                             </div>
                         </div>
                         <Badge className={cn('text-xs font-medium', STATUS_COLORS[server.status])}>
@@ -408,7 +271,14 @@ const ServerStatusCard = ({
                             </div>
                         )}
 
-                        <Details />
+                        <Details
+                            showMore={showMore}
+                            server={server}
+                            diskRead={diskRead}
+                            diskWrite={diskWrite}
+                            rxTotal={rxTotal}
+                            txTotal={txTotal}
+                        />
                     </div>
                     {/* Footer Info */}
                     <div
@@ -495,7 +365,7 @@ const ServerStatusCard = ({
                                         ></div>
                                     </div>
                                 </h3>
-                                <Tags />
+                                <Tags server={server} />
                             </div>
                         </div>
                         <div className={'flex flex-row w-full items-center gap-4 flex-3'}>
@@ -583,11 +453,168 @@ const ServerStatusCard = ({
                             </div>
                         </div>
                     </div>
-                    <Details />
+                    <Details
+                        showMore={showMore}
+                        server={server}
+                        diskRead={diskRead}
+                        diskWrite={diskWrite}
+                        rxTotal={rxTotal}
+                        txTotal={txTotal}
+                    />
                 </>
             )}
         </Card>
     );
 };
+
+const Tags = ({ server }: { server: Server }) => (
+    <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
+        <Badge className="bg-accent/70 text-accent-foreground gap-1.5">
+            <img
+                src={`/flags/${(server.location || 'UN').toLowerCase()}.svg`}
+                width="16"
+                height="12"
+                alt={server.location}
+            />
+            {server.locationName || 'Unknown'}
+        </Badge>
+        {server.provider && (
+            <Badge className="bg-emerald-500/20 text-accent-foreground">{server.provider}</Badge>
+        )}
+        {server.amount && (
+            <Badge className="bg-indigo-500/20 text-accent-foreground">
+                {server.amount === '0'
+                    ? 'Free'
+                    : server.amount === '-1'
+                      ? 'PAYG'
+                      : server.amount +
+                        (server.cycle
+                            ? cycleMap[server.cycle]
+                                ? '/' + cycleMap[server.cycle]
+                                : ''
+                            : '')}
+                {}
+            </Badge>
+        )}
+        {server.bandwidth && (
+            <Badge className="bg-violet-500/20 text-accent-foreground">{server.bandwidth}</Badge>
+        )}
+        {server.end_time &&
+            (() => {
+                const remainingDays = getRemainingTime(server.end_time);
+                return (
+                    <Badge
+                        className={cn(
+                            'text-accent-foreground',
+                            remainingDays > 7
+                                ? 'bg-green-500/20'
+                                : remainingDays > 3
+                                  ? 'bg-orange-500/20'
+                                  : 'bg-red-500/20'
+                        )}
+                    >
+                        {remainingDays < 0 ? 'Expired' : `Expired: ${remainingDays}d`}
+                    </Badge>
+                );
+            })()}
+        {server.note_public && (
+            <Badge className="bg-yellow-500/20 text-accent-foreground">{server.note_public}</Badge>
+        )}
+    </div>
+);
+
+const Details = ({
+    showMore,
+    server,
+    diskRead,
+    diskWrite,
+    rxTotal,
+    txTotal,
+}: {
+    showMore: boolean;
+    server: Server;
+    diskRead: { value: string; unit: string };
+    diskWrite: { value: string; unit: string };
+    rxTotal: { value: string; unit: string };
+    txTotal: { value: string; unit: string };
+}) => (
+    <div
+        className={cn(
+            'border-t border-border pt-2.5 -mb-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300',
+            showMore ? 'h-24' : 'h-0 border-0 p-0'
+        )}
+    >
+        <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+                <HardDrive className="h-3.5 w-3.5" />
+                <span>I/O</span>
+            </div>
+            <div className="flex items-center">
+                <div className="flex items-center gap-1 text-success">
+                    <HardDriveUpload className="h-3 w-3" />
+                    <span className="font-mono">{diskRead.value}</span>
+                    <span className="text-muted-foreground">{diskRead.unit}/s</span>
+                </div>
+                <div className="flex items-center gap-1 text-info ms-3">
+                    <HardDriveDownload className="h-3 w-3" />
+                    <span className="font-mono">{diskWrite.value}</span>
+                    <span className="text-muted-foreground">{diskWrite.unit}/s</span>
+                </div>
+            </div>
+        </div>
+        <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+                <HardDrive className="h-3.5 w-3.5" />
+                <span>IOPS</span>
+            </div>
+            <div className="flex items-center">
+                <div className="flex items-center gap-1 text-success">
+                    <HardDriveUpload className="h-3 w-3" />
+                    <span className="font-mono">{server.diskReadIOPS}</span>
+                    <span className="text-muted-foreground">ps</span>
+                </div>
+                <div className="flex items-center gap-1 text-info ms-3">
+                    <HardDriveDownload className="h-3 w-3" />
+                    <span className="font-mono">{server.diskWriteIOPS}</span>
+                    <span className="text-muted-foreground">ps</span>
+                </div>
+            </div>
+        </div>
+        <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+                <Unplug className="h-3.5 w-3.5" />
+                <span>Connections</span>
+            </div>
+            <div className="flex items-center">
+                <div className="flex items-center gap-1 text-success">
+                    <span className="font-mono text-muted-foreground">TCP</span>
+                    <span className="font-mono">{server.tcpTotal}</span>
+                </div>
+                <div className="flex items-center gap-1 text-info ms-3">
+                    <span className="font-mono text-muted-foreground">UDP</span>
+                    <span className="font-mono">{server.udpTotal}</span>
+                </div>
+            </div>
+        </div>
+        <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+                <ArrowUpDown className="h-3.5 w-3.5" />
+                <span>Bandwidth (Total)</span>
+            </div>
+            <div className="flex items-center">
+                <div className="flex items-center gap-1 text-success">
+                    <ArrowUp className="h-3 w-3" />
+                    <span className="font-mono">{rxTotal.value}</span>
+                    <span className="text-muted-foreground">{rxTotal.unit}</span>
+                </div>
+                <div className="flex items-center gap-1 text-info ms-3">
+                    <ArrowDown className="h-3 w-3" />
+                    <span className="font-mono">{txTotal.value}</span>
+                    <span className="text-muted-foreground">{txTotal.unit}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+);
 
 export default ServerStatusCard;
