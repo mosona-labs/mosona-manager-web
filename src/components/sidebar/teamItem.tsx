@@ -26,7 +26,7 @@ const TeamItem = ({
     isCurrent?: boolean;
     onClose?: () => void;
 }) => {
-    const { refresh } = useUser();
+    const { refresh, refreshCategories } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -36,6 +36,7 @@ const TeamItem = ({
         ApiUser.setActiveTeam(id)
             .then(() => {
                 onClose && onClose();
+                refreshCategories().then();
                 refresh().finally(() => {
                     setIsLoading(false);
                     toast.success('Success', { description: 'Switched team successfully.' });

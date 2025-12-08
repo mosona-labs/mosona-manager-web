@@ -3,6 +3,7 @@ import {
     Briefcase,
     Container,
     FingerprintIcon,
+    LogsIcon,
     Mail,
     Server,
     Settings,
@@ -37,6 +38,12 @@ const sidebarItems: {
         title: 'Servers',
         icon: <Server size={22} />,
         path: '/admin/servers',
+    },
+    { title: 'Logging' },
+    {
+        title: 'Admin Logs',
+        icon: <LogsIcon size={22} />,
+        path: '/admin/logs',
     },
     { title: 'Settings' },
     {

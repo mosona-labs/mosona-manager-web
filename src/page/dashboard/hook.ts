@@ -2,8 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { type MonitorType, type ServerStatusType } from '@/api/monitor';
+import { useUser } from '@/context/useUser.tsx';
 
 export default function useMonitors() {
+    const { team } = useUser();
+
     const [isLoading, setIsLoading] = useState(true);
     const [time, setTime] = useState<Date>(new Date());
     const [servers, setServers] = useState<MonitorType[]>([]);
@@ -124,7 +127,7 @@ export default function useMonitors() {
 
     useEffect(() => {
         return subscribe();
-    }, [subscribe]);
+    }, [subscribe, team]);
 
     return {
         isLoading,
