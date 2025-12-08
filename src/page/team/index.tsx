@@ -17,6 +17,8 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import ApiTeam from '@/api/team';
 import { ToastError } from '@/utils/toast';
+import LoadingButton from '@/components/loading-button.tsx';
+import LeaveTeam from '@/components/leave-team.tsx';
 
 const Team = () => {
     const { user, team, refresh } = useUser();
@@ -57,8 +59,9 @@ const Team = () => {
             });
     }, [team]);
 
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const onSubmit = () => {
-        setIsLoading(true);
+        setIsSubmitting(true);
         ApiTeam.edit(
             team!.id,
             teamName,
@@ -75,11 +78,12 @@ const Team = () => {
         )
             .then(() => {
                 toast.success('Success', { description: 'Team updated successfully.' });
-                refresh();
+                setIsLoading(true);
+                refresh().then();
             })
             .catch(ToastError)
             .finally(() => {
-                setIsLoading(false);
+                setIsSubmitting(false);
             });
     };
 
@@ -100,7 +104,7 @@ const Team = () => {
             <div className="mt-4 flex flex-row gap-3">
                 <div>
                     <div className="grid gap-3">
-                        <Label>Team Avatar</Label>
+                        <Label>Profile picture</Label>
                         <AvatarEditor
                             name={teamName}
                             colorRef={avatarColorRef}
@@ -146,6 +150,7 @@ const Team = () => {
                             item={item}
                             index={index}
                             myUID={user?.id!}
+                            isOwner={team?.owner_id === item?.id}
                             onRemove={() => {
                                 if (members[index].id === user?.id) {
                                     toast.warning('Warning', {
@@ -196,9 +201,14 @@ const Team = () => {
             </div>
 
             <div className="mt-4 flex flex-row justify-end items-center gap-3">
-                <Button disabled={isLoading} onClick={onSubmit}>
+                {team && (
+                    <LeaveTeam team={team}>
+                        <Button variant={'destructive'}>Leave Team</Button>
+                    </LeaveTeam>
+                )}
+                <LoadingButton isLoading={isSubmitting} onClick={onSubmit}>
                     Saved Change
-                </Button>
+                </LoadingButton>
             </div>
         </div>
     );

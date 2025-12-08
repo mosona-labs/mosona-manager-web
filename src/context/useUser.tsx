@@ -14,6 +14,7 @@ type UserContextType = {
     categories?: CategoryType[];
     setUser: (u?: UserType) => void;
     refresh: () => Promise<void>;
+    refreshCategories: () => Promise<void>;
     config: UserConfigType;
     updateConfig: (newConfig: Partial<UserConfigType>) => void;
 };
@@ -52,6 +53,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 ToastError(err);
                 setUser(undefined);
             });
+    };
+
+    const refreshCategories = async () => {
         ApiCategory.list()
             .then((res) => {
                 setCategories(res.data || []);
@@ -89,11 +93,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refresh().then(() => {
             console.log('User info refreshed');
         });
+        refreshCategories().then(() => {
+            console.log('Categories refreshed');
+        });
     }, []);
 
     return (
         <UserContext.Provider
-            value={{ user, team, teams, categories, setUser, refresh, config, updateConfig }}
+            value={{
+                user,
+                team,
+                teams,
+                categories,
+                setUser,
+                refresh,
+                refreshCategories,
+                config,
+                updateConfig,
+            }}
         >
             {children}
         </UserContext.Provider>

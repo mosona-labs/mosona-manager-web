@@ -13,6 +13,7 @@ export type TeamPlanType = {
 
 export type TeamType = {
     id: number;
+    owner_id: number;
     name: string;
     description: string;
     color: string;

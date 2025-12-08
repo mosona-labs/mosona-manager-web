@@ -24,7 +24,7 @@ const Profile = () => {
                 <div>
                     <h1 className="text-2xl font-bold">Profile</h1>
                     <p className="opacity-65">
-                        Manage your personal profile, account settings and sessions.
+                        Manage your personal profile, account settings and sessions
                     </p>
                 </div>
             </div>

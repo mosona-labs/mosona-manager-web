@@ -378,7 +378,12 @@ const ServerStatusCard = ({
                                     <span className="font-mono font-medium text-card-foreground">
                                         {server.cpu}%
                                         {showMore && (
-                                            <div className="text-muted-foreground">
+                                            <div
+                                                className={cn(
+                                                    'text-muted-foreground text-xs',
+                                                    layout === 'list2' && 'xl:block hidden'
+                                                )}
+                                            >
                                                 ({server.os})
                                             </div>
                                         )}
@@ -400,7 +405,12 @@ const ServerStatusCard = ({
                                     <span className="font-mono font-medium text-card-foreground">
                                         {server.memory}%
                                         {showMore && (
-                                            <div className="text-muted-foreground">
+                                            <div
+                                                className={cn(
+                                                    'text-muted-foreground text-xs',
+                                                    layout === 'list2' && 'xl:block hidden'
+                                                )}
+                                            >
                                                 {' '}
                                                 ({MemoryUnit(server.memory_used, 'mb')}/
                                                 {MemoryUnit(server.memory_total, 'mb')})
@@ -424,7 +434,12 @@ const ServerStatusCard = ({
                                     <span className="font-mono font-medium text-card-foreground">
                                         {server.disk}%
                                         {showMore && (
-                                            <div className="text-muted-foreground">
+                                            <div
+                                                className={cn(
+                                                    'text-muted-foreground text-xs',
+                                                    layout === 'list2' && 'xl:block hidden'
+                                                )}
+                                            >
                                                 {' '}
                                                 ({MemoryUnit(server.disk_used, 'gb')}/
                                                 {MemoryUnit(server.disk_total, 'gb')})

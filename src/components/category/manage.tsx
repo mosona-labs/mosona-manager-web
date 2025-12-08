@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 import { Plus, Save, GripVertical, Trash, Loader } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import {
     DndContext,
     closestCenter,
@@ -48,7 +48,7 @@ import { useUser } from '@/context/useUser';
 import ApiCategory, { type CategoryType } from '@/api/category';
 
 const CategoryItem = ({ id, name }: { id: number; name: string }) => {
-    const { refresh } = useUser();
+    const { refreshCategories } = useUser();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id,
     });
@@ -68,7 +68,7 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
         setIsDeleting(true);
         ApiCategory.delete(id)
             .then(() => {
-                refresh().finally(() => {
+                refreshCategories().finally(() => {
                     setIsDeleting(false);
                     toast.success('Category deleted successfully');
                 });
@@ -83,7 +83,7 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
         setIsSaving(true);
         ApiCategory.update(id, nameInput)
             .then(() => {
-                refresh().finally(() => {
+                refreshCategories().finally(() => {
                     setIsSaving(false);
                     toast.success('Category updated successfully');
                 });
@@ -145,8 +145,8 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
     );
 };
 
-const ManageCategory = ({ children }: { children?: React.ReactNode }) => {
-    const { categories, refresh } = useUser();
+const ManageCategory = ({ children }: { children?: ReactNode }) => {
+    const { categories, refreshCategories } = useUser();
     const [sortedCategories, setSortedCategories] = useState<CategoryType[]>([]);
     useEffect(() => {
         if (categories) {
@@ -173,7 +173,7 @@ const ManageCategory = ({ children }: { children?: React.ReactNode }) => {
 
                 ApiCategory.sort(newItems.map((item) => item.id))
                     .then(() => {
-                        refresh().finally(() => {
+                        refreshCategories().finally(() => {
                             toast.success('Category order updated successfully');
                         });
                     })

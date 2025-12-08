@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 import { Loader } from 'lucide-react';
 
 import { Input } from '../ui/input';
@@ -19,8 +19,8 @@ import { useUser } from '@/context/useUser';
 import ApiCategory from '@/api/category';
 import { ToastError } from '@/utils/toast';
 
-const AddCategory = ({ children }: { children?: React.ReactNode }) => {
-    const { categories, refresh } = useUser();
+const AddCategory = ({ children }: { children?: ReactNode }) => {
+    const { categories, refreshCategories } = useUser();
 
     const [open, setOpen] = useState(false);
     const [categoryName, setCategoryName] = useState('');
@@ -33,13 +33,15 @@ const AddCategory = ({ children }: { children?: React.ReactNode }) => {
     const handleCreate = () => {
         setIsLoading(true);
         ApiCategory.create(categoryName)
-            .then(() => {
-                setCategoryName('');
-                setOpen(false);
-                refresh();
-            })
-            .catch(ToastError)
-            .finally(() => {
+            .then(() =>
+                refreshCategories().finally(() => {
+                    setCategoryName('');
+                    setOpen(false);
+                    setIsLoading(false);
+                })
+            )
+            .catch((err) => {
+                ToastError(err);
                 setIsLoading(false);
             });
     };

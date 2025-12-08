@@ -14,17 +14,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge.tsx';
 
 const Member = ({
     item,
     index,
     myUID,
+    isOwner,
     onRemove,
     onChangeRole,
 }: {
     item: TeamMemberType;
     index: number;
     myUID: number;
+    isOwner: boolean;
     onRemove: () => void;
     onChangeRole: (role: number) => void;
 }) => (
@@ -39,7 +42,14 @@ const Member = ({
             </Avatar>
         </div>
         <div className="flex-1">
-            <p className="font-medium">{item.username}</p>
+            <div className="font-medium flex flex-row items-center gap-1">
+                {item.username}
+                {isOwner && (
+                    <Badge variant={'outline'} className={'text-xs py-0.5'}>
+                        Owner
+                    </Badge>
+                )}
+            </div>
             <p className="text-xs text-muted-foreground">{item.email}</p>
         </div>
         <div>

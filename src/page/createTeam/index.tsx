@@ -99,7 +99,7 @@ const CreateTeam = () => {
             <div className="mt-4 flex flex-row gap-3">
                 <div>
                     <div className="grid gap-3">
-                        <Label>Team Avatar</Label>
+                        <Label>Profile picture</Label>
                         <AvatarEditor
                             name={name}
                             colorRef={avatarColorRef}
@@ -141,6 +141,7 @@ const CreateTeam = () => {
                             item={item}
                             myUID={user?.id!}
                             index={index}
+                            isOwner={false}
                             onRemove={() => {
                                 if (members[index].id === user?.id) {
                                     toast.warning('Warning', {
