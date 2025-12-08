@@ -179,7 +179,7 @@ const MonitorCard = ({
                 category_id={server.category}
                 server_id={server.id}
             />
-            <EditServer open={openEdit} onOpenChange={setOpenEdit} server_id={server.id} />
+            <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
         </div>
     );
 };

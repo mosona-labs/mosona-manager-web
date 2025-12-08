@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { type Dispatch, type FormEvent, type SetStateAction, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Loader, Plus } from 'lucide-react';
 
@@ -23,15 +23,16 @@ import { Card, CardContent } from '../ui/card';
 import { useUser } from '@/context/useUser';
 import ApiServer from '@/api/server';
 import { ToastError } from '@/utils/toast';
+import LoadingButton from '@/components/loading-button.tsx';
 
 const EditServer = ({
     open,
     onOpenChange,
-    server_id,
+    serverID,
 }: {
     open: boolean;
-    onOpenChange: React.Dispatch<React.SetStateAction<boolean>>;
-    server_id: number;
+    onOpenChange: Dispatch<SetStateAction<boolean>>;
+    serverID: number;
 }) => {
     const { categories } = useUser();
 
@@ -63,9 +64,9 @@ const EditServer = ({
 
     const [isInfoLoading, setIsInfoLoading] = useState<boolean>(false);
     useEffect(() => {
-        if (!server_id || !open) return;
+        if (!serverID || !open) return;
         setIsInfoLoading(true);
-        ApiServer.info(server_id)
+        ApiServer.info(serverID)
             .then((data) => {
                 setCategory(data.data.category);
                 setName(data.data.name || '');
@@ -91,15 +92,14 @@ const EditServer = ({
             .finally(() => {
                 setIsInfoLoading(false);
             });
-    }, [server_id, open]);
+    }, [serverID, open]);
 
-    const handleSubmit = (e?: React.FormEvent) => {
+    const handleSubmit = (e?: FormEvent) => {
         e?.preventDefault();
         setIsLoading(true);
 
-        // adapt to ApiServer.update signature; adjust if your API differs
         ApiServer.edit(
-            server_id,
+            serverID,
             name,
             address,
             port,
@@ -142,7 +142,7 @@ const EditServer = ({
                     <DialogHeader className="px-2">
                         <DialogTitle>Edit Server</DialogTitle>
                         <DialogDescription>
-                            Edit server settings for ID {server_id ?? '—'}.
+                            Edit server settings for ID {serverID ?? '—'}.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="md:flex flex-col max-h-[60vh] overflow-y-auto md:max-h-none md:flex-row relative">
@@ -266,7 +266,7 @@ const EditServer = ({
                                     <Switch
                                         id="monitor"
                                         checked={allowMonitor}
-                                        onCheckedChange={(v) => setAllowMonitor(!!v)}
+                                        onCheckedChange={(v) => setAllowMonitor(v)}
                                     />
                                 </div>
                                 <div className="flex flex-row justify-between gap-3">
@@ -274,7 +274,7 @@ const EditServer = ({
                                     <Switch
                                         id="terminal"
                                         checked={allowTerminal}
-                                        onCheckedChange={(v) => setAllowTerminal(!!v)}
+                                        onCheckedChange={(v) => setAllowTerminal(v)}
                                     />
                                 </div>
                             </div>
@@ -414,7 +414,7 @@ const EditServer = ({
                                             <Switch
                                                 id="bill-auto-renew"
                                                 checked={autoRenew}
-                                                onCheckedChange={(v) => setAutoRenew(!!v)}
+                                                onCheckedChange={(v) => setAutoRenew(v)}
                                             />
                                         </div>
                                     </CardContent>
@@ -472,18 +472,17 @@ const EditServer = ({
                             </div>
                         </div>
                     </div>
-
                     <DialogFooter>
                         <DialogClose asChild>
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button type="submit" disabled={isLoading}>
+                        <LoadingButton type="submit" isLoading={isLoading}>
                             <Loader
                                 className="animate-spin"
                                 style={{ display: isLoading ? 'inline-block' : 'none' }}
                             />
                             Save changes
-                        </Button>
+                        </LoadingButton>
                     </DialogFooter>
                 </form>
             </DialogContent>

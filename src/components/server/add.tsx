@@ -25,6 +25,7 @@ import AddCategory from '../category/add';
 import { useUser } from '@/context/useUser';
 import ApiServer from '@/api/server';
 import { ToastError } from '@/utils/toast';
+import IsRequired from '@/components/required.tsx';
 
 const AddServer = () => {
     const { categories } = useUser();
@@ -163,16 +164,25 @@ const AddServer = () => {
                                     </div>
                                 </div>
                                 <div className="grid gap-3">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label htmlFor="name">
+                                        Name
+                                        <IsRequired />
+                                    </Label>
                                     <Input id="name" name="name" placeholder="LAX1" />
                                 </div>
                                 <div className="flex flex-row gap-2">
                                     <div className="flex-2 grid gap-3">
-                                        <Label htmlFor="host">IP / Hostname</Label>
+                                        <Label htmlFor="host">
+                                            IP / Hostname
+                                            <IsRequired />
+                                        </Label>
                                         <Input id="host" name="address" placeholder="1.2.3.4" />
                                     </div>
                                     <div className="flex-1 grid gap-3">
-                                        <Label htmlFor="port">Port</Label>
+                                        <Label htmlFor="port">
+                                            Port
+                                            <IsRequired />
+                                        </Label>
                                         <Input
                                             id="port"
                                             name="port"
@@ -186,7 +196,10 @@ const AddServer = () => {
                                     </div>
                                 </div>
                                 <div className="grid gap-3">
-                                    <Label htmlFor="username">Username</Label>
+                                    <Label htmlFor="username">
+                                        Username
+                                        <IsRequired />
+                                    </Label>
                                     <Input
                                         id="username"
                                         name="username"

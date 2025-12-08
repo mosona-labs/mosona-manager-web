@@ -19,6 +19,7 @@ import Session from '@/page/session';
 import Team from '@/page/team';
 import Logs from '@/page/logs';
 import Profile from '@/page/profile';
+import Keychain from '@/page/keychain';
 
 function App() {
     // Theme
@@ -58,6 +59,7 @@ function App() {
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/:id/monitor" element={<Monitor />} />
                     <Route path="/terminal" element={<Terminal />} />
+                    <Route path="/keychain" element={<Keychain />} />
                     <Route path="/logs" element={<Logs />} />
                     <Route path="/team" element={<Team />} />
                     <Route path="/profile" element={<Profile />} />

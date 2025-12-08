@@ -18,7 +18,7 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
     const [openEdit, setOpenEdit] = useState<boolean>(false);
 
     return (
-        <div key={server.id}>
+        <div>
             <ContextMenu
                 items={[
                     {
@@ -59,7 +59,7 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
                 category_id={server.category}
                 server_id={server.id}
             />
-            <EditServer open={openEdit} onOpenChange={setOpenEdit} server_id={server.id} />
+            <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
         </div>
     );
 };
