@@ -158,7 +158,7 @@ const ServerStatusCard = ({
                     </div>
 
                     {/* Metrics */}
-                    <div className="space-y-3 mt-auto">
+                    <div className={cn('space-y-3', showMore ? '' : '-mb-3')}>
                         {/* CPU */}
                         <div className="space-y-1.5">
                             <div className="flex items-center justify-between text-xs">
@@ -282,10 +282,9 @@ const ServerStatusCard = ({
                     </div>
                     {/* Footer Info */}
                     <div
-                        className={cn(
-                            'flex items-center justify-between border-t border-border pt-3 text-xs transition-all duration-300`',
-                            showMore ? '' : '-mt-3'
-                        )}
+                        className={
+                            'flex items-center justify-between border-t border-border pt-3 text-xs transition-all duration-300 mt-auto'
+                        }
                         onClick={handleToggleMore}
                     >
                         <div className="flex items-center gap-1.5 text-muted-foreground">

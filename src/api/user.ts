@@ -87,6 +87,22 @@ class ApiUserClass extends baseAPI {
             state,
         });
     }
+
+    // TOTP
+    async enableTOTP() {
+        return this.postData<
+            ResponseInterface<{
+                secret: string;
+                url: string;
+            }>
+        >('/v1/user/totp/enable', {});
+    }
+    async confirmTOTP(secret: string, code: string) {
+        return this.postData<ResponseInterface>('/v1/user/totp/confirm', { secret, code });
+    }
+    async disableTOTP(code?: string) {
+        return this.postData<ResponseInterface>('/v1/user/totp/disable', { v_code: code });
+    }
 }
 
 const ApiUser = new ApiUserClass();
