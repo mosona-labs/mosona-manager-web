@@ -6,15 +6,21 @@ import { useNavigate } from 'react-router-dom';
 import ApiUser, { type UserType } from '@/api/user';
 import ApiCategory, { type CategoryType } from '@/api/category';
 import { ToastError } from '@/utils/toast.ts';
+import ApiKey, { type KeyType } from '@/api/key.ts';
 
 type UserContextType = {
     user?: UserType;
     team?: TeamType;
     teams: TeamType[];
-    categories?: CategoryType[];
     setUser: (u?: UserType) => void;
     refresh: () => Promise<void>;
+
+    categories?: CategoryType[];
     refreshCategories: () => Promise<void>;
+
+    keys?: KeyType[];
+    refreshKeys: () => Promise<void>;
+
     config: UserConfigType;
     updateConfig: (newConfig: Partial<UserConfigType>) => void;
 };
@@ -37,6 +43,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [team, setTeam] = useState<TeamType | undefined>(undefined);
     const [teams, setTeams] = useState<TeamType[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
+    const [keys, setKeys] = useState<KeyType[] | undefined>(undefined);
 
     const refresh = async () => {
         ApiUser.me()
@@ -62,6 +69,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
             })
             .catch(() => {
                 setCategories([]);
+            });
+    };
+
+    const refreshKeys = async () => {
+        setKeys(undefined);
+        ApiKey.list()
+            .then((res) => {
+                setKeys(res.data || []);
+            })
+            .catch(() => {
+                setKeys([]);
             });
     };
 
@@ -96,18 +114,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refreshCategories().then(() => {
             console.log('Categories refreshed');
         });
+        refreshKeys().then(() => {
+            console.log('API Keys refreshed');
+        });
     }, []);
 
     return (
         <UserContext.Provider
             value={{
-                user,
                 team,
                 teams,
-                categories,
+                user,
                 setUser,
                 refresh,
+
+                categories,
                 refreshCategories,
+
+                keys,
+                refreshKeys,
+
                 config,
                 updateConfig,
             }}

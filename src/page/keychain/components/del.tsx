@@ -15,25 +15,26 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.tsx';
+import { useUser } from '@/context/useUser.tsx';
 
 const DelKey = ({
     open,
     onOpenChange,
     item,
-    refresh,
 }: {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     item: KeyType;
-    refresh: () => void;
 }) => {
+    const { refreshKeys } = useUser();
+
     const [isLoading, setIsLoading] = useState(false);
 
     const handleDelete = () => {
         setIsLoading(true);
         ApiKey.delete(item.id)
             .then(() => {
-                refresh();
+                refreshKeys().then();
                 onOpenChange(false);
             })
             .catch(ToastError)

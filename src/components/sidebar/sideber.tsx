@@ -98,7 +98,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                                         title={session.name}
                                         icon={
                                             <img
-                                                src={`/icons/${osIcons.includes(session.os.toLowerCase() || '') ? session.os.toLowerCase() : 'linux'}.svg`}
+                                                src={`/icons/${session?.os && osIcons.includes(session.os.toLowerCase() || '') ? session.os.toLowerCase() : 'linux'}.svg`}
                                                 alt=""
                                                 className="w-6"
                                             />

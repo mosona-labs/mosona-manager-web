@@ -42,7 +42,7 @@ const useAuthKeys = () => {
     }, []);
 
     useEffect(() => {
-        fetchKeys();
+        fetchKeys().then();
     }, [fetchKeys]);
 
     const refresh = useCallback(() => fetchKeys(true), [fetchKeys]);

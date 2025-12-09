@@ -24,6 +24,7 @@ import { useUser } from '@/context/useUser';
 import ApiServer from '@/api/server';
 import { ToastError } from '@/utils/toast';
 import LoadingButton from '@/components/loading-button.tsx';
+import AddKey from '@/page/keychain/components/add.tsx';
 
 const EditServer = ({
     open,
@@ -34,7 +35,7 @@ const EditServer = ({
     onOpenChange: Dispatch<SetStateAction<boolean>>;
     serverID: number;
 }) => {
-    const { categories } = useUser();
+    const { categories, keys } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -87,6 +88,10 @@ const EditServer = ({
                 setTraffic(data.data.traffic || '');
                 setTrafficType(data.data.traffic_type || -1);
                 setNotePublic(data.data.note_public || '');
+                setKeyId(data.data.key_id || 0);
+                if (data.data.key_id) {
+                    setAuthType('key');
+                }
             })
             .catch(ToastError)
             .finally(() => {
@@ -220,9 +225,14 @@ const EditServer = ({
                                 <Label>Authorization</Label>
                                 <Tabs
                                     value={authType}
-                                    onValueChange={(v) =>
-                                        setAuthType(v === 'password' ? 'password' : 'key')
-                                    }
+                                    onValueChange={(v) => {
+                                        setAuthType(v === 'password' ? 'password' : 'key');
+                                        if (v === 'password') {
+                                            setKeyId(0);
+                                        } else {
+                                            setPassword('');
+                                        }
+                                    }}
                                 >
                                     <TabsList className="w-full">
                                         <TabsTrigger value="password">Password</TabsTrigger>
@@ -236,12 +246,12 @@ const EditServer = ({
                                         />
                                     </TabsContent>
                                     <TabsContent value="key">
-                                        <Input
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Password (Keep empty to not change)"
-                                        />
-                                        <div className="mt-2 flex flex-row gap-1.5">
+                                        {/*<Input*/}
+                                        {/*    value={password}*/}
+                                        {/*    onChange={(e) => setPassword(e.target.value)}*/}
+                                        {/*    placeholder="Password (Keep empty to not change)"*/}
+                                        {/*/>*/}
+                                        <div className="flex flex-row gap-1.5">
                                             <Select
                                                 value={keyId ? keyId.toString() : '0'}
                                                 onValueChange={(v) => setKeyId(parseInt(v || '0'))}
@@ -251,12 +261,21 @@ const EditServer = ({
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="0">None</SelectItem>
-                                                    <SelectItem value="1">Key1</SelectItem>
+                                                    {keys?.map((item) => (
+                                                        <SelectItem
+                                                            key={item.id}
+                                                            value={item.id.toString()}
+                                                        >
+                                                            {item.name}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
-                                            <Button variant="outline">
-                                                <Plus />
-                                            </Button>
+                                            <AddKey>
+                                                <Button variant="outline">
+                                                    <Plus />
+                                                </Button>
+                                            </AddKey>
                                         </div>
                                     </TabsContent>
                                 </Tabs>

@@ -1,5 +1,5 @@
 import { ImportIcon, Loader, Plus } from 'lucide-react';
-import { type ChangeEvent, type DragEvent, useEffect, useState } from 'react';
+import { type ChangeEvent, type DragEvent, type ReactNode, useEffect, useState } from 'react';
 
 import {
     Dialog,
@@ -19,13 +19,17 @@ import { Textarea } from '@/components/ui/textarea.tsx';
 import { Card } from '@/components/ui/card.tsx';
 import ApiKey from '@/api/key.ts';
 import { ToastError } from '@/utils/toast.ts';
+import { useUser } from '@/context/useUser.tsx';
 
-const AddKey = ({ refresh }: { refresh: () => void }) => {
+const AddKey = ({ children }: { children?: ReactNode }) => {
+    const { refreshKeys } = useUser();
+
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     const [name, setName] = useState('');
     const [privateKey, setPrivateKey] = useState('');
+    const [password, setPassword] = useState('');
 
     const [isDragging, setIsDragging] = useState(false);
 
@@ -76,9 +80,9 @@ const AddKey = ({ refresh }: { refresh: () => void }) => {
             return;
         }
         setIsLoading(true);
-        ApiKey.add(name, privateKey)
+        ApiKey.add(name, privateKey, password)
             .then(() => {
-                refresh();
+                refreshKeys().then();
                 setOpen(false);
             })
             .catch(ToastError)
@@ -91,22 +95,28 @@ const AddKey = ({ refresh }: { refresh: () => void }) => {
         if (open) {
             setName('');
             setPrivateKey('');
+            setPassword('');
         }
     }, [open]);
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button>
-                    <Plus />
-                    Add Key
-                </Button>
+                {children ? (
+                    children
+                ) : (
+                    <Button>
+                        <Plus />
+                        Add Key
+                    </Button>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Add New SSH Key</DialogTitle>
                     <DialogDescription>
-                        Fill in the details below to add a new SSH key to your keychain.
+                        Fill in the details below to add a new SSH key to your keychain. All keys &
+                        passwords are encrypted.
                     </DialogDescription>
                 </DialogHeader>
                 <div className={'space-y-4'}>
@@ -134,6 +144,17 @@ const AddKey = ({ refresh }: { refresh: () => void }) => {
                             rows={6}
                             className={'max-h-64'}
                         />
+                    </div>
+                    <div className={'grid gap-3'}>
+                        <Label>Password</Label>
+                        <Input
+                            type="password"
+                            placeholder="If the key is encrypted, enter the password here"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <div className={'grid gap-3'}>
                         <label htmlFor={'import-key'} className={'cursor-pointer'}>
                             <Card
                                 className={`px-4 py-6 rounded-md text-center gap-2 bg-background transition-colors ${

@@ -140,7 +140,7 @@ const ServerStatusCard = ({
                         <div className="flex items-center gap-3 flex-1">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
                                 <img
-                                    src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
+                                    src={`/icons/${server.os && osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
                                     alt={'OS'}
                                     className="h-6 w-6"
                                 />
@@ -333,7 +333,7 @@ const ServerStatusCard = ({
                         <div className="flex items-center gap-3 w-full lg:flex-1">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
                                 <img
-                                    src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
+                                    src={`/icons/${server.os && osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
                                     alt={'OS'}
                                     className="h-6 w-6"
                                 />

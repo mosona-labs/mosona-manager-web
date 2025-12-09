@@ -1,5 +1,5 @@
 import { Loader, Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Input } from '../ui/input';
@@ -26,9 +26,10 @@ import { useUser } from '@/context/useUser';
 import ApiServer from '@/api/server';
 import { ToastError } from '@/utils/toast';
 import IsRequired from '@/components/required.tsx';
+import AddKey from '@/page/keychain/components/add.tsx';
 
 const AddServer = () => {
-    const { categories } = useUser();
+    const { categories, keys } = useUser();
 
     const [authType, setAuthType] = useState<'password' | 'key'>('password');
 
@@ -47,7 +48,7 @@ const AddServer = () => {
         }
     }, [categories]);
 
-    const onSubmit = (e: React.FormEvent) => {
+    const onSubmit = (e: FormEvent) => {
         e.preventDefault();
 
         const form = e.target as HTMLFormElement;
@@ -237,17 +238,27 @@ const AddServer = () => {
                                             placeholder="Password"
                                         />
                                         <div className="mt-2 flex flex-row gap-1.5">
-                                            <Select name="key">
+                                            <Select name="key" defaultValue={'0'}>
                                                 <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Select Key" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="1">Key1</SelectItem>
+                                                    <SelectItem value="0">None</SelectItem>
+                                                    {keys?.map((item) => (
+                                                        <SelectItem
+                                                            key={item.id}
+                                                            value={item.id.toString()}
+                                                        >
+                                                            {item.name}
+                                                        </SelectItem>
+                                                    ))}
                                                 </SelectContent>
                                             </Select>
-                                            <Button variant="outline">
-                                                <Plus />
-                                            </Button>
+                                            <AddKey>
+                                                <Button variant="outline" type={'button'}>
+                                                    <Plus />
+                                                </Button>
+                                            </AddKey>
                                         </div>
                                     </TabsContent>
                                 </Tabs>

@@ -14,7 +14,7 @@ export type ServerFullType = {
     address: string;
     port: number;
     username: string;
-    key_id: string;
+    key_id: number;
     allow_monitor: boolean;
     allow_terminal: boolean;
     weight: number;

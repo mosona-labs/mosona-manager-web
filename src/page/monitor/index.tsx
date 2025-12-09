@@ -253,7 +253,7 @@ const Monitor = () => {
                     </div>
                     <div className="font-mono text-lg">
                         <img
-                            src={`/icons/${osIcons.includes(server?.os?.toLowerCase() || '') ? server?.os?.toLowerCase() : 'linux'}.svg`}
+                            src={`/icons/${server?.os && osIcons.includes(server?.os?.toLowerCase() || '') ? server?.os?.toLowerCase() : 'linux'}.svg`}
                             className="inline-block h-5 w-5 mr-2"
                         />
                         {server?.os || 'N/A'}

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button.tsx';
 import EditKey from '@/page/keychain/components/edit.tsx';
 import DelKey from '@/page/keychain/components/del.tsx';
 
-const KeyCard = ({ item, refresh }: { item: KeyType; refresh: () => void }) => {
+const KeyCard = ({ item }: { item: KeyType }) => {
     const [editOpen, setEditOpen] = useState(false);
     const [delOpen, setDelOpen] = useState(false);
 
@@ -58,9 +58,9 @@ const KeyCard = ({ item, refresh }: { item: KeyType; refresh: () => void }) => {
                 </div>
             </ContextMenu>
             {/*Edit*/}
-            <EditKey open={editOpen} onOpenChange={setEditOpen} item={item} refresh={refresh} />
+            <EditKey open={editOpen} onOpenChange={setEditOpen} item={item} />
             {/*Delete*/}
-            <DelKey open={delOpen} onOpenChange={setDelOpen} item={item} refresh={refresh} />
+            <DelKey open={delOpen} onOpenChange={setDelOpen} item={item} />
         </div>
     );
 };

@@ -136,12 +136,7 @@ const MonitorCard = ({
                         memory_total: info.mem_total_mb || 0,
                         swap:
                             info.swap_total_mb && info.swap_used_mb
-                                ? Math.floor(
-                                      ((info.swap_total_mb - info.swap_used_mb) /
-                                          info.swap_total_mb) *
-                                          100 *
-                                          100
-                                  ) / 100
+                                ? Math.floor((info.swap_used_mb / info.swap_total_mb) * 100)
                                 : 0 || 0,
                         swap_used: info.swap_used_mb || 0,
                         swap_total: info.swap_total_mb || 0,

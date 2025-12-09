@@ -12,12 +12,16 @@ class ApiKeyClass extends baseAPI {
         return this.getData<ResponseInterface<KeyType[]>>('/v1/key');
     }
 
-    async add(name: string, content: string) {
-        return this.postData<ResponseInterface<{ id: number }>>('/v1/key', { name, content });
+    async add(name: string, content: string, password: string) {
+        return this.postData<ResponseInterface<{ id: number }>>('/v1/key', {
+            name,
+            content,
+            password,
+        });
     }
 
-    async edit(id: number, name: string) {
-        return this.putData<ResponseInterface<{ id: number }>>('/v1/key/' + id, { name });
+    async edit(id: number, name: string, password: string) {
+        return this.putData<ResponseInterface<{ id: number }>>('/v1/key/' + id, { name, password });
     }
 
     async delete(id: number) {

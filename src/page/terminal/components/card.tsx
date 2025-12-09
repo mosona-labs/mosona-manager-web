@@ -41,7 +41,7 @@ const ServerTerminalCard = ({
         >
             <div className="w-10 p-2 bg-accent rounded-md">
                 <img
-                    src={`/icons/${osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
+                    src={`/icons/${server.os && osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
                     alt={server.os}
                 />
             </div>
