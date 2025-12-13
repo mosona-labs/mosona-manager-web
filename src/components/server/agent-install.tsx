@@ -15,6 +15,8 @@ const AgentInstall = ({
     open,
     setOpen,
     mode,
+    allow_monitor,
+    allow_terminal,
     // Passive
     hub,
     enroll_token,
@@ -22,14 +24,23 @@ const AgentInstall = ({
     open: boolean;
     setOpen: (open: boolean) => void;
     mode: 'active' | 'passive';
+    allow_monitor: boolean;
+    allow_terminal: boolean;
     // Passive
     hub?: string;
     enroll_token?: string;
 }) => {
-    const script =
-        mode === 'active'
-            ? ''
-            : `curl -o agent https://example.com/agent && ./agent install passive "${hub}" "${enroll_token}"`;
+    const script = [
+        `curl -o agent https://example.com/agent && ./agent install`,
+        mode === 'active' ? 'active' : `passive`,
+    ];
+    if (!allow_monitor) {
+        script.push('--no-monitor');
+    }
+    if (!allow_terminal) {
+        script.push('--no-terminal');
+    }
+    script.push(mode === 'active' ? '' : `"${hub}" "${enroll_token}"`);
 
     return (
         <Dialog open={open}>
@@ -41,13 +52,15 @@ const AgentInstall = ({
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
-                    <p className={'font-mono break-all bg-muted p-3 rounded-md'}>{script}</p>
+                    <p className={'font-mono break-all bg-muted p-3 rounded-md'}>
+                        {script.join(' ')}
+                    </p>
                 </div>
                 <DialogFooter>
                     <Button
                         variant={'outline'}
                         onClick={() => {
-                            navigator.clipboard.writeText(script).then(() => {
+                            navigator.clipboard.writeText(script.join(' ')).then(() => {
                                 toast.success('Installation command copied to clipboard.');
                             });
                         }}

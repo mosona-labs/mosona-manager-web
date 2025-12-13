@@ -41,6 +41,8 @@ const AddServer = () => {
     // Agent Install
     const [isInstallOpen, setIsInstallOpen] = useState(false);
     const [installConfig, setInstallConfig] = useState<{
+        allow_monitor?: boolean;
+        allow_terminal?: boolean;
         hub?: string;
         enroll_token?: string;
     }>({});
@@ -136,6 +138,8 @@ const AddServer = () => {
                     setIsInstallOpen(true);
                     if (agentMode === 'passive') {
                         setInstallConfig({
+                            allow_monitor,
+                            allow_terminal,
                             hub: res.data.hub,
                             enroll_token: res.data.enroll_token,
                         });
@@ -610,6 +614,8 @@ const AddServer = () => {
                 open={isInstallOpen}
                 setOpen={setIsInstallOpen}
                 mode={agentMode}
+                allow_monitor={!!installConfig.allow_monitor}
+                allow_terminal={!!installConfig.allow_terminal}
                 hub={installConfig.hub}
                 enroll_token={installConfig.enroll_token}
             />
