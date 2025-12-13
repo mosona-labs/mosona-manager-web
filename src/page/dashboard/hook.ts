@@ -60,6 +60,7 @@ export default function useMonitors() {
 
     const reconnectInterval = useRef<number | null>(null);
     const eventSourceRef = useRef<EventSource | null>(null);
+    const heartbeatTimeout = useRef<number | null>(null);
 
     const subscribe = useCallback(() => {
         if (eventSourceRef.current) {
@@ -73,11 +74,9 @@ export default function useMonitors() {
         const eventSource = new EventSource('/api/v1/server/monitor/sse');
         eventSourceRef.current = eventSource;
 
-        let heartbeatTimeout: number | null = null;
-
         const resetHeartbeat = () => {
-            if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-            heartbeatTimeout = setTimeout(() => {
+            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current); // 使用 ref
+            heartbeatTimeout.current = setTimeout(() => {
                 toast.error('Connection lost', {
                     description: 'Client will try to reconnect at 3 seconds interval.',
                 });
@@ -95,17 +94,15 @@ export default function useMonitors() {
 
         eventSource.addEventListener('update', (event) => {
             const data = JSON.parse(event.data);
-
             setTime(new Date(data.now * 1000));
             setServers(data.servers);
             setStatuses(data.status);
-
-            if (isLoading) setIsLoading(false);
+            setIsLoading(false);
             resetHeartbeat();
         });
 
         eventSource.addEventListener('error', () => {
-            if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);
             toast.error('Connection lost', {
                 description: 'Client will try to reconnect at 3 seconds interval.',
             });
@@ -117,17 +114,17 @@ export default function useMonitors() {
         });
 
         return () => {
-            if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);
             eventSource.close();
             if (reconnectInterval.current) {
                 clearTimeout(reconnectInterval.current);
             }
         };
-    }, [isLoading]);
+    }, [team]);
 
     useEffect(() => {
         return subscribe();
-    }, [subscribe, team]);
+    }, [subscribe]);
 
     return {
         isLoading,

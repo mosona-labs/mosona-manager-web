@@ -306,7 +306,7 @@ const Monitor = () => {
                         <span>CPU Usage</span>
                     </div>
                     <div className="font-mono text-lg">
-                        {realTimeStatus ? realTimeStatus.cpu + '%' : 'N/A'}
+                        {realTimeStatus ? parseFloat(realTimeStatus.cpu.toFixed(2)) + '%' : 'N/A'}
                     </div>
                 </div>
                 <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">

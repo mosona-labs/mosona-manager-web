@@ -167,7 +167,7 @@ const ServerStatusCard = ({
                                     <span>CPU</span>
                                 </div>
                                 <span className="font-mono font-medium text-card-foreground">
-                                    {server.cpu}%
+                                    {parseFloat(server.cpu.toFixed(2))}%
                                 </span>
                             </div>
                             <Progress
@@ -376,7 +376,7 @@ const ServerStatusCard = ({
                                         <span>CPU</span>
                                     </div>
                                     <span className="font-mono font-medium text-card-foreground">
-                                        {server.cpu}%
+                                        {parseFloat(server.cpu.toFixed(2))}%
                                         {showMore && (
                                             <div
                                                 className={cn(

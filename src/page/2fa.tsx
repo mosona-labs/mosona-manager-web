@@ -28,11 +28,7 @@ const TwoFA = () => {
         login_2fa: boolean;
         totp: boolean;
         verified: boolean;
-    }>({
-        login_2fa: false,
-        totp: false,
-        verified: false,
-    });
+    }>();
     const [cooling, setCooling] = useState(0);
 
     const timerRef = useRef<number>(null);
@@ -52,7 +48,7 @@ const TwoFA = () => {
                 setIsLoading(false);
 
                 if (res.data.cooling > 0) createTimer();
-                else if (!res.data.verified || !res.data.totp) sendMFA();
+                else if (!res.data.verified || !res.data.totp) sendMFA(res.data.verified);
             })
             .catch((err) => {
                 ToastError(err);
@@ -61,9 +57,9 @@ const TwoFA = () => {
     }, []);
 
     const [sending, setSending] = useState(false);
-    const sendMFA = () => {
+    const sendMFA = (verified: boolean) => {
         setSending(true);
-        ApiAuth.twoFASendMFA(status.verified ? '2fa' : 'activation')
+        ApiAuth.twoFASendMFA(verified ? '2fa' : 'activation')
             .then(() => {
                 setCooling(60);
                 createTimer();
@@ -77,7 +73,7 @@ const TwoFA = () => {
     const [submitting, setSubmitting] = useState(false);
     const [code, setCode] = useState('');
     useEffect(() => {
-        if (code.length < 6) return;
+        if (code.length < 6 || !status) return;
 
         setSubmitting(true);
         setCode('');
@@ -132,12 +128,12 @@ const TwoFA = () => {
                 <Card className={'max-w-full'}>
                     <CardHeader>
                         <CardTitle>
-                            {status.verified
-                                ? 'Two-Factor Authentication (2FA)'
-                                : 'Activate Account'}
+                            {!status?.verified
+                                ? 'Activate Account'
+                                : 'Two-Factor Authentication (2FA)'}
                         </CardTitle>
                         <CardDescription>
-                            {status.verified && status.totp
+                            {status?.verified && status?.totp
                                 ? 'Please enter the 6-digit code from your authenticator app to proceed.'
                                 : 'Please enter the 6-digit code from your email to proceed.'}
                         </CardDescription>
@@ -158,7 +154,7 @@ const TwoFA = () => {
                                 </InputOTPGroup>
                             </InputOTP>
                         </div>
-                        {(!status.verified || !status.totp) && (
+                        {(!status?.verified || !status?.totp) && (
                             <div className={'flex flex-row items-center mt-3 -mx-2'}>
                                 <LoadingButton
                                     isLoading={sending}
@@ -166,7 +162,7 @@ const TwoFA = () => {
                                     size={'sm'}
                                     className={'text-xs'}
                                     disabled={cooling > 0}
-                                    onClick={sendMFA}
+                                    onClick={() => sendMFA(!!status?.verified)}
                                 >
                                     {cooling > 0 ? `Waiting ${cooling}s` : 'Send Again'}
                                 </LoadingButton>

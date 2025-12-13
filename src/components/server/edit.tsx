@@ -147,7 +147,7 @@ const EditServer = ({
                     <DialogHeader className="px-2">
                         <DialogTitle>Edit Server</DialogTitle>
                         <DialogDescription>
-                            Edit server settings for ID {serverID ?? '—'}.
+                            Edit Detail for server ID {serverID ?? '—'}.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="md:flex flex-col max-h-[60vh] overflow-y-auto md:max-h-none md:flex-row relative">
