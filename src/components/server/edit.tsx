@@ -285,7 +285,10 @@ const EditServer = ({
                                     <Switch
                                         id="monitor"
                                         checked={allowMonitor}
-                                        onCheckedChange={(v) => setAllowMonitor(v)}
+                                        onCheckedChange={(v) => {
+                                            setAllowMonitor(v);
+                                            if (!v) setAllowTerminal(true);
+                                        }}
                                     />
                                 </div>
                                 <div className="flex flex-row justify-between gap-3">
@@ -293,7 +296,10 @@ const EditServer = ({
                                     <Switch
                                         id="terminal"
                                         checked={allowTerminal}
-                                        onCheckedChange={(v) => setAllowTerminal(v)}
+                                        onCheckedChange={(v) => {
+                                            setAllowTerminal(v);
+                                            if (!v) setAllowMonitor(true);
+                                        }}
                                     />
                                 </div>
                             </div>

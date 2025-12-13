@@ -41,8 +41,6 @@ const AddServer = () => {
     // Agent Install
     const [isInstallOpen, setIsInstallOpen] = useState(false);
     const [installConfig, setInstallConfig] = useState<{
-        allow_monitor?: boolean;
-        allow_terminal?: boolean;
         hub?: string;
         enroll_token?: string;
     }>({});
@@ -50,6 +48,10 @@ const AddServer = () => {
     const [category, setCategory] = useState<number>();
     const [mode, setMode] = useState<'ssh' | 'agent'>('ssh');
     const [agentMode, setAgentMode] = useState<'active' | 'passive'>('active');
+
+    // Access Permissions
+    const [enableMonitor, setEnableMonitor] = useState(true);
+    const [enableTerminal, setEnableTerminal] = useState(true);
 
     // Billing Information
     const [startTime, setStartTime] = useState<Date>();
@@ -138,8 +140,6 @@ const AddServer = () => {
                     setIsInstallOpen(true);
                     if (agentMode === 'passive') {
                         setInstallConfig({
-                            allow_monitor,
-                            allow_terminal,
                             hub: res.data.hub,
                             enroll_token: res.data.enroll_token,
                         });
@@ -394,11 +394,27 @@ const AddServer = () => {
 
                                     <div className="flex flex-row justify-between mt-1 gap-3">
                                         <Label htmlFor="monitor">Monitor Access</Label>
-                                        <Switch id="monitor" name="monitor" defaultChecked />
+                                        <Switch
+                                            id="monitor"
+                                            name="monitor"
+                                            checked={enableMonitor}
+                                            onCheckedChange={(v) => {
+                                                setEnableMonitor(v);
+                                                if (!v) setEnableTerminal(true);
+                                            }}
+                                        />
                                     </div>
                                     <div className="flex flex-row justify-between gap-3">
                                         <Label htmlFor="terminal">Terminal Access</Label>
-                                        <Switch id="terminal" name="terminal" defaultChecked />
+                                        <Switch
+                                            id="terminal"
+                                            name="terminal"
+                                            checked={enableTerminal}
+                                            onCheckedChange={(v) => {
+                                                setEnableTerminal(v);
+                                                if (!v) setEnableMonitor(true);
+                                            }}
+                                        />
                                     </div>
                                 </div>
                             </div>
@@ -614,8 +630,8 @@ const AddServer = () => {
                 open={isInstallOpen}
                 setOpen={setIsInstallOpen}
                 mode={agentMode}
-                allow_monitor={!!installConfig.allow_monitor}
-                allow_terminal={!!installConfig.allow_terminal}
+                allow_monitor={enableMonitor}
+                allow_terminal={enableTerminal}
                 hub={installConfig.hub}
                 enroll_token={installConfig.enroll_token}
             />
