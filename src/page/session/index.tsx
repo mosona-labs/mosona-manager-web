@@ -88,6 +88,9 @@ const Session = () => {
             setTimeout(() => {
                 const currentSession = switchSession(id);
                 if (!currentSession) return;
+
+                initLock.current = false;
+
                 if (!currentSession?.ws || currentSession.ws.readyState !== WebSocket.OPEN) {
                     connectWebSocket(id, {
                         cols: terminal.cols,
@@ -100,6 +103,10 @@ const Session = () => {
             }, 100);
         }
     }, [id]);
+
+    useEffect(() => {
+        initLock.current = !!session?.isConnected;
+    }, [session?.isConnected]);
 
     useEffect(() => {
         if (!session || !xtermRef.current) return;
