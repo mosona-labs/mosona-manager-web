@@ -134,6 +134,10 @@ class ApiServerClass extends baseAPI {
         );
     }
 
+    async delete(serverId: number) {
+        return this.deleteData<ResponseInterface>('/v1/server/' + serverId);
+    }
+
     async setCategory(serverId: number, categoryId: number) {
         return this.putData<ResponseInterface>('/v1/server/' + serverId + '/category', {
             category_id: categoryId,

@@ -16,6 +16,7 @@ import { useUser } from '@/context/useUser.tsx';
 import { cn } from '@/lib/utils.ts';
 
 import '../components/category.css';
+import DeleteServer from '@/components/server/delete.tsx';
 
 const MonitorCard = ({
     server,
@@ -49,6 +50,7 @@ const MonitorCard = ({
 
     const [openCategory, setOpenCategory] = useState<boolean>(false);
     const [openEdit, setOpenEdit] = useState<boolean>(false);
+    const [openDelete, setOpenDelete] = useState<boolean>(false);
 
     return (
         <div key={server.id} className={'h-full'}>
@@ -110,7 +112,9 @@ const MonitorCard = ({
                     {
                         label: 'Delete',
                         icon: <Trash2 className="h-4 w-4" />,
-                        onClick: () => console.log('刪除'),
+                        onClick: () => {
+                            setOpenDelete(true);
+                        },
                         danger: true,
                     },
                 ]}
@@ -175,6 +179,12 @@ const MonitorCard = ({
                 server_id={server.id}
             />
             <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
+            <DeleteServer
+                open={openDelete}
+                onOpenChange={setOpenDelete}
+                serverName={server.name}
+                serverID={server.id}
+            />
         </div>
     );
 };

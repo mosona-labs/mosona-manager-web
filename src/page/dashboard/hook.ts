@@ -101,17 +101,7 @@ export default function useMonitors() {
             resetHeartbeat();
         });
 
-        eventSource.addEventListener('error', () => {
-            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);
-            toast.error('Connection lost', {
-                description: 'Client will try to reconnect at 5 seconds interval.',
-            });
-            setIsLoading(true);
-            eventSource.close();
-            reconnectInterval.current = setTimeout(() => {
-                subscribe();
-            }, 5000);
-        });
+        eventSource.addEventListener('error', () => resetHeartbeat());
 
         return () => {
             if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);

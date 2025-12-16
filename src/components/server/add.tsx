@@ -41,6 +41,12 @@ const AddServer = () => {
     // Agent Install
     const [isInstallOpen, setIsInstallOpen] = useState(false);
     const [installConfig, setInstallConfig] = useState<{
+        // Active
+        agent_uid?: string;
+        public_key?: string;
+        host?: string;
+        port?: number;
+        // Passive
         hub?: string;
         enroll_token?: string;
     }>({});
@@ -138,11 +144,19 @@ const AddServer = () => {
                 setOpen(false);
                 if (mode === 'agent') {
                     setIsInstallOpen(true);
-                    if (agentMode === 'passive') {
-                        setInstallConfig({
-                            hub: res.data.hub,
-                            enroll_token: res.data.enroll_token,
-                        });
+                    switch (agentMode) {
+                        case 'passive':
+                            return setInstallConfig({
+                                hub: res.data.hub,
+                                enroll_token: res.data.enroll_token,
+                            });
+                        case 'active':
+                            return setInstallConfig({
+                                agent_uid: res.data.agent_uid,
+                                public_key: res.data.public_key,
+                                host: res.data.host,
+                                port: res.data.port,
+                            });
                     }
                 }
             })
@@ -632,6 +646,10 @@ const AddServer = () => {
                 mode={agentMode}
                 allow_monitor={enableMonitor}
                 allow_terminal={enableTerminal}
+                agent_uid={installConfig.agent_uid}
+                public_key={installConfig.public_key}
+                host={installConfig.host}
+                port={installConfig.port}
                 hub={installConfig.hub}
                 enroll_token={installConfig.enroll_token}
             />

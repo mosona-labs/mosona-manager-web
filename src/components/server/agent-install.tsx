@@ -17,6 +17,11 @@ const AgentInstall = ({
     mode,
     allow_monitor,
     allow_terminal,
+    // Active
+    agent_uid,
+    public_key,
+    host,
+    port,
     // Passive
     hub,
     enroll_token,
@@ -26,6 +31,11 @@ const AgentInstall = ({
     mode: 'active' | 'passive';
     allow_monitor: boolean;
     allow_terminal: boolean;
+    // Active
+    agent_uid?: string;
+    public_key?: string;
+    host?: string;
+    port?: number;
     // Passive
     hub?: string;
     enroll_token?: string;
@@ -40,7 +50,11 @@ const AgentInstall = ({
     if (!allow_terminal) {
         script.push('--no-terminal');
     }
-    script.push(mode === 'active' ? '' : `"${hub}" "${enroll_token}"`);
+    script.push(
+        mode === 'active'
+            ? `${agent_uid} ${public_key} ${host} ${port}`
+            : `"${hub}" "${enroll_token}"`
+    );
 
     return (
         <Dialog open={open}>
