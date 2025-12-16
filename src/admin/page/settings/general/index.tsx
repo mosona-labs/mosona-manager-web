@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { useSettings } from '@/admin/page/settings/useSettings.tsx';
 import { Label } from '@/components/ui/label.tsx';
@@ -29,6 +30,9 @@ const General = () => {
         ApiAdminSettings.set(updates)
             .then(() => {
                 refresh().then(() => {
+                    toast.success('Success', {
+                        description: 'Settings updated successfully.',
+                    });
                     setIsSubmitting(false);
                 });
             })

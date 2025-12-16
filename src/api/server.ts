@@ -68,7 +68,9 @@ class ApiServerClass extends baseAPI {
             ResponseInterface<{
                 id: number;
                 // Active
-                listen?: string;
+                host?: string;
+                port?: number;
+                agent_uid?: string;
                 public_key?: string;
                 // Passive
                 hub?: string;

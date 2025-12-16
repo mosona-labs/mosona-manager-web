@@ -347,7 +347,7 @@ const AddServer = () => {
                                                     <div className="flex flex-row gap-2">
                                                         <div className="flex-2 grid gap-3">
                                                             <Label htmlFor="host">
-                                                                IP / Hostname
+                                                                Listen IP / Hostname
                                                                 <IsRequired />
                                                             </Label>
                                                             <Input

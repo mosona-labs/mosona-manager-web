@@ -5,7 +5,7 @@ import { Trash2, Settings, Package, Terminal, Eye } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import ServerStatusCard from './card';
+import ServerStatusCard from './card.tsx';
 
 import { formatUptime } from '@/utils/time';
 import { ContextMenu } from '@/components/context-menu';

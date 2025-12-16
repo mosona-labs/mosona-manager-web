@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Label } from '@/components/ui/label.tsx';
 import {
@@ -19,6 +20,11 @@ import LoadingButton from '@/components/loading-button.tsx';
 const Register = () => {
     const { settings, refresh } = useSettings();
 
+    const success = () =>
+        toast.success('Success', {
+            description: 'Settings updated successfully.',
+        });
+
     // Registration Enabled
     const [registrationEnabled, setRegistrationEnabled] = useState(false);
     const [registrationEnabledLoading, setRegistrationEnabledLoading] = useState(false);
@@ -33,6 +39,7 @@ const Register = () => {
             .then(() => {
                 setRegistrationEnabled(enabled);
                 refresh().then(() => {
+                    success();
                     setRegistrationEnabledLoading(false);
                 });
             })
@@ -56,6 +63,7 @@ const Register = () => {
             .then(() => {
                 setRegistrationVerifyEmail(enabled);
                 refresh().then(() => {
+                    success();
                     setRegistrationVerifyEmailLoading(false);
                 });
             })
@@ -79,6 +87,7 @@ const Register = () => {
             .then(() => {
                 setLoginVerifyEmail(enabled);
                 refresh().then(() => {
+                    success();
                     setLoginVerifyEmailLoading(false);
                 });
             })
@@ -106,6 +115,7 @@ const Register = () => {
         ])
             .then(() => {
                 refresh().then(() => {
+                    success();
                     setCaptchaLoading(false);
                 });
             })

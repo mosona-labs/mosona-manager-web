@@ -15,17 +15,18 @@ import {
     ArrowUpDown,
     ChevronUp,
     Unplug,
+    ClockAlert,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
 
-import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
-import { MemoryUnit, NetUnit } from '@/utils/unit';
-import { osIcons } from '@/utils/icon';
-import { useUser } from '@/context/useUser';
+import { Card } from '@/components/ui/card.tsx';
+import { Badge } from '@/components/ui/badge.tsx';
+import { Progress } from '@/components/ui/progress.tsx';
+import { cn } from '@/lib/utils.ts';
+import { MemoryUnit, NetUnit } from '@/utils/unit.ts';
+import { osIcons } from '@/utils/icon.ts';
+import { useUser } from '@/context/useUser.tsx';
 import { getRemainingTime } from '@/utils/time.ts';
 
 const cycleMap: Record<number, string> = {
@@ -167,11 +168,14 @@ const ServerStatusCard = ({
                                     <span>CPU</span>
                                 </div>
                                 <span className="font-mono font-medium text-card-foreground">
-                                    {parseFloat(server.cpu.toFixed(2))}%
+                                    {server.status === 'offline'
+                                        ? '--'
+                                        : parseFloat(server.cpu.toFixed(2))}
+                                    %
                                 </span>
                             </div>
                             <Progress
-                                value={server.cpu}
+                                value={server.status === 'offline' ? 0 : server.cpu}
                                 className={'h-1.5'}
                                 color={getProgressColor(server.cpu)}
                             />
@@ -185,18 +189,24 @@ const ServerStatusCard = ({
                                     <span>Memory</span>
                                 </div>
                                 <span className="font-mono font-medium text-card-foreground">
-                                    {server.memory}%
+                                    {server.status === 'offline' ? '--' : server.memory}%
                                     {showMore && (
                                         <span className="text-muted-foreground">
                                             {' '}
-                                            ({MemoryUnit(server.memory_used, 'mb')}/
-                                            {MemoryUnit(server.memory_total, 'mb')})
+                                            (
+                                            {MemoryUnit(
+                                                server.status === 'offline'
+                                                    ? 0
+                                                    : server.memory_used,
+                                                'mb'
+                                            )}
+                                            /{MemoryUnit(server.memory_total, 'mb')})
                                         </span>
                                     )}
                                 </span>
                             </div>
                             <Progress
-                                value={server.memory}
+                                value={server.status === 'offline' ? 0 : server.memory}
                                 className={'h-1.5 text-red-500'}
                                 color={getProgressColor(server.memory)}
                             />
@@ -211,16 +221,20 @@ const ServerStatusCard = ({
                                         <span>SWAP</span>
                                     </div>
                                     <span className="font-mono font-medium text-card-foreground">
-                                        {server.swap}%
+                                        {server.status === 'offline' ? '--' : server.swap}%
                                         <span className="text-muted-foreground">
                                             {' '}
-                                            ({MemoryUnit(server.swap_used, 'mb')}/
-                                            {MemoryUnit(server.swap_total, 'mb')})
+                                            (
+                                            {MemoryUnit(
+                                                server.status === 'offline' ? 0 : server.swap_used,
+                                                'mb'
+                                            )}
+                                            /{MemoryUnit(server.swap_total, 'mb')})
                                         </span>
                                     </span>
                                 </div>
                                 <Progress
-                                    value={server.swap}
+                                    value={server.status === 'offline' ? 0 : server.swap}
                                     className={'h-1.5 text-red-500'}
                                     color={getProgressColor(server.swap)}
                                 />
@@ -235,18 +249,22 @@ const ServerStatusCard = ({
                                     <span>Disk</span>
                                 </div>
                                 <span className="font-mono font-medium text-card-foreground">
-                                    {server.disk}%
+                                    {server.status === 'offline' ? '--' : server.disk}%
                                     {showMore && (
                                         <span className="text-muted-foreground">
                                             {' '}
-                                            ({MemoryUnit(server.disk_used, 'gb')}/
-                                            {MemoryUnit(server.disk_total, 'gb')})
+                                            (
+                                            {MemoryUnit(
+                                                server.status === 'offline' ? 0 : server.disk_used,
+                                                'gb'
+                                            )}
+                                            /{MemoryUnit(server.disk_total, 'gb')})
                                         </span>
                                     )}
                                 </span>
                             </div>
                             <Progress
-                                value={server.disk}
+                                value={server.status === 'offline' ? 0 : server.disk}
                                 className="h-1.5"
                                 color={getProgressColor(server.disk)}
                             />
@@ -288,8 +306,14 @@ const ServerStatusCard = ({
                         onClick={handleToggleMore}
                     >
                         <div className="flex items-center gap-1.5 text-muted-foreground">
-                            <Clock className="h-3.5 w-3.5" />
-                            <span className="font-mono">{server.uptime}</span>
+                            {server.status === 'offline' ? (
+                                <ClockAlert className="h-3.5 w-3.5" />
+                            ) : (
+                                <Clock className="h-3.5 w-3.5" />
+                            )}
+                            <span className="font-mono">
+                                {server.status === 'offline' ? 'TODO: OFFLINE' : server.uptime}
+                            </span>
                         </div>
                         <div className="flex items-center">
                             <div className="flex items-center gap-1 text-success">
@@ -364,7 +388,7 @@ const ServerStatusCard = ({
                                         ></div>
                                     </div>
                                 </h3>
-                                <Tags server={server} />
+                                <Tags server={server} showUptime />
                             </div>
                         </div>
                         <div className={'flex flex-row w-full items-center gap-4 flex-3'}>
@@ -376,7 +400,10 @@ const ServerStatusCard = ({
                                         <span>CPU</span>
                                     </div>
                                     <span className="font-mono font-medium text-card-foreground">
-                                        {parseFloat(server.cpu.toFixed(2))}%
+                                        {server.status === 'offline'
+                                            ? '--'
+                                            : parseFloat(server.cpu.toFixed(2))}
+                                        %
                                         {showMore && (
                                             <div
                                                 className={cn(
@@ -390,7 +417,7 @@ const ServerStatusCard = ({
                                     </span>
                                 </div>
                                 <Progress
-                                    value={server.cpu}
+                                    value={server.status === 'offline' ? 0 : server.cpu}
                                     className={'h-1'}
                                     color={getProgressColor(server.cpu)}
                                 />
@@ -403,7 +430,7 @@ const ServerStatusCard = ({
                                         <span>Memory</span>
                                     </div>
                                     <span className="font-mono font-medium text-card-foreground">
-                                        {server.memory}%
+                                        {server.status === 'offline' ? '--' : server.memory}%
                                         {showMore && (
                                             <div
                                                 className={cn(
@@ -419,7 +446,7 @@ const ServerStatusCard = ({
                                     </span>
                                 </div>
                                 <Progress
-                                    value={server.memory}
+                                    value={server.status === 'offline' ? 0 : server.memory}
                                     className={'h-1 text-red-500'}
                                     color={getProgressColor(server.memory)}
                                 />
@@ -432,7 +459,7 @@ const ServerStatusCard = ({
                                         <span>Disk</span>
                                     </div>
                                     <span className="font-mono font-medium text-card-foreground">
-                                        {server.disk}%
+                                        {server.status === 'offline' ? '--' : server.disk}%
                                         {showMore && (
                                             <div
                                                 className={cn(
@@ -448,7 +475,7 @@ const ServerStatusCard = ({
                                     </span>
                                 </div>
                                 <Progress
-                                    value={server.disk}
+                                    value={server.status === 'offline' ? 0 : server.disk}
                                     className="h-1"
                                     color={getProgressColor(server.disk)}
                                 />
@@ -481,7 +508,7 @@ const ServerStatusCard = ({
     );
 };
 
-const Tags = ({ server }: { server: Server }) => (
+const Tags = ({ server, showUptime }: { server: Server; showUptime?: boolean }) => (
     <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
         <Badge className="bg-accent/70 text-accent-foreground gap-1.5">
             <img
@@ -492,6 +519,21 @@ const Tags = ({ server }: { server: Server }) => (
             />
             {server.locationName || 'Unknown'}
         </Badge>
+        {showUptime && (
+            <Badge variant={'secondary'} className="text-accent-foreground">
+                {server.status === 'offline' ? (
+                    <>
+                        <ClockAlert />
+                        Offline
+                    </>
+                ) : (
+                    <>
+                        <Clock className="h-3.5 w-3.5" />
+                        {server.uptime.split(' ')[0]}
+                    </>
+                )}
+            </Badge>
+        )}
         {server.provider && (
             <Badge className="bg-emerald-500/20 text-accent-foreground">{server.provider}</Badge>
         )}

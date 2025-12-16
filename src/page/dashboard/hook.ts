@@ -75,16 +75,16 @@ export default function useMonitors() {
         eventSourceRef.current = eventSource;
 
         const resetHeartbeat = () => {
-            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current); // 使用 ref
+            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current); // Ref
             heartbeatTimeout.current = setTimeout(() => {
                 toast.error('Connection lost', {
-                    description: 'Client will try to reconnect at 3 seconds interval.',
+                    description: 'Client will try to reconnect at 5 seconds interval.',
                 });
                 setIsLoading(true);
                 eventSource.close();
                 reconnectInterval.current = setTimeout(() => {
                     subscribe();
-                }, 3000);
+                }, 5000);
             }, 10000);
         };
 
@@ -104,13 +104,13 @@ export default function useMonitors() {
         eventSource.addEventListener('error', () => {
             if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);
             toast.error('Connection lost', {
-                description: 'Client will try to reconnect at 3 seconds interval.',
+                description: 'Client will try to reconnect at 5 seconds interval.',
             });
             setIsLoading(true);
             eventSource.close();
             reconnectInterval.current = setTimeout(() => {
                 subscribe();
-            }, 3000);
+            }, 5000);
         });
 
         return () => {

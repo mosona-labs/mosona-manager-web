@@ -63,15 +63,17 @@ const Dashboard = () => {
             </div>
             <div>
                 {/* Overview */}
-                <div className="grid gap-4 lg:grid-cols-4">
+                <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
                     <Card className="border-border bg-card p-4">
                         <div className="flex items-center gap-3">
                             <div className="rounded-lg bg-primary/10 p-2">
                                 <Server className="h-5 w-5 text-primary" />
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Total Servers</p>
-                                <p className="text-2xl font-semibold text-card-foreground">
+                                <p className="text-xs md:text-sm text-muted-foreground">
+                                    Total Servers
+                                </p>
+                                <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : total}
                                 </p>
                             </div>
@@ -83,8 +85,8 @@ const Dashboard = () => {
                                 <Monitor className="h-5 w-5 text-chart-2" />
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Online</p>
-                                <p className="text-2xl font-semibold text-card-foreground">
+                                <p className="text-xs md:text-sm text-muted-foreground">Online</p>
+                                <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : online}
                                 </p>
                             </div>
@@ -96,8 +98,8 @@ const Dashboard = () => {
                                 <Cpu className="h-5 w-5 text-chart-1" />
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Avg CPU</p>
-                                <p className="text-2xl font-semibold text-card-foreground">
+                                <p className="text-xs md:text-sm text-muted-foreground">Avg CPU</p>
+                                <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : avgCpu.toFixed(2) + '%'}
                                 </p>
                             </div>
@@ -109,8 +111,10 @@ const Dashboard = () => {
                                 <HardDrive className="h-5 w-5 text-chart-3" />
                             </div>
                             <div>
-                                <p className="text-sm text-muted-foreground">Avg Memory</p>
-                                <p className="text-2xl font-semibold text-card-foreground">
+                                <p className="text-xs md:text-sm text-muted-foreground">
+                                    Avg Memory
+                                </p>
+                                <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : avgMemory.toFixed(2) + '%'}
                                 </p>
                             </div>
