@@ -182,6 +182,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 console.error('Session not found:', sessionId);
                 return;
             }
+            console.log(existingSession?.ws?.readyState);
             if (existingSession?.ws?.readyState === WebSocket.OPEN) {
                 console.warn('WebSocket already connected for this session');
                 return;
@@ -206,6 +207,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                             if (terminalConfig) {
                                 session.terminalConfig = terminalConfig;
                             }
+                            sessions.set(sessionId, session);
                             updated.set(sessionId, { ...session });
                         }
                         return updated;
@@ -246,6 +248,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                         const session = updated.get(sessionId);
                         if (session) {
                             session.isConnected = false;
+                            sessions.set(sessionId, session);
                             updated.set(sessionId, { ...session });
                         }
                         return updated;
@@ -261,6 +264,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                             session.isConnected = false;
                             session.ws = null;
                             session.content += '\r\n[Connection closed]\r\n';
+                            sessions.set(sessionId, session);
                             updated.set(sessionId, { ...session });
                         }
                         return updated;
@@ -282,6 +286,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 session.ws.close();
                 session.ws = null;
                 session.isConnected = false;
+                sessions.set(sessionId, session);
                 updated.set(sessionId, { ...session });
             }
             return updated;
@@ -294,6 +299,8 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
             const currentSession = sessions.get(sessionId);
             if (!currentSession?.ws) {
                 console.warn('WebSocket is not connected');
+
+                connectWebSocket(sessionId, currentSession?.terminalConfig);
                 return;
             }
 

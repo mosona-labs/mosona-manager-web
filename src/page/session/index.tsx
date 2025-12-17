@@ -91,7 +91,11 @@ const Session = () => {
 
                 initLock.current = false;
 
-                if (!currentSession?.ws || currentSession.ws.readyState !== WebSocket.OPEN) {
+                if (
+                    !currentSession?.ws ||
+                    (currentSession.ws.readyState !== WebSocket.OPEN &&
+                        currentSession.ws.readyState !== WebSocket.CONNECTING)
+                ) {
                     connectWebSocket(id, {
                         cols: terminal.cols,
                         rows: terminal.rows,
