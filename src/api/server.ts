@@ -149,6 +149,25 @@ class ApiServerClass extends baseAPI {
         return this.deleteData<ResponseInterface>('/v1/server/' + serverId);
     }
 
+    async reinstallAgent(serverId: number, mode: 1 | 2, address?: string, port?: number) {
+        return this.postData<
+            ResponseInterface<{
+                // Active
+                host?: string;
+                port?: number;
+                agent_uid?: string;
+                public_key?: string;
+                // Passive
+                hub?: string;
+                enroll_token?: string;
+            }>
+        >('/v1/server/' + serverId + '/reinstall', {
+            mode,
+            address,
+            port,
+        });
+    }
+
     async setCategory(serverId: number, categoryId: number) {
         return this.putData<ResponseInterface>('/v1/server/' + serverId + '/category', {
             category_id: categoryId,

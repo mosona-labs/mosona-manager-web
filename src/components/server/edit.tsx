@@ -27,6 +27,7 @@ import LoadingButton from '@/components/loading-button.tsx';
 import AddKey from '@/page/keychain/components/add.tsx';
 import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
 import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
+import ReinstallDialog from '@/components/server/reinstall.tsx';
 
 const EditServer = ({
     open,
@@ -373,9 +374,23 @@ const EditServer = ({
                                                 </>
                                             )}
                                             <div className={'flex-1'} />
-                                            <Button type={'button'} size={'sm'} variant={'outline'}>
-                                                Reinstall
-                                            </Button>
+                                            <ReinstallDialog
+                                                id={serverID}
+                                                mode={mode == 1 ? 'active' : 'passive'}
+                                                allow_monitor={allowMonitor}
+                                                allow_terminal={allowTerminal}
+                                                address={address}
+                                                port={port}
+                                            >
+                                                <Button
+                                                    type={'button'}
+                                                    size={'sm'}
+                                                    variant={'outline'}
+                                                    onClick={() => onOpenChange(false)}
+                                                >
+                                                    Reinstall
+                                                </Button>
+                                            </ReinstallDialog>
                                         </div>
                                     </div>
                                 )}

@@ -1,5 +1,5 @@
 import { Loader, Plus } from 'lucide-react';
-import { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, memo, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Input } from '../ui/input';
@@ -610,4 +610,4 @@ const AddServer = () => {
     );
 };
 
-export default AddServer;
+export default memo(AddServer);
