@@ -5,6 +5,7 @@ export interface Server {
     location: string;
     locationName: string;
     status: 'online' | 'warning' | 'offline';
+    lastSeen: string;
     cpu: number;
     memory: number;
     memory_used: number;

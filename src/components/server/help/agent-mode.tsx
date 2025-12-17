@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { InfoIcon, MoveDownLeft, MoveUpRight } from 'lucide-react';
 
 import {
@@ -12,13 +14,17 @@ import {
 } from '@/components/ui/dialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
 
-const AgentModeDialog = () => {
+const HelpAgentMode = ({ children }: { children?: ReactNode }) => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className={'text-muted-foreground flex items-center gap-1 cursor-pointer'}>
-                    <InfoIcon size={14} /> Help
-                </div>
+                {children ? (
+                    children
+                ) : (
+                    <div className={'text-muted-foreground flex items-center gap-1 cursor-pointer'}>
+                        <InfoIcon size={14} /> Help
+                    </div>
+                )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
@@ -56,4 +62,4 @@ const AgentModeDialog = () => {
     );
 };
 
-export default AgentModeDialog;
+export default HelpAgentMode;

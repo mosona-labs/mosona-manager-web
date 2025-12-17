@@ -16,6 +16,7 @@ import useAuthKeys from '@/hooks/useAuthKeys';
 import ApiAuth from '@/api/auth';
 import { ToastError } from '@/utils/toast';
 import OAuthBtn from '@/page/auth/components/oauth.tsx';
+import ApiUser from '@/api/user.ts';
 
 const SignIn = () => {
     const navigate = useNavigate();
@@ -125,6 +126,15 @@ const SignIn = () => {
                 });
         }
     };
+
+    // Login Status
+    useEffect(() => {
+        ApiUser.me()
+            .then((res) => {
+                if (res.data.user.id != 0) navigate(jumpTarget ? jumpTarget : '/');
+            })
+            .catch(() => {});
+    }, []);
 
     // Auth Keys
     const { keys } = useAuthKeys();
@@ -269,9 +279,9 @@ const SignIn = () => {
                             ))}
                         </CardContent>
                     </Card>
-                    <Button variant={'ghost'} className="fixed bottom-4">
-                        Forget my password
-                    </Button>
+                    {/*<Button variant={'ghost'} className="fixed bottom-4">*/}
+                    {/*    Forget my password*/}
+                    {/*</Button>*/}
                 </>
             )}
         </div>

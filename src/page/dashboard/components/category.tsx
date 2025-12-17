@@ -132,6 +132,7 @@ const MonitorCard = ({
                             time.getTime() - new Date(info.time).getTime() < 5 * 1000
                                 ? 'online'
                                 : 'offline',
+                        lastSeen: info.time || '',
                         cpu: statuses[server.id]?.cpu || 0,
                         memory:
                             Math.floor((info.mem_used_mb / info.mem_total_mb) * 100 * 100) / 100 ||

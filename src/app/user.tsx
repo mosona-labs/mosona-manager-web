@@ -112,7 +112,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                             Github
                         </Button>
                     </a>
-                    <a href={'manager.mosona.cc'} target={'_blank'}>
+                    <a href={'https://manager.mosona.cc'} target={'_blank'}>
                         <Button
                             variant={'ghost'}
                             className="w-full rounded-none py-3 justify-start"

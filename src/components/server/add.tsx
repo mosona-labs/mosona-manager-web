@@ -27,8 +27,9 @@ import ApiServer, { type ServerAddRequest } from '@/api/server';
 import { ToastError } from '@/utils/toast';
 import IsRequired from '@/components/required.tsx';
 import AddKey from '@/page/keychain/components/add.tsx';
-import AgentModeDialog from '@/components/server/agent-mode.tsx';
+import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
 import AgentInstall from '@/components/server/agent-install.tsx';
+import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
 
 const AddServer = () => {
     const { categories, keys } = useUser();
@@ -189,7 +190,7 @@ const AddServer = () => {
                             <div className="flex-1 md:max-h-[75vh] overflow-y-auto px-2">
                                 <div className="grid gap-4">
                                     <div className="grid gap-3">
-                                        <Label htmlFor="name">Category</Label>
+                                        <Label>Category</Label>
                                         <div className="flex flex-row gap-2">
                                             <Select
                                                 name="category"
@@ -221,11 +222,11 @@ const AddServer = () => {
                                         </div>
                                     </div>
                                     <div className="grid gap-3">
-                                        <Label htmlFor="name">
+                                        <Label>
                                             Name
                                             <IsRequired />
                                         </Label>
-                                        <Input id="name" name="name" placeholder="LAX1" />
+                                        <Input name="name" placeholder="LAX1" />
                                     </div>
                                     <Tabs
                                         value={mode}
@@ -240,23 +241,18 @@ const AddServer = () => {
                                         <TabsContent value="ssh" className={'grid gap-4 mt-1'}>
                                             <div className="flex flex-row gap-2">
                                                 <div className="flex-2 grid gap-3">
-                                                    <Label htmlFor="host">
+                                                    <Label>
                                                         IP / Hostname
                                                         <IsRequired />
                                                     </Label>
-                                                    <Input
-                                                        id="host"
-                                                        name="address"
-                                                        placeholder="1.2.3.4"
-                                                    />
+                                                    <Input name="address" placeholder="1.2.3.4" />
                                                 </div>
                                                 <div className="flex-1 grid gap-3">
-                                                    <Label htmlFor="port">
+                                                    <Label>
                                                         Port
                                                         <IsRequired />
                                                     </Label>
                                                     <Input
-                                                        id="port"
                                                         name="port"
                                                         placeholder="22"
                                                         type="number"
@@ -268,20 +264,18 @@ const AddServer = () => {
                                                 </div>
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="username">
+                                                <Label>
                                                     Username
                                                     <IsRequired />
                                                 </Label>
                                                 <Input
-                                                    id="username"
                                                     name="username"
                                                     defaultValue="root"
                                                     placeholder="root"
                                                 />
                                             </div>
-                                            <Label htmlFor="auth">Authorization</Label>
+                                            <Label>Authorization</Label>
                                             <Tabs
-                                                id="auth"
                                                 defaultValue="password"
                                                 value={authType}
                                                 onValueChange={(e) => {
@@ -297,11 +291,7 @@ const AddServer = () => {
                                                     <TabsTrigger value="key">Key</TabsTrigger>
                                                 </TabsList>
                                                 <TabsContent value="password">
-                                                    <Input
-                                                        id="password"
-                                                        name="password"
-                                                        placeholder="Password"
-                                                    />
+                                                    <Input name="password" placeholder="Password" />
                                                     <p className="mt-1 text-xs text-muted-foreground">
                                                         We will use encrypted storage to protect
                                                         your password.
@@ -341,7 +331,7 @@ const AddServer = () => {
                                         </TabsContent>
                                         <TabsContent value="agent" className={'grid gap-3 mt-1'}>
                                             <Label>
-                                                Agent Mode <AgentModeDialog />
+                                                Agent Mode <HelpAgentMode />
                                             </Label>
                                             <Tabs
                                                 value={agentMode}
@@ -360,23 +350,21 @@ const AddServer = () => {
                                                 <TabsContent value="active" className="mt-1">
                                                     <div className="flex flex-row gap-2">
                                                         <div className="flex-2 grid gap-3">
-                                                            <Label htmlFor="host">
+                                                            <Label>
                                                                 Listen IP / Hostname
                                                                 <IsRequired />
                                                             </Label>
                                                             <Input
-                                                                id="host"
                                                                 name="address"
                                                                 placeholder="1.2.3.4"
                                                             />
                                                         </div>
                                                         <div className="flex-1 grid gap-3">
-                                                            <Label htmlFor="port">
+                                                            <Label>
                                                                 Port
                                                                 <IsRequired />
                                                             </Label>
                                                             <Input
-                                                                id="port"
                                                                 name="port"
                                                                 placeholder="22"
                                                                 type="number"
@@ -407,9 +395,8 @@ const AddServer = () => {
                                     </Tabs>
 
                                     <div className="flex flex-row justify-between mt-1 gap-3">
-                                        <Label htmlFor="monitor">Monitor Access</Label>
+                                        <Label>Monitor Access</Label>
                                         <Switch
-                                            id="monitor"
                                             name="monitor"
                                             checked={enableMonitor}
                                             onCheckedChange={(v) => {
@@ -419,9 +406,8 @@ const AddServer = () => {
                                         />
                                     </div>
                                     <div className="flex flex-row justify-between gap-3">
-                                        <Label htmlFor="terminal">Terminal Access</Label>
+                                        <Label>Terminal Access</Label>
                                         <Switch
-                                            id="terminal"
                                             name="terminal"
                                             checked={enableTerminal}
                                             onCheckedChange={(v) => {
@@ -439,9 +425,8 @@ const AddServer = () => {
                                     <Card className="py-4">
                                         <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                             <div className="grid gap-3">
-                                                <Label htmlFor="weight">Weight (Sort)</Label>
+                                                <Label>Weight (Sort)</Label>
                                                 <Input
-                                                    id="weight"
                                                     name="weight"
                                                     placeholder="0"
                                                     type="number"
@@ -451,13 +436,8 @@ const AddServer = () => {
                                                 />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="note">Note (Private)</Label>
-                                                <Input
-                                                    id="note"
-                                                    name="note"
-                                                    max={255}
-                                                    maxLength={255}
-                                                />
+                                                <Label>Note (Private)</Label>
+                                                <Input name="note" max={255} maxLength={255} />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -465,23 +445,17 @@ const AddServer = () => {
                                     <Card className="py-4">
                                         <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                             <div className="grid gap-3">
-                                                <Label htmlFor="provider">
-                                                    Provider / Data Center
-                                                </Label>
+                                                <Label>Provider / Data Center</Label>
                                                 <Input
-                                                    id="provider"
                                                     name="provider"
                                                     placeholder="AWS, DigitalOcean, etc."
                                                     maxLength={255}
                                                 />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="bill-cycle">Cycle</Label>
+                                                <Label>Cycle</Label>
                                                 <Select defaultValue="-1" name="cycle">
-                                                    <SelectTrigger
-                                                        id="bill-cycle"
-                                                        className="w-full"
-                                                    >
+                                                    <SelectTrigger className="w-full">
                                                         <SelectValue placeholder="Select Cycle" />
                                                     </SelectTrigger>
                                                     <SelectContent>
@@ -497,7 +471,7 @@ const AddServer = () => {
                                                 </Select>
                                             </div>
                                             <div className="grid gap-1.5">
-                                                <Label htmlFor="start-time">
+                                                <Label>
                                                     Start Time{' '}
                                                     <Button
                                                         type="button"
@@ -510,13 +484,12 @@ const AddServer = () => {
                                                     </Button>
                                                 </Label>
                                                 <DatePicker
-                                                    id="start-time"
                                                     date={startTime}
                                                     setDate={setStartTime}
                                                 />
                                             </div>
                                             <div className="grid gap-1.5">
-                                                <Label htmlFor="end-time">
+                                                <Label>
                                                     End Time
                                                     <Button
                                                         type="button"
@@ -528,14 +501,10 @@ const AddServer = () => {
                                                         Clear
                                                     </Button>
                                                 </Label>
-                                                <DatePicker
-                                                    id="end-time"
-                                                    date={endTime}
-                                                    setDate={setEndTime}
-                                                />
+                                                <DatePicker date={endTime} setDate={setEndTime} />
                                             </div>
                                             <div className="grid gap-1.5">
-                                                <Label htmlFor="bill-note">
+                                                <Label>
                                                     Amount
                                                     <Button
                                                         type="button"
@@ -557,7 +526,6 @@ const AddServer = () => {
                                                     </Button>
                                                 </Label>
                                                 <Input
-                                                    id="bill-amount"
                                                     name="amount"
                                                     placeholder="€100"
                                                     maxLength={255}
@@ -566,12 +534,10 @@ const AddServer = () => {
                                                 />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="bill-auto-renew">Auto Renew</Label>
-                                                <Switch
-                                                    id="bill-auto-renew"
-                                                    name="auto_renew"
-                                                    defaultChecked
-                                                />
+                                                <Label>
+                                                    Auto Renew <HelpAutoRenew />
+                                                </Label>
+                                                <Switch name="auto_renew" defaultChecked />
                                             </div>
                                         </CardContent>
                                     </Card>
@@ -579,26 +545,17 @@ const AddServer = () => {
                                     <Card className="py-4">
                                         <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                             <div className="grid gap-3">
-                                                <Label htmlFor="bandwidth">Bandwidth</Label>
-                                                <Input
-                                                    id="bandwidth"
-                                                    name="bandwidth"
-                                                    placeholder="1Gbps"
-                                                />
+                                                <Label>Bandwidth</Label>
+                                                <Input name="bandwidth" placeholder="1Gbps" />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="traffic">Traffic</Label>
-                                                <Input
-                                                    id="traffic"
-                                                    name="traffic"
-                                                    placeholder="1TB/Mo"
-                                                />
+                                                <Label>Traffic</Label>
+                                                <Input name="traffic" placeholder="1TB/Mo" />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="traffic_type">Traffic Type</Label>
+                                                <Label>Traffic Type</Label>
                                                 <Select defaultValue="-1" name="traffic_type">
                                                     <SelectTrigger
-                                                        id="traffic_type"
                                                         name="traffic_type"
                                                         className="w-full"
                                                     >
@@ -613,12 +570,8 @@ const AddServer = () => {
                                                 </Select>
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label htmlFor="network-note">Note (Public)</Label>
-                                                <Input
-                                                    id="network-note"
-                                                    name="note_public"
-                                                    placeholder="AS114514"
-                                                />
+                                                <Label>Note (Public)</Label>
+                                                <Input name="note_public" placeholder="AS114514" />
                                             </div>
                                         </CardContent>
                                     </Card>

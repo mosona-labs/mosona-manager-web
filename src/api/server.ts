@@ -10,11 +10,8 @@ export type ServerMinimalType = {
 export type ServerFullType = {
     id: number;
     category: number;
+    type: number;
     name: string;
-    address: string;
-    port: number;
-    username: string;
-    key_id: number;
     allow_monitor: boolean;
     allow_terminal: boolean;
     weight: number;
@@ -29,6 +26,20 @@ export type ServerFullType = {
     traffic: string;
     traffic_type: number;
     note_public: string;
+
+    // Connection
+    address: string;
+    port: number;
+
+    // SSH
+    username: string;
+    key_id: number;
+
+    // Agent
+    agent_uuid?: string;
+    agent_status: number;
+    agent_version?: string;
+    agent_last_seen_at?: string;
 };
 
 export type ServerAddRequest = {

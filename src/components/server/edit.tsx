@@ -1,6 +1,6 @@
 import { type Dispatch, type FormEvent, type SetStateAction, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import { Loader, Plus } from 'lucide-react';
+import { CircleSlash, InfoIcon, Loader, MonitorCheck, Plug, Plus } from 'lucide-react';
 
 import {
     Dialog,
@@ -25,6 +25,8 @@ import ApiServer from '@/api/server';
 import { ToastError } from '@/utils/toast';
 import LoadingButton from '@/components/loading-button.tsx';
 import AddKey from '@/page/keychain/components/add.tsx';
+import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
+import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
 
 const EditServer = ({
     open,
@@ -38,6 +40,11 @@ const EditServer = ({
     const { categories, keys } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const [mode, setMode] = useState<number>();
+    const [agentUUID, setAgentUUID] = useState<string>();
+    const [agentStatus, setAgentStatus] = useState<number>();
+    const [agentVersion, setAgentVersion] = useState<string>();
 
     // form fields
     const [category, setCategory] = useState<number | undefined>(undefined);
@@ -92,6 +99,10 @@ const EditServer = ({
                 if (data.data.key_id) {
                     setAuthType('key');
                 }
+                setMode(data.data.type);
+                setAgentUUID(data.data.agent_uuid);
+                setAgentStatus(data.data.agent_status);
+                setAgentVersion(data.data.agent_version);
             })
             .catch(ToastError)
             .finally(() => {
@@ -178,112 +189,200 @@ const EditServer = ({
                                     </Select>
                                 </div>
                                 <div className="grid gap-3">
-                                    <Label htmlFor="name">Name</Label>
+                                    <Label>Name</Label>
                                     <Input
-                                        id="name"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
                                         placeholder="LAX1"
                                     />
                                 </div>
-                                <div className="flex flex-row gap-2">
-                                    <div className="flex-2 grid gap-3">
-                                        <Label htmlFor="host">IP / Hostname</Label>
-                                        <Input
-                                            id="host"
-                                            value={address}
-                                            onChange={(e) => setAddress(e.target.value)}
-                                            placeholder="1.2.3.4"
-                                        />
+                                <div className={'bg-muted p-3 rounded-md space-y-2'}>
+                                    <div className={'flex flex-row items-center gap-1'}>
+                                        <Plug size={18} />
+                                        {mode === 0
+                                            ? 'SSH'
+                                            : mode === 1
+                                              ? 'Agent (Active)'
+                                              : mode === 2
+                                                ? 'Agent (Passive)'
+                                                : 'Agent'}{' '}
+                                        Mode
+                                        <div className={'flex-1'} />
+                                        {mode !== 0 && (
+                                            <HelpAgentMode>
+                                                <InfoIcon
+                                                    size={14}
+                                                    className={
+                                                        'text-muted-foreground cursor-pointer'
+                                                    }
+                                                />
+                                            </HelpAgentMode>
+                                        )}
                                     </div>
-                                    <div className="flex-1 grid gap-3">
-                                        <Label htmlFor="port">Port</Label>
-                                        <Input
-                                            id="port"
-                                            type="number"
-                                            min={1}
-                                            max={65535}
-                                            step={1}
-                                            value={port}
-                                            onChange={(e) =>
-                                                setPort(parseInt(e.target.value || '22'))
-                                            }
-                                            placeholder="22"
-                                        />
-                                    </div>
+                                    <p className={'text-xs text-muted-foreground'}>
+                                        {mode === 0
+                                            ? 'Connect to the server via SSH protocol.'
+                                            : mode === 1
+                                              ? 'Hub actively connects to the agent.'
+                                              : mode === 2
+                                                ? 'Agent passively connects to the hub.'
+                                                : 'Agent-based server management.'}
+                                    </p>
                                 </div>
-                                <div className="grid gap-3">
-                                    <Label htmlFor="username">Username</Label>
-                                    <Input
-                                        id="username"
-                                        value={username}
-                                        onChange={(e) => setUsername(e.target.value)}
-                                        placeholder="root"
-                                    />
-                                </div>
-
-                                <Label>Authorization</Label>
-                                <Tabs
-                                    value={authType}
-                                    onValueChange={(v) => {
-                                        setAuthType(v === 'password' ? 'password' : 'key');
-                                        if (v === 'password') {
-                                            setKeyId(0);
-                                        } else {
-                                            setPassword('');
-                                        }
-                                    }}
-                                >
-                                    <TabsList className="w-full">
-                                        <TabsTrigger value="password">Password</TabsTrigger>
-                                        <TabsTrigger value="key">Key</TabsTrigger>
-                                    </TabsList>
-                                    <TabsContent value="password">
-                                        <Input
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Password (Keep empty to not change)"
-                                        />
-                                    </TabsContent>
-                                    <TabsContent value="key">
-                                        {/*<Input*/}
-                                        {/*    value={password}*/}
-                                        {/*    onChange={(e) => setPassword(e.target.value)}*/}
-                                        {/*    placeholder="Password (Keep empty to not change)"*/}
-                                        {/*/>*/}
-                                        <div className="flex flex-row gap-1.5">
-                                            <Select
-                                                value={keyId ? keyId.toString() : '0'}
-                                                onValueChange={(v) => setKeyId(parseInt(v || '0'))}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Select Key" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="0">None</SelectItem>
-                                                    {keys?.map((item) => (
-                                                        <SelectItem
-                                                            key={item.id}
-                                                            value={item.id.toString()}
-                                                        >
-                                                            {item.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            <AddKey>
-                                                <Button variant="outline">
-                                                    <Plus />
-                                                </Button>
-                                            </AddKey>
+                                {(mode === 0 || mode === 1) && (
+                                    <>
+                                        <div className="flex flex-row gap-2">
+                                            <div className="flex-2 grid gap-3">
+                                                <Label>IP / Hostname</Label>
+                                                <Input
+                                                    value={address}
+                                                    onChange={(e) => setAddress(e.target.value)}
+                                                    placeholder="1.2.3.4"
+                                                    disabled={mode == 1}
+                                                />
+                                            </div>
+                                            <div className="flex-1 grid gap-3">
+                                                <Label>Port</Label>
+                                                <Input
+                                                    type="number"
+                                                    min={1}
+                                                    max={65535}
+                                                    step={1}
+                                                    value={port}
+                                                    onChange={(e) =>
+                                                        setPort(parseInt(e.target.value || '22'))
+                                                    }
+                                                    placeholder="22"
+                                                    disabled={mode == 1}
+                                                />
+                                            </div>
                                         </div>
-                                    </TabsContent>
-                                </Tabs>
+                                    </>
+                                )}
+                                {mode === 0 && (
+                                    <>
+                                        <div className="grid gap-3">
+                                            <Label>Username</Label>
+                                            <Input
+                                                value={username}
+                                                onChange={(e) => setUsername(e.target.value)}
+                                                placeholder="root"
+                                            />
+                                        </div>
+                                        <Label>Authorization</Label>
+                                        <Tabs
+                                            value={authType}
+                                            onValueChange={(v) => {
+                                                setAuthType(v === 'password' ? 'password' : 'key');
+                                                if (v === 'password') {
+                                                    setKeyId(0);
+                                                } else {
+                                                    setPassword('');
+                                                }
+                                            }}
+                                        >
+                                            <TabsList className="w-full">
+                                                <TabsTrigger value="password">Password</TabsTrigger>
+                                                <TabsTrigger value="key">Key</TabsTrigger>
+                                            </TabsList>
+                                            <TabsContent value="password">
+                                                <Input
+                                                    value={password}
+                                                    onChange={(e) => setPassword(e.target.value)}
+                                                    placeholder="Password (Keep empty to not change)"
+                                                />
+                                            </TabsContent>
+                                            <TabsContent value="key">
+                                                {/*<Input*/}
+                                                {/*    value={password}*/}
+                                                {/*    onChange={(e) => setPassword(e.target.value)}*/}
+                                                {/*    placeholder="Password (Keep empty to not change)"*/}
+                                                {/*/>*/}
+                                                <div className="flex flex-row gap-1.5">
+                                                    <Select
+                                                        value={keyId ? keyId.toString() : '0'}
+                                                        onValueChange={(v) =>
+                                                            setKeyId(parseInt(v || '0'))
+                                                        }
+                                                    >
+                                                        <SelectTrigger className="w-full">
+                                                            <SelectValue placeholder="Select Key" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            <SelectItem value="0">None</SelectItem>
+                                                            {keys?.map((item) => (
+                                                                <SelectItem
+                                                                    key={item.id}
+                                                                    value={item.id.toString()}
+                                                                >
+                                                                    {item.name}
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                    <AddKey>
+                                                        <Button variant="outline">
+                                                            <Plus />
+                                                        </Button>
+                                                    </AddKey>
+                                                </div>
+                                            </TabsContent>
+                                        </Tabs>
+                                    </>
+                                )}
+                                {mode === 1 && (
+                                    <div className="grid gap-3">
+                                        <Label>UUID</Label>
+                                        <Input
+                                            value={agentUUID}
+                                            placeholder={'Not Initialized'}
+                                            disabled
+                                        />
+                                    </div>
+                                )}
+                                {mode !== 0 && (
+                                    <div className="grid gap-3">
+                                        <Label>Agent</Label>
+                                        <div
+                                            className={
+                                                'border p-4 rounded-md gap-3 flex flex-row items-center'
+                                            }
+                                        >
+                                            {agentStatus === 0 ? (
+                                                <>
+                                                    <CircleSlash className={'text-orange-400'} />
+                                                    <h1 className={'font-semibold'}>
+                                                        Not Installed
+                                                    </h1>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <MonitorCheck className={'text-green-400'} />
+                                                    <div>
+                                                        <h1 className={'font-semibold'}>
+                                                            Installed
+                                                        </h1>
+                                                        <p
+                                                            className={
+                                                                'my-0 text-xs text-muted-foreground'
+                                                            }
+                                                        >
+                                                            v{agentVersion}
+                                                        </p>
+                                                    </div>
+                                                </>
+                                            )}
+                                            <div className={'flex-1'} />
+                                            <Button type={'button'} size={'sm'} variant={'outline'}>
+                                                Reinstall
+                                            </Button>
+                                        </div>
+                                    </div>
+                                )}
 
                                 <div className="flex flex-row justify-between mt-1 gap-3">
-                                    <Label htmlFor="monitor">Monitor Access</Label>
+                                    <Label>Monitor Access</Label>
                                     <Switch
-                                        id="monitor"
                                         checked={allowMonitor}
                                         onCheckedChange={(v) => {
                                             setAllowMonitor(v);
@@ -292,9 +391,8 @@ const EditServer = ({
                                     />
                                 </div>
                                 <div className="flex flex-row justify-between gap-3">
-                                    <Label htmlFor="terminal">Terminal Access</Label>
+                                    <Label>Terminal Access</Label>
                                     <Switch
-                                        id="terminal"
                                         checked={allowTerminal}
                                         onCheckedChange={(v) => {
                                             setAllowTerminal(v);
@@ -313,9 +411,8 @@ const EditServer = ({
                                 <Card className="py-4">
                                     <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                         <div className="grid gap-3">
-                                            <Label htmlFor="weight">Weight (Sort)</Label>
+                                            <Label>Weight (Sort)</Label>
                                             <Input
-                                                id="weight"
                                                 type="number"
                                                 value={weight}
                                                 onChange={(e) =>
@@ -324,9 +421,8 @@ const EditServer = ({
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label htmlFor="note">Note (Private)</Label>
+                                            <Label>Note (Private)</Label>
                                             <Input
-                                                id="note"
                                                 value={note}
                                                 onChange={(e) => setNote(e.target.value)}
                                             />
@@ -338,21 +434,20 @@ const EditServer = ({
                                 <Card className="py-4">
                                     <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                         <div className="grid gap-3">
-                                            <Label htmlFor="provider">Provider / Data Center</Label>
+                                            <Label>Provider / Data Center</Label>
                                             <Input
-                                                id="provider"
                                                 value={provider}
                                                 onChange={(e) => setProvider(e.target.value)}
                                                 placeholder="AWS, DigitalOcean, etc."
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label htmlFor="bill-cycle">Cycle</Label>
+                                            <Label>Cycle</Label>
                                             <Select
                                                 value={cycle.toString()}
                                                 onValueChange={(v) => setCycle(parseInt(v))}
                                             >
-                                                <SelectTrigger id="bill-cycle" className="w-full">
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Select Cycle" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -367,7 +462,7 @@ const EditServer = ({
                                         </div>
 
                                         <div className="grid gap-1.5">
-                                            <Label htmlFor="start-time">
+                                            <Label>
                                                 Start Time
                                                 <Button
                                                     type="button"
@@ -379,14 +474,10 @@ const EditServer = ({
                                                     Clear
                                                 </Button>
                                             </Label>
-                                            <DatePicker
-                                                id="start-time"
-                                                date={startTime}
-                                                setDate={setStartTime}
-                                            />
+                                            <DatePicker date={startTime} setDate={setStartTime} />
                                         </div>
                                         <div className="grid gap-1.5">
-                                            <Label htmlFor="end-time">
+                                            <Label>
                                                 End Time
                                                 <Button
                                                     type="button"
@@ -398,15 +489,11 @@ const EditServer = ({
                                                     Clear
                                                 </Button>
                                             </Label>
-                                            <DatePicker
-                                                id="end-time"
-                                                date={endTime}
-                                                setDate={setEndTime}
-                                            />
+                                            <DatePicker date={endTime} setDate={setEndTime} />
                                         </div>
 
                                         <div className="grid gap-1.5">
-                                            <Label htmlFor="bill-amount">
+                                            <Label>
                                                 Amount
                                                 <Button
                                                     type="button"
@@ -428,16 +515,16 @@ const EditServer = ({
                                                 </Button>
                                             </Label>
                                             <Input
-                                                id="bill-amount"
                                                 value={amount ?? ''}
                                                 onChange={(e) => setAmount(e.target.value)}
                                                 placeholder="€100"
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label htmlFor="bill-auto-renew">Auto Renew</Label>
+                                            <Label>
+                                                Auto Renew <HelpAutoRenew />
+                                            </Label>
                                             <Switch
-                                                id="bill-auto-renew"
                                                 checked={autoRenew}
                                                 onCheckedChange={(v) => setAutoRenew(v)}
                                             />
@@ -449,30 +536,28 @@ const EditServer = ({
                                 <Card className="py-4">
                                     <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                         <div className="grid gap-3">
-                                            <Label htmlFor="bandwidth">Bandwidth</Label>
+                                            <Label>Bandwidth</Label>
                                             <Input
-                                                id="bandwidth"
                                                 value={bandwidth}
                                                 onChange={(e) => setBandwidth(e.target.value)}
                                                 placeholder="1Gbps"
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label htmlFor="traffic">Traffic</Label>
+                                            <Label>Traffic</Label>
                                             <Input
-                                                id="traffic"
                                                 value={traffic}
                                                 onChange={(e) => setTraffic(e.target.value)}
                                                 placeholder="1TB/Mo"
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label htmlFor="traffic_type">Traffic Type</Label>
+                                            <Label>Traffic Type</Label>
                                             <Select
                                                 value={trafficType.toString()}
                                                 onValueChange={(v) => setTrafficType(parseInt(v))}
                                             >
-                                                <SelectTrigger id="traffic_type" className="w-full">
+                                                <SelectTrigger className="w-full">
                                                     <SelectValue placeholder="Select Type" />
                                                 </SelectTrigger>
                                                 <SelectContent>
@@ -484,9 +569,8 @@ const EditServer = ({
                                             </Select>
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label htmlFor="network-note">Note (Public)</Label>
+                                            <Label>Note (Public)</Label>
                                             <Input
-                                                id="network-note"
                                                 value={notePublic}
                                                 onChange={(e) => setNotePublic(e.target.value)}
                                                 placeholder="AS114514"

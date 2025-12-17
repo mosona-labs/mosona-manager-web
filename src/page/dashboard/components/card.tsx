@@ -27,7 +27,7 @@ import { cn } from '@/lib/utils.ts';
 import { MemoryUnit, NetUnit } from '@/utils/unit.ts';
 import { osIcons } from '@/utils/icon.ts';
 import { useUser } from '@/context/useUser.tsx';
-import { getRemainingTime } from '@/utils/time.ts';
+import { formatUptime, getRemainingTime } from '@/utils/time.ts';
 
 const cycleMap: Record<number, string> = {
     1: 'Mo',
@@ -312,7 +312,9 @@ const ServerStatusCard = ({
                                 <Clock className="h-3.5 w-3.5" />
                             )}
                             <span className="font-mono">
-                                {server.status === 'offline' ? 'TODO: OFFLINE' : server.uptime}
+                                {server.status === 'offline'
+                                    ? formatUptime(server.lastSeen)
+                                    : server.uptime}
                             </span>
                         </div>
                         <div className="flex items-center">
