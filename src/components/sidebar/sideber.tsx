@@ -9,6 +9,7 @@ import {
     BadgeInfo,
     X,
     UserRoundCog,
+    Settings,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,6 +51,7 @@ const sidebarItems: {
     },
     { title: 'Team', icon: <Briefcase size={22} />, path: '/team' },
     { title: 'Profile', icon: <UserRoundCog size={22} />, path: '/profile' },
+    { title: 'Settings', icon: <Settings size={22} />, path: '/settings' },
     {
         title: 'Other',
     },

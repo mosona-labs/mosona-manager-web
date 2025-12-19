@@ -11,7 +11,7 @@ import {
     SelectValue,
 } from '@/components/ui/select.tsx';
 import { Input } from '@/components/ui/input.tsx';
-import EnableCard from '@/admin/page/settings/components/enable-card.tsx';
+import EnableCard from '@/components/enable-card.tsx';
 import { useSettings } from '@/admin/page/settings/useSettings.tsx';
 import ApiAdminSettings from '@/api/admin/settings.ts';
 import { ToastError } from '@/utils/toast.ts';
@@ -188,7 +188,7 @@ const Register = () => {
                 <div className={'space-y-1.5'}>
                     <Label className={'text-xs'}>Provider</Label>
                     <Select value={'turnstile'}>
-                        <SelectTrigger className="max-w-[22rem] w-full" disabled>
+                        <SelectTrigger className="max-w-[26rem] w-full" disabled>
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -206,7 +206,7 @@ const Register = () => {
                             setCaptchaSiteKey(e.target.value);
                         }}
                         placeholder="0xAAAAAAAAAAAAA"
-                        className={'max-w-[22rem] w-full'}
+                        className={'max-w-[26rem] w-full'}
                     />
                 </div>
                 <div className={'space-y-1.5'}>
@@ -217,7 +217,7 @@ const Register = () => {
                             setCaptchaSecretKey(e.target.value);
                         }}
                         placeholder="0xBBBBBBBBBBBBBBBBBBB"
-                        className={'max-w-[22rem] w-full'}
+                        className={'max-w-[26rem] w-full'}
                     />
                 </div>
                 <div className={'mt-1'}>

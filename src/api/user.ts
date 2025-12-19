@@ -34,14 +34,14 @@ export type AuthIdentityType = {
 };
 
 class ApiUserClass extends baseAPI {
-    async me() {
+    async me(authRequired: boolean = true) {
         return this.getData<
             ResponseInterface<{
                 user: UserType;
                 team: TeamType;
                 teams: TeamType[];
             }>
-        >('/v1/user/me');
+        >('/v1/user/me', authRequired);
     }
 
     async find(email: string) {

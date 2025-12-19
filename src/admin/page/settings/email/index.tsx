@@ -12,7 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select.tsx';
-import EnableCard from '@/admin/page/settings/components/enable-card.tsx';
+import EnableCard from '@/components/enable-card.tsx';
 import TestEmail from '@/admin/page/settings/email/components/test.tsx';
 import ApiAdminSettings from '@/api/admin/settings.ts';
 import { ToastError } from '@/utils/toast.ts';
@@ -83,7 +83,7 @@ const Email = () => {
                             setEmailProvider(e);
                         }}
                     >
-                        <SelectTrigger className="max-w-[22rem] w-full">
+                        <SelectTrigger className="max-w-[26rem] w-full">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -104,7 +104,7 @@ const Email = () => {
                                     setSmtpHost(e.target.value);
                                 }}
                                 placeholder={'smtp.example.com'}
-                                className={'max-w-[22rem] w-full'}
+                                className={'max-w-[26rem] w-full'}
                             />
                         </div>
                         <div className={'space-y-1.5'}>
@@ -117,7 +117,7 @@ const Email = () => {
                                     setSmtpPort(e.target.value);
                                 }}
                                 placeholder={'587'}
-                                className={'max-w-[22rem] w-full'}
+                                className={'max-w-[26rem] w-full'}
                             />
                         </div>
                         <div className={'space-y-1.5'}>
@@ -128,7 +128,7 @@ const Email = () => {
                                     setSmtpUsername(e.target.value);
                                 }}
                                 placeholder={'admin@example.com'}
-                                className={'max-w-[22rem] w-full'}
+                                className={'max-w-[26rem] w-full'}
                             />
                         </div>
                         <div className={'space-y-1.5'}>
@@ -139,7 +139,7 @@ const Email = () => {
                                     setSmtpPassword(e.target.value);
                                 }}
                                 placeholder={'*******'}
-                                className={'max-w-[22rem] w-full'}
+                                className={'max-w-[26rem] w-full'}
                             />
                         </div>
                         <div className={'space-y-1.5'}>
@@ -149,7 +149,7 @@ const Email = () => {
                                 onChange={(v) => {
                                     setSmtpEncryption(v);
                                 }}
-                                className={'max-w-[22rem]'}
+                                className={'max-w-[26rem]'}
                                 title={'Use TLS'}
                                 description={'Enable TLS for secure email transmission.'}
                             />

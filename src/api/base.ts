@@ -31,7 +31,7 @@ export class baseAPI {
         }
     }
 
-    async getData<T>(path: string, needLogin: boolean = true): Promise<T> {
+    async getData<T>(path: string, authRequired: boolean = true): Promise<T> {
         try {
             const response = await axios.get(API_BASE_URL + path);
             if (response.data.code === '2fa_required') {
@@ -40,7 +40,7 @@ export class baseAPI {
             }
             return response.data;
         } catch (error: any) {
-            if (needLogin && error.response.data.code === 'login') {
+            if (authRequired && error.response.data.code === 'login') {
                 window.location.href =
                     '/auth?jump=' + window.location.pathname + window.location.hash;
                 return null as T;
@@ -66,12 +66,12 @@ export class baseAPI {
         }
     }
 
-    async deleteData<T>(path: string, needLogin: boolean = true): Promise<T> {
+    async deleteData<T>(path: string, authRequired: boolean = true): Promise<T> {
         try {
             const response = await axios.delete(API_BASE_URL + path);
             return response.data;
         } catch (error: any) {
-            if (needLogin && error.response.data.code === 'login') {
+            if (authRequired && error.response.data.code === 'login') {
                 window.location.href =
                     '/auth?jump=' + window.location.pathname + window.location.hash;
                 return null as T;

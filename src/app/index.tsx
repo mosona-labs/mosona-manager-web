@@ -20,6 +20,7 @@ import Team from '@/page/team';
 import Logs from '@/page/logs';
 import Profile from '@/page/profile';
 import Keychain from '@/page/keychain';
+import Settings from '@/page/settings';
 
 function App() {
     // Theme
@@ -63,6 +64,7 @@ function App() {
                     <Route path="/logs" element={<Logs />} />
                     <Route path="/team" element={<Team />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
                     <Route path="/about" element={<About />} />
                     {/* Create Team */}
                     <Route path="/create-team" element={<CreateTeam />} />

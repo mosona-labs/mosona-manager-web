@@ -129,7 +129,7 @@ const SignIn = () => {
 
     // Login Status
     useEffect(() => {
-        ApiUser.me()
+        ApiUser.me(false)
             .then((res) => {
                 if (res.data.user.id != 0) navigate(jumpTarget ? jumpTarget : '/');
             })

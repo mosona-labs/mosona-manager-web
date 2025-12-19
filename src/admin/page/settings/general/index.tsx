@@ -66,7 +66,7 @@ const General = () => {
                             setDomain(e.target.value);
                         }}
                         placeholder={'https://example.com'}
-                        className={'max-w-[22rem] w-full'}
+                        className={'max-w-[26rem] w-full'}
                     />
                     <p className={'text-xs text-muted-foreground'}>
                         The base URL of your application. This is used for generating links, oauth
