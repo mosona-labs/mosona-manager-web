@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
-import { type MonitorType, type ServerStatusType } from '@/api/monitor';
+import { type MonitorType, type ServerStatusType } from '@/api/monitor.ts';
 import { useUser } from '@/context/useUser.tsx';
 
 export default function useMonitors() {

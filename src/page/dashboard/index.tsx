@@ -11,7 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import CategoryCard from './components/category';
-import useMonitors from './hook';
+import useMonitors from './hook/hook.ts';
 import DetailBtn from './components/detail-btn';
 
 import { Card } from '@/components/ui/card';

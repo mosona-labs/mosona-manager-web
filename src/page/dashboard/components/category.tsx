@@ -1,22 +1,24 @@
 import type { CategoryType } from '@/api/category';
 import type { MonitorType, ServerStatusType } from '@/api/monitor';
 
-import { Trash2, Settings, Package, Terminal, Eye } from 'lucide-react';
+import { Trash2, Settings, Package, Terminal, Eye, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import ServerStatusCard from './card.tsx';
 
+import { cn } from '@/lib/utils.ts';
 import { formatUptime } from '@/utils/time';
 import { ContextMenu } from '@/components/context-menu';
 import EditCategory from '@/components/category/edit';
 import EditServer from '@/components/server/edit';
 import { useSession } from '@/context/useSession';
 import { useUser } from '@/context/useUser.tsx';
-import { cn } from '@/lib/utils.ts';
+import DeleteServer from '@/components/server/delete.tsx';
+import AlertDialog from '@/page/dashboard/components/alerts/alerts.tsx';
+import { AlertProvider } from '@/page/dashboard/hook/useAlert.tsx';
 
 import '../components/category.css';
-import DeleteServer from '@/components/server/delete.tsx';
 
 const MonitorCard = ({
     server,
@@ -51,6 +53,7 @@ const MonitorCard = ({
     const [openCategory, setOpenCategory] = useState<boolean>(false);
     const [openEdit, setOpenEdit] = useState<boolean>(false);
     const [openDelete, setOpenDelete] = useState<boolean>(false);
+    const [openAlert, setOpenAlert] = useState<boolean>(false);
 
     return (
         <div key={server.id} className={'h-full'}>
@@ -87,6 +90,17 @@ const MonitorCard = ({
                               },
                           ]
                         : []),
+                    {
+                        separator: true,
+                        label: '',
+                    },
+                    {
+                        label: 'Notifications',
+                        icon: <Bell className="h-4 w-4" />,
+                        onClick: () => {
+                            setOpenAlert(true);
+                        },
+                    },
                     {
                         separator: true,
                         label: '',
@@ -186,6 +200,12 @@ const MonitorCard = ({
                 serverName={server.name}
                 serverID={server.id}
             />
+            <AlertDialog
+                open={openAlert}
+                onOpenChange={setOpenAlert}
+                serverID={server.id}
+                serverName={server.name}
+            />
         </div>
     );
 };
@@ -204,7 +224,7 @@ const CategoryCard = ({
     const { config } = useUser();
 
     return (
-        <div key={category.id}>
+        <AlertProvider key={category.id}>
             <div className="mt-4">
                 <p className="mt-4 opacity-65">{category.name}</p>
             </div>
@@ -221,7 +241,7 @@ const CategoryCard = ({
                     <MonitorCard key={server.id} server={server} statuses={statuses} time={time} />
                 ))}
             </div>
-        </div>
+        </AlertProvider>
     );
 };
 
