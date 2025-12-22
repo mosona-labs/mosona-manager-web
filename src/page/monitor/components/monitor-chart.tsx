@@ -237,16 +237,15 @@ export function MonitorChart({
                             }}
                             content={Tooltip}
                         />
-
                         {keys.map((k, i) => {
                             return (
                                 <Area
                                     key={k}
                                     dataKey={k}
                                     type="monotone"
-                                    fill={`var(--chart-${(i % 6) + 1})`}
+                                    fill={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
                                     fillOpacity={0.4}
-                                    stroke={`var(--chart-${(i % 6) + 1})`}
+                                    stroke={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
                                     isAnimationActive={false}
                                 />
                             );

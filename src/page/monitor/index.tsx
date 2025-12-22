@@ -353,11 +353,11 @@ const Monitor = () => {
                         <span>I/O</span>
                     </div>
                     <div className="font-mono text-lg flex items-center gap-2">
-                        <HardDriveUpload className="h-3 w-3" />
+                        <HardDriveUpload className="h-4 w-4" />
                         {realTimeStatus
                             ? MemoryUnit(realTimeStatus.disk_read_kib_s, 'kb') + '/s'
                             : 'N/A'}
-                        <HardDriveDownload className="h-3 w-3" />
+                        <HardDriveDownload className="h-4 w-4" />
                         {realTimeStatus
                             ? MemoryUnit(realTimeStatus.disk_write_kib_s, 'kb') + '/s'
                             : 'N/A'}
@@ -369,9 +369,9 @@ const Monitor = () => {
                         <span>Network</span>
                     </div>
                     <div className="font-mono text-lg flex items-center gap-2">
-                        <ArrowUp className="h-3 w-3" />
+                        <ArrowUp className="h-4 w-4" />
                         {realTimeStatus ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s' : 'N/A'}
-                        <ArrowDown className="h-3 w-3" />
+                        <ArrowDown className="h-4 w-4" />
                         {realTimeStatus ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s' : 'N/A'}
                     </div>
                 </div>
@@ -505,10 +505,15 @@ const Monitor = () => {
                     nowTime={nowTime}
                     title="Disk I/O"
                     description={'Read and write speed of root filesystem'}
-                    keyName={['Read', 'Write']}
+                    keyName={['Read', 'Write', 'Read IOPS', 'Write IOPS']}
                     keyUnit={['/s', '/s']}
                     autoUnit={'kb'}
-                    keyObj={['disk_read_kib_s', 'disk_write_kib_s']}
+                    keyObj={[
+                        'disk_read_kib_s',
+                        'disk_write_kib_s',
+                        'disk_read_iops',
+                        'disk_write_iops',
+                    ]}
                     yWidth={46}
                     colorClass={'blue-yellow'}
                 />
