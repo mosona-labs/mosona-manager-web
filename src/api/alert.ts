@@ -27,16 +27,26 @@ class ApiAlertClass extends baseAPI {
         >('/v1/alert');
     }
 
-    async set(server_id: number, item: string, threshold: number, for_duration: number) {
+    async set(
+        server_id: number,
+        item: string,
+        threshold: number,
+        for_duration: number,
+        override: boolean = false
+    ) {
         return this.putData<ResponseInterface<number>>('/v1/alert/' + server_id, {
             item,
             threshold,
             for_duration,
+            override,
         });
     }
 
-    async del(server_id: number, item: string) {
-        return this.deleteData<ResponseInterface>('/v1/alert/' + item + '/' + server_id, true);
+    async del(server_id: number, item: string, override: boolean = false) {
+        return this.deleteData<ResponseInterface<number>>(
+            '/v1/alert/' + item + '/' + server_id + '?override=' + override,
+            true
+        );
     }
 }
 

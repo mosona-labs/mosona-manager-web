@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState, useRef } from 'react';
+import { toast } from 'sonner';
 
 import { Switch } from '@/components/ui/switch.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
@@ -19,6 +20,7 @@ const AlertItem = ({
     thresholdUnit = '%',
     thresholdStep = 1,
     defaultDuration = 10,
+    override,
 }: {
     server_id: number;
     item: string;
@@ -31,8 +33,9 @@ const AlertItem = ({
     thresholdUnit?: string;
     thresholdStep?: number;
     defaultDuration?: number;
+    override: boolean;
 }) => {
-    const { alerts, refresh } = useAlert();
+    const { alerts, teamAlerts, refresh } = useAlert();
 
     const [enabled, setEnabled] = useState<boolean>(false);
     const [threshold, setThreshold] = useState<number>(defaultThreshold);
@@ -42,7 +45,7 @@ const AlertItem = ({
     const prevEnabledRef = useRef<boolean>(false);
 
     useEffect(() => {
-        const serverAlerts = alerts[server_id];
+        const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
         if (serverAlerts && item in serverAlerts) {
             const alert = serverAlerts[item as keyof typeof serverAlerts];
             setEnabled(true);
@@ -62,6 +65,9 @@ const AlertItem = ({
         if (prevEnabledRef.current === enabled) return;
         prevEnabledRef.current = enabled;
 
+        const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
+        if ((serverAlerts && item in serverAlerts) === enabled) return;
+
         if (!enabled) {
             setThreshold(defaultThreshold);
             setDuration(defaultDuration);
@@ -71,15 +77,31 @@ const AlertItem = ({
                 debounceTimerRef.current = null;
             }
 
-            ApiAlert.del(server_id, item)
-                .then(() => {
+            ApiAlert.del(server_id, item, override)
+                .then((res) => {
                     void refresh();
+                    if (server_id < 0) {
+                        toast.success('Team alert disabled', {
+                            description:
+                                'There are currently ' +
+                                res.data +
+                                ' servers using the team alert settings.',
+                        });
+                    }
                 })
                 .catch(ToastError);
         } else {
-            ApiAlert.set(server_id, item, threshold, duration)
-                .then(() => {
+            ApiAlert.set(server_id, item, threshold, duration, override)
+                .then((res) => {
                     void refresh();
+                    if (server_id < 0) {
+                        toast.success('Team alert enabled', {
+                            description:
+                                'There are currently ' +
+                                res.data +
+                                ' servers using the team alert settings.',
+                        });
+                    }
                 })
                 .catch(ToastError);
         }
@@ -92,7 +114,7 @@ const AlertItem = ({
         }
 
         debounceTimerRef.current = setTimeout(() => {
-            ApiAlert.set(server_id, item, threshold, duration)
+            ApiAlert.set(server_id, item, threshold, duration, override)
                 .then(() => {
                     void refresh();
                 })
