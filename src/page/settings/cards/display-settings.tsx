@@ -101,6 +101,28 @@ const DisplaySettings = () => {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="grid gap-3">
+                    <Label>Max & Min Lines on Graphs</Label>
+                    <Select
+                        value={config.defaultMinMaxMode}
+                        onValueChange={(e) => {
+                            updateConfig({
+                                defaultMinMaxMode: e as 'min-auto' | '0-auto' | '0-max',
+                            });
+                        }}
+                    >
+                        <SelectTrigger className="w-full">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="min-auto">Min - Auto</SelectItem>
+                                <SelectItem value="0-auto">0 - Auto</SelectItem>
+                                <SelectItem value="0-max">0 - Max</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
                 <EnableCard
                     value={config.autoRefresh}
                     onChange={(v) => {

@@ -29,6 +29,7 @@ type UserConfigType = {
     defaultTimeFrame: string;
     autoRefresh: boolean;
     defaultMonitorMode: 'avg' | 'max' | 'raw';
+    defaultMinMaxMode: 'min-auto' | '0-auto' | '0-max';
     defaultLayout: 'grid-3' | 'grid-2' | 'list';
     dashboardLayout: 'grid' | 'list' | 'list2';
     dashboardShowDetails: boolean;
@@ -93,6 +94,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                       defaultTimeFrame: '1h',
                       autoRefresh: true,
                       defaultMonitorMode: 'avg',
+                      defaultMinMaxMode: 'min-auto',
                       defaultLayout: 'grid-2',
                       dashboardLayout: 'grid',
                       dashboardShowDetails: false,

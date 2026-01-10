@@ -14,7 +14,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { NetUnit } from '@/utils/unit';
+import { NetUnit, UnitConverter } from '@/utils/unit';
+import { useUser } from '@/context/useUser.tsx';
 
 import './chart.css';
 
@@ -33,6 +34,8 @@ export function MonitorChart({
     autoUnit,
     yWidth = 30,
     colorClass = 'blue',
+    chartMaxValue = 0,
+    chartMaxValueUnit = 'mb',
 }: {
     data: any[];
     defaultMode: 'avg' | 'max' | 'raw';
@@ -48,7 +51,13 @@ export function MonitorChart({
     autoUnit?: 'kb' | 'mb' | 'gb';
     yWidth?: number;
     colorClass?: string;
+    chartMaxValue?: number;
+    chartMaxValueUnit?: 'kb' | 'mb' | 'gb' | 'tb' | 'other';
 }) {
+    const { config } = useUser();
+
+    const [maxValueChart, setMaxValueChart] = useState<number>(chartMaxValue);
+
     const [mode, setMode] = useState<'avg' | 'max' | 'raw'>(defaultMode);
     const [currentUnit, setCurrentUnit] = useState<string | string[]>(keyUnit || '');
 
@@ -96,7 +105,12 @@ export function MonitorChart({
             }
         }
         if (autoUnit) {
-            const { unit, multiple } = NetUnit(maxValue, autoUnit);
+            const { unit, multiple } = NetUnit(
+                config.defaultMinMaxMode === '0-max' && chartMaxValue != 0
+                    ? chartMaxValue
+                    : maxValue,
+                autoUnit
+            );
             setCurrentUnit(
                 Array.isArray(keyUnit) ? keyUnit.map((value) => unit + value) : unit + keyUnit
             );
@@ -108,6 +122,14 @@ export function MonitorChart({
                         }
                     }
                 }
+
+            if (maxValue !== 0 && chartMaxValueUnit !== 'other') {
+                setMaxValueChart(
+                    UnitConverter(chartMaxValue, chartMaxValueUnit, unit.toLowerCase() as any)
+                );
+            }
+        } else if (chartMaxValueUnit === 'other') {
+            setMaxValueChart(chartMaxValue);
         }
         return Array.from(map.values()).sort((a: any, b: any) => a.time - b.time);
     }, [data, mode, timeFrame, keyObj]);
@@ -211,7 +233,12 @@ export function MonitorChart({
                                 `${parseFloat(value.toFixed(1))}` +
                                 (units.length > 0 ? units[0] : '')
                             }
-                            domain={['min', 'auto']}
+                            domain={[
+                                config.defaultMinMaxMode === 'min-auto' ? 'min' : 0,
+                                config.defaultMinMaxMode === '0-max' && maxValueChart != 0
+                                    ? maxValueChart
+                                    : 'auto',
+                            ]}
                             tickCount={6}
                             width={yWidth}
                             interval="preserveStartEnd"

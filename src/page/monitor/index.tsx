@@ -46,6 +46,7 @@ import {
 import { ToastError } from '@/utils/toast';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUser } from '@/context/useUser';
+import SettingsDialog from '@/page/monitor/components/settings-dialog.tsx';
 
 const Monitor = () => {
     const { id } = useParams<{ id: string }>();
@@ -255,6 +256,7 @@ const Monitor = () => {
                         <img
                             src={`/icons/${server?.os && osIcons.includes(server?.os?.toLowerCase() || '') ? server?.os?.toLowerCase() : 'linux'}.svg`}
                             className="inline-block h-5 w-5 mr-2"
+                            alt={'System Icon'}
                         />
                         {server?.os || 'N/A'}
                     </div>
@@ -417,9 +419,11 @@ const Monitor = () => {
                     </SelectContent>
                 </Select>
                 <div className="space-x-2">
-                    <Button variant={'outline'}>
-                        <Settings size={16} />
-                    </Button>
+                    <SettingsDialog>
+                        <Button variant={'outline'}>
+                            <Settings size={16} />
+                        </Button>
+                    </SettingsDialog>
                     <Tooltip>
                         <TooltipTrigger asChild>
                             <Button
@@ -468,6 +472,8 @@ const Monitor = () => {
                     keyName="Usage"
                     keyUnit="%"
                     keyObj="cpu"
+                    chartMaxValue={100}
+                    chartMaxValueUnit={'other'}
                 />
                 <MonitorChart
                     data={statuses || []}
@@ -482,6 +488,7 @@ const Monitor = () => {
                     keyObj={'mem_used_mb'}
                     yWidth={38}
                     colorClass={'green'}
+                    chartMaxValue={realTimeStatus ? realTimeStatus.mem_total_mb : 0}
                 />
                 <MonitorChart
                     data={statuses || []}
@@ -496,6 +503,8 @@ const Monitor = () => {
                     keyObj={'disk_used_gb'}
                     yWidth={44}
                     colorClass={'orange'}
+                    chartMaxValue={realTimeStatus ? realTimeStatus.disk_total_gb : 0}
+                    chartMaxValueUnit={'gb'}
                 />
                 <MonitorChart
                     data={statuses || []}
@@ -545,6 +554,7 @@ const Monitor = () => {
                     keyObj={'swap_used_mb'}
                     yWidth={38}
                     colorClass={'green'}
+                    chartMaxValue={realTimeStatus ? realTimeStatus.swap_total_mb : 0}
                 />
             </div>
         </div>

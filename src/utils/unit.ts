@@ -80,4 +80,40 @@ const MemoryUnit = (value: number, base: 'kb' | 'mb' | 'gb') => {
     return v;
 };
 
-export { NetUnit, MemoryUnit };
+const UnitConverter = (
+    value: number,
+    from: 'kb' | 'mb' | 'gb' | 'tb',
+    to: 'kb' | 'mb' | 'gb' | 'tb'
+) => {
+    let kbValue: number;
+    switch (from) {
+        case 'kb':
+            kbValue = value;
+            break;
+        case 'mb':
+            kbValue = value * 1024;
+            break;
+        case 'gb':
+            kbValue = value * 1024 * 1024;
+            break;
+        case 'tb':
+            kbValue = value * 1024 * 1024 * 1024;
+            break;
+        default:
+            throw new Error('Invalid from unit');
+    }
+    switch (to) {
+        case 'kb':
+            return kbValue;
+        case 'mb':
+            return kbValue / 1024;
+        case 'gb':
+            return kbValue / (1024 * 1024);
+        case 'tb':
+            return kbValue / (1024 * 1024 * 1024);
+        default:
+            throw new Error('Invalid to unit');
+    }
+};
+
+export { NetUnit, MemoryUnit, UnitConverter };
