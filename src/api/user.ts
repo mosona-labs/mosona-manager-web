@@ -12,6 +12,7 @@ export type UserType = {
     created_at: string;
     updated_at: string;
     login_at?: string;
+    pwd_at?: string;
 };
 
 export type UserSessionType = {

@@ -32,12 +32,10 @@ const sidebarItems: {
     {
         title: 'Teams',
         icon: <Briefcase size={22} />,
-        path: '/admin/teams',
     },
     {
         title: 'Servers',
         icon: <Server size={22} />,
-        path: '/admin/servers',
     },
     { title: 'Logging' },
     {
@@ -93,12 +91,13 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
 
                 <div className={'flex flex-col gap-2 overflow-y-auto -mx-3 px-3 flex-1'}>
                     {sidebarItems.map((item) =>
-                        item.path ? (
+                        item.icon ? (
                             <SidebarItem
                                 key={item.title}
                                 title={item.title}
                                 icon={item.icon}
-                                path={item.path}
+                                path={item.path || ''}
+                                enabled={!!item.path}
                             />
                         ) : (
                             <p key={item.title} className="text-sm mt-3 mx-1 opacity-65">

@@ -1,5 +1,5 @@
 import { Loader } from 'lucide-react';
-import { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 
 import PasswordCheck from '../auth/components/PasswordCheck';
 
@@ -14,7 +14,7 @@ const Init = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [password, setPassword] = useState<string>('');
 
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const form = e.currentTarget;
@@ -72,30 +72,6 @@ const Init = () => {
                             />
                         </div>
                         <div className="my-1 gap-3 flex flex-col">
-                            <div className="flex items-center gap-3">
-                                <Checkbox id="terms" name="terms" />
-                                <Label htmlFor="terms" className="gap-1.5">
-                                    I agree to the{' '}
-                                    <a
-                                        className="underline"
-                                        href="https://github.com/mosona-network"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        Terms of Service
-                                    </a>{' '}
-                                    and{' '}
-                                    <a
-                                        className="underline"
-                                        href="https://github.com/mosona-network"
-                                        target="_blank"
-                                        rel="noreferrer"
-                                    >
-                                        Privacy Policy
-                                    </a>
-                                    .
-                                </Label>
-                            </div>
                             <div className="flex items-center gap-3">
                                 <Checkbox id="know_pwd" name="know_pwd" />
                                 <Label htmlFor="know_pwd">

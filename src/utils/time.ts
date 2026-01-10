@@ -27,4 +27,27 @@ const getRemainingTime = (endTime: string | Date): number => {
     return Math.floor(diffMs / (24 * 3600 * 1000));
 };
 
-export { formatUptime, formatUptimeDays, getRemainingTime };
+function formatTimeAgo(input?: string | null) {
+    if (!input) return 'never';
+    const date = new Date(input);
+    if (isNaN(date.getTime())) return 'invalid date';
+    const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+    if (seconds < 5) return 'just now';
+
+    const intervals = [
+        { unit: 'year', secs: 31536000 },
+        { unit: 'month', secs: 2592000 },
+        { unit: 'day', secs: 86400 },
+        { unit: 'hour', secs: 3600 },
+        { unit: 'minute', secs: 60 },
+        { unit: 'second', secs: 1 },
+    ];
+
+    for (const { unit, secs } of intervals) {
+        const n = Math.floor(seconds / secs);
+        if (n >= 1) return `${n} ${unit}${n > 1 ? 's' : ''} ago`;
+    }
+    return 'just now';
+}
+
+export { formatUptime, formatUptimeDays, getRemainingTime, formatTimeAgo };

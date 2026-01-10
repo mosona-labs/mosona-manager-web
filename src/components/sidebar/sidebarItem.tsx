@@ -9,11 +9,13 @@ const SidebarItem = ({
     icon,
     path,
     btn,
+    enabled = true,
 }: {
     title: string;
     icon: ReactNode;
     path: string;
     btn?: ReactNode;
+    enabled?: boolean;
 }) => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -21,10 +23,11 @@ const SidebarItem = ({
 
     return (
         <div
-            onClick={() => navigate(path)}
+            onClick={() => enabled && navigate(path)}
             className={cn(
                 'flex flex-row gap-2 py-2 rounded-md items-center cursor-pointer hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 whitespace-nowrap transition-all duration-300 ease-in-out',
-                isActive ? 'bg-accent text-accent-foreground px-3' : 'px-2'
+                isActive ? 'bg-accent text-accent-foreground px-3' : 'px-2',
+                !enabled && 'opacity-50 cursor-not-allowed'
             )}
         >
             {icon}

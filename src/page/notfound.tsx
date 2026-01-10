@@ -27,7 +27,7 @@ const NotFound = () => (
                 <EmptyDescription>
                     Need help?{' '}
                     <a
-                        href="https://github.com/mosona-network/mosona-manager/issues"
+                        href="https://github.com/mosona-labs/mosona-manager/issues"
                         target={'_blank'}
                     >
                         Contact support

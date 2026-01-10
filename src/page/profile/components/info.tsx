@@ -17,6 +17,7 @@ import { useUser } from '@/context/useUser.tsx';
 import ApiUser from '@/api/user.ts';
 import { ToastError } from '@/utils/toast.ts';
 import LoadingButton from '@/components/loading-button.tsx';
+import { formatTimeAgo } from '@/utils/time.ts';
 
 const AccountInfoCard = () => {
     const { user, refresh } = useUser();
@@ -93,7 +94,9 @@ const AccountInfoCard = () => {
                             <Key className="h-4 w-4 text-muted-foreground" />
                             Password
                         </Label>
-                        <p className="text-xs text-muted-foreground">Last changed 3 months ago</p>
+                        <p className="text-xs text-muted-foreground">
+                            Last changed {formatTimeAgo(user?.pwd_at || '')}
+                        </p>
                     </div>
                     <Button variant="outline">Change Password</Button>
                 </div>

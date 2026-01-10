@@ -103,7 +103,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         Settings
                     </Button>
                     <DropdownMenuSeparator />
-                    <a href={'https://github.com/mosona-network/mosona-manager'} target={'_blank'}>
+                    <a href={'https://github.com/mosona-labs/mosona-manager'} target={'_blank'}>
                         <Button
                             variant={'ghost'}
                             className="w-full rounded-none py-3 justify-start"
@@ -123,7 +123,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                     </a>
                     <a
                         href={
-                            'https://github.com/mosona-network/mosona-manager/issues/new?template=bug-report.yml'
+                            'https://github.com/mosona-labs/mosona-manager/issues/new?template=bug-report.yml'
                         }
                         target={'_blank'}
                     >

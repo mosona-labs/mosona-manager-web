@@ -21,6 +21,7 @@ import Logs from '@/page/logs';
 import Profile from '@/page/profile';
 import Keychain from '@/page/keychain';
 import Settings from '@/page/settings';
+import TOTPAlert from '@/components/alert-dialog/totp.tsx';
 
 function App() {
     // Theme
@@ -74,6 +75,8 @@ function App() {
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
+            {/*Dialog*/}
+            <TOTPAlert />
         </div>
     );
 }

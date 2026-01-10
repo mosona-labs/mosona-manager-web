@@ -33,7 +33,7 @@ const About = () => (
             <div className="text-sm flex flex-row items-center gap-2">
                 <a
                     className="underline text-green-600"
-                    href="https://github.com/mosona-network/mosona-manager"
+                    href="https://github.com/mosona-labs/mosona-manager"
                     target="_blank"
                 >
                     Github
