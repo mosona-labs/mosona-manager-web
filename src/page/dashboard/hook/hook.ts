@@ -15,6 +15,8 @@ export default function useMonitors() {
     const [online, setOnline] = useState(0);
     const [avgCpu, setAvgCpu] = useState(0);
     const [avgMemory, setAvgMemory] = useState(0);
+    const [sumRX, setSumRX] = useState(0);
+    const [sumTX, setSumTX] = useState(0);
 
     const [categoryFilter, setCategoryFilter] = useState<number | null>(null);
 
@@ -31,7 +33,9 @@ export default function useMonitors() {
         let totalCount = 0,
             onlineCount = 0,
             cpuAcc = 0,
-            memAcc = 0;
+            memAcc = 0,
+            rxAcc = 0,
+            txAcc = 0;
 
         for (const server of servers) {
             if (categoryFilter !== null && server.category !== categoryFilter) {
@@ -44,18 +48,22 @@ export default function useMonitors() {
                 const nowMs = time.getTime();
                 if (nowMs - new Date(status.time).getTime() < 5 * 1000) {
                     onlineCount++;
-                    cpuAcc = cpuAcc + status.cpu / servers.length;
-                    memAcc =
-                        memAcc +
-                        ((status.mem_used_mb / status.mem_total_mb) * 100) / servers.length;
+                    cpuAcc = cpuAcc + status.cpu;
+                    memAcc = memAcc + (status.mem_used_mb / status.mem_total_mb) * 100;
+                    rxAcc = rxAcc + status.rx_kib_s;
+                    txAcc = txAcc + status.tx_kib_s;
                 }
             }
         }
+        cpuAcc = totalCount > 0 ? cpuAcc / totalCount : 0;
+        memAcc = totalCount > 0 ? memAcc / totalCount : 0;
 
         setTotal(totalCount);
         setOnline(onlineCount);
         setAvgCpu(cpuAcc);
         setAvgMemory(memAcc);
+        setSumRX(rxAcc);
+        setSumTX(txAcc);
     }, [servers, categoryFilter]);
 
     const reconnectInterval = useRef<number | null>(null);
@@ -125,6 +133,8 @@ export default function useMonitors() {
         online,
         avgCpu,
         avgMemory,
+        sumRX,
+        sumTX,
         categoryServerMap,
         categoryFilter,
         setCategoryFilter,

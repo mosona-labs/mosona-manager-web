@@ -1,5 +1,5 @@
 import { Bell, Plus, X } from 'lucide-react';
-import { type KeyboardEvent, useState } from 'react';
+import { type KeyboardEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -70,13 +70,13 @@ const NotificationSettings = () => {
                 .filter((item) => item != '')
                 .map((item) => ({
                     module: 'email',
-                    title: item,
+                    target: item,
                 })),
             ...shoutrrrUrls
                 .filter((item) => item != '')
                 .map((item) => ({
                     module: 'shoutrrr',
-                    title: item,
+                    target: item,
                 })),
         ];
 
@@ -91,6 +91,24 @@ const NotificationSettings = () => {
                 setSubmitting(false);
             });
     };
+
+    useEffect(() => {
+        ApiNotification.list()
+            .then((res) => {
+                const emailTargets: string[] = [];
+                const shoutrrrTargets: string[] = [];
+                res.data.forEach((item) => {
+                    if (item.module === 'email') {
+                        emailTargets.push(item.target);
+                    } else if (item.module === 'shoutrrr') {
+                        shoutrrrTargets.push(item.target);
+                    }
+                });
+                setEmails(emailTargets);
+                setShoutrrrUrls(shoutrrrTargets.length > 0 ? shoutrrrTargets : ['']);
+            })
+            .catch(ToastError);
+    }, []);
 
     return (
         <Card className="border-border bg-card">

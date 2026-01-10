@@ -2,7 +2,7 @@ import { baseAPI, type ResponseInterface } from '@/api/base.ts';
 
 export type NotificationType = {
     module: string;
-    title: string;
+    target: string;
 };
 
 class ApiNotificationClass extends baseAPI {

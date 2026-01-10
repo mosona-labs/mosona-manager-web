@@ -68,14 +68,14 @@ const AlertItem = ({
         const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
         if ((serverAlerts && item in serverAlerts) === enabled) return;
 
+        if (debounceTimerRef.current) {
+            clearTimeout(debounceTimerRef.current);
+            debounceTimerRef.current = null;
+        }
+
         if (!enabled) {
             setThreshold(defaultThreshold);
             setDuration(defaultDuration);
-
-            if (debounceTimerRef.current) {
-                clearTimeout(debounceTimerRef.current);
-                debounceTimerRef.current = null;
-            }
 
             ApiAlert.del(server_id, item, override)
                 .then((res) => {
@@ -109,6 +109,15 @@ const AlertItem = ({
 
     useEffect(() => {
         if (!enabled || isInitialLoadRef.current) return;
+
+        const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
+        if (serverAlerts && item in serverAlerts) {
+            const alert = serverAlerts[item as keyof typeof serverAlerts];
+            if (alert?.threshold === threshold && alert?.for_duration === duration) {
+                return;
+            }
+        }
+
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
         }
@@ -161,7 +170,7 @@ const AlertItem = ({
                                 onValueChange={(e) => {
                                     setThreshold(e[0]);
                                 }}
-                                min={0}
+                                min={1}
                                 max={maxThreshold}
                                 step={thresholdStep}
                             />

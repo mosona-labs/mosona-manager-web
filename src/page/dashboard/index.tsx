@@ -1,9 +1,11 @@
 import {
+    ArrowDown,
     ArrowLeftRight,
+    ArrowUp,
+    ArrowUpDown,
     Cpu,
     HardDrive,
     LoaderCircle,
-    Monitor,
     Plus,
     Server,
     Settings,
@@ -24,6 +26,7 @@ import ManageCategory from '@/components/category/manage';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import LayoutBtn from '@/page/dashboard/components/layout-btn.tsx';
+import { MemoryUnit } from '@/utils/unit.ts';
 
 const Dashboard = () => {
     const navigator = useNavigate();
@@ -37,6 +40,8 @@ const Dashboard = () => {
         online,
         avgCpu,
         avgMemory,
+        sumRX,
+        sumTX,
         categoryServerMap,
         categoryFilter,
         setCategoryFilter,
@@ -63,7 +68,7 @@ const Dashboard = () => {
             </div>
             <div>
                 {/* Overview */}
-                <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+                <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
                     <Card className="border-border bg-card p-4">
                         <div className="flex items-center gap-3">
                             <div className="rounded-lg bg-primary/10 p-2">
@@ -74,20 +79,7 @@ const Dashboard = () => {
                                     Total Servers
                                 </p>
                                 <p className="text-xl md:text-2xl font-semibold text-card-foreground">
-                                    {isLoading ? '--' : total}
-                                </p>
-                            </div>
-                        </div>
-                    </Card>
-                    <Card className="border-border bg-card p-4">
-                        <div className="flex items-center gap-3">
-                            <div className="rounded-lg bg-chart-2/10 p-2">
-                                <Monitor className="h-5 w-5 text-chart-2" />
-                            </div>
-                            <div>
-                                <p className="text-xs md:text-sm text-muted-foreground">Online</p>
-                                <p className="text-xl md:text-2xl font-semibold text-card-foreground">
-                                    {isLoading ? '--' : online}
+                                    {isLoading ? '--' : online} / {isLoading ? '--' : total}
                                 </p>
                             </div>
                         </div>
@@ -116,6 +108,24 @@ const Dashboard = () => {
                                 </p>
                                 <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : avgMemory.toFixed(2) + '%'}
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                    <Card className="border-border bg-card p-4">
+                        <div className="flex items-center h-full gap-3">
+                            <div className="rounded-lg bg-chart-2/10 p-2">
+                                <ArrowUpDown className="h-5 w-5 text-chart-2" />
+                            </div>
+                            <div>
+                                <p className="text-xs md:text-sm text-muted-foreground">
+                                    Network Traffic
+                                </p>
+                                <p className="text-sm 2xl:text-lg font-semibold text-card-foreground flex flex-row items-center gap-1">
+                                    <ArrowUp className="h-3 w-3 2xl:h-4 2xl:w-4" />
+                                    {isLoading ? '--' : MemoryUnit(sumTX, 'kb') + '/s'}
+                                    <ArrowDown className="h-3 w-3 2xl:h-4 2xl:w-4" />
+                                    {isLoading ? '--' : MemoryUnit(sumRX, 'kb') + '/s'}
                                 </p>
                             </div>
                         </div>

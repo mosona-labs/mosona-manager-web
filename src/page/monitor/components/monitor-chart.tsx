@@ -211,7 +211,7 @@ export function MonitorChart({
                                 `${parseFloat(value.toFixed(1))}` +
                                 (units.length > 0 ? units[0] : '')
                             }
-                            domain={[0, 'auto']}
+                            domain={['min', 'auto']}
                             tickCount={6}
                             width={yWidth}
                             interval="preserveStartEnd"

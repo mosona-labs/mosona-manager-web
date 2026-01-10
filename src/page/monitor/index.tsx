@@ -370,9 +370,9 @@ const Monitor = () => {
                     </div>
                     <div className="font-mono text-lg flex items-center gap-2">
                         <ArrowUp className="h-4 w-4" />
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s' : 'N/A'}
-                        <ArrowDown className="h-4 w-4" />
                         {realTimeStatus ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s' : 'N/A'}
+                        <ArrowDown className="h-4 w-4" />
+                        {realTimeStatus ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s' : 'N/A'}
                     </div>
                 </div>
                 <div className="flex flex-col col-span-6 xl:col-span-2">
