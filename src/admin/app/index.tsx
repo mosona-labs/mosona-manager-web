@@ -14,6 +14,7 @@ import OAuth from '@/admin/page/settings/oauth';
 import { SettingsProvider } from '@/admin/page/settings/useSettings.tsx';
 import General from '@/admin/page/settings/general';
 import Email from '@/admin/page/settings/email';
+import Logs from '@/page/logs';
 
 function AdminApp() {
     // Theme
@@ -52,6 +53,8 @@ function AdminApp() {
                     <Routes>
                         <Route path={'/'} element={<Dashboard />} />
                         <Route path={'/users'} element={<Users />} />
+                        {/*Logs*/}
+                        <Route path={'/logs'} element={<Logs isAdmin={true} />} />
                         {/*Settings*/}
                         <Route path={'/settings/general'} element={<General />} />
                         <Route path={'/settings/email'} element={<Email />} />

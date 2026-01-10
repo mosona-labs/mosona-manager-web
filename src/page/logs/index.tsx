@@ -29,8 +29,9 @@ import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ToastError } from '@/utils/toast.ts';
 import BottomPagination from '@/components/bottom-pagination.tsx';
+import ApiAdminLogs from '@/api/admin/logs.ts';
 
-const Logs = () => {
+const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(20);
 
@@ -62,7 +63,8 @@ const Logs = () => {
     const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
         setIsLoading(true);
-        ApiLogs.list(page, perPage, category, level, email, message)
+        (isAdmin ? ApiAdminLogs : ApiLogs)
+            .list(page, perPage, category, level, email, message)
             .then((data) => {
                 setLogs(data.data.logs);
                 setCount(data.data.total);
@@ -79,7 +81,9 @@ const Logs = () => {
                 <div>
                     <h1 className="text-2xl font-bold">Logs</h1>
                     <p className="opacity-65">
-                        View and manage user & system logs for audit and troubleshooting purposes
+                        {isAdmin
+                            ? 'View and manage system logs for audit and troubleshooting purposes'
+                            : 'View and manage user & system logs for audit and troubleshooting purposes'}
                     </p>
                 </div>
             </div>
@@ -95,10 +99,18 @@ const Logs = () => {
                     </SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">All Categories</SelectItem>
-                        <SelectItem value="team">Team</SelectItem>
-                        <SelectItem value="server">Server</SelectItem>
-                        <SelectItem value="terminal">Terminal</SelectItem>
-                        <SelectItem value="category">Category</SelectItem>
+                        {isAdmin
+                            ? [
+                                  <SelectItem value="user">User</SelectItem>,
+                                  <SelectItem value="oauth">OAuth</SelectItem>,
+                                  <SelectItem value="settings">Settings</SelectItem>,
+                              ]
+                            : [
+                                  <SelectItem value="team">Team</SelectItem>,
+                                  <SelectItem value="server">Server</SelectItem>,
+                                  <SelectItem value="terminal">Terminal</SelectItem>,
+                                  <SelectItem value="category">Category</SelectItem>,
+                              ]}
                     </SelectContent>
                 </Select>
                 <Select
