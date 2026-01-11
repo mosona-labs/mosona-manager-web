@@ -49,6 +49,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const refresh = async () => {
         ApiUser.me()
             .then((res) => {
+                if (res.code === 'init_required') {
+                    navigator('/init');
+                    return;
+                }
+
                 if (!res.data?.team) {
                     navigator('/create-team');
                 }

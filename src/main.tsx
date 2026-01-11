@@ -6,7 +6,6 @@ import { ThemeProvider } from './components/theme-provider.tsx';
 import { Toaster } from './components/ui/sonner.tsx';
 import { UserProvider } from './context/useUser.tsx';
 import { SessionProvider } from './context/useSession.tsx';
-import Init from './page/init/index.tsx';
 
 import SignIn from '@/page/auth/signin.tsx';
 
@@ -14,6 +13,7 @@ const App = lazy(() => import('@/app/index.tsx'));
 const AdminApp = lazy(() => import('@/admin/app/index.tsx'));
 const OAuth = lazy(() => import('@/page/oauth.tsx'));
 const TwoFA = lazy(() => import('@/page/2fa.tsx'));
+const Init = lazy(() => import('@/page/init/index.tsx'));
 
 import './index.css';
 import './style.css';

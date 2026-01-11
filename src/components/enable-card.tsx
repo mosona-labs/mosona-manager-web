@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { Label } from '@/components/ui/label.tsx';
 import { cn } from '@/lib/utils.ts';
 import { Checkbox } from '@/components/ui/checkbox.tsx';
@@ -13,7 +15,7 @@ const EnableCard = ({
     value: boolean;
     onChange: (v: boolean) => void;
     title: string;
-    description: string;
+    description?: string | ReactNode;
     disabled?: boolean;
     className?: string;
 }) => (
@@ -32,7 +34,7 @@ const EnableCard = ({
         />
         <div className="grid gap-1.5 font-normal">
             <p className="text-sm leading-none font-medium">{title}</p>
-            <p className="text-muted-foreground text-sm">{description}</p>
+            {description && <p className="text-muted-foreground text-sm">{description}</p>}
         </div>
     </Label>
 );

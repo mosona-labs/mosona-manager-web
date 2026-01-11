@@ -1,26 +1,102 @@
-import { Loader } from 'lucide-react';
-import { type FormEvent, useState } from 'react';
+import { CirclePlay, InfoIcon, LoaderCircle, SquareChevronRight } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 import PasswordCheck from '../auth/components/PasswordCheck';
 
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Logo from '@/components/logo';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert.tsx';
+import IsRequired from '@/components/required.tsx';
+import StepCard from '@/page/init/components/step-card.tsx';
+import EnableCard from '@/components/enable-card.tsx';
+import ApiInit from '@/api/init.ts';
+import { ToastError } from '@/utils/toast.ts';
 
 const Init = () => {
+    const navigate = useNavigate();
+
     const [loading, setLoading] = useState<boolean>(false);
-    const [password, setPassword] = useState<string>('');
+    const [step, setStep] = useState<number>(1);
 
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    useEffect(() => {
+        ApiInit.status()
+            .then((res) => {
+                if (res.data) navigate('/');
+            })
+            .catch(ToastError);
+    }, []);
 
-        const form = e.currentTarget;
-        const formData = new FormData(form);
+    // Form State
+    const [username, setUsername] = useState('admin');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [websiteURL, setWebsiteURL] = useState(
+        typeof window !== 'undefined' ? window.location.origin : ''
+    );
+    const [registrationEnabled, setRegistrationEnabled] = useState<boolean>(false);
+
+    const onSubmit = () => {
+        if (!username || !email || !password || !confirmPassword) {
+            setStep(1);
+            toast.warning('Warning', { description: 'Please fill in all required fields.' });
+            return;
+        }
+        if (!websiteURL) {
+            setStep(2);
+            toast.warning('Warning', { description: 'Please provide the website URL.' });
+            return;
+        }
+        if (password !== confirmPassword) {
+            setStep(1);
+            toast.warning('Warning', { description: 'Passwords do not match.' });
+            return;
+        }
+        if (email.indexOf('@') === -1) {
+            setStep(1);
+            toast.warning('Warning', { description: 'Please provide a valid email address.' });
+            return;
+        }
+        const failed = [
+            { ok: password.length >= 8, text: 'At least 8 characters' },
+            { ok: /[A-Z]/.test(password), text: 'At least one uppercase letter' },
+            { ok: /[a-z]/.test(password), text: 'At least one lowercase letter' },
+            { ok: /[0-9]/.test(password), text: 'At least one number' },
+            { ok: /[^A-Za-z0-9]/.test(password), text: 'At least one special character' },
+        ].filter((it) => !it.ok);
+        if (failed.length > 0) {
+            setStep(1);
+            toast.warning('Weak password', {
+                description: failed.map((f) => f.text).join(', '),
+            });
+            return;
+        }
+        if (!websiteURL.startsWith('http://') && !websiteURL.startsWith('https://')) {
+            setStep(2);
+            toast.warning('Warning', {
+                description: 'Website URL must start with http:// or https://.',
+            });
+            return;
+        }
+        if (websiteURL.endsWith('/')) {
+            setStep(2);
+            toast.warning('Warning', {
+                description: 'Website URL must not end with a trailing slash (/).',
+            });
+            return;
+        }
 
         setLoading(true);
+        ApiInit.setup(username, password, email, websiteURL, registrationEnabled)
+            .then(() => {})
+            .catch(ToastError)
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     return (
@@ -30,65 +106,144 @@ const Init = () => {
                 <h1 className="text-3xl font-bold mt-2">Mosona Manager</h1>
                 <p className="text-muted-foreground">Server Monitor & Remote Management</p>
             </div>
-            <Card className="w-[90vw] md:w-md py-4">
-                <CardContent className="px-4">
-                    <CardHeader className="px-0">
-                        <CardTitle>Setup</CardTitle>
-                        <CardDescription>
-                            Please set up your administrator account to get started.
-                        </CardDescription>
-                    </CardHeader>
-                    <form className="mt-4 flex flex-col gap-3" onSubmit={onSubmit}>
-                        <div className="grid gap-3">
-                            <Label htmlFor="email">Email</Label>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                placeholder="user@example.com"
-                            />
-                        </div>
-                        <div>
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="Your password"
-                                className="mt-3"
-                                onChange={(e) => {
-                                    setPassword(e.target.value);
-                                }}
-                            />
-                            <PasswordCheck password={password} />
-                        </div>
-                        <div className="grid gap-3">
-                            <Label htmlFor="confirm-password">Confirm Password</Label>
-                            <Input
-                                id="confirm-password"
-                                name="confirm-password"
-                                type="password"
-                                placeholder="Confirm your password"
-                            />
-                        </div>
-                        <div className="my-1 gap-3 flex flex-col">
-                            <div className="flex items-center gap-3">
-                                <Checkbox id="know_pwd" name="know_pwd" />
-                                <Label htmlFor="know_pwd">
-                                    I Know password reset is not available for admin.
-                                </Label>
-                            </div>
-                        </div>
-                        <Button type="submit" variant={'outline'} disabled={loading}>
-                            <Loader
-                                className="animate-spin"
-                                style={{ display: loading ? 'inline-block' : 'none' }}
-                            />
-                            Create Account
-                        </Button>
-                    </form>
-                </CardContent>
-            </Card>
+
+            <StepCard
+                show={step == 1}
+                setStep={() => {
+                    setStep(1);
+                }}
+                title={'Step 1: Create Admin Account'}
+                description={'Set up the initial administrator account.'}
+            >
+                <div className="mt-4 flex flex-col gap-3">
+                    <Alert variant="default">
+                        <InfoIcon />
+                        <AlertTitle>Attention</AlertTitle>
+                        <AlertDescription>
+                            Admin account is not support the "forgot password". Please keep your
+                            credentials safe.
+                        </AlertDescription>
+                    </Alert>
+                    <div className="grid gap-3 mt-1">
+                        <Label>
+                            Username
+                            <IsRequired />
+                        </Label>
+                        <Input
+                            placeholder="admin"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                    </div>
+                    <div className="grid gap-3 mt-1">
+                        <Label>
+                            Email
+                            <IsRequired />
+                        </Label>
+                        <Input
+                            type="email"
+                            placeholder="user@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <Label>
+                            Password
+                            <IsRequired />
+                        </Label>
+                        <Input
+                            type="password"
+                            placeholder="Your password"
+                            className="mt-3"
+                            value={password}
+                            onChange={(e) => {
+                                setPassword(e.target.value);
+                            }}
+                        />
+                        <PasswordCheck password={password} />
+                    </div>
+                    <div className="grid gap-3">
+                        <Label>
+                            Confirm Password
+                            <IsRequired />
+                        </Label>
+                        <Input
+                            type="password"
+                            placeholder="Confirm your password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                        />
+                    </div>
+                    <Button
+                        type={'button'}
+                        className={'mt-2'}
+                        onClick={() => {
+                            setStep(2);
+                        }}
+                    >
+                        <SquareChevronRight />
+                        Next Step
+                    </Button>
+                </div>
+            </StepCard>
+
+            <StepCard
+                show={step == 2}
+                setStep={() => {
+                    setStep(2);
+                }}
+                title={'Step 2: Base URL & Registration'}
+                description={'Configure base settings.'}
+            >
+                <div className="mt-4 flex flex-col gap-3">
+                    <div className="grid gap-3">
+                        <Label>
+                            Website URL
+                            <IsRequired />
+                        </Label>
+                        <Input
+                            placeholder="https://example.com"
+                            value={websiteURL}
+                            onChange={(e) => setWebsiteURL(e.target.value)}
+                        />
+                        <p className={'text-xs text-muted-foreground -mt-1'}>
+                            Used for email links and OAuth redirects. Ensure correctness.
+                        </p>
+                    </div>
+                    <div className={'border-t border-border my-1'}></div>
+                    <div className="grid gap-3">
+                        <Label>
+                            User Registration
+                            <IsRequired />
+                        </Label>
+                        <p className={'text-xs text-muted-foreground'}>
+                            If you wish to allow user self-registration, please configure the email
+                            sender under <b>Admin Settings → Email</b> after initialization, and
+                            enable activation emails in <b>Admin Settings → Register & Login</b>.
+                            <br />
+                        </p>
+                        <i className={'text-xs text-muted-foreground -mt-2'}>
+                            Please note that exposing this service to unknown users may involve
+                            certain <b>legal risks</b>.
+                        </i>
+                        <EnableCard
+                            value={registrationEnabled}
+                            onChange={setRegistrationEnabled}
+                            title={'Enable User Registration'}
+                        />
+                    </div>
+                    <Button
+                        type={'button'}
+                        className={'mt-1'}
+                        onClick={onSubmit}
+                        disabled={loading}
+                    >
+                        {loading ? <LoaderCircle className="animate-spin" /> : <CirclePlay />}
+                        Finish Initialization
+                    </Button>
+                </div>
+            </StepCard>
         </div>
     );
 };
