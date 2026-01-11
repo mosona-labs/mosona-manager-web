@@ -1,4 +1,11 @@
-import { CirclePlay, InfoIcon, LoaderCircle, SquareChevronRight } from 'lucide-react';
+import {
+    CirclePlay,
+    InfoIcon,
+    LayoutDashboard,
+    LoaderCircle,
+    Settings,
+    SquareChevronRight,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
@@ -19,6 +26,7 @@ import { ToastError } from '@/utils/toast.ts';
 const Init = () => {
     const navigate = useNavigate();
 
+    const [installed, setInstalled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [step, setStep] = useState<number>(1);
 
@@ -92,14 +100,38 @@ const Init = () => {
 
         setLoading(true);
         ApiInit.setup(username, password, email, websiteURL, registrationEnabled)
-            .then(() => {})
+            .then(() => {
+                setInstalled(true);
+            })
             .catch(ToastError)
             .finally(() => {
                 setLoading(false);
             });
     };
 
-    return (
+    return installed ? (
+        <div className="flex flex-col h-screen gap-3 justify-center items-center w-full">
+            <div className="w-full mb-4 flex flex-col gap-2 items-center">
+                <p className={'text-5xl'}>🎉</p>
+                <h1 className="text-3xl font-bold mt-2">Installation Successfully!</h1>
+                <p className="text-muted-foreground">Now, start your journey by logging in.</p>
+                <div className={'flex flex-row mt-3 gap-2'}>
+                    <a href={'/'}>
+                        <Button>
+                            <LayoutDashboard />
+                            Go Dashboard
+                        </Button>
+                    </a>
+                    <a href={'/admin/'}>
+                        <Button variant={'outline'}>
+                            <Settings />
+                            Go Admin Panel
+                        </Button>
+                    </a>
+                </div>
+            </div>
+        </div>
+    ) : (
         <div className="flex flex-col h-screen gap-3 justify-center items-center w-full">
             <div className="w-full mb-4 flex flex-col gap-2 items-center">
                 <Logo />

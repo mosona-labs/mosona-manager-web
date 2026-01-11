@@ -266,7 +266,7 @@ const SignIn = () => {
                     </form>
                 </CardContent>
             </Card>
-            {mode === 'signin' && (
+            {mode === 'signin' && keys?.oauth && keys?.oauth.length > 0 && (
                 <>
                     <div className="flex flex-row gap-3 md:w-md items-center px-1">
                         <div className="border-t flex-1" />

@@ -128,11 +128,11 @@ const OAuthCard = () => {
             </CardHeader>
             <CardContent className="grid gap-2 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
                 {isLoading ? (
-                    <p className="text-sm text-center py-3 text-muted-foreground">
+                    <p className="text-sm text-center py-3 text-muted-foreground xl:col-span-2 2xl:col-span-3 3xl:col-span-4">
                         Loading connected OAuth providers...
                     </p>
                 ) : items.length === 0 ? (
-                    <p className="text-sm text-center py-3 text-muted-foreground">
+                    <p className="text-sm text-center py-3 text-muted-foreground xl:col-span-2 2xl:col-span-3 3xl:col-span-4">
                         No OAuth providers available.
                     </p>
                 ) : (

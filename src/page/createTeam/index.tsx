@@ -20,6 +20,7 @@ import ApiTeam from '@/api/team';
 import { useUser } from '@/context/useUser';
 import { ToastError } from '@/utils/toast';
 import ApiUser from '@/api/user.ts';
+import LoadingButton from '@/components/loading-button.tsx';
 
 const CreateTeam = () => {
     const navigator = useNavigate();
@@ -191,9 +192,9 @@ const CreateTeam = () => {
                 </Card>
             </div>
             <div className="mt-4 flex flex-row justify-end items-center gap-3">
-                <Button disabled={isLoading} onClick={handleCreateTeam}>
+                <LoadingButton isLoading={isLoading} onClick={handleCreateTeam}>
                     Create Team
-                </Button>
+                </LoadingButton>
             </div>
         </div>
     );

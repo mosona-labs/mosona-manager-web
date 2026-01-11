@@ -15,30 +15,41 @@ const useAuthKeys = () => {
     const fetchKeys = useCallback(async (force = false) => {
         setError(null);
 
+        const fetchNetwork = async (showLoading = true) => {
+            if (showLoading) setLoading(true);
+            try {
+                const res = await ApiAuth.authKeys();
+                localStorage.setItem(
+                    STORAGE_KEY,
+                    JSON.stringify({ ts: Date.now(), data: res.data })
+                );
+                setKeys(res.data);
+            } catch (e: any) {
+                setError(e);
+                if (force) setKeys(null);
+            } finally {
+                if (showLoading) setLoading(false);
+            }
+        };
+
         if (!force) {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) {
                     const parsed = JSON.parse(raw);
                     if (parsed?.ts && Date.now() - parsed.ts < TTL_MS && parsed.data) {
+                        // Use cached data immediately
                         setKeys(parsed.data);
+                        // Refresh in background without showing loading
+                        fetchNetwork(false).catch(() => {});
                         return;
                     }
                 }
             } catch {}
         }
 
-        setLoading(true);
-        try {
-            const res = await ApiAuth.authKeys();
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ ts: Date.now(), data: res.data }));
-            setKeys(res.data);
-        } catch (e: any) {
-            setError(e);
-            setKeys(null);
-        } finally {
-            setLoading(false);
-        }
+        // No valid cache or forced refresh: fetch with loading
+        await fetchNetwork(true);
     }, []);
 
     useEffect(() => {
