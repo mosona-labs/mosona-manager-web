@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useNavigate } from 'react-router-dom';
 
 import { type MonitorType, type ServerStatusType } from '@/api/monitor.ts';
 import { useUser } from '@/context/useUser.tsx';
 
 export default function useMonitors() {
     const { team } = useUser();
+    const navigator = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
     const [time, setTime] = useState<Date>(new Date());
@@ -109,7 +111,14 @@ export default function useMonitors() {
             resetHeartbeat();
         });
 
-        eventSource.addEventListener('error', () => resetHeartbeat());
+        eventSource.addEventListener('error', () => {
+            fetch('/api/v1/server/monitor/sse')
+                .then(async (res) => {
+                    const data = await res.json();
+                    if (data.code === 'login') navigator('/auth');
+                })
+                .finally(resetHeartbeat);
+        });
 
         return () => {
             if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);
