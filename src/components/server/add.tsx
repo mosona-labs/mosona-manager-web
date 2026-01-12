@@ -71,6 +71,21 @@ const AddServer = () => {
         }
     }, [categories]);
 
+    useEffect(() => {
+        if (!open) {
+            // Reset form
+            setAuthType('password');
+            setMode('ssh');
+            setAgentMode('active');
+            setCategory(categories && categories.length > 0 ? categories[0].id : undefined);
+            setEnableMonitor(true);
+            setEnableTerminal(true);
+            setStartTime(undefined);
+            setEndTime(undefined);
+            setAmount(undefined);
+        }
+    }, [open]);
+
     const onSubmit = (e: FormEvent) => {
         e.preventDefault();
 

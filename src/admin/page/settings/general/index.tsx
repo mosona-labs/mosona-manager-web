@@ -7,11 +7,13 @@ import { Input } from '@/components/ui/input.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
 import ApiAdminSettings from '@/api/admin/settings.ts';
 import { ToastError } from '@/utils/toast.ts';
+import EnableCard from '@/components/enable-card.tsx';
 
 const General = () => {
     const { settings, refresh } = useSettings();
 
     const [domain, setDomain] = useState('');
+    const [debugMode, setDebugMode] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const onSaveChanges = () => {
@@ -21,6 +23,12 @@ const General = () => {
             updates.push({
                 key: 'domain',
                 value: domain.endsWith('/') ? domain.slice(0, -1) : domain,
+            });
+        }
+        if (settings?.debug !== debugMode) {
+            updates.push({
+                key: 'debug',
+                value: debugMode ? 'true' : 'false',
             });
         }
         if (updates.length === 0) {
@@ -46,6 +54,7 @@ const General = () => {
     useEffect(() => {
         if (settings) {
             setDomain(settings.domain);
+            setDebugMode(settings.debug);
         }
     }, [settings]);
 
@@ -58,7 +67,7 @@ const General = () => {
                 </div>
             </div>
             <div className={'flex flex-col gap-3'}>
-                <div className={'space-y-1.5'}>
+                <div className={'space-y-2'}>
                     <Label className={'text-xs'}>Base URL</Label>
                     <Input
                         value={domain}
@@ -72,6 +81,18 @@ const General = () => {
                         The base URL of your application. This is used for generating links, oauth
                         and emails.
                     </p>
+                </div>
+                <div className={'space-y-2'}>
+                    <Label className={'text-xs'}>Debug Mode</Label>
+                    <EnableCard
+                        value={debugMode}
+                        onChange={setDebugMode}
+                        title={'Enable Debug Mode'}
+                        description={
+                            'When enabled, detailed error messages and stack traces will be shown.'
+                        }
+                        className={'max-w-[26rem]'}
+                    />
                 </div>
                 <div>
                     <LoadingButton

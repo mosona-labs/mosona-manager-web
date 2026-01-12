@@ -1,6 +1,8 @@
 import { baseAPI, type ResponseInterface } from '@/api/base.ts';
 
 export type AdminSettingsType = {
+    debug: boolean;
+
     // Domain
     domain: string;
 

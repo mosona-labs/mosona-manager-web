@@ -1,4 +1,4 @@
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useEffect, useState } from 'react';
 import { Loader } from 'lucide-react';
 
 import { Input } from '../ui/input';
@@ -24,6 +24,12 @@ const AddCategory = ({ children }: { children?: ReactNode }) => {
 
     const [open, setOpen] = useState(false);
     const [categoryName, setCategoryName] = useState('');
+
+    useEffect(() => {
+        if (!open) {
+            setCategoryName('');
+        }
+    }, [open]);
 
     const isCategoryNameExists = categories?.some(
         (cat) => cat.name.toLowerCase() === categoryName.toLowerCase()
