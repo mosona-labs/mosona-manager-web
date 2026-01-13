@@ -28,7 +28,7 @@ function App() {
     const { theme, setTheme } = useTheme();
 
     // Sidebar
-    const [openSidebar, setOpenSidebar] = useState(true);
+    const [openSidebar, setOpenSidebar] = useState(window.innerWidth >= 1024);
 
     return (
         <div className="flex flex-row h-screen overflow-hidden">

@@ -121,11 +121,15 @@ const Dashboard = () => {
                                 <p className="text-xs md:text-sm text-muted-foreground">
                                     Network Traffic
                                 </p>
-                                <p className="text-sm 2xl:text-lg font-semibold text-card-foreground flex flex-row items-center gap-1">
-                                    <ArrowUp className="h-3 w-3 2xl:h-4 2xl:w-4" />
-                                    {isLoading ? '--' : MemoryUnit(sumTX, 'kb') + '/s'}
-                                    <ArrowDown className="h-3 w-3 2xl:h-4 2xl:w-4" />
-                                    {isLoading ? '--' : MemoryUnit(sumRX, 'kb') + '/s'}
+                                <p className="text-sm 2xl:text-lg font-semibold text-card-foreground flex flex-col md:flex-row md:items-center md:gap-1">
+                                    <div className={'flex flex-row items-center gap-1'}>
+                                        <ArrowUp className="h-3 w-3 2xl:h-4 2xl:w-4" />
+                                        {isLoading ? '--' : MemoryUnit(sumTX, 'kb') + '/s'}
+                                    </div>
+                                    <div className={'flex flex-row items-center gap-1'}>
+                                        <ArrowDown className="h-3 w-3 2xl:h-4 2xl:w-4" />
+                                        {isLoading ? '--' : MemoryUnit(sumRX, 'kb') + '/s'}
+                                    </div>
                                 </p>
                             </div>
                         </div>
