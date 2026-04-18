@@ -21,6 +21,7 @@ import Logs from '@/page/logs';
 import Profile from '@/page/profile';
 import Keychain from '@/page/keychain';
 import Settings from '@/page/settings';
+import PublicPage from '@/page/publicPage';
 import TOTPAlert from '@/components/alert-dialog/totp.tsx';
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
                     <Route path="/keychain" element={<Keychain />} />
                     <Route path="/logs" element={<Logs />} />
                     <Route path="/team" element={<Team />} />
+                    <Route path="/public-page" element={<PublicPage />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/settings" element={<Settings />} />
                     <Route path="/about" element={<About />} />

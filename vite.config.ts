@@ -20,6 +20,12 @@ export default defineConfig({
                 ws: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
             },
+            '/preview': {
+                target: 'http://localhost:3214/preview',
+                changeOrigin: true,
+                ws: true,
+                rewrite: (path) => path.replace(/^\/preview/, ''),
+            },
             '/avatars': {
                 target: 'http://localhost:3214/avatars',
                 changeOrigin: true,

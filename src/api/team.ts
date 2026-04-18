@@ -26,6 +26,16 @@ export type TeamMemberType = UserType & {
     role: number; // 0 - Administrator 1 - Read & Terminal Access 2 - Read Only
 };
 
+export type TeamPublicPageConfigType = {
+    enabled: boolean;
+    name?: string | null;
+    domain?: string | null;
+    title?: string | null;
+    description?: string | null;
+    url_by_name?: string | null;
+    url_by_domain?: string | null;
+};
+
 class ApiTeamClass extends baseAPI {
     async info() {
         return this.getData<
@@ -77,6 +87,24 @@ class ApiTeamClass extends baseAPI {
 
     async leave(team_id: number) {
         return this.deleteData<ResponseInterface>('/v1/team/leave/' + team_id);
+    }
+
+    async getPublicPage() {
+        return this.getData<ResponseInterface<TeamPublicPageConfigType>>('/v1/team/public-page');
+    }
+
+    async updatePublicPage(data: {
+        enabled: boolean;
+        name?: string;
+        domain?: string;
+        title?: string;
+        description?: string;
+    }) {
+        return this.putData<ResponseInterface<TeamPublicPageConfigType>>(
+            '/v1/team/public-page',
+            data,
+            false
+        );
     }
 }
 

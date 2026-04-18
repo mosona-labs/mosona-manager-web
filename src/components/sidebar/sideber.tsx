@@ -10,6 +10,7 @@ import {
     X,
     UserRoundCog,
     Settings,
+    RadioTower,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -50,6 +51,7 @@ const sidebarItems: {
         title: 'Manage',
     },
     { title: 'Team', icon: <Briefcase size={22} />, path: '/team' },
+    { title: 'Public Page', icon: <RadioTower size={22} />, path: '/public-page' },
     { title: 'Profile', icon: <UserRoundCog size={22} />, path: '/profile' },
     { title: 'Settings', icon: <Settings size={22} />, path: '/settings' },
     {
