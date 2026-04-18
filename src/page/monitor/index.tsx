@@ -73,6 +73,17 @@ const Monitor = () => {
         config.defaultMonitorMode
     );
 
+    const syncNowTime = (value?: string) => {
+        if (!value) {
+            return;
+        }
+
+        const nextNow = new Date(value);
+        if (!Number.isNaN(nextNow.getTime())) {
+            setNowTime(nextNow);
+        }
+    };
+
     // Config
     useEffect(() => {
         if (config) {
@@ -88,6 +99,7 @@ const Monitor = () => {
         ApiMonitor.realtime(parseInt(id))
             .then((data) => {
                 setRealTimeStatus(data.data);
+                syncNowTime(data.data.time);
 
                 if (realTimeChart.current)
                     setStatuses((prev) => {
@@ -110,7 +122,11 @@ const Monitor = () => {
         ApiMonitor.chart(parseInt(id), time_frame)
             .then((data) => {
                 setStatuses(data.data);
-                if (data.data.length > 0) setStatus(data.data[data.data.length - 1]);
+                if (data.data.length > 0) {
+                    const latestStatus = data.data[data.data.length - 1];
+                    setStatus(latestStatus);
+                    syncNowTime(latestStatus.time);
+                }
             })
             .catch((err) => {
                 console.error('Failed to fetch monitor chart data:', err);
@@ -149,33 +165,37 @@ const Monitor = () => {
             realTimeChart.current = false;
             setDefaultMode(config.defaultMonitorMode);
             chart(id, timeFrame);
-            if (autoRefresh) {
-                autoRefreshRef.current = setInterval(() => {
-                    chart(id, timeFrame);
-                }, 60000);
-            }
         }
         return () => {
             if (interval) clearInterval(interval);
             if (autoRefreshRef.current) {
                 clearInterval(autoRefreshRef.current);
+                autoRefreshRef.current = 0;
             }
         };
     }, [id, timeFrame]);
 
     useEffect(() => {
+        if (autoRefreshRef.current) {
+            clearInterval(autoRefreshRef.current);
+            autoRefreshRef.current = 0;
+        }
+
+        if (!autoRefresh || !id || timeFrame === 'real-time') {
+            return;
+        }
+
+        autoRefreshRef.current = window.setInterval(() => {
+            chart(id, timeFrame);
+        }, 60000);
+
         return () => {
-            if (autoRefreshRef.current && autoRefresh) {
+            if (autoRefreshRef.current) {
                 clearInterval(autoRefreshRef.current);
-            } else {
-                autoRefreshRef.current = setInterval(() => {
-                    if (id && timeFrame !== 'real-time') {
-                        chart(id, timeFrame);
-                    }
-                }, 60000);
+                autoRefreshRef.current = 0;
             }
         };
-    }, [autoRefresh]);
+    }, [autoRefresh, id, timeFrame]);
 
     const rx = status
         ? NetUnit(realTimeStatus ? realTimeStatus.rx_total_mb : status.rx_total_mb, 'mb')

@@ -601,10 +601,6 @@ const EditServer = ({
                             <Button variant="outline">Cancel</Button>
                         </DialogClose>
                         <LoadingButton type="submit" isLoading={isLoading}>
-                            <Loader
-                                className="animate-spin"
-                                style={{ display: isLoading ? 'inline-block' : 'none' }}
-                            />
                             Save changes
                         </LoadingButton>
                     </DialogFooter>

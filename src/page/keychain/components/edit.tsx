@@ -1,5 +1,4 @@
 import { type FormEvent, useState } from 'react';
-import { Loader } from 'lucide-react';
 
 import ApiKey, { type KeyType } from '@/api/key.ts';
 import {
@@ -116,10 +115,6 @@ const EditKey = ({
                                 <Button variant="outline">Cancel</Button>
                             </DialogClose>
                             <LoadingButton type="submit" isLoading={isLoading}>
-                                <Loader
-                                    className="animate-spin"
-                                    style={{ display: isLoading ? 'inline-block' : 'none' }}
-                                />
                                 Save changes
                             </LoadingButton>
                         </DialogFooter>
