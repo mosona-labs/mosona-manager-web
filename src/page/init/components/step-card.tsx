@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/card.tsx';
 
 const collapsedHeight = 76;
+const expandedHeightBuffer = 16;
 
 const StepCard = ({
     show,
@@ -34,7 +35,7 @@ const StepCard = ({
         const update = () => {
             const el = contentRef.current;
             if (!el) return;
-            const h = el.scrollHeight;
+            const h = el.scrollHeight + expandedHeightBuffer;
             setMeasuredHeight(h || collapsedHeight);
         };
         if (show) update();
@@ -60,7 +61,7 @@ const StepCard = ({
             style={{ height: show ? `calc(${measuredHeight}px + 2rem)` : `${collapsedHeight}px` }}
         >
             <CardContent className="px-4">
-                <div ref={contentRef}>
+                <div ref={contentRef} className="flow-root">
                     <CardHeader className="px-0 cursor-pointer select-none" onClick={setStep}>
                         <div className={'flex items-center justify-between'}>
                             <CardTitle>{title}</CardTitle>
