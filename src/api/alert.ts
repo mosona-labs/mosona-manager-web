@@ -7,14 +7,23 @@ export type AlertType = {
     for_duration: number;
 };
 
-export type AlertsType = {
-    status?: AlertType;
-    cpu_usage?: AlertType;
-    memory_usage?: AlertType;
-    disk_usage?: AlertType;
-    read_iops?: AlertType;
-    write_iops?: AlertType;
-    bandwidth?: AlertType;
+export type AlertsType = Record<string, AlertType>;
+
+export type AlertControlConfigType = {
+    enabled: boolean;
+    min?: number;
+    max?: number;
+    default?: number;
+    unit?: string;
+};
+
+export type AlertItemConfigType = {
+    item: string;
+    label: string;
+    description: string;
+    threshold: AlertControlConfigType;
+    for_duration: AlertControlConfigType;
+    notify_once: boolean;
 };
 
 class ApiAlertClass extends baseAPI {
@@ -23,6 +32,7 @@ class ApiAlertClass extends baseAPI {
             ResponseInterface<{
                 alerts: Record<number, AlertsType>;
                 team_alerts: AlertsType;
+                item_configs: AlertItemConfigType[];
             }>
         >('/v1/alert');
     }

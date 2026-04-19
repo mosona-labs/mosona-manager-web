@@ -1,72 +1,89 @@
-import { type ReactNode, useEffect, useState, useRef } from 'react';
+import type { AlertItemConfigType } from '@/api/alert.ts';
+
+import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
+import ApiAlert from '@/api/alert.ts';
 import { Switch } from '@/components/ui/switch.tsx';
 import { Slider } from '@/components/ui/slider.tsx';
 import { cn } from '@/lib/utils.ts';
 import { useAlert } from '@/page/dashboard/hook/useAlert.tsx';
-import ApiAlert from '@/api/alert.ts';
 import { ToastError } from '@/utils/toast.ts';
 
 const AlertItem = ({
-    server_id,
-    item,
+    alertTargetId,
+    scope,
+    config,
     icon,
-    title,
-    description,
-    showThreshold = true,
-    defaultThreshold = 80,
-    maxThreshold = 100,
-    thresholdUnit = '%',
-    thresholdStep = 1,
-    defaultDuration = 10,
     override,
 }: {
-    server_id: number;
-    item: string;
+    alertTargetId: number;
+    scope: 'server' | 'team';
+    config: AlertItemConfigType;
     icon: ReactNode;
-    title: string;
-    description: string;
-    showThreshold?: boolean;
-    defaultThreshold?: number;
-    maxThreshold?: number;
-    thresholdUnit?: string;
-    thresholdStep?: number;
-    defaultDuration?: number;
     override: boolean;
 }) => {
     const { alerts, teamAlerts, refresh } = useAlert();
 
-    const [enabled, setEnabled] = useState<boolean>(false);
-    const [threshold, setThreshold] = useState<number>(defaultThreshold);
-    const [duration, setDuration] = useState<number>(defaultDuration);
+    const currentAlerts = scope === 'team' ? teamAlerts : alerts[alertTargetId];
+    const currentAlert = currentAlerts?.[config.item];
+    const thresholdEnabled = config.threshold.enabled;
+    const durationEnabled = config.for_duration.enabled;
+    const defaultThreshold = config.threshold.default ?? config.threshold.min ?? 0;
+    const defaultDuration = config.for_duration.default ?? config.for_duration.min ?? 0;
+    const sliderThresholdMax = config.threshold.max ?? defaultThreshold;
+    const sliderDurationMax = config.for_duration.max ?? defaultDuration;
+
+    const [enabled, setEnabled] = useState(false);
+    const [threshold, setThreshold] = useState(defaultThreshold);
+    const [duration, setDuration] = useState(defaultDuration);
     const debounceTimerRef = useRef<number | null>(null);
-    const isInitialLoadRef = useRef<boolean>(true);
-    const prevEnabledRef = useRef<boolean>(false);
+    const isSyncingRef = useRef(true);
+    const prevEnabledRef = useRef(false);
+
+    const effectiveOverride = scope === 'team' ? override : false;
+    const normalizedDuration = durationEnabled ? duration : 0;
+    const normalizedThreshold = thresholdEnabled ? threshold : defaultThreshold;
+
+    const thresholdText = useMemo(
+        () => formatValue(threshold, config.threshold.unit),
+        [threshold, config.threshold.unit]
+    );
+    const durationText = useMemo(
+        () => formatValue(duration, config.for_duration.unit),
+        [duration, config.for_duration.unit]
+    );
 
     useEffect(() => {
-        const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
-        if (serverAlerts && item in serverAlerts) {
-            const alert = serverAlerts[item as keyof typeof serverAlerts];
+        isSyncingRef.current = true;
+
+        if (currentAlert) {
             setEnabled(true);
-            setThreshold(alert?.threshold || defaultThreshold);
-            setDuration(alert?.for_duration || defaultDuration);
+            setThreshold(currentAlert.threshold ?? defaultThreshold);
+            setDuration(
+                durationEnabled ? (currentAlert.for_duration ?? defaultDuration) : defaultDuration
+            );
+            prevEnabledRef.current = true;
         } else {
             setEnabled(false);
+            setThreshold(defaultThreshold);
+            setDuration(defaultDuration);
+            prevEnabledRef.current = false;
         }
-        isInitialLoadRef.current = false;
-    }, [alerts, server_id, item]);
+
+        const timer = window.setTimeout(() => {
+            isSyncingRef.current = false;
+        }, 0);
+
+        return () => window.clearTimeout(timer);
+    }, [currentAlert, defaultDuration, defaultThreshold, durationEnabled]);
 
     useEffect(() => {
-        if (isInitialLoadRef.current) {
-            prevEnabledRef.current = enabled;
+        if (isSyncingRef.current) {
             return;
         }
         if (prevEnabledRef.current === enabled) return;
         prevEnabledRef.current = enabled;
-
-        const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
-        if ((serverAlerts && item in serverAlerts) === enabled) return;
 
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
@@ -77,10 +94,10 @@ const AlertItem = ({
             setThreshold(defaultThreshold);
             setDuration(defaultDuration);
 
-            ApiAlert.del(server_id, item, override)
+            ApiAlert.del(alertTargetId, config.item, effectiveOverride)
                 .then((res) => {
                     void refresh();
-                    if (server_id < 0) {
+                    if (scope === 'team') {
                         toast.success('Team alert disabled', {
                             description:
                                 'There are currently ' +
@@ -91,10 +108,16 @@ const AlertItem = ({
                 })
                 .catch(ToastError);
         } else {
-            ApiAlert.set(server_id, item, threshold, duration, override)
+            ApiAlert.set(
+                alertTargetId,
+                config.item,
+                normalizedThreshold,
+                normalizedDuration,
+                effectiveOverride
+            )
                 .then((res) => {
                     void refresh();
-                    if (server_id < 0) {
+                    if (scope === 'team') {
                         toast.success('Team alert enabled', {
                             description:
                                 'There are currently ' +
@@ -105,17 +128,27 @@ const AlertItem = ({
                 })
                 .catch(ToastError);
         }
-    }, [enabled]);
+    }, [
+        alertTargetId,
+        config.item,
+        defaultDuration,
+        defaultThreshold,
+        effectiveOverride,
+        enabled,
+        normalizedDuration,
+        normalizedThreshold,
+        refresh,
+        scope,
+    ]);
 
     useEffect(() => {
-        if (!enabled || isInitialLoadRef.current) return;
+        if (!enabled || isSyncingRef.current) return;
 
-        const serverAlerts = server_id < 0 ? teamAlerts : alerts[server_id];
-        if (serverAlerts && item in serverAlerts) {
-            const alert = serverAlerts[item as keyof typeof serverAlerts];
-            if (alert?.threshold === threshold && alert?.for_duration === duration) {
-                return;
-            }
+        if (
+            currentAlert?.threshold === normalizedThreshold &&
+            currentAlert?.for_duration === normalizedDuration
+        ) {
+            return;
         }
 
         if (debounceTimerRef.current) {
@@ -123,7 +156,13 @@ const AlertItem = ({
         }
 
         debounceTimerRef.current = setTimeout(() => {
-            ApiAlert.set(server_id, item, threshold, duration, override)
+            ApiAlert.set(
+                alertTargetId,
+                config.item,
+                normalizedThreshold,
+                normalizedDuration,
+                effectiveOverride
+            )
                 .then(() => {
                     void refresh();
                 })
@@ -135,7 +174,16 @@ const AlertItem = ({
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [threshold, duration]);
+    }, [
+        alertTargetId,
+        config.item,
+        currentAlert,
+        effectiveOverride,
+        enabled,
+        normalizedDuration,
+        normalizedThreshold,
+        refresh,
+    ]);
 
     return (
         <div className={cn('border rounded-md py-3 px-4', enabled ? 'bg-muted/30' : '')}>
@@ -148,52 +196,86 @@ const AlertItem = ({
                 <div className={'space-y-1'}>
                     <div className={'font-semibold flex flex-row items-center gap-2'}>
                         {icon}
-                        {title}
+                        {config.label}
                     </div>
-                    {!enabled && <p className={'text-sm text-muted-foreground'}>{description}</p>}
+                    <p className={'text-sm text-muted-foreground'}>{config.description}</p>
+                    {enabled && config.notify_once && (
+                        <p className={'text-xs text-muted-foreground'}>
+                            This alert is sent once per matching window.
+                        </p>
+                    )}
                 </div>
-                <Switch checked={enabled} onCheckedChange={(v) => setEnabled(v)} />
+                <div
+                    onClick={(e) => {
+                        e.stopPropagation();
+                    }}
+                >
+                    <Switch checked={enabled} onCheckedChange={(v) => setEnabled(v)} />
+                </div>
             </div>
             {enabled && (
-                <div className={'flex flex-row w-full gap-4'}>
-                    {showThreshold && (
+                <div className={'flex flex-row w-full gap-4 flex-wrap'}>
+                    {thresholdEnabled && (
                         <div className={'py-2 space-y-2.5 flex-1'}>
                             <div className={'text-muted-foreground text-sm font-semibold'}>
-                                Average exceeds{' '}
-                                <span className={'text-accent-foreground'}>
-                                    {threshold}
-                                    {thresholdUnit}
-                                </span>
+                                Threshold{' '}
+                                <span className={'text-accent-foreground'}>{thresholdText}</span>
                             </div>
                             <Slider
                                 value={[threshold]}
                                 onValueChange={(e) => {
                                     setThreshold(e[0]);
                                 }}
-                                min={1}
-                                max={maxThreshold}
-                                step={thresholdStep}
+                                min={config.threshold.min ?? 0}
+                                max={sliderThresholdMax}
+                                step={getSliderStep(config.threshold.min ?? 0, sliderThresholdMax)}
                             />
                         </div>
                     )}
-                    <div className={'py-2 space-y-2.5 flex-1'}>
-                        <div className={'text-muted-foreground text-sm font-semibold'}>
-                            For <span className={'text-accent-foreground'}>{duration}</span> minutes
+                    {durationEnabled && (
+                        <div className={'py-2 space-y-2.5 flex-1'}>
+                            <div className={'text-muted-foreground text-sm font-semibold'}>
+                                Window{' '}
+                                <span className={'text-accent-foreground'}>{durationText}</span>
+                            </div>
+                            <Slider
+                                value={[duration]}
+                                onValueChange={(e) => {
+                                    setDuration(e[0]);
+                                }}
+                                min={config.for_duration.min ?? 0}
+                                max={sliderDurationMax}
+                                step={getSliderStep(
+                                    config.for_duration.min ?? 0,
+                                    sliderDurationMax
+                                )}
+                            />
                         </div>
-                        <Slider
-                            value={[duration]}
-                            onValueChange={(e) => {
-                                setDuration(e[0]);
-                            }}
-                            min={1}
-                            max={120}
-                            step={1}
-                        />
-                    </div>
+                    )}
                 </div>
             )}
         </div>
     );
+};
+
+const formatValue = (value: number, unit?: string) => {
+    switch (unit) {
+        case 'percent':
+            return `${value}%`;
+        case 'minute':
+            return `${value} minute${value === 1 ? '' : 's'}`;
+        case 'day':
+            return `${value} day${value === 1 ? '' : 's'}`;
+        default:
+            return unit ? `${value} ${unit}` : String(value);
+    }
+};
+
+const getSliderStep = (min: number, max: number) => {
+    const range = Math.max(max - min, 1);
+    if (range >= 10000) return 1000;
+    if (range >= 1000) return 10;
+    return 1;
 };
 
 export default AlertItem;

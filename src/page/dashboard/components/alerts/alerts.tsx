@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import {
     CheckIcon,
+    CircleHelp,
+    ClockAlert,
     CpuIcon,
     EthernetPort,
     GlobeIcon,
@@ -22,6 +24,7 @@ import {
 import AlertItem from '@/page/dashboard/components/alerts/item.tsx';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import { useAlert } from '@/page/dashboard/hook/useAlert.tsx';
 
 const AlertDialog = ({
     open,
@@ -35,9 +38,12 @@ const AlertDialog = ({
     serverName: string;
 }) => {
     const navigate = useNavigate();
+    const { itemConfigs, loading } = useAlert();
 
     const [tab, setTab] = useState<'server' | 'all'>('server');
     const [overrideTeamAlerts, setOverrideTeamAlerts] = useState<boolean>(false);
+    const scope = tab === 'all' ? 'team' : 'server';
+    const alertTargetId = scope === 'team' ? 0 : serverID;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,79 +100,48 @@ const AlertDialog = ({
                     </Button>
                 )}
                 <div className="grid gap-2">
-                    <AlertItem
-                        icon={<ServerIcon size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'status'}
-                        title={'Server Down'}
-                        description={'You will receive alert when the server down / back online.'}
-                        showThreshold={false}
-                        override={overrideTeamAlerts}
-                    />
-                    <AlertItem
-                        icon={<CpuIcon size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'cpu_usage'}
-                        title={'CPU Usage'}
-                        description={'You will receive alert when CPU usage is high.'}
-                        override={overrideTeamAlerts}
-                    />
-                    <AlertItem
-                        icon={<MemoryStick size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'memory_usage'}
-                        title={'Memory Usage'}
-                        description={'You will receive alert when Memory usage is high.'}
-                        override={overrideTeamAlerts}
-                    />
-                    <AlertItem
-                        icon={<HardDrive size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'disk_usage'}
-                        title={'Disk Usage'}
-                        description={'You will receive alert when Disk usage is high.'}
-                        override={overrideTeamAlerts}
-                    />
-                    <AlertItem
-                        icon={<HardDriveUploadIcon size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'read_iops'}
-                        title={'Disk Read IOPS'}
-                        defaultThreshold={20000}
-                        maxThreshold={100000}
-                        thresholdStep={1000}
-                        description={'You will receive alert when Disk Read IOPS is high.'}
-                        thresholdUnit={' ops/s'}
-                        override={overrideTeamAlerts}
-                    />
-                    <AlertItem
-                        icon={<HardDriveDownloadIcon size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'write_iops'}
-                        title={'Disk Write IOPS'}
-                        defaultThreshold={15000}
-                        maxThreshold={100000}
-                        thresholdStep={1000}
-                        description={'You will receive alert when Disk Write IOPS is high.'}
-                        thresholdUnit={' ops/s'}
-                        override={overrideTeamAlerts}
-                    />
-                    <AlertItem
-                        icon={<EthernetPort size={16} />}
-                        server_id={tab === 'all' ? -1 : serverID}
-                        item={'bandwidth'}
-                        title={'Bandwidth'}
-                        description={'You will receive alert when Bandwidth usage is high.'}
-                        defaultThreshold={800}
-                        maxThreshold={5000}
-                        thresholdStep={10}
-                        thresholdUnit={' Mbps'}
-                        override={overrideTeamAlerts}
-                    />
+                    {itemConfigs.map((itemConfig) => (
+                        <AlertItem
+                            key={itemConfig.item}
+                            icon={getAlertIcon(itemConfig.item)}
+                            alertTargetId={alertTargetId}
+                            scope={scope}
+                            config={itemConfig}
+                            override={overrideTeamAlerts}
+                        />
+                    ))}
+                    {!loading && itemConfigs.length === 0 && (
+                        <div className="text-sm text-muted-foreground">
+                            No configurable alerts are available right now.
+                        </div>
+                    )}
                 </div>
             </DialogContent>
         </Dialog>
     );
+};
+
+const getAlertIcon = (item: string) => {
+    switch (item) {
+        case 'status':
+            return <ServerIcon size={16} />;
+        case 'cpu_usage':
+            return <CpuIcon size={16} />;
+        case 'memory_usage':
+            return <MemoryStick size={16} />;
+        case 'disk_usage':
+            return <HardDrive size={16} />;
+        case 'read_iops':
+            return <HardDriveUploadIcon size={16} />;
+        case 'write_iops':
+            return <HardDriveDownloadIcon size={16} />;
+        case 'bandwidth':
+            return <EthernetPort size={16} />;
+        case 'expiry_reminder':
+            return <ClockAlert size={16} />;
+        default:
+            return <CircleHelp size={16} />;
+    }
 };
 
 export default AlertDialog;
