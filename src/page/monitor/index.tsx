@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
     ArrowBigDownDash,
     ArrowBigUpDash,
@@ -35,6 +35,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { osIcons } from '@/utils/icon';
 import { MemoryUnit, NetUnit } from '@/utils/unit';
+import { getDiskLabel, getDiskUsagePercentage, getStatusDisks } from '@/utils/disk';
 import {
     Select,
     SelectContent,
@@ -238,6 +239,42 @@ const Monitor = () => {
               value: 0,
               unit: 'MB',
           };
+
+    const realtimeDisks = useMemo(() => getStatusDisks(realTimeStatus), [realTimeStatus]);
+    const diskDefinitions = useMemo(() => {
+        const diskMap = new Map<string, { mp: string; total_gb: number; used_gb: number }>();
+
+        for (const disk of realtimeDisks) {
+            diskMap.set(disk.mp, disk);
+        }
+
+        for (const entry of [...(statuses || [])].reverse()) {
+            for (const disk of getStatusDisks(entry)) {
+                if (!diskMap.has(disk.mp)) {
+                    diskMap.set(disk.mp, disk);
+                }
+            }
+        }
+
+        return Array.from(diskMap.values());
+    }, [realtimeDisks, statuses]);
+
+    const diskChartData = useMemo(
+        () =>
+            diskDefinitions.map((disk, index) => ({
+                disk,
+                label: getDiskLabel(index),
+                data: (statuses || []).map((entry) => {
+                    const matched = getStatusDisks(entry).find((item) => item.mp === disk.mp);
+
+                    return {
+                        time: entry.time,
+                        used_gb: matched?.used_gb ?? 0,
+                    };
+                }),
+            })),
+        [diskDefinitions, statuses]
+    );
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24 flex flex-col gap-4 relative">
@@ -478,23 +515,27 @@ const Monitor = () => {
                             <HardDrive size={16} />
                             <span>Disk</span>
                         </div>
-                        <div className="font-mono text-lg">
-                            {realTimeStatus ? MemoryUnit(realTimeStatus.disk_used_gb, 'gb') : 'N/A'}{' '}
-                            /{' '}
-                            {realTimeStatus
-                                ? MemoryUnit(realTimeStatus.disk_total_gb, 'gb')
-                                : 'N/A'}{' '}
-                            (
-                            {realTimeStatus
-                                ? parseFloat(
-                                      (
-                                          (realTimeStatus.disk_used_gb /
-                                              realTimeStatus.disk_total_gb) *
-                                          100
-                                      ).toFixed(2)
-                                  ) + '%'
-                                : 'N/A'}
-                            )
+                        <div className="space-y-1 font-mono text-sm lg:text-base">
+                            {realtimeDisks.length > 0 ? (
+                                realtimeDisks.map((disk, index) => (
+                                    <div
+                                        key={disk.mp}
+                                        className="flex flex-wrap items-center gap-x-2"
+                                    >
+                                        <span className="rounded bg-muted px-1.5 py-0.5 text-xs">
+                                            {getDiskLabel(index)}
+                                        </span>
+                                        <span className="text-muted-foreground">{disk.mp}</span>
+                                        <span>
+                                            {MemoryUnit(disk.used_gb, 'gb')} /{' '}
+                                            {MemoryUnit(disk.total_gb, 'gb')} (
+                                            {getDiskUsagePercentage(disk)}%)
+                                        </span>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="text-lg">N/A</div>
+                            )}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
@@ -662,28 +703,12 @@ const Monitor = () => {
                     />
                     <MonitorChart
                         data={statuses || []}
-                        defaultMode={'raw'}
-                        enableModeSwitch={false}
-                        timeFrame={timeFrame}
-                        nowTime={nowTime}
-                        title="Disk Usage"
-                        description="Usage of root filesystem"
-                        keyName={'Used'}
-                        autoUnit={'gb'}
-                        keyObj={'disk_used_gb'}
-                        yWidth={44}
-                        colorClass={'orange'}
-                        chartMaxValue={realTimeStatus ? realTimeStatus.disk_total_gb : 0}
-                        chartMaxValueUnit={'gb'}
-                    />
-                    <MonitorChart
-                        data={statuses || []}
                         defaultMode={defaultMode}
                         enableModeSwitch={timeFrame !== 'real-time'}
                         timeFrame={timeFrame}
                         nowTime={nowTime}
                         title="Disk I/O"
-                        description={'Read and write speed of root filesystem'}
+                        description={'Aggregated read and write speed across all disks'}
                         keyName={['Read', 'Write', 'Read IOPS', 'Write IOPS']}
                         keyUnit={['/s', '/s']}
                         autoUnit={'kb'}
@@ -726,6 +751,44 @@ const Monitor = () => {
                         colorClass={'green'}
                         chartMaxValue={realTimeStatus ? realTimeStatus.swap_total_mb : 0}
                     />
+                    {diskChartData.length > 0 ? (
+                        diskChartData.map(({ disk, label, data }) => (
+                            <MonitorChart
+                                key={disk.mp}
+                                data={data}
+                                defaultMode={'raw'}
+                                enableModeSwitch={false}
+                                timeFrame={timeFrame}
+                                nowTime={nowTime}
+                                title={`${label} Usage`}
+                                description={`Usage of ${disk.mp} filesystem`}
+                                keyName={'Used'}
+                                autoUnit={'gb'}
+                                keyObj={'used_gb'}
+                                yWidth={44}
+                                colorClass={'orange'}
+                                chartMaxValue={disk.total_gb}
+                                chartMaxValueUnit={'gb'}
+                            />
+                        ))
+                    ) : (
+                        <MonitorChart
+                            data={[]}
+                            defaultMode={'raw'}
+                            enableModeSwitch={false}
+                            timeFrame={timeFrame}
+                            nowTime={nowTime}
+                            title="Disk Usage"
+                            description="No disk usage data available"
+                            keyName={'Used'}
+                            autoUnit={'gb'}
+                            keyObj={'used_gb'}
+                            yWidth={44}
+                            colorClass={'orange'}
+                            chartMaxValue={0}
+                            chartMaxValueUnit={'gb'}
+                        />
+                    )}
                 </div>
             </div>
         </div>

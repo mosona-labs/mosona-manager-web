@@ -1,3 +1,11 @@
+export interface ServerDisk {
+    label: string;
+    mountPoint: string;
+    usage: number;
+    used: number;
+    total: number;
+}
+
 export interface Server {
     id: number;
     name: string;
@@ -13,9 +21,7 @@ export interface Server {
     swap: number;
     swap_used: number;
     swap_total: number;
-    disk: number;
-    disk_used: number;
-    disk_total: number;
+    disks: ServerDisk[];
     uptime: string;
     networkUp: number;
     networkDown: number;

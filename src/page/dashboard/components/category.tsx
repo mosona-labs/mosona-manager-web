@@ -17,6 +17,7 @@ import { useUser } from '@/context/useUser.tsx';
 import DeleteServer from '@/components/server/delete.tsx';
 import AlertDialog from '@/page/dashboard/components/alerts/alerts.tsx';
 import { AlertProvider } from '@/page/dashboard/hook/useAlert.tsx';
+import { getDiskLabel, getDiskUsagePercentage, getStatusDisks } from '@/utils/disk.ts';
 
 import '../components/category.css';
 
@@ -45,14 +46,29 @@ const MonitorCard = ({
             cpu: 0,
             mem_total_mb: 0,
             mem_used_mb: 0,
-            disk_total_gb: 0,
-            disk_used_gb: 0,
+            swap_total_mb: 0,
+            swap_used_mb: 0,
+            disks: [],
+            disk_read_kib_s: 0,
+            disk_write_kib_s: 0,
+            disk_read_iops: 0,
+            disk_write_iops: 0,
             rx_kib_s: 0,
             tx_kib_s: 0,
             rx_total_mb: 0,
             tx_total_mb: 0,
+            tcp_total: 0,
+            udp_total: 0,
             time: '',
         };
+
+    const disks = getStatusDisks(info).map((disk, index) => ({
+        label: getDiskLabel(index),
+        mountPoint: disk.mp,
+        usage: getDiskUsagePercentage(disk),
+        used: disk.used_gb,
+        total: disk.total_gb,
+    }));
 
     const [openCategory, setOpenCategory] = useState<boolean>(false);
     const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -172,11 +188,7 @@ const MonitorCard = ({
                                 : 0 || 0,
                         swap_used: info.swap_used_mb || 0,
                         swap_total: info.swap_total_mb || 0,
-                        disk:
-                            Math.floor((info.disk_used_gb / info.disk_total_gb) * 100 * 100) /
-                                100 || 0,
-                        disk_used: info.disk_used_gb || 0,
-                        disk_total: info.disk_total_gb || 0,
+                        disks,
                         uptime: formatUptime(server.open_time),
                         networkUp: info.rx_kib_s || 0,
                         networkDown: info.tx_kib_s || 0,

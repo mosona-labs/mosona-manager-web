@@ -1,5 +1,3 @@
-import type { ServerStatusType } from '@/api/monitor';
-
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -86,7 +84,7 @@ export function MonitorChart({
             } else {
                 seriesByKey[k] = data.map((d) => ({
                     time: d.time,
-                    value: d[k as keyof ServerStatusType] as number,
+                    value: Number(d[k] ?? 0),
                 }));
             }
         }
@@ -132,7 +130,7 @@ export function MonitorChart({
             setMaxValueChart(chartMaxValue);
         }
         return Array.from(map.values()).sort((a: any, b: any) => a.time - b.time);
-    }, [data, mode, timeFrame, keyObj]);
+    }, [data, mode, timeFrame, keyObj, windowSize, autoUnit, chartMaxValue, chartMaxValueUnit]);
 
     const startTime = useMemo(() => {
         if (!chartData || chartData.length === 0) return Date.now();

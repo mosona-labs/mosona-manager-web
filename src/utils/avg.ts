@@ -17,9 +17,13 @@ const windowAverage = (values: any[], key: string, window: number) => {
     const result: any[] = [];
     for (let i = 0; i <= values.length; i += window) {
         const windowSlice = values.slice(i, i + window);
-        const avg = windowSlice.reduce((a, b) => a + b[key], 0) / window;
+        if (!windowSlice[0]?.time) continue;
+
+        const avg =
+            windowSlice.reduce((sum, item) => sum + Number(item[key] ?? 0), 0) / windowSlice.length;
+
         result.push({
-            time: String(windowSlice[0]?.time),
+            time: String(windowSlice[0].time),
             value: avg,
         });
     }
@@ -30,7 +34,7 @@ const windowMax = (values: any[], key: string, window: number) => {
     const result: any[] = [];
     for (let i = 0; i <= values.length; i += window) {
         const windowSlice = values.slice(i, i + window);
-        const max = Math.max(...windowSlice.map((item) => item[key]));
+        const max = Math.max(...windowSlice.map((item) => Number(item[key] ?? 0)));
         if (windowSlice[0]?.time)
             result.push({
                 time: String(windowSlice[0]?.time),

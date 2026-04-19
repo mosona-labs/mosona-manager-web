@@ -34,14 +34,19 @@ export type MonitorDetailType = MonitorType & {
     arch: string;
 };
 
+export type DiskStatusType = {
+    mp: string;
+    total_gb: number;
+    used_gb: number;
+};
+
 export type ServerStatusType = {
     cpu: number;
     mem_total_mb: number;
     mem_used_mb: number;
     swap_total_mb: number;
     swap_used_mb: number;
-    disk_total_gb: number;
-    disk_used_gb: number;
+    disks: DiskStatusType[] | null;
     disk_read_kib_s: number;
     disk_write_kib_s: number;
     disk_read_iops: number;
