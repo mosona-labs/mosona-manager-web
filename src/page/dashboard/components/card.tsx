@@ -20,7 +20,6 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
 
-import { Card } from '@/components/ui/card.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
 import { cn } from '@/lib/utils.ts';
@@ -115,9 +114,24 @@ const ServerStatusCard = ({
         setShowMore(config.dashboardShowDetails);
     }, [config.dashboardShowDetails]);
 
+    const monitorPath = `/${server.id}/monitor`;
     const handleCardClick = useCallback(
-        () => navigator(`/${server.id}/monitor`),
-        [navigator, server.id]
+        (e: MouseEvent<HTMLAnchorElement>) => {
+            if (
+                e.button !== 0 ||
+                e.metaKey ||
+                e.ctrlKey ||
+                e.shiftKey ||
+                e.altKey ||
+                e.defaultPrevented
+            ) {
+                return;
+            }
+
+            e.preventDefault();
+            navigator(monitorPath);
+        },
+        [navigator, monitorPath]
     );
     const handleToggleMore = useCallback((e?: MouseEvent) => {
         if (e) e.stopPropagation();
@@ -125,9 +139,10 @@ const ServerStatusCard = ({
     }, []);
 
     return (
-        <Card
+        <a
+            href={monitorPath}
             className={cn(
-                'border-border bg-card p-5 transition-all hover:border-primary/50 cursor-pointer h-full',
+                'border-border bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm p-5 transition-all hover:border-primary/50 cursor-pointer h-full no-underline',
                 layout !== 'grid' && 'py-3.5 gap-3.5'
             )}
             onClick={handleCardClick}
@@ -506,7 +521,7 @@ const ServerStatusCard = ({
                     />
                 </>
             )}
-        </Card>
+        </a>
     );
 };
 
