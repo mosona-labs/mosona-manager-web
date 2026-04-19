@@ -8,12 +8,27 @@ import { Button } from '@/components/ui/button.tsx';
 import EditKey from '@/page/keychain/components/edit.tsx';
 import DelKey from '@/page/keychain/components/del.tsx';
 
-const KeyCard = ({ item }: { item: KeyType }) => {
+const KeyCard = ({
+    item,
+    mounted,
+    index,
+}: {
+    item: KeyType;
+    mounted: boolean;
+    index: number;
+}) => {
     const [editOpen, setEditOpen] = useState(false);
     const [delOpen, setDelOpen] = useState(false);
 
     return (
-        <div>
+        <div
+            style={{
+                transition: 'opacity 400ms ease, transform 400ms ease',
+                transitionDelay: `${140 + index * 60}ms`,
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? 'none' : 'translateY(10px)',
+            }}
+        >
             <ContextMenu
                 items={[
                     {

@@ -24,10 +24,14 @@ const MonitorCard = ({
     server,
     statuses,
     time,
+    mounted,
+    index,
 }: {
     server: MonitorType;
     statuses: Record<number, ServerStatusType>;
     time: Date;
+    mounted: boolean;
+    index: number;
 }) => {
     const navigator = useNavigate();
     const { createSession } = useSession();
@@ -56,7 +60,16 @@ const MonitorCard = ({
     const [openAlert, setOpenAlert] = useState<boolean>(false);
 
     return (
-        <div key={server.id} className={'h-full'}>
+        <div
+            key={server.id}
+            className={'h-full'}
+            style={{
+                transition: 'opacity 400ms ease, transform 400ms ease',
+                transitionDelay: `${160 + index * 70}ms`,
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? 'none' : 'translateY(10px)',
+            }}
+        >
             <ContextMenu
                 className={'h-full'}
                 items={[
@@ -215,17 +228,26 @@ const CategoryCard = ({
     categoryServerMap,
     statuses,
     time,
+    mounted,
 }: {
     category: CategoryType;
     categoryServerMap: Record<number, MonitorType[]>;
     statuses: Record<number, ServerStatusType>;
     time: Date;
+    mounted: boolean;
 }) => {
     const { config } = useUser();
 
     return (
         <AlertProvider key={category.id}>
-            <div className="mt-4">
+            <div
+                className="mt-4"
+                style={{
+                    transition: 'opacity 400ms ease, transform 400ms ease',
+                    opacity: mounted ? 1 : 0,
+                    transform: mounted ? 'none' : 'translateY(8px)',
+                }}
+            >
                 <p className="mt-4 opacity-65">{category.name}</p>
             </div>
             <div
@@ -237,8 +259,15 @@ const CategoryCard = ({
                           : 'category-grid'
                 )}
             >
-                {categoryServerMap[category.id]?.map((server) => (
-                    <MonitorCard key={server.id} server={server} statuses={statuses} time={time} />
+                {categoryServerMap[category.id]?.map((server, index) => (
+                    <MonitorCard
+                        key={server.id}
+                        server={server}
+                        statuses={statuses}
+                        time={time}
+                        mounted={mounted}
+                        index={index}
+                    />
                 ))}
             </div>
         </AlertProvider>

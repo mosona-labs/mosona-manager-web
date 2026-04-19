@@ -62,6 +62,9 @@ const Monitor = () => {
 
     const [statuses, setStatuses] = useState<ServerStatusType[]>();
     const [status, setStatus] = useState<ServerStatusType>();
+    const [mounted, setMounted] = useState(false);
+    const [showSkeleton, setShowSkeleton] = useState(true);
+    const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
 
     const [layout, setLayout] = useState<'grid-2' | 'grid-3' | 'list'>(config.defaultLayout);
 
@@ -114,15 +117,15 @@ const Monitor = () => {
             })
             .catch((err) => {
                 console.error('Failed to fetch monitor real-time data:', err);
-            })
-            .catch(ToastError);
+                ToastError(err);
+            });
     };
 
     const chart = (id: string, time_frame: string) => {
         ApiMonitor.chart(parseInt(id), time_frame)
             .then((data) => {
                 setStatuses(data.data);
-                if (data.data.length > 0) {
+                if (data.data?.length > 0) {
                     const latestStatus = data.data[data.data.length - 1];
                     setStatus(latestStatus);
                     syncNowTime(latestStatus.time);
@@ -130,8 +133,8 @@ const Monitor = () => {
             })
             .catch((err) => {
                 console.error('Failed to fetch monitor chart data:', err);
-            })
-            .catch(ToastError);
+                ToastError(err);
+            });
     };
 
     useEffect(() => {
@@ -144,8 +147,8 @@ const Monitor = () => {
             })
             .catch((err) => {
                 console.error('Failed to fetch monitor data:', err);
-            })
-            .catch(ToastError);
+                ToastError(err);
+            });
 
         realtime(id);
         let interval: number;
@@ -197,6 +200,32 @@ const Monitor = () => {
         };
     }, [autoRefresh, id, timeFrame]);
 
+    const initialLoading =
+        !server || !realTimeStatus || (timeFrame !== 'real-time' && statuses === undefined);
+
+    useEffect(() => {
+        let fadeInTimer: number | undefined;
+        let fadeOutTimer: number | undefined;
+
+        if (!hasInitialLoaded && initialLoading) {
+            setShowSkeleton(true);
+            setMounted(false);
+            return;
+        }
+
+        if (!hasInitialLoaded && !initialLoading) {
+            setHasInitialLoaded(true);
+        }
+
+        fadeInTimer = window.setTimeout(() => setMounted(true), 60);
+        fadeOutTimer = window.setTimeout(() => setShowSkeleton(false), 420);
+
+        return () => {
+            if (fadeInTimer) window.clearTimeout(fadeInTimer);
+            if (fadeOutTimer) window.clearTimeout(fadeOutTimer);
+        };
+    }, [hasInitialLoaded, initialLoading]);
+
     const rx = status
         ? NetUnit(realTimeStatus ? realTimeStatus.rx_total_mb : status.rx_total_mb, 'mb')
         : {
@@ -211,371 +240,493 @@ const Monitor = () => {
           };
 
     return (
-        <div className="w-full p-5 h-full overflow-y-auto pb-24 flex flex-col gap-4">
-            <div className="flex flex-col gap-3 items-start md:flex-row justify-between md:items-center">
-                <div className="flex flex-row gap-3 items-center">
-                    <Button
-                        className="w-10 h-10"
-                        variant={'ghost'}
-                        onClick={() => {
-                            if (window.history.length > 1) navigate(-1);
-                            else navigate('/');
-                        }}
-                    >
-                        <ChevronLeft size={100} />
-                    </Button>
-                    <h1 className="text-2xl font-bold">{server?.name}</h1>
-                </div>
-                <div className="flex flex-row gap-2">
-                    <Badge
+        <div className="w-full p-5 h-full overflow-y-auto pb-24 flex flex-col gap-4 relative">
+            {showSkeleton ? (
+                <div
+                    className="absolute inset-5 z-40 pointer-events-none overflow-hidden transition-opacity duration-400"
+                    style={{ opacity: !hasInitialLoaded && initialLoading ? 1 : 0 }}
+                >
+                    <div className="flex flex-col gap-3 items-start md:flex-row justify-between md:items-center">
+                        <div className="flex flex-row gap-3 items-center">
+                            <div className="h-10 w-10 rounded bg-muted-foreground/8 animate-pulse" />
+                            <div className="h-8 w-48 rounded bg-muted-foreground/10 animate-pulse" />
+                        </div>
+                        <div className="flex flex-row gap-2">
+                            <div className="h-8 w-20 rounded-full bg-muted-foreground/8 animate-pulse" />
+                            <div className="h-8 w-28 rounded-full bg-muted-foreground/8 animate-pulse" />
+                            <div className="h-8 w-24 rounded-full bg-muted-foreground/8 animate-pulse" />
+                        </div>
+                    </div>
+                    <Card className="px-6 py-4 grid grid-cols-12 gap-4 mt-4">
+                        {Array.from({ length: 12 }).map((_, index) => (
+                            <div
+                                key={index}
+                                className={cn(
+                                    'h-16 rounded bg-muted-foreground/8 animate-pulse',
+                                    index < 2
+                                        ? 'col-span-12 md:col-span-6'
+                                        : index < 5
+                                          ? 'col-span-6 lg:col-span-2 xl:col-span-2'
+                                          : 'col-span-12 md:col-span-6 xl:col-span-4'
+                                )}
+                            />
+                        ))}
+                    </Card>
+                    <div className="flex flex-row justify-between mt-4">
+                        <div className="h-10 w-[180px] rounded bg-muted-foreground/8 animate-pulse" />
+                        <div className="flex gap-2">
+                            <div className="h-10 w-10 rounded bg-muted-foreground/8 animate-pulse" />
+                            <div className="h-10 w-10 rounded bg-muted-foreground/8 animate-pulse" />
+                            <div className="h-10 w-10 rounded bg-muted-foreground/8 animate-pulse" />
+                        </div>
+                    </div>
+                    <div
                         className={cn(
-                            'bg-accent text-accent-foreground px-3 py-1 text-sm',
-                            !stale ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+                            'grid gap-4 mt-4',
+                            layout === 'grid-3'
+                                ? 'xl:grid-cols-3 lg:grid-cols-2'
+                                : layout === 'grid-2'
+                                  ? 'lg:grid-cols-2'
+                                  : 'grid-cols-1'
                         )}
                     >
-                        {!stale ? 'online' : 'offline'}
-                    </Badge>
-                    <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm gap-1.5">
-                        <img
-                            src={`/flags/${(server?.county || 'UN').toLowerCase()}.svg`}
-                            width="16"
-                            height="12"
-                            alt={'UN'}
-                        />
-                        {server?.area || 'Unknown'}
-                    </Badge>
-                    <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm">
-                        <ClockArrowUp />
-                        {formatUptimeDays(server?.open_time || '')}d
-                    </Badge>
-                </div>
-            </div>
-            <Card className="px-6 py-4 grid grid-cols-12 gap-4">
-                <div className="flex flex-col col-span-12 md:col-span-6">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <WorkflowIcon size={16} />
-                        <span>IP Address</span>
-                    </div>
-                    <div className="font-mono text-lg">{server?.ip || 'N/A'}</div>
-                </div>
-                <div className="flex flex-col col-span-12 md:col-span-6">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <MonitorIcon size={16} />
-                        <span>Hostname</span>
-                    </div>
-                    <div className="font-mono text-lg line-clamp-1">
-                        {server?.hostname || 'N/A'}
+                        {Array.from({ length: 6 }).map((_, index) => (
+                            <Card key={index} className="min-w-0">
+                                <div className="p-6 pb-2">
+                                    <div className="h-5 w-32 rounded bg-muted-foreground/10 animate-pulse" />
+                                    <div className="h-4 w-48 rounded bg-muted-foreground/8 animate-pulse mt-2" />
+                                </div>
+                                <div className="p-6 pt-4">
+                                    <div className="h-[256px] rounded bg-muted-foreground/8 animate-pulse" />
+                                </div>
+                            </Card>
+                        ))}
                     </div>
                 </div>
-                <div className="flex flex-col col-span-6 lg:col-span-2 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <Shell size={16} />
-                        <span>System</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        <img
-                            src={`/icons/${server?.os && osIcons.includes(server?.os?.toLowerCase() || '') ? server?.os?.toLowerCase() : 'linux'}.svg`}
-                            className="inline-block h-5 w-5 mr-2"
-                            alt={'System Icon'}
-                        />
-                        {server?.os || 'N/A'}
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-6 lg:col-span-2 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <Triangle size={16} />
-                        <span>Arch</span>
-                    </div>
-                    <div className="font-mono text-lg">{server?.arch || 'N/A'}</div>
-                </div>
-                <div className="flex flex-col col-span-6 lg:col-span-6 xl:col-span-4">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <Triangle size={16} />
-                        <span>Kernel</span>
-                    </div>
-                    <div className="font-mono text-lg">{server?.kernel || 'N/A'}</div>
-                </div>
-                <div className="xl:col-span-4 " />
-                <div className="flex flex-col col-span-12 2xl:col-span-6">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <CpuIcon size={16} />
-                        <span>CPU</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        {server?.cpu_name
-                            ? `${server?.cpu_name} (${server?.core_c}C/${server?.core_t}T)`
-                            : 'N/A'}
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-6 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <ArrowBigUpDash size={16} />
-                        <span>Upload Total</span>
-                    </div>
-                    <div className="font-mono text-lg">{tx ? `${tx.value} ${tx.unit}` : 'N/A'}</div>
-                </div>
-                <div className="flex flex-col col-span-6 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <ArrowBigDownDash size={16} />
-                        <span>Download Total</span>
-                    </div>
-                    <div className="font-mono text-lg">{rx ? `${rx.value} ${rx.unit}` : 'N/A'}</div>
-                </div>
-                <div className="hidden xl:block xl:col-span-1" />
-                <div className="flex flex-col col-span-6 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <PercentCircle size={16} />
-                        <span>CPU Usage</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        {realTimeStatus ? parseFloat(realTimeStatus.cpu.toFixed(2)) + '%' : 'N/A'}
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <MemoryStick size={16} />
-                        <span>Memory</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.mem_used_mb, 'mb') : 'N/A'} /{' '}
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.mem_total_mb, 'mb') : 'N/A'} (
-                        {realTimeStatus
-                            ? parseFloat(
-                                  (
-                                      (realTimeStatus.mem_used_mb / realTimeStatus.mem_total_mb) *
-                                      100
-                                  ).toFixed(2)
-                              ) + '%'
-                            : 'N/A'}
-                        )
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <HardDrive size={16} />
-                        <span>Disk</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.disk_used_gb, 'gb') : 'N/A'} /{' '}
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.disk_total_gb, 'gb') : 'N/A'} (
-                        {realTimeStatus
-                            ? parseFloat(
-                                  (
-                                      (realTimeStatus.disk_used_gb / realTimeStatus.disk_total_gb) *
-                                      100
-                                  ).toFixed(2)
-                              ) + '%'
-                            : 'N/A'}
-                        )
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <HardDrive size={16} />
-                        <span>I/O</span>
-                    </div>
-                    <div className="font-mono text-lg flex items-center gap-2">
-                        <HardDriveUpload className="h-4 w-4" />
-                        {realTimeStatus
-                            ? MemoryUnit(realTimeStatus.disk_read_kib_s, 'kb') + '/s'
-                            : 'N/A'}
-                        <HardDriveDownload className="h-4 w-4" />
-                        {realTimeStatus
-                            ? MemoryUnit(realTimeStatus.disk_write_kib_s, 'kb') + '/s'
-                            : 'N/A'}
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <EthernetPort size={16} />
-                        <span>Network</span>
-                    </div>
-                    <div className="font-mono text-lg flex items-center gap-2">
-                        <ArrowUp className="h-4 w-4" />
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s' : 'N/A'}
-                        <ArrowDown className="h-4 w-4" />
-                        {realTimeStatus ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s' : 'N/A'}
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-6 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <Unplug size={16} />
-                        <span>TCP Connections</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        {realTimeStatus?.tcp_total ? realTimeStatus?.tcp_total : 'N/A'}
-                    </div>
-                </div>
-                <div className="flex flex-col col-span-6 xl:col-span-2">
-                    <div className="flex flex-row gap-2 items-center text-muted-foreground">
-                        <Unplug size={16} />
-                        <span>UDP Connections</span>
-                    </div>
-                    <div className="font-mono text-lg">
-                        {realTimeStatus?.udp_total ? realTimeStatus?.udp_total : 'N/A'}
-                    </div>
-                </div>
-            </Card>
-            <div className="flex flex-row justify-between">
-                <Select
-                    value={timeFrame}
-                    onValueChange={(e) => {
-                        updateConfig({ defaultTimeFrame: e });
+            ) : null}
+
+            <div
+                className="flex flex-col gap-4"
+                style={{ transition: 'opacity 400ms ease', opacity: mounted ? 1 : 0 }}
+            >
+                <div
+                    className="flex flex-col gap-3 items-start md:flex-row justify-between md:items-center"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(6px)',
                     }}
                 >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem value="real-time">Real-Time (3M)</SelectItem>
-                            <SelectItem value="1h">1H</SelectItem>
-                            <SelectItem value="12h">12H</SelectItem>
-                            <SelectItem value="24h">24H</SelectItem>
-                            <SelectItem value="7d">7D</SelectItem>
-                            <SelectItem value="30d">30D</SelectItem>
-                            <SelectItem value="365d">365D</SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
-                <div className="space-x-2">
-                    <SettingsDialog>
-                        <Button variant={'outline'}>
-                            <Settings size={16} />
+                    <div className="flex flex-row gap-3 items-center">
+                        <Button
+                            className="w-10 h-10"
+                            variant={'ghost'}
+                            onClick={() => {
+                                if (window.history.length > 1) navigate(-1);
+                                else navigate('/');
+                            }}
+                        >
+                            <ChevronLeft size={100} />
                         </Button>
-                    </SettingsDialog>
-                    <Tooltip>
-                        <TooltipTrigger asChild>
-                            <Button
-                                variant={'outline'}
-                                onClick={() => {
-                                    updateConfig({ autoRefresh: !autoRefresh });
-                                }}
-                            >
-                                {autoRefresh ? (
-                                    <RefreshCw size={16} className="text-green-500" />
-                                ) : (
-                                    <RefreshCwOff size={16} />
-                                )}
-                            </Button>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" className="me-2">
-                            {autoRefresh ? <p>Auto-refresh is ON</p> : <p>Auto-refresh is OFF</p>}
-                        </TooltipContent>
-                    </Tooltip>
-                    <LayoutBtn
-                        layout={layout}
-                        setLayout={(l) => {
-                            updateConfig({ defaultLayout: l });
+                        <h1 className="text-2xl font-bold">{server?.name}</h1>
+                    </div>
+                    <div className="flex flex-row gap-2">
+                        <Badge
+                            className={cn(
+                                'bg-accent text-accent-foreground px-3 py-1 text-sm',
+                                !stale
+                                    ? 'bg-green-500/20 text-green-400'
+                                    : 'bg-red-500/20 text-red-400'
+                            )}
+                        >
+                            {!stale ? 'online' : 'offline'}
+                        </Badge>
+                        <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm gap-1.5">
+                            <img
+                                src={`/flags/${(server?.county || 'UN').toLowerCase()}.svg`}
+                                width="16"
+                                height="12"
+                                alt={'UN'}
+                            />
+                            {server?.area || 'Unknown'}
+                        </Badge>
+                        <Badge className="bg-accent text-accent-foreground px-3 py-1 text-sm">
+                            <ClockArrowUp />
+                            {formatUptimeDays(server?.open_time || '')}d
+                        </Badge>
+                    </div>
+                </div>
+                <Card
+                    className="px-6 py-4 grid grid-cols-12 gap-4"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '80ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <div className="flex flex-col col-span-12 md:col-span-6">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <WorkflowIcon size={16} />
+                            <span>IP Address</span>
+                        </div>
+                        <div className="font-mono text-lg">{server?.ip || 'N/A'}</div>
+                    </div>
+                    <div className="flex flex-col col-span-12 md:col-span-6">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <MonitorIcon size={16} />
+                            <span>Hostname</span>
+                        </div>
+                        <div className="font-mono text-lg line-clamp-1">
+                            {server?.hostname || 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-6 lg:col-span-2 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <Shell size={16} />
+                            <span>System</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            <img
+                                src={`/icons/${server?.os && osIcons.includes(server?.os?.toLowerCase() || '') ? server?.os?.toLowerCase() : 'linux'}.svg`}
+                                className="inline-block h-5 w-5 mr-2"
+                                alt={'System Icon'}
+                            />
+                            {server?.os || 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-6 lg:col-span-2 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <Triangle size={16} />
+                            <span>Arch</span>
+                        </div>
+                        <div className="font-mono text-lg">{server?.arch || 'N/A'}</div>
+                    </div>
+                    <div className="flex flex-col col-span-6 lg:col-span-6 xl:col-span-4">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <Triangle size={16} />
+                            <span>Kernel</span>
+                        </div>
+                        <div className="font-mono text-lg">{server?.kernel || 'N/A'}</div>
+                    </div>
+                    <div className="xl:col-span-4 " />
+                    <div className="flex flex-col col-span-12 2xl:col-span-6">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <CpuIcon size={16} />
+                            <span>CPU</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {server?.cpu_name
+                                ? `${server?.cpu_name} (${server?.core_c}C/${server?.core_t}T)`
+                                : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-6 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <ArrowBigUpDash size={16} />
+                            <span>Upload Total</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {tx ? `${tx.value} ${tx.unit}` : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-6 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <ArrowBigDownDash size={16} />
+                            <span>Download Total</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {rx ? `${rx.value} ${rx.unit}` : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="hidden xl:block xl:col-span-1" />
+                    <div className="flex flex-col col-span-6 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <PercentCircle size={16} />
+                            <span>CPU Usage</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {realTimeStatus
+                                ? parseFloat(realTimeStatus.cpu.toFixed(2)) + '%'
+                                : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <MemoryStick size={16} />
+                            <span>Memory</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {realTimeStatus ? MemoryUnit(realTimeStatus.mem_used_mb, 'mb') : 'N/A'}{' '}
+                            /{' '}
+                            {realTimeStatus ? MemoryUnit(realTimeStatus.mem_total_mb, 'mb') : 'N/A'}{' '}
+                            (
+                            {realTimeStatus
+                                ? parseFloat(
+                                      (
+                                          (realTimeStatus.mem_used_mb /
+                                              realTimeStatus.mem_total_mb) *
+                                          100
+                                      ).toFixed(2)
+                                  ) + '%'
+                                : 'N/A'}
+                            )
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <HardDrive size={16} />
+                            <span>Disk</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {realTimeStatus ? MemoryUnit(realTimeStatus.disk_used_gb, 'gb') : 'N/A'}{' '}
+                            /{' '}
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.disk_total_gb, 'gb')
+                                : 'N/A'}{' '}
+                            (
+                            {realTimeStatus
+                                ? parseFloat(
+                                      (
+                                          (realTimeStatus.disk_used_gb /
+                                              realTimeStatus.disk_total_gb) *
+                                          100
+                                      ).toFixed(2)
+                                  ) + '%'
+                                : 'N/A'}
+                            )
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <HardDrive size={16} />
+                            <span>I/O</span>
+                        </div>
+                        <div className="font-mono text-lg flex items-center gap-2">
+                            <HardDriveUpload className="h-4 w-4" />
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.disk_read_kib_s, 'kb') + '/s'
+                                : 'N/A'}
+                            <HardDriveDownload className="h-4 w-4" />
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.disk_write_kib_s, 'kb') + '/s'
+                                : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <EthernetPort size={16} />
+                            <span>Network</span>
+                        </div>
+                        <div className="font-mono text-lg flex items-center gap-2">
+                            <ArrowUp className="h-4 w-4" />
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s'
+                                : 'N/A'}
+                            <ArrowDown className="h-4 w-4" />
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s'
+                                : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-6 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <Unplug size={16} />
+                            <span>TCP Connections</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {realTimeStatus?.tcp_total ? realTimeStatus?.tcp_total : 'N/A'}
+                        </div>
+                    </div>
+                    <div className="flex flex-col col-span-6 xl:col-span-2">
+                        <div className="flex flex-row gap-2 items-center text-muted-foreground">
+                            <Unplug size={16} />
+                            <span>UDP Connections</span>
+                        </div>
+                        <div className="font-mono text-lg">
+                            {realTimeStatus?.udp_total ? realTimeStatus?.udp_total : 'N/A'}
+                        </div>
+                    </div>
+                </Card>
+                <div
+                    className="flex flex-row justify-between"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '140ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <Select
+                        value={timeFrame}
+                        onValueChange={(e) => {
+                            updateConfig({ defaultTimeFrame: e });
                         }}
+                    >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="real-time">Real-Time (3M)</SelectItem>
+                                <SelectItem value="1h">1H</SelectItem>
+                                <SelectItem value="12h">12H</SelectItem>
+                                <SelectItem value="24h">24H</SelectItem>
+                                <SelectItem value="7d">7D</SelectItem>
+                                <SelectItem value="30d">30D</SelectItem>
+                                <SelectItem value="365d">365D</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <div className="space-x-2">
+                        <SettingsDialog>
+                            <Button variant={'outline'}>
+                                <Settings size={16} />
+                            </Button>
+                        </SettingsDialog>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant={'outline'}
+                                    onClick={() => {
+                                        updateConfig({ autoRefresh: !autoRefresh });
+                                    }}
+                                >
+                                    {autoRefresh ? (
+                                        <RefreshCw size={16} className="text-green-500" />
+                                    ) : (
+                                        <RefreshCwOff size={16} />
+                                    )}
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom" className="me-2">
+                                {autoRefresh ? (
+                                    <p>Auto-refresh is ON</p>
+                                ) : (
+                                    <p>Auto-refresh is OFF</p>
+                                )}
+                            </TooltipContent>
+                        </Tooltip>
+                        <LayoutBtn
+                            layout={layout}
+                            setLayout={(l) => {
+                                updateConfig({ defaultLayout: l });
+                            }}
+                        />
+                    </div>
+                </div>
+                <div
+                    className={cn(
+                        'grid gap-4',
+                        layout === 'grid-3'
+                            ? 'xl:grid-cols-3 lg:grid-cols-2'
+                            : layout === 'grid-2'
+                              ? 'lg:grid-cols-2'
+                              : 'grid-cols-1'
+                    )}
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '180ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={defaultMode}
+                        timeFrame={timeFrame}
+                        enableModeSwitch={timeFrame !== 'real-time'}
+                        nowTime={nowTime}
+                        title="CPU Usage"
+                        description="System-wide CPU utilization overview"
+                        keyName="Usage"
+                        keyUnit="%"
+                        keyObj="cpu"
+                        chartMaxValue={100}
+                        chartMaxValueUnit={'other'}
+                    />
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={'raw'}
+                        enableModeSwitch={false}
+                        timeFrame={timeFrame}
+                        nowTime={nowTime}
+                        title="Memory Usage"
+                        description="System memory consumption overview"
+                        keyName={'Used'}
+                        autoUnit={'mb'}
+                        keyObj={'mem_used_mb'}
+                        yWidth={38}
+                        colorClass={'green'}
+                        chartMaxValue={realTimeStatus ? realTimeStatus.mem_total_mb : 0}
+                    />
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={'raw'}
+                        enableModeSwitch={false}
+                        timeFrame={timeFrame}
+                        nowTime={nowTime}
+                        title="Disk Usage"
+                        description="Usage of root filesystem"
+                        keyName={'Used'}
+                        autoUnit={'gb'}
+                        keyObj={'disk_used_gb'}
+                        yWidth={44}
+                        colorClass={'orange'}
+                        chartMaxValue={realTimeStatus ? realTimeStatus.disk_total_gb : 0}
+                        chartMaxValueUnit={'gb'}
+                    />
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={defaultMode}
+                        enableModeSwitch={timeFrame !== 'real-time'}
+                        timeFrame={timeFrame}
+                        nowTime={nowTime}
+                        title="Disk I/O"
+                        description={'Read and write speed of root filesystem'}
+                        keyName={['Read', 'Write', 'Read IOPS', 'Write IOPS']}
+                        keyUnit={['/s', '/s']}
+                        autoUnit={'kb'}
+                        keyObj={[
+                            'disk_read_kib_s',
+                            'disk_write_kib_s',
+                            'disk_read_iops',
+                            'disk_write_iops',
+                        ]}
+                        yWidth={46}
+                        colorClass={'blue-yellow'}
+                    />
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={defaultMode}
+                        enableModeSwitch={timeFrame !== 'real-time'}
+                        timeFrame={timeFrame}
+                        nowTime={nowTime}
+                        title="Bandwidth"
+                        description={'Network bandwidth usage for all network interfaces'}
+                        keyName={['Receive', 'Transmit']}
+                        keyUnit={['/s', '/s']}
+                        autoUnit={'kb'}
+                        keyObj={['rx_kib_s', 'tx_kib_s']}
+                        yWidth={46}
+                        colorClass={'violet-red'}
+                    />
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={'raw'}
+                        enableModeSwitch={false}
+                        timeFrame={timeFrame}
+                        nowTime={nowTime}
+                        title="Swap Usage"
+                        description={'Amount of swap space used'}
+                        keyName={'Used'}
+                        autoUnit={'mb'}
+                        keyObj={'swap_used_mb'}
+                        yWidth={38}
+                        colorClass={'green'}
+                        chartMaxValue={realTimeStatus ? realTimeStatus.swap_total_mb : 0}
                     />
                 </div>
-            </div>
-            <div
-                className={cn(
-                    'grid gap-4',
-                    layout === 'grid-3'
-                        ? 'xl:grid-cols-3 lg:grid-cols-2'
-                        : layout === 'grid-2'
-                          ? 'lg:grid-cols-2'
-                          : 'grid-cols-1'
-                )}
-            >
-                <MonitorChart
-                    data={statuses || []}
-                    defaultMode={defaultMode}
-                    timeFrame={timeFrame}
-                    enableModeSwitch={timeFrame !== 'real-time'}
-                    nowTime={nowTime}
-                    title="CPU Usage"
-                    description="System-wide CPU utilization overview"
-                    keyName="Usage"
-                    keyUnit="%"
-                    keyObj="cpu"
-                    chartMaxValue={100}
-                    chartMaxValueUnit={'other'}
-                />
-                <MonitorChart
-                    data={statuses || []}
-                    defaultMode={'raw'}
-                    enableModeSwitch={false}
-                    timeFrame={timeFrame}
-                    nowTime={nowTime}
-                    title="Memory Usage"
-                    description="System memory consumption overview"
-                    keyName={'Used'}
-                    autoUnit={'mb'}
-                    keyObj={'mem_used_mb'}
-                    yWidth={38}
-                    colorClass={'green'}
-                    chartMaxValue={realTimeStatus ? realTimeStatus.mem_total_mb : 0}
-                />
-                <MonitorChart
-                    data={statuses || []}
-                    defaultMode={'raw'}
-                    enableModeSwitch={false}
-                    timeFrame={timeFrame}
-                    nowTime={nowTime}
-                    title="Disk Usage"
-                    description="Usage of root filesystem"
-                    keyName={'Used'}
-                    autoUnit={'gb'}
-                    keyObj={'disk_used_gb'}
-                    yWidth={44}
-                    colorClass={'orange'}
-                    chartMaxValue={realTimeStatus ? realTimeStatus.disk_total_gb : 0}
-                    chartMaxValueUnit={'gb'}
-                />
-                <MonitorChart
-                    data={statuses || []}
-                    defaultMode={defaultMode}
-                    enableModeSwitch={timeFrame !== 'real-time'}
-                    timeFrame={timeFrame}
-                    nowTime={nowTime}
-                    title="Disk I/O"
-                    description={'Read and write speed of root filesystem'}
-                    keyName={['Read', 'Write', 'Read IOPS', 'Write IOPS']}
-                    keyUnit={['/s', '/s']}
-                    autoUnit={'kb'}
-                    keyObj={[
-                        'disk_read_kib_s',
-                        'disk_write_kib_s',
-                        'disk_read_iops',
-                        'disk_write_iops',
-                    ]}
-                    yWidth={46}
-                    colorClass={'blue-yellow'}
-                />
-                <MonitorChart
-                    data={statuses || []}
-                    defaultMode={defaultMode}
-                    enableModeSwitch={timeFrame !== 'real-time'}
-                    timeFrame={timeFrame}
-                    nowTime={nowTime}
-                    title="Bandwidth"
-                    description={'Network bandwidth usage for all network interfaces'}
-                    keyName={['Receive', 'Transmit']}
-                    keyUnit={['/s', '/s']}
-                    autoUnit={'kb'}
-                    keyObj={['rx_kib_s', 'tx_kib_s']}
-                    yWidth={46}
-                    colorClass={'violet-red'}
-                />
-                <MonitorChart
-                    data={statuses || []}
-                    defaultMode={'raw'}
-                    enableModeSwitch={false}
-                    timeFrame={timeFrame}
-                    nowTime={nowTime}
-                    title="Swap Usage"
-                    description={'Amount of swap space used'}
-                    keyName={'Used'}
-                    autoUnit={'mb'}
-                    keyObj={'swap_used_mb'}
-                    yWidth={38}
-                    colorClass={'green'}
-                    chartMaxValue={realTimeStatus ? realTimeStatus.swap_total_mb : 0}
-                />
             </div>
         </div>
     );

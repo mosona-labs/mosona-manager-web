@@ -11,9 +11,13 @@ import { useSession } from '@/context/useSession';
 const ServerTerminalCard = ({
     server,
     openEdit,
+    mounted,
+    index,
 }: {
     server: TerminalType;
     openEdit: () => void;
+    mounted: boolean;
+    index: number;
 }) => {
     const navigator = useNavigate();
     const { createSession } = useSession();
@@ -21,6 +25,13 @@ const ServerTerminalCard = ({
     return (
         <Card
             className="border-border bg-card p-4 transition-all hover:border-primary/50 cursor-pointer flex-row flex items-center gap-3"
+            style={{
+                transition:
+                    'opacity 400ms ease, transform 400ms ease, border-color 200ms ease',
+                transitionDelay: `${180 + index * 60}ms`,
+                opacity: mounted ? 1 : 0,
+                transform: mounted ? 'none' : 'translateY(10px)',
+            }}
             onClick={() => {
                 createSession(
                     {

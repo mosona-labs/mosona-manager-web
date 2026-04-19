@@ -12,7 +12,15 @@ import EditServer from '@/components/server/edit';
 
 import '../components/category.css';
 
-const TerminalCard = ({ server }: { server: TerminalType }) => {
+const TerminalCard = ({
+    server,
+    mounted,
+    index,
+}: {
+    server: TerminalType;
+    mounted: boolean;
+    index: number;
+}) => {
     const [openCategory, setOpenCategory] = useState<boolean>(false);
 
     const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -51,6 +59,8 @@ const TerminalCard = ({ server }: { server: TerminalType }) => {
                     key={server.id}
                     server={server}
                     openEdit={() => setOpenEdit(true)}
+                    mounted={mounted}
+                    index={index}
                 />
             </ContextMenu>
             <EditCategory
@@ -68,10 +78,12 @@ const CategoryCard = ({
     category,
     categoryServerMap,
     filter,
+    mounted,
 }: {
     category: CategoryType;
     categoryServerMap: Record<number, TerminalType[]>;
     filter: string;
+    mounted: boolean;
 }) => {
     const filterServer = (server: TerminalType): boolean => {
         if (!filter) return true;
@@ -87,15 +99,36 @@ const CategoryCard = ({
     return (
         <div key={category.id}>
             <div className="mt-4">
-                <p className="mt-4 opacity-65">{category.name}</p>
+                <p
+                    className="mt-4 opacity-65"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    {category.name}
+                </p>
             </div>
             <div className="category-terminal-grid">
                 {filteredServers.length ? (
-                    filteredServers.map((server) => (
-                        <TerminalCard key={server.id} server={server} />
+                    filteredServers.map((server, index) => (
+                        <TerminalCard
+                            key={server.id}
+                            server={server}
+                            mounted={mounted}
+                            index={index}
+                        />
                     ))
                 ) : (
-                    <div className="col-span-full">
+                    <div
+                        className="col-span-full"
+                        style={{
+                            transition: 'opacity 400ms ease, transform 400ms ease',
+                            opacity: mounted ? 1 : 0,
+                            transform: mounted ? 'none' : 'translateY(8px)',
+                        }}
+                    >
                         <p className="text-sm text-muted-foreground/50">
                             No servers in this category.
                         </p>

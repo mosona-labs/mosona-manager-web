@@ -141,6 +141,8 @@ const PublicPage = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [mounted, setMounted] = useState(false);
+    const [showSkeleton, setShowSkeleton] = useState(true);
 
     const [enabled, setEnabled] = useState(false);
     const [name, setName] = useState('');
@@ -178,6 +180,24 @@ const PublicPage = () => {
                 setIsLoading(false);
             });
     }, [team?.id]);
+
+    useEffect(() => {
+        let fadeInTimer: number | undefined;
+        let fadeOutTimer: number | undefined;
+
+        if (isLoading) {
+            setShowSkeleton(true);
+            setMounted(false);
+        } else {
+            fadeInTimer = window.setTimeout(() => setMounted(true), 60);
+            fadeOutTimer = window.setTimeout(() => setShowSkeleton(false), 420);
+        }
+
+        return () => {
+            if (fadeInTimer) window.clearTimeout(fadeInTimer);
+            if (fadeOutTimer) window.clearTimeout(fadeOutTimer);
+        };
+    }, [isLoading]);
 
     const onSave = () => {
         const normalizedName = normalizeValue(name);
@@ -247,180 +267,241 @@ const PublicPage = () => {
     }
 
     return (
-        <div className="w-full p-5 h-full overflow-y-auto pb-24">
-            <div className="flex flex-row justify-between items-center mb-3">
-                <div>
-                    <h1 className="text-2xl font-bold">Public Page</h1>
-                    <p className="opacity-65">
-                        Manage your public status page — set the path, custom domain, title, and
-                        description.
-                    </p>
-                </div>
-                <LoadingButton isLoading={isSubmitting || isLoading} onClick={onSave}>
-                    Save Changes
-                </LoadingButton>
-            </div>
-
-            {enabled && (urlByName || urlByDomain) && (
-                <div className="grid gap-3 mb-4">
-                    {urlByName && <PreviewUrlAlert value={urlByName} />}
-                    {urlByDomain && <PreviewUrlAlert value={urlByDomain} />}
-                </div>
-            )}
-
-            <Card className="border-border bg-card">
-                <CardHeader>
-                    <CardTitle className="text-lg font-medium flex items-center gap-2">
-                        <RadioTower className="h-5 w-5 text-primary" />
-                        Public Page Configuration
-                    </CardTitle>
-                    <CardDescription>
-                        Enable a shareable status page and manage its path-based name or custom
-                        domain.
-                    </CardDescription>
-                </CardHeader>
-                <CardContent className="grid gap-6">
-                    <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
-                        <div className="grid gap-1">
-                            <Label htmlFor="public-page-enabled">Enable public page</Label>
-                            <p className="text-sm text-muted-foreground">
-                                When disabled, existing links stay saved but the public page is not
-                                served.
-                            </p>
+        <div className="w-full p-5 h-full overflow-y-auto pb-24 relative">
+            {showSkeleton ? (
+                <div
+                    className="absolute inset-5 z-40 pointer-events-none overflow-hidden transition-opacity duration-400"
+                    style={{ opacity: isLoading ? 1 : 0 }}
+                >
+                    <div className="flex flex-row justify-between items-center mb-3">
+                        <div>
+                            <div className="h-8 w-36 rounded bg-muted-foreground/10 animate-pulse" />
+                            <div className="mt-2 h-4 w-[32rem] rounded bg-muted-foreground/8 animate-pulse" />
                         </div>
-                        <Switch
-                            id="public-page-enabled"
-                            checked={enabled}
-                            disabled={isLoading || isSubmitting}
-                            onCheckedChange={(checked) => {
-                                setEnabled(checked);
-                                if (checked && !normalizeValue(name)) {
-                                    setName(generateRandomPathName(team?.name));
-                                }
-                                if (checked) {
-                                    if (!title) setTitle(generateDefaultTitle(team?.name));
-                                    if (!description)
-                                        setDescription(generateDefaultDescription(team?.name));
-                                }
-                                setErrors({});
-                            }}
-                        />
+                        <div className="h-10 w-32 rounded bg-muted-foreground/8 animate-pulse" />
                     </div>
-
-                    {enabled && (
-                        <>
+                    <div className="grid gap-3 mb-4">
+                        <div className="h-14 rounded bg-muted-foreground/8 animate-pulse" />
+                        <div className="h-14 rounded bg-muted-foreground/8 animate-pulse" />
+                    </div>
+                    <Card className="border-border bg-card">
+                        <CardHeader>
+                            <div className="h-6 w-56 rounded bg-muted-foreground/10 animate-pulse" />
+                            <div className="h-4 w-96 rounded bg-muted-foreground/8 animate-pulse" />
+                        </CardHeader>
+                        <CardContent className="grid gap-6">
+                            <div className="h-20 rounded bg-muted-foreground/8 animate-pulse" />
                             <div className="grid gap-4 lg:grid-cols-2">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="public-page-name">Path name</Label>
-                                    <Input
-                                        id="public-page-name"
-                                        placeholder="acme-status"
-                                        value={name}
-                                        disabled={isLoading || isSubmitting}
-                                        aria-invalid={!!errors.name}
-                                        onChange={(e) => {
-                                            setName(e.target.value);
-                                            setErrors((prev) => ({
-                                                ...prev,
-                                                name: undefined,
-                                                general: undefined,
-                                            }));
-                                        }}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        3-32 chars, lowercase letters, numbers, and hyphens only.
-                                    </p>
-                                    {errors.name && (
-                                        <p className="text-sm text-destructive">{errors.name}</p>
-                                    )}
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="public-page-domain">Custom domain</Label>
-                                    <Input
-                                        id="public-page-domain"
-                                        placeholder="status.example.com"
-                                        value={domain}
-                                        disabled={isLoading || isSubmitting}
-                                        aria-invalid={!!errors.domain}
-                                        onChange={(e) => {
-                                            setDomain(e.target.value);
-                                            setErrors((prev) => ({
-                                                ...prev,
-                                                domain: undefined,
-                                                general: undefined,
-                                            }));
-                                        }}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        Host only. Do not include https://, paths, query strings, or
-                                        @.
-                                    </p>
-                                    {errors.domain && (
-                                        <p className="text-sm text-destructive">{errors.domain}</p>
-                                    )}
-                                </div>
+                                <div className="h-28 rounded bg-muted-foreground/8 animate-pulse" />
+                                <div className="h-28 rounded bg-muted-foreground/8 animate-pulse" />
                             </div>
-
                             <div className="grid gap-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="public-page-title">Title</Label>
-                                    <Input
-                                        id="public-page-title"
-                                        placeholder="Acme Status"
-                                        value={title}
-                                        disabled={isLoading || isSubmitting}
-                                        aria-invalid={!!errors.title}
-                                        onChange={(e) => {
-                                            setTitle(e.target.value);
-                                            setErrors((prev) => ({
-                                                ...prev,
-                                                title: undefined,
-                                            }));
-                                        }}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        The title shown on the public status page.
-                                    </p>
-                                    {errors.title && (
-                                        <p className="text-sm text-destructive">{errors.title}</p>
-                                    )}
-                                </div>
-
-                                <div className="grid gap-2">
-                                    <Label htmlFor="public-page-description">Description</Label>
-                                    <Textarea
-                                        id="public-page-description"
-                                        placeholder="The public status page for Acme."
-                                        value={description}
-                                        disabled={isLoading || isSubmitting}
-                                        aria-invalid={!!errors.description}
-                                        onChange={(e) => {
-                                            setDescription(e.target.value);
-                                            setErrors((prev) => ({
-                                                ...prev,
-                                                description: undefined,
-                                            }));
-                                        }}
-                                    />
-                                    <p className="text-xs text-muted-foreground">
-                                        A short description shown on the public status page.
-                                    </p>
-                                    {errors.description && (
-                                        <p className="text-sm text-destructive">
-                                            {errors.description}
-                                        </p>
-                                    )}
-                                </div>
+                                <div className="h-28 rounded bg-muted-foreground/8 animate-pulse" />
+                                <div className="h-36 rounded bg-muted-foreground/8 animate-pulse" />
                             </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            ) : null}
 
-                            {errors.general && (
-                                <p className="text-sm text-destructive">{errors.general}</p>
-                            )}
-                        </>
-                    )}
-                </CardContent>
-            </Card>
+            <div style={{ transition: 'opacity 400ms ease', opacity: mounted ? 1 : 0 }}>
+                <div
+                    className="flex flex-row justify-between items-center mb-3"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(6px)',
+                    }}
+                >
+                    <div>
+                        <h1 className="text-2xl font-bold">Public Page</h1>
+                        <p className="opacity-65">
+                            Manage your public status page — set the path, custom domain, title, and
+                            description.
+                        </p>
+                    </div>
+                    <LoadingButton isLoading={isSubmitting || isLoading} onClick={onSave}>
+                        Save Changes
+                    </LoadingButton>
+                </div>
+
+                {enabled && (urlByName || urlByDomain) && (
+                    <div
+                        className="grid gap-3 mb-4"
+                        style={{
+                            transition: 'opacity 400ms ease, transform 400ms ease',
+                            transitionDelay: '80ms',
+                            opacity: mounted ? 1 : 0,
+                            transform: mounted ? 'none' : 'translateY(8px)',
+                        }}
+                    >
+                        {urlByName && <PreviewUrlAlert value={urlByName} />}
+                        {urlByDomain && <PreviewUrlAlert value={urlByDomain} />}
+                    </div>
+                )}
+
+                <Card
+                    className="border-border bg-card"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '120ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <CardHeader>
+                        <CardTitle className="text-lg font-medium flex items-center gap-2">
+                            <RadioTower className="h-5 w-5 text-primary" />
+                            Public Page Configuration
+                        </CardTitle>
+                        <CardDescription>
+                            Enable a shareable status page and manage its path-based name or custom
+                            domain.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid gap-6">
+                        <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+                            <div className="grid gap-1">
+                                <Label htmlFor="public-page-enabled">Enable public page</Label>
+                                <p className="text-sm text-muted-foreground">
+                                    When disabled, existing links stay saved but the public page is not
+                                    served.
+                                </p>
+                            </div>
+                            <Switch
+                                id="public-page-enabled"
+                                checked={enabled}
+                                disabled={isLoading || isSubmitting}
+                                onCheckedChange={(checked) => {
+                                    setEnabled(checked);
+                                    if (checked && !normalizeValue(name)) {
+                                        setName(generateRandomPathName(team?.name));
+                                    }
+                                    if (checked) {
+                                        if (!title) setTitle(generateDefaultTitle(team?.name));
+                                        if (!description)
+                                            setDescription(generateDefaultDescription(team?.name));
+                                    }
+                                    setErrors({});
+                                }}
+                            />
+                        </div>
+
+                        {enabled && (
+                            <>
+                                <div className="grid gap-4 lg:grid-cols-2">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="public-page-name">Path name</Label>
+                                        <Input
+                                            id="public-page-name"
+                                            placeholder="acme-status"
+                                            value={name}
+                                            disabled={isLoading || isSubmitting}
+                                            aria-invalid={!!errors.name}
+                                            onChange={(e) => {
+                                                setName(e.target.value);
+                                                setErrors((prev) => ({
+                                                    ...prev,
+                                                    name: undefined,
+                                                    general: undefined,
+                                                }));
+                                            }}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            3-32 chars, lowercase letters, numbers, and hyphens only.
+                                        </p>
+                                        {errors.name && (
+                                            <p className="text-sm text-destructive">{errors.name}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="public-page-domain">Custom domain</Label>
+                                        <Input
+                                            id="public-page-domain"
+                                            placeholder="status.example.com"
+                                            value={domain}
+                                            disabled={isLoading || isSubmitting}
+                                            aria-invalid={!!errors.domain}
+                                            onChange={(e) => {
+                                                setDomain(e.target.value);
+                                                setErrors((prev) => ({
+                                                    ...prev,
+                                                    domain: undefined,
+                                                    general: undefined,
+                                                }));
+                                            }}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            Host only. Do not include https://, paths, query strings, or
+                                            @.
+                                        </p>
+                                        {errors.domain && (
+                                            <p className="text-sm text-destructive">{errors.domain}</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="grid gap-4">
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="public-page-title">Title</Label>
+                                        <Input
+                                            id="public-page-title"
+                                            placeholder="Acme Status"
+                                            value={title}
+                                            disabled={isLoading || isSubmitting}
+                                            aria-invalid={!!errors.title}
+                                            onChange={(e) => {
+                                                setTitle(e.target.value);
+                                                setErrors((prev) => ({
+                                                    ...prev,
+                                                    title: undefined,
+                                                }));
+                                            }}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            The title shown on the public status page.
+                                        </p>
+                                        {errors.title && (
+                                            <p className="text-sm text-destructive">{errors.title}</p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="public-page-description">Description</Label>
+                                        <Textarea
+                                            id="public-page-description"
+                                            placeholder="The public status page for Acme."
+                                            value={description}
+                                            disabled={isLoading || isSubmitting}
+                                            aria-invalid={!!errors.description}
+                                            onChange={(e) => {
+                                                setDescription(e.target.value);
+                                                setErrors((prev) => ({
+                                                    ...prev,
+                                                    description: undefined,
+                                                }));
+                                            }}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            A short description shown on the public status page.
+                                        </p>
+                                        {errors.description && (
+                                            <p className="text-sm text-destructive">
+                                                {errors.description}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {errors.general && (
+                                    <p className="text-sm text-destructive">{errors.general}</p>
+                                )}
+                            </>
+                        )}
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import { Briefcase, Shield } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 import { useUser } from '@/context/useUser.tsx';
 import {
@@ -17,10 +18,23 @@ import OAuthCard from '@/page/profile/components/oauth.tsx';
 
 const Profile = () => {
     const { user, teams } = useUser();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        const timer = window.setTimeout(() => setMounted(true), 40);
+        return () => window.clearTimeout(timer);
+    }, []);
 
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
-            <div className="flex flex-row justify-between items-center mb-3">
+            <div
+                className="flex flex-row justify-between items-center mb-3"
+                style={{
+                    transition: 'opacity 400ms ease, transform 400ms ease',
+                    opacity: mounted ? 1 : 0,
+                    transform: mounted ? 'none' : 'translateY(6px)',
+                }}
+            >
                 <div>
                     <h1 className="text-2xl font-bold">Profile</h1>
                     <p className="opacity-65">
@@ -28,8 +42,16 @@ const Profile = () => {
                     </p>
                 </div>
             </div>
-            <div className={'flex flex-col gap-4'}>
-                <Card className={'py-4 overflow-hidden'}>
+            <div className={'flex flex-col gap-4'} style={{ transition: 'opacity 400ms ease', opacity: mounted ? 1 : 0 }}>
+                <Card
+                    className={'py-4 overflow-hidden'}
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '60ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
                     <CardContent className={'flex flex-row items-center gap-3 relative'}>
                         <GravatarDialog username={user?.username || ''} email={user?.email} />
                         <div className={'flex-1 flex flex-col justify-center'}>
@@ -43,10 +65,27 @@ const Profile = () => {
                 </Card>
 
                 {/* Account Information */}
-                <AccountInfoCard />
+                <div
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '100ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <AccountInfoCard />
+                </div>
 
                 {/* Security */}
-                <Card className="border-border bg-card">
+                <Card
+                    className="border-border bg-card"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '140ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
                     <CardHeader>
                         <CardTitle className="text-lg font-medium flex items-center gap-2">
                             <Shield className="h-5 w-5 text-primary" />
@@ -63,10 +102,27 @@ const Profile = () => {
                 </Card>
 
                 {/*OAuth*/}
-                <OAuthCard />
+                <div
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '180ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <OAuthCard />
+                </div>
 
                 {/*Teams*/}
-                <Card className="border-border bg-card">
+                <Card
+                    className="border-border bg-card"
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '220ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
                     <CardHeader>
                         <CardTitle className="text-lg font-medium flex items-center gap-2">
                             <Briefcase className="h-5 w-5 text-primary" />
@@ -86,7 +142,16 @@ const Profile = () => {
                 </Card>
 
                 {/*Sessions*/}
-                <SessionsCard />
+                <div
+                    style={{
+                        transition: 'opacity 400ms ease, transform 400ms ease',
+                        transitionDelay: '260ms',
+                        opacity: mounted ? 1 : 0,
+                        transform: mounted ? 'none' : 'translateY(8px)',
+                    }}
+                >
+                    <SessionsCard />
+                </div>
             </div>
         </div>
     );
