@@ -203,7 +203,10 @@ const ServerStatusCard = ({
         [navigator, monitorPath]
     );
     const handleToggleMore = useCallback((e?: MouseEvent) => {
-        if (e) e.stopPropagation();
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         setShowMore((s) => !s);
     }, []);
 
