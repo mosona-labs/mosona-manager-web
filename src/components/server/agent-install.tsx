@@ -1,5 +1,6 @@
 import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
+import { useState } from 'react';
 
 import {
     Dialog,
@@ -10,6 +11,14 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select.tsx';
 
 const AgentInstall = ({
     open,
@@ -40,8 +49,15 @@ const AgentInstall = ({
     hub?: string;
     enroll_token?: string;
 }) => {
+    const [os, setOs] = useState<string>('linux');
+    const [arch, setArch] = useState<string>('amd64');
+
     const script = [
-        `curl -o agent https://example.com/agent && ./agent install`,
+        `curl -o agent${
+            os === 'windows' ? '.exe' : ''
+        } https://github.com/mosona-labs/mosona-manager/releases/latest/download/agent_${os}_${arch}${
+            os === 'windows' ? '.exe' : ''
+        } && ./agent${os === 'windows' ? '.exe' : ''} install`,
         mode === 'active' ? 'active' : `passive`,
     ];
     if (!allow_monitor) {
@@ -66,6 +82,41 @@ const AgentInstall = ({
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
+                    <div className={'flex items-center gap-2'}>
+                        <Select
+                            onValueChange={(e) => {
+                                setOs(e as 'linux' | 'darwin' | 'windows');
+                            }}
+                            value={os}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="linux">Linux</SelectItem>
+                                    <SelectItem value="darwin">Darwin</SelectItem>
+                                    <SelectItem value="windows">Windows</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                        <Select
+                            onValueChange={(e) => {
+                                setArch(e as 'amd64' | 'arm64');
+                            }}
+                            value={arch}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="amd64">amd64</SelectItem>
+                                    <SelectItem value="arm64">arm64</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                     <p className={'font-mono break-all bg-muted p-3 rounded-md'}>
                         {script.join(' ')}
                     </p>

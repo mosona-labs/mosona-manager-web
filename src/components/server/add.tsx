@@ -76,7 +76,6 @@ const AddServer = () => {
             // Reset form
             setAuthType('password');
             setMode('ssh');
-            setAgentMode('active');
             setCategory(categories && categories.length > 0 ? categories[0].id : undefined);
             setEnableMonitor(true);
             setEnableTerminal(true);

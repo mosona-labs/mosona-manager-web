@@ -15,8 +15,8 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'https://mosona.arsfy.top/api',
-                changeOrigin: true,
+                target: 'http://localhost:3214/api',
+                changeOrigin: false,
                 ws: true,
                 rewrite: (path) => path.replace(/^\/api/, ''),
             },
