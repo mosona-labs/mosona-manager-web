@@ -1,8 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { Terminal } from '@xterm/xterm';
 import { FitAddon } from '@xterm/addon-fit';
+import { RefreshCw } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
+import { Button } from '@/components/ui/button';
 import { useSession } from '@/context/useSession';
 
 import '@xterm/xterm/css/xterm.css';
@@ -10,7 +12,14 @@ import '@xterm/xterm/css/xterm.css';
 const Session = () => {
     const { id } = useParams<{ id: string }>();
 
-    const { session, sendData, switchSession, connectWebSocket, resizeTerminal } = useSession();
+    const {
+        session,
+        sendData,
+        switchSession,
+        connectWebSocket,
+        reconnectWebSocket,
+        resizeTerminal,
+    } = useSession();
 
     const initLock = useRef<boolean>(false);
     const terminalRef = useRef<HTMLDivElement>(null);
@@ -26,9 +35,14 @@ const Session = () => {
             cursorBlink: true,
             fontSize: 14,
             fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+            scrollback: 5000,
+            fastScrollModifier: 'alt',
+            macOptionIsMeta: true,
             theme: {
                 background: '#000',
                 foreground: '#fff',
+                cursor: '#fff',
+                selectionBackground: '#334155',
             },
             allowTransparency: false,
             disableStdin: false,
@@ -41,6 +55,7 @@ const Session = () => {
 
         terminal.open(terminalRef.current);
         fitAddon.fit();
+        terminal.focus();
 
         xtermRef.current = terminal;
         fitAddonRef.current = fitAddon;
@@ -61,12 +76,19 @@ const Session = () => {
 
         // Handle window resize
         const handleResize = () => {
+            if (!terminalRef.current) return;
             fitAddon.fit();
             resizeTerminal(terminal.cols, terminal.rows);
         };
+        const resizeObserver = new ResizeObserver(() => {
+            requestAnimationFrame(handleResize);
+        });
+
+        resizeObserver.observe(terminalRef.current);
         window.addEventListener('resize', handleResize);
 
         return () => {
+            resizeObserver.disconnect();
             window.removeEventListener('resize', handleResize);
             terminal.dispose();
             xtermRef.current = null;
@@ -140,19 +162,46 @@ const Session = () => {
         }
     }, [session?.content]);
 
+    const statusClassName =
+        session?.connectionStatus === 'connected'
+            ? 'text-green-400'
+            : session?.connectionStatus === 'connecting' ||
+                session?.connectionStatus === 'reconnecting'
+              ? 'text-amber-300'
+              : 'text-red-400';
+    const statusLabel =
+        session?.connectionStatus === 'connected'
+            ? 'Connected'
+            : session?.connectionStatus === 'connecting'
+              ? 'Connecting'
+              : session?.connectionStatus === 'reconnecting'
+                ? `Reconnecting${session.reconnectAttempt ? ` #${session.reconnectAttempt}` : ''}`
+                : 'Disconnected';
+
     return (
         <div className="px-6 py-6 pb-24 bg-black w-full h-full">
-            <div className="mb-2 text-white text-sm">
+            <div className="mb-2 min-h-8 text-white text-sm flex items-center gap-3">
                 {session && (
-                    <div>
-                        <span className="font-bold">{session.name}</span>
-                        <span className="ml-4 text-gray-400">{session.os}</span>
-                        <span
-                            className={`ml-4 ${session.isConnected ? 'text-green-400' : 'text-red-400'}`}
-                        >
-                            {session.isConnected ? '● Connected' : '○ Disconnected'}
+                    <>
+                        <div className="min-w-0 flex items-center gap-3">
+                            <span className="font-bold truncate">{session.name}</span>
+                            <span className="text-gray-400 shrink-0">{session.os}</span>
+                        </div>
+                        <span className={`${statusClassName} shrink-0`}>
+                            {session.isConnected ? '●' : '○'} {statusLabel}
                         </span>
-                    </div>
+                        {!session.isConnected && id && (
+                            <Button
+                                size="sm"
+                                variant="ghost"
+                                className="h-7 px-2 text-white hover:bg-white/10 hover:text-white"
+                                onClick={() => reconnectWebSocket(id)}
+                            >
+                                <RefreshCw className="h-3.5 w-3.5" />
+                                Reconnect
+                            </Button>
+                        )}
+                    </>
                 )}
             </div>
             <div ref={terminalRef} className="w-full h-[calc(100%-1rem)]" />

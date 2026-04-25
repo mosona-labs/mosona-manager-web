@@ -1,5 +1,17 @@
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+type ConnectionStatus = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
+type TerminalConfig = {
+    cols: number;
+    rows: number;
+    term: string;
+};
+type PendingInput = string | ArrayBuffer | Uint8Array;
+type CreateSessionConfig = Omit<
+    SessionData,
+    'id' | 'content' | 'createdAt' | 'ws' | 'isConnected' | 'connectionStatus' | 'reconnectAttempt'
+>;
 
 export interface SessionData {
     id: string;
@@ -8,14 +20,12 @@ export interface SessionData {
     os: string;
     content: string;
     createdAt: Date;
-    terminalConfig?: {
-        cols: number;
-        rows: number;
-        term: string;
-    };
+    terminalConfig?: TerminalConfig;
     // WebSocket connection per session
     ws: WebSocket | null;
     isConnected: boolean;
+    connectionStatus: ConnectionStatus;
+    reconnectAttempt: number;
 }
 
 interface SessionContextType {
@@ -23,10 +33,7 @@ interface SessionContextType {
     sessions: Map<string, SessionData>;
 
     // Session Actions
-    createSession: (
-        config: Omit<SessionData, 'id' | 'content' | 'createdAt' | 'ws' | 'isConnected'>,
-        onCreated?: (sessionId: string) => void
-    ) => void;
+    createSession: (config: CreateSessionConfig, onCreated?: (sessionId: string) => void) => void;
     closeSession: (sessionId: string) => void;
     switchSession: (sessionId: string) => SessionData | null;
 
@@ -36,10 +43,8 @@ interface SessionContextType {
 
     // WebSocket Actions
     sendData: (sessionId: string, data: string | ArrayBuffer | Uint8Array) => void;
-    connectWebSocket: (
-        sessionId: string,
-        terminalConfig?: { cols: number; rows: number; term: string }
-    ) => void;
+    connectWebSocket: (sessionId: string, terminalConfig?: TerminalConfig) => void;
+    reconnectWebSocket: (sessionId: string) => void;
     disconnect: (sessionId: string) => void;
 
     // Resize terminal
@@ -48,12 +53,23 @@ interface SessionContextType {
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
+const MAX_RECONNECT_DELAY = 12000;
+const MAX_PENDING_INPUT_BYTES = 64 * 1024;
+
 export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [session, setSession] = useState<SessionData | null>(null);
     const [sessions, setSessions] = useState<Map<string, SessionData>>(new Map());
     const [currentSessionId, setCurrentSessionId] = useState<string | null>(null);
+    const sessionsRef = useRef(sessions);
+    const reconnectTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+    const pendingInputRef = useRef<Map<string, PendingInput[]>>(new Map());
+    const manualDisconnectRef = useRef<Set<string>>(new Set());
 
     const navigator = useNavigate();
+
+    useEffect(() => {
+        sessionsRef.current = sessions;
+    }, [sessions]);
 
     useEffect(() => {
         if (currentSessionId) {
@@ -63,24 +79,43 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         }
     }, [currentSessionId, sessions]);
 
-    // Append content to specific session
-    const appendContent = useCallback((sessionId: string, content: string) => {
-        setSessions((prev) => {
-            const updated = new Map(prev);
-            const session = updated.get(sessionId);
-            if (session) {
-                session.content += content;
-                updated.set(sessionId, { ...session });
-            }
-            return updated;
-        });
+    const clearReconnectTimer = useCallback((sessionId: string) => {
+        const timer = reconnectTimersRef.current.get(sessionId);
+        if (timer) {
+            clearTimeout(timer);
+            reconnectTimersRef.current.delete(sessionId);
+        }
     }, []);
 
+    const patchSession = useCallback(
+        (sessionId: string, patcher: (session: SessionData) => void) => {
+            setSessions((prev) => {
+                const updated = new Map(prev);
+                const target = updated.get(sessionId);
+                if (!target) return updated;
+
+                const next = { ...target };
+                patcher(next);
+                updated.set(sessionId, next);
+                sessionsRef.current = updated;
+                return updated;
+            });
+        },
+        []
+    );
+
+    // Append content to specific session
+    const appendContent = useCallback(
+        (sessionId: string, content: string) => {
+            patchSession(sessionId, (session) => {
+                session.content += content;
+            });
+        },
+        [patchSession]
+    );
+
     const createSession = useCallback(
-        (
-            config: Omit<SessionData, 'id' | 'content' | 'createdAt' | 'ws' | 'isConnected'>,
-            onCreated?: (sessionId: string) => void
-        ) => {
+        (config: CreateSessionConfig, onCreated?: (sessionId: string) => void) => {
             // const existingSession = Array.from(sessions.values()).find(
             //     (s) => s.serverId === config.serverId
             // );
@@ -98,11 +133,14 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 createdAt: new Date(),
                 ws: null,
                 isConnected: false,
+                connectionStatus: 'idle',
+                reconnectAttempt: 0,
             };
 
             setSessions((prev) => {
                 const updated = new Map(prev);
                 updated.set(newSession.id, newSession);
+                sessionsRef.current = updated;
                 return updated;
             });
             setCurrentSessionId(newSession.id);
@@ -123,6 +161,10 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 const updated = new Map(prev);
                 const session = updated.get(sessionId);
 
+                clearReconnectTimer(sessionId);
+                pendingInputRef.current.delete(sessionId);
+                manualDisconnectRef.current.add(sessionId);
+
                 // Close WebSocket connection
                 if (session?.ws) {
                     session.ws.close();
@@ -139,7 +181,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 return updated;
             });
         },
-        [currentSessionId]
+        [clearReconnectTimer, navigator]
     );
 
     // Switch session without disconnecting
@@ -156,7 +198,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                 return null;
             }
         },
-        [sessions, currentSessionId]
+        [sessions, navigator]
     );
 
     // Clear content
@@ -176,56 +218,93 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
     // WebSocket connect
     const connectWebSocket = useCallback(
-        (sessionId: string, terminalConfig?: { cols: number; rows: number; term: string }) => {
-            const existingSession = sessions.get(sessionId);
+        (sessionId: string, terminalConfig?: TerminalConfig) => {
+            const existingSession = sessionsRef.current.get(sessionId);
             if (!existingSession) {
                 console.error('Session not found:', sessionId);
                 return;
             }
-            console.log(existingSession?.ws?.readyState);
-            if (existingSession?.ws?.readyState === WebSocket.OPEN) {
+
+            if (
+                existingSession.ws?.readyState === WebSocket.OPEN ||
+                existingSession.ws?.readyState === WebSocket.CONNECTING
+            ) {
                 console.warn('WebSocket already connected for this session');
                 return;
             }
 
-            // appendContent(sessionId, '\r\nConnecting...');
+            clearReconnectTimer(sessionId);
+            manualDisconnectRef.current.delete(sessionId);
+
+            const nextAttempt =
+                existingSession.connectionStatus === 'reconnecting'
+                    ? existingSession.reconnectAttempt
+                    : 0;
+
+            patchSession(sessionId, (session) => {
+                session.connectionStatus = nextAttempt > 0 ? 'reconnecting' : 'connecting';
+                session.isConnected = false;
+                session.reconnectAttempt = nextAttempt;
+                if (terminalConfig) {
+                    session.terminalConfig = terminalConfig;
+                }
+            });
 
             const protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
             const wsUrl = `${protocol}${window.location.host}/api/v1/server/terminal/${existingSession.serverId}/ws`;
 
             try {
                 const websocket = new WebSocket(wsUrl);
+                websocket.binaryType = 'arraybuffer';
+
+                patchSession(sessionId, (session) => {
+                    session.ws = websocket;
+                });
 
                 websocket.onopen = () => {
-                    // Update session with WebSocket
-                    setSessions((prev) => {
-                        const updated = new Map(prev);
-                        const session = updated.get(sessionId);
-                        if (session) {
-                            session.ws = websocket;
-                            session.isConnected = true;
-                            if (terminalConfig) {
-                                session.terminalConfig = terminalConfig;
-                            }
-                            sessions.set(sessionId, session);
-                            updated.set(sessionId, { ...session });
+                    clearReconnectTimer(sessionId);
+
+                    const sessionBeforeOpen = sessionsRef.current.get(sessionId);
+                    const didReconnect = (sessionBeforeOpen?.reconnectAttempt ?? 0) > 0;
+
+                    patchSession(sessionId, (session) => {
+                        session.ws = websocket;
+                        session.isConnected = true;
+                        session.connectionStatus = 'connected';
+                        session.reconnectAttempt = 0;
+                        if (terminalConfig) {
+                            session.terminalConfig = terminalConfig;
                         }
-                        return updated;
                     });
 
                     // Send init config if provided
-                    if (terminalConfig) {
+                    const activeConfig =
+                        terminalConfig ?? sessionsRef.current.get(sessionId)?.terminalConfig;
+                    if (activeConfig) {
                         const initMessage = JSON.stringify({
                             type: 'resize',
-                            cols: terminalConfig.cols,
-                            rows: terminalConfig.rows,
+                            cols: activeConfig.cols,
+                            rows: activeConfig.rows,
                         });
                         websocket.send(initMessage);
+                    }
+
+                    const pendingInput = pendingInputRef.current.get(sessionId) ?? [];
+                    pendingInput.forEach((item) => {
+                        websocket.send(item);
+                    });
+                    pendingInputRef.current.delete(sessionId);
+
+                    if (didReconnect) {
+                        appendContent(sessionId, '\r\n[Reconnected]\r\n');
                     }
                 };
 
                 websocket.onmessage = (event) => {
-                    if (event.data instanceof Blob) {
+                    if (event.data instanceof ArrayBuffer) {
+                        const decoder = new TextDecoder('utf-8', { fatal: false });
+                        appendContent(sessionId, decoder.decode(event.data));
+                    } else if (event.data instanceof Blob) {
                         event.data
                             .arrayBuffer()
                             .then((buffer) => {
@@ -243,81 +322,148 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
                 websocket.onerror = (error) => {
                     console.error('WebSocket error:', error);
-                    setSessions((prev) => {
-                        const updated = new Map(prev);
-                        const session = updated.get(sessionId);
-                        if (session) {
-                            session.isConnected = false;
-                            sessions.set(sessionId, session);
-                            updated.set(sessionId, { ...session });
-                        }
-                        return updated;
+                    patchSession(sessionId, (session) => {
+                        session.isConnected = false;
                     });
                 };
 
                 websocket.onclose = () => {
                     console.log('WebSocket disconnected');
-                    setSessions((prev) => {
-                        const updated = new Map(prev);
-                        const session = updated.get(sessionId);
-                        if (session) {
+                    const latestSession = sessionsRef.current.get(sessionId);
+                    if (!latestSession) return;
+                    if (latestSession.ws && latestSession.ws !== websocket) return;
+
+                    if (manualDisconnectRef.current.has(sessionId)) {
+                        patchSession(sessionId, (session) => {
                             session.isConnected = false;
                             session.ws = null;
-                            session.content += '\r\n[Connection closed]\r\n';
-                            sessions.set(sessionId, session);
-                            updated.set(sessionId, { ...session });
-                        }
-                        return updated;
+                            session.connectionStatus = 'disconnected';
+                            session.reconnectAttempt = 0;
+                        });
+                        return;
+                    }
+
+                    const reconnectAttempt = latestSession.reconnectAttempt + 1;
+                    const delay = Math.min(
+                        1000 * 2 ** Math.max(reconnectAttempt - 1, 0),
+                        MAX_RECONNECT_DELAY
+                    );
+
+                    patchSession(sessionId, (session) => {
+                        session.isConnected = false;
+                        session.ws = null;
+                        session.connectionStatus = 'reconnecting';
+                        session.reconnectAttempt = reconnectAttempt;
+                        session.content += `\r\n[Connection lost. Reconnecting in ${Math.round(delay / 1000)}s]\r\n`;
                     });
+
+                    clearReconnectTimer(sessionId);
+                    const timer = setTimeout(() => {
+                        reconnectTimersRef.current.delete(sessionId);
+                        const session = sessionsRef.current.get(sessionId);
+                        if (!session || manualDisconnectRef.current.has(sessionId)) return;
+                        connectWebSocket(sessionId, session.terminalConfig);
+                    }, delay);
+                    reconnectTimersRef.current.set(sessionId, timer);
                 };
             } catch (error) {
                 console.error('Failed to create WebSocket:', error);
+                patchSession(sessionId, (session) => {
+                    session.isConnected = false;
+                    session.ws = null;
+                    session.connectionStatus = 'disconnected';
+                });
             }
         },
-        [sessions, appendContent]
+        [appendContent, clearReconnectTimer, patchSession]
+    );
+
+    const reconnectWebSocket = useCallback(
+        (sessionId: string) => {
+            const currentSession = sessionsRef.current.get(sessionId);
+            if (!currentSession) return;
+
+            clearReconnectTimer(sessionId);
+            manualDisconnectRef.current.delete(sessionId);
+
+            if (currentSession.ws) {
+                currentSession.ws.close();
+            }
+
+            patchSession(sessionId, (session) => {
+                session.ws = null;
+                session.isConnected = false;
+                session.connectionStatus = 'reconnecting';
+                session.reconnectAttempt = Math.max(session.reconnectAttempt, 1);
+            });
+            connectWebSocket(sessionId, currentSession.terminalConfig);
+        },
+        [clearReconnectTimer, connectWebSocket, patchSession]
     );
 
     // Disconnect specific session
-    const disconnect = useCallback((sessionId: string) => {
-        setSessions((prev) => {
-            const updated = new Map(prev);
-            const session = updated.get(sessionId);
-            if (session?.ws) {
-                session.ws.close();
-                session.ws = null;
-                session.isConnected = false;
-                sessions.set(sessionId, session);
-                updated.set(sessionId, { ...session });
-            }
-            return updated;
-        });
-    }, []);
+    const disconnect = useCallback(
+        (sessionId: string) => {
+            clearReconnectTimer(sessionId);
+            pendingInputRef.current.delete(sessionId);
+            manualDisconnectRef.current.add(sessionId);
+
+            setSessions((prev) => {
+                const updated = new Map(prev);
+                const session = updated.get(sessionId);
+                if (session) {
+                    if (session.ws) {
+                        session.ws.close();
+                    }
+                    updated.set(sessionId, {
+                        ...session,
+                        ws: null,
+                        isConnected: false,
+                        connectionStatus: 'disconnected',
+                        reconnectAttempt: 0,
+                    });
+                }
+                sessionsRef.current = updated;
+                return updated;
+            });
+        },
+        [clearReconnectTimer]
+    );
 
     // Send data to current session
     const sendData = useCallback(
         (sessionId: string, data: string | ArrayBuffer | Uint8Array) => {
-            const currentSession = sessions.get(sessionId);
+            const currentSession = sessionsRef.current.get(sessionId);
+            const payload = data;
+
             if (!currentSession?.ws) {
                 console.warn('WebSocket is not connected');
+
+                const pendingInput = pendingInputRef.current.get(sessionId) ?? [];
+                const pendingBytes = pendingInput.reduce((total, item) => {
+                    return total + (typeof item === 'string' ? item.length : item.byteLength);
+                }, 0);
+
+                if (pendingBytes < MAX_PENDING_INPUT_BYTES) {
+                    pendingInput.push(payload);
+                    pendingInputRef.current.set(sessionId, pendingInput);
+                }
 
                 connectWebSocket(sessionId, currentSession?.terminalConfig);
                 return;
             }
 
             if (currentSession.ws.readyState === WebSocket.OPEN) {
-                if (typeof data === 'string') {
-                    currentSession.ws.send(data);
-                } else if (data instanceof Uint8Array) {
-                    currentSession.ws.send(data.buffer);
-                } else {
-                    currentSession.ws.send(data);
-                }
+                currentSession.ws.send(payload);
             } else {
                 console.warn('WebSocket is not open');
+                const pendingInput = pendingInputRef.current.get(sessionId) ?? [];
+                pendingInput.push(payload);
+                pendingInputRef.current.set(sessionId, pendingInput);
                 connectWebSocket(sessionId, currentSession.terminalConfig);
             }
         },
-        [sessions]
+        [connectWebSocket]
     );
 
     // Resize terminal
@@ -355,7 +501,11 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            sessions.forEach((session) => {
+            reconnectTimersRef.current.forEach((timer) => {
+                clearTimeout(timer);
+            });
+            sessionsRef.current.forEach((session) => {
+                manualDisconnectRef.current.add(session.id);
                 if (session.ws) {
                     session.ws.close();
                 }
@@ -373,6 +523,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
         clearContent,
         sendData,
         connectWebSocket,
+        reconnectWebSocket,
         disconnect,
         resizeTerminal,
     };
