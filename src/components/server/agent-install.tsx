@@ -51,13 +51,15 @@ const AgentInstall = ({
 }) => {
     const [os, setOs] = useState<string>('linux');
     const [arch, setArch] = useState<string>('amd64');
+    const binaryName = `agent${os === 'windows' ? '.exe' : ''}`;
+    const downloadUrl = `https://github.com/mosona-labs/mosona-manager/releases/latest/download/agent_${os}_${arch}${
+        os === 'windows' ? '.exe' : ''
+    }`;
 
     const script = [
-        `curl -o agent${
-            os === 'windows' ? '.exe' : ''
-        } https://github.com/mosona-labs/mosona-manager/releases/latest/download/agent_${os}_${arch}${
-            os === 'windows' ? '.exe' : ''
-        } && ./agent${os === 'windows' ? '.exe' : ''} install`,
+        os === 'windows'
+            ? `curl -L -o ${binaryName} ${downloadUrl} && ./${binaryName} install`
+            : `curl -L -o ${binaryName} ${downloadUrl} && chmod +x ./${binaryName} && ./${binaryName} install`,
         mode === 'active' ? 'active' : `passive`,
     ];
     if (!allow_monitor) {
