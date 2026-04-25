@@ -1,3 +1,4 @@
+import { LoaderCircle } from 'lucide-react';
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -34,6 +35,7 @@ export function MonitorChart({
     colorClass = 'blue',
     chartMaxValue = 0,
     chartMaxValueUnit = 'mb',
+    loading = false,
 }: {
     data: any[];
     defaultMode: 'avg' | 'max' | 'raw';
@@ -51,6 +53,7 @@ export function MonitorChart({
     colorClass?: string;
     chartMaxValue?: number;
     chartMaxValueUnit?: 'kb' | 'mb' | 'gb' | 'tb' | 'other';
+    loading?: boolean;
 }) {
     const { config } = useUser();
 
@@ -66,6 +69,7 @@ export function MonitorChart({
     const keys = Array.isArray(keyObj) ? keyObj : [keyObj];
     const names = Array.isArray(keyName) ? keyName : [keyName];
     const units = Array.isArray(currentUnit) ? currentUnit : currentUnit ? [currentUnit] : [];
+    const showOverlay = loading;
 
     const chartData = useMemo(() => {
         if (!data || data.length === 0) return [];
@@ -213,70 +217,84 @@ export function MonitorChart({
                     </Select>
                 )}
             </CardHeader>
-            <CardContent className={colorClass}>
-                <ChartContainer config={{}} className="h-[256px] w-full">
-                    <AreaChart
-                        accessibilityLayer
-                        data={chartData}
-                        margin={{
-                            left: 12,
-                            right: 12,
-                        }}
+            <CardContent className={`${colorClass} relative`}>
+                <div className="chart-surface">
+                    <ChartContainer
+                        config={{}}
+                        className={`chart-canvas h-[256px] w-full ${showOverlay ? 'chart-canvas--loading' : ''}`}
                     >
-                        <CartesianGrid vertical={false} />
-                        <YAxis
-                            tickLine={false}
-                            axisLine={false}
-                            tickFormatter={(value) =>
-                                `${parseFloat(value.toFixed(1))}` +
-                                (units.length > 0 ? units[0] : '')
-                            }
-                            domain={[
-                                config.defaultMinMaxMode === 'min-auto' ? 'min' : 0,
-                                config.defaultMinMaxMode === '0-max' && maxValueChart != 0
-                                    ? maxValueChart
-                                    : 'auto',
-                            ]}
-                            tickCount={6}
-                            width={yWidth}
-                            interval="preserveStartEnd"
-                        />
-                        <XAxis
-                            dataKey={'time'}
-                            domain={[startTime, nowTime.getTime()]}
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                            tickFormatter={(value) => {
-                                return new Date(value).toLocaleTimeString('en-UK', {
-                                    hour: '2-digit',
-                                    minute: '2-digit',
-                                });
+                        <AreaChart
+                            accessibilityLayer
+                            data={chartData}
+                            margin={{
+                                left: 12,
+                                right: 12,
                             }}
-                            type="number"
-                        />
-                        <ChartTooltip
-                            cursor={true}
-                            labelFormatter={(value) => {
-                                return new Date(parseInt(value)).toLocaleString('en-UK');
-                            }}
-                            content={Tooltip}
-                        />
-                        {keys.map((k, i) => {
-                            return (
-                                <Area
-                                    key={k}
-                                    dataKey={k}
-                                    type="monotone"
-                                    fill={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
-                                    fillOpacity={0.4}
-                                    stroke={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
-                                    isAnimationActive={false}
-                                />
-                            );
-                        })}
-                    </AreaChart>
-                </ChartContainer>
+                        >
+                            <CartesianGrid vertical={false} />
+                            <YAxis
+                                tickLine={false}
+                                axisLine={false}
+                                tickFormatter={(value) =>
+                                    `${parseFloat(value.toFixed(1))}` +
+                                    (units.length > 0 ? units[0] : '')
+                                }
+                                domain={[
+                                    config.defaultMinMaxMode === 'min-auto' ? 'min' : 0,
+                                    config.defaultMinMaxMode === '0-max' && maxValueChart != 0
+                                        ? maxValueChart
+                                        : 'auto',
+                                ]}
+                                tickCount={6}
+                                width={yWidth}
+                                interval="preserveStartEnd"
+                            />
+                            <XAxis
+                                dataKey={'time'}
+                                domain={[startTime, nowTime.getTime()]}
+                                tickLine={false}
+                                axisLine={false}
+                                tickMargin={8}
+                                tickFormatter={(value) => {
+                                    return new Date(value).toLocaleTimeString('en-UK', {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                    });
+                                }}
+                                type="number"
+                            />
+                            <ChartTooltip
+                                cursor={true}
+                                labelFormatter={(value) => {
+                                    return new Date(parseInt(value)).toLocaleString('en-UK');
+                                }}
+                                content={Tooltip}
+                            />
+                            {keys.map((k, i) => {
+                                return (
+                                    <Area
+                                        key={k}
+                                        dataKey={k}
+                                        type="monotone"
+                                        fill={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
+                                        fillOpacity={0.4}
+                                        stroke={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
+                                        isAnimationActive={false}
+                                    />
+                                );
+                            })}
+                        </AreaChart>
+                    </ChartContainer>
+                    <div
+                        className={`chart-loading-overlay ${showOverlay ? 'chart-loading-overlay--visible' : ''}`}
+                        aria-hidden={!showOverlay}
+                    >
+                        <div className="chart-loading-content">
+                            <LoaderCircle className="chart-loading-spinner" />
+                            <div className="chart-loading-text">Loading...</div>
+                        </div>
+                    </div>
+                </div>
             </CardContent>
         </Card>
     );

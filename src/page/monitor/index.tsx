@@ -63,6 +63,7 @@ const Monitor = () => {
 
     const [statuses, setStatuses] = useState<ServerStatusType[]>();
     const [status, setStatus] = useState<ServerStatusType>();
+    const [chartLoading, setChartLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
@@ -76,6 +77,7 @@ const Monitor = () => {
     const [defaultMode, setDefaultMode] = useState<'avg' | 'max' | 'raw'>(
         config.defaultMonitorMode
     );
+    const hasInitialLoadedRef = useRef(false);
 
     const syncNowTime = (value?: string) => {
         if (!value) {
@@ -98,14 +100,23 @@ const Monitor = () => {
         }
     }, [config]);
 
+    useEffect(() => {
+        hasInitialLoadedRef.current = hasInitialLoaded;
+    }, [hasInitialLoaded]);
+
+    useEffect(() => {
+        setDefaultMode(timeFrame === 'real-time' ? 'raw' : config.defaultMonitorMode);
+    }, [config.defaultMonitorMode, timeFrame]);
+
     const realTimeChart = useRef<boolean>(false);
-    const realtime = (id: string) => {
+    const chartRequestRef = useRef(0);
+    const realtime = (id: string, updateRealtimeChart = realTimeChart.current) => {
         ApiMonitor.realtime(parseInt(id))
             .then((data) => {
                 setRealTimeStatus(data.data);
                 syncNowTime(data.data.time);
 
-                if (realTimeChart.current)
+                if (updateRealtimeChart)
                     setStatuses((prev) => {
                         if (!prev) return [data.data];
                         const newStatuses = [...prev, data.data];
@@ -119,12 +130,25 @@ const Monitor = () => {
             .catch((err) => {
                 console.error('Failed to fetch monitor real-time data:', err);
                 ToastError(err);
+            })
+            .finally(() => {
+                if (updateRealtimeChart) {
+                    setChartLoading(false);
+                }
             });
     };
 
-    const chart = (id: string, time_frame: string) => {
+    const chart = (id: string, time_frame: string, withOverlay = true) => {
+        const requestId = ++chartRequestRef.current;
+        if (withOverlay) {
+            setChartLoading(true);
+        }
+
         ApiMonitor.chart(parseInt(id), time_frame)
             .then((data) => {
+                if (requestId !== chartRequestRef.current) {
+                    return;
+                }
                 setStatuses(data.data);
                 if (data.data?.length > 0) {
                     const latestStatus = data.data[data.data.length - 1];
@@ -135,6 +159,11 @@ const Monitor = () => {
             .catch((err) => {
                 console.error('Failed to fetch monitor chart data:', err);
                 ToastError(err);
+            })
+            .finally(() => {
+                if (requestId === chartRequestRef.current && withOverlay) {
+                    setChartLoading(false);
+                }
             });
     };
 
@@ -151,24 +180,26 @@ const Monitor = () => {
                 ToastError(err);
             });
 
-        realtime(id);
+        realTimeChart.current = timeFrame === 'real-time';
+        const shouldOverlayCharts = hasInitialLoadedRef.current;
+
         let interval: number;
         interval = setInterval(() => {
             realtime(id);
         }, 3000);
 
         if (timeFrame === 'real-time') {
-            setDefaultMode('raw');
             setStatuses(undefined);
-
-            realTimeChart.current = true;
+            if (shouldOverlayCharts) {
+                setChartLoading(true);
+            }
+            realtime(id, true);
             if (autoRefreshRef.current) {
                 clearInterval(autoRefreshRef.current);
             }
         } else {
-            realTimeChart.current = false;
-            setDefaultMode(config.defaultMonitorMode);
-            chart(id, timeFrame);
+            realtime(id, false);
+            chart(id, timeFrame, shouldOverlayCharts);
         }
         return () => {
             if (interval) clearInterval(interval);
@@ -685,6 +716,7 @@ const Monitor = () => {
                         keyObj="cpu"
                         chartMaxValue={100}
                         chartMaxValueUnit={'other'}
+                        loading={chartLoading}
                     />
                     <MonitorChart
                         data={statuses || []}
@@ -700,6 +732,7 @@ const Monitor = () => {
                         yWidth={38}
                         colorClass={'green'}
                         chartMaxValue={realTimeStatus ? realTimeStatus.mem_total_mb : 0}
+                        loading={chartLoading}
                     />
                     <MonitorChart
                         data={statuses || []}
@@ -720,6 +753,7 @@ const Monitor = () => {
                         ]}
                         yWidth={46}
                         colorClass={'blue-yellow'}
+                        loading={chartLoading}
                     />
                     <MonitorChart
                         data={statuses || []}
@@ -735,6 +769,7 @@ const Monitor = () => {
                         keyObj={['rx_kib_s', 'tx_kib_s']}
                         yWidth={46}
                         colorClass={'violet-red'}
+                        loading={chartLoading}
                     />
                     <MonitorChart
                         data={statuses || []}
@@ -750,6 +785,7 @@ const Monitor = () => {
                         yWidth={38}
                         colorClass={'green'}
                         chartMaxValue={realTimeStatus ? realTimeStatus.swap_total_mb : 0}
+                        loading={chartLoading}
                     />
                     {diskChartData.length > 0 ? (
                         diskChartData.map(({ disk, label, data }) => (
@@ -769,6 +805,7 @@ const Monitor = () => {
                                 colorClass={'orange'}
                                 chartMaxValue={disk.total_gb}
                                 chartMaxValueUnit={'gb'}
+                                loading={chartLoading}
                             />
                         ))
                     ) : (
@@ -787,6 +824,7 @@ const Monitor = () => {
                             colorClass={'orange'}
                             chartMaxValue={0}
                             chartMaxValueUnit={'gb'}
+                            loading={chartLoading}
                         />
                     )}
                 </div>
