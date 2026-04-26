@@ -50,6 +50,9 @@ const Dashboard = () => {
         setCategoryFilter,
     } = useMonitors();
 
+    const isDefaultCategory = (categoryName: string) =>
+        categoryName.trim().toLowerCase() === 'default';
+
     useEffect(() => {
         let fadeInTimer: number | undefined;
         let fadeOutTimer: number | undefined;
@@ -359,8 +362,12 @@ const Dashboard = () => {
 
                 {/* Server */}
                 {categoryFilter == null
-                    ? categories?.map((category) =>
-                          categoryServerMap[category.id] ? (
+                    ? categories?.map((category) => {
+                          const hasServers = !!categoryServerMap[category.id];
+
+                          if (!hasServers && isDefaultCategory(category.name)) return null;
+
+                          return hasServers ? (
                               <CategoryCard
                                   key={category.id}
                                   category={category}
@@ -387,8 +394,8 @@ const Dashboard = () => {
                                       </p>
                                   </div>
                               </div>
-                          )
-                      )
+                          );
+                      })
                     : categories
                           ?.filter((c) => c.id === categoryFilter)
                           .map((category) =>

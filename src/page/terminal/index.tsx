@@ -26,6 +26,8 @@ const Terminal = () => {
     const { isLoading, categoryServerMap, categoryFilter, setCategoryFilter } = useTerminals();
 
     const [filter, setFilter] = useState<string>('');
+    const isDefaultCategory = (categoryName: string) =>
+        categoryName.trim().toLowerCase() === 'default';
 
     useEffect(() => {
         let fadeInTimer: number | undefined;
@@ -213,69 +215,71 @@ const Terminal = () => {
                     </div>
                 </div>
 
-                {categoryFilter == null ? (
-                    categories?.map((category) =>
-                        categoryServerMap[category.id] ? (
-                            <CategoryCard
-                                key={category.id}
-                                category={category}
-                                categoryServerMap={categoryServerMap}
-                                filter={filter}
-                                mounted={mounted}
-                            />
-                        ) : (
-                            <div
-                                key={category.id}
-                                style={{
-                                    transition: 'opacity 400ms ease, transform 400ms ease',
-                                    opacity: mounted ? 1 : 0,
-                                    transform: mounted ? 'none' : 'translateY(8px)',
-                                }}
-                            >
-                                <div className="mt-4">
-                                    <p className="mt-4 opacity-65">{category.name}</p>
-                                </div>
-                                <div className="mt-2">
-                                    <p className="text-sm text-muted-foreground/50">
-                                        No servers in this category.
-                                    </p>
-                                </div>
-                            </div>
-                        )
-                    )
-                ) : (
-                    categories
-                        ?.filter((c) => c.id === categoryFilter)
-                        .map((category) =>
-                            categoryServerMap[category.id] ? (
-                                <CategoryCard
-                                    key={category.id}
-                                    category={category}
-                                    categoryServerMap={categoryServerMap}
-                                    filter={filter}
-                                    mounted={mounted}
-                                />
-                            ) : (
-                                <div
-                                    key={category.id}
-                                    style={{
-                                        transition: 'opacity 400ms ease, transform 400ms ease',
-                                        opacity: mounted ? 1 : 0,
-                                        transform: mounted ? 'none' : 'translateY(8px)',
-                                    }}
-                                >
-                                    <div className="mt-4">
-                                        <p className="mt-4 opacity-65">{category.name}</p>
-                                    </div>
-                                    <div className="mt-2">
-                                        <p className="text-sm text-muted-foreground/50">
-                                            No servers in this category.
-                                        </p>
-                                    </div>
-                                </div>
-                            )
-                        )
-                )}
+                {categoryFilter == null
+                    ? categories?.map((category) => {
+                          const hasServers = !!categoryServerMap[category.id];
+
+                          if (!hasServers && isDefaultCategory(category.name)) return null;
+
+                          return hasServers ? (
+                              <CategoryCard
+                                  key={category.id}
+                                  category={category}
+                                  categoryServerMap={categoryServerMap}
+                                  filter={filter}
+                                  mounted={mounted}
+                              />
+                          ) : (
+                              <div
+                                  key={category.id}
+                                  style={{
+                                      transition: 'opacity 400ms ease, transform 400ms ease',
+                                      opacity: mounted ? 1 : 0,
+                                      transform: mounted ? 'none' : 'translateY(8px)',
+                                  }}
+                              >
+                                  <div className="mt-4">
+                                      <p className="mt-4 opacity-65">{category.name}</p>
+                                  </div>
+                                  <div className="mt-2">
+                                      <p className="text-sm text-muted-foreground/50">
+                                          No servers in this category.
+                                      </p>
+                                  </div>
+                              </div>
+                          );
+                      })
+                    : categories
+                          ?.filter((c) => c.id === categoryFilter)
+                          .map((category) =>
+                              categoryServerMap[category.id] ? (
+                                  <CategoryCard
+                                      key={category.id}
+                                      category={category}
+                                      categoryServerMap={categoryServerMap}
+                                      filter={filter}
+                                      mounted={mounted}
+                                  />
+                              ) : (
+                                  <div
+                                      key={category.id}
+                                      style={{
+                                          transition: 'opacity 400ms ease, transform 400ms ease',
+                                          opacity: mounted ? 1 : 0,
+                                          transform: mounted ? 'none' : 'translateY(8px)',
+                                      }}
+                                  >
+                                      <div className="mt-4">
+                                          <p className="mt-4 opacity-65">{category.name}</p>
+                                      </div>
+                                      <div className="mt-2">
+                                          <p className="text-sm text-muted-foreground/50">
+                                              No servers in this category.
+                                          </p>
+                                      </div>
+                                  </div>
+                              )
+                          )}
             </div>
         </div>
     );
