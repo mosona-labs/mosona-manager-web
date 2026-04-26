@@ -7,4 +7,5 @@ export const osIcons = [
     'rockylinux',
     'alpine',
     'windows',
+    'macos',
 ];
