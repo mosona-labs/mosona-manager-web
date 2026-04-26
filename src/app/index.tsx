@@ -1,6 +1,6 @@
 import { Moon, SidebarIcon, Sun } from 'lucide-react';
-import { Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { Navigate, Routes, Route } from 'react-router-dom';
+import { type ReactNode, useState } from 'react';
 
 import { Button } from '../components/ui/button';
 import { useTheme } from '../components/theme-provider';
@@ -23,6 +23,16 @@ import Keychain from '@/page/keychain';
 import Settings from '@/page/settings';
 import PublicPage from '@/page/publicPage';
 import TOTPAlert from '@/components/alert-dialog/totp.tsx';
+import { useUser } from '@/context/useUser';
+
+const RequireTeam = ({ children }: { children: ReactNode }) => {
+    const { team } = useUser();
+
+    if (team === undefined) return null;
+    if (team === null) return <Navigate to="/create-team" replace />;
+
+    return children;
+};
 
 function App() {
     // Theme
@@ -59,20 +69,83 @@ function App() {
                     </div>
                 </div>
                 <Routes>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/:id/monitor" element={<Monitor />} />
-                    <Route path="/terminal" element={<Terminal />} />
-                    <Route path="/keychain" element={<Keychain />} />
-                    <Route path="/logs" element={<Logs />} />
-                    <Route path="/team" element={<Team />} />
-                    <Route path="/public-page" element={<PublicPage />} />
+                    <Route
+                        path="/"
+                        element={
+                            <RequireTeam>
+                                <Dashboard />
+                            </RequireTeam>
+                        }
+                    />
+                    <Route
+                        path="/:id/monitor"
+                        element={
+                            <RequireTeam>
+                                <Monitor />
+                            </RequireTeam>
+                        }
+                    />
+                    <Route
+                        path="/terminal"
+                        element={
+                            <RequireTeam>
+                                <Terminal />
+                            </RequireTeam>
+                        }
+                    />
+                    <Route
+                        path="/keychain"
+                        element={
+                            <RequireTeam>
+                                <Keychain />
+                            </RequireTeam>
+                        }
+                    />
+                    <Route
+                        path="/logs"
+                        element={
+                            <RequireTeam>
+                                <Logs />
+                            </RequireTeam>
+                        }
+                    />
+                    <Route
+                        path="/team"
+                        element={
+                            <RequireTeam>
+                                <Team />
+                            </RequireTeam>
+                        }
+                    />
+                    <Route
+                        path="/public-page"
+                        element={
+                            <RequireTeam>
+                                <PublicPage />
+                            </RequireTeam>
+                        }
+                    />
                     <Route path="/profile" element={<Profile />} />
-                    <Route path="/settings" element={<Settings />} />
+                    <Route
+                        path="/settings"
+                        element={
+                            <RequireTeam>
+                                <Settings />
+                            </RequireTeam>
+                        }
+                    />
                     <Route path="/about" element={<About />} />
                     {/* Create Team */}
                     <Route path="/create-team" element={<CreateTeam />} />
                     {/* Session */}
-                    <Route path="/session/:id" element={<Session />} />
+                    <Route
+                        path="/session/:id"
+                        element={
+                            <RequireTeam>
+                                <Session />
+                            </RequireTeam>
+                        }
+                    />
                     {/* Not Found */}
                     <Route path="*" element={<NotFound />} />
                 </Routes>

@@ -107,6 +107,8 @@ const Team = () => {
             });
     };
 
+    if (!team) return null;
+
     return (
         <div className="w-full p-5 h-full overflow-y-auto pb-24 relative">
             {showSkeleton ? (
@@ -252,7 +254,9 @@ const Team = () => {
                                 setMembers((prev) => {
                                     const exists = prev.some(
                                         (m) =>
-                                            ('id' in m && 'id' in user && m.id === (user as any).id) ||
+                                            ('id' in m &&
+                                                'id' in user &&
+                                                m.id === (user as any).id) ||
                                             (m.email && user.email && m.email === user.email)
                                     );
                                     if (exists) return prev;
@@ -268,7 +272,10 @@ const Team = () => {
                         >
                             <Button
                                 variant={'ghost'}
-                                className={cn('py-7', members.length > 0 && 'border-t rounded-t-none')}
+                                className={cn(
+                                    'py-7',
+                                    members.length > 0 && 'border-t rounded-t-none'
+                                )}
                             >
                                 <Plus />
                             </Button>

@@ -39,7 +39,7 @@ class ApiUserClass extends baseAPI {
         return this.getData<
             ResponseInterface<{
                 user: UserType;
-                team: TeamType;
+                team: TeamType | null;
                 teams: TeamType[];
             }>
         >('/v1/user/me', authRequired);

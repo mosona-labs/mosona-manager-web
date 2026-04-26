@@ -10,7 +10,7 @@ import ApiKey, { type KeyType } from '@/api/key.ts';
 
 type UserContextType = {
     user?: UserType;
-    team?: TeamType;
+    team?: TeamType | null;
     teams: TeamType[];
     setUser: (u?: UserType) => void;
     refresh: () => Promise<void>;
@@ -41,7 +41,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const navigator = useNavigate();
 
     const [user, setUser] = useState<UserType | undefined>(undefined);
-    const [team, setTeam] = useState<TeamType | undefined>(undefined);
+    const [team, setTeam] = useState<TeamType | null | undefined>(undefined);
     const [teams, setTeams] = useState<TeamType[]>([]);
     const [categories, setCategories] = useState<CategoryType[]>([]);
     const [keys, setKeys] = useState<KeyType[] | undefined>(undefined);
@@ -54,12 +54,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
                     return;
                 }
 
-                if (!res.data?.team) {
-                    navigator('/create-team');
-                }
-
                 setUser(res.data?.user);
-                setTeam(res.data?.team);
+                setTeam(res.data?.team ?? null);
                 setTeams(res.data?.teams || []);
             })
             .catch((err) => {
