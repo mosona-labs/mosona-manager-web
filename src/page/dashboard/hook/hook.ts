@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { type MonitorType, type ServerStatusType } from '@/api/monitor.ts';
 import { useUser } from '@/context/useUser.tsx';
+import { SERVER_MUTATION_EVENT } from '@/utils/server-events';
 
 export default function useMonitors() {
     const { team } = useUser();
@@ -80,6 +81,10 @@ export default function useMonitors() {
             clearTimeout(reconnectInterval.current);
             reconnectInterval.current = null;
         }
+        if (heartbeatTimeout.current) {
+            clearTimeout(heartbeatTimeout.current);
+            heartbeatTimeout.current = null;
+        }
 
         const eventSource = new EventSource('/api/v1/server/monitor/sse');
         eventSourceRef.current = eventSource;
@@ -127,10 +132,17 @@ export default function useMonitors() {
                 clearTimeout(reconnectInterval.current);
             }
         };
-    }, [team]);
+    }, [navigator, team]);
 
     useEffect(() => {
         return subscribe();
+    }, [subscribe]);
+
+    useEffect(() => {
+        window.addEventListener(SERVER_MUTATION_EVENT, subscribe);
+        return () => {
+            window.removeEventListener(SERVER_MUTATION_EVENT, subscribe);
+        };
     }, [subscribe]);
 
     return {

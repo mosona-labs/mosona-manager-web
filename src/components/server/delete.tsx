@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
 import ApiServer from '@/api/server.ts';
 import { ToastError } from '@/utils/toast.ts';
+import { notifyServerMutation } from '@/utils/server-events';
 
 const DeleteServer = ({
     open,
@@ -41,6 +42,7 @@ const DeleteServer = ({
         ApiServer.delete(serverID)
             .then(() => {
                 toast.success('Server deleted successfully.', {});
+                notifyServerMutation();
                 onOpenChange(false);
             })
             .catch(ToastError)

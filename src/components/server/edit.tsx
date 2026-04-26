@@ -28,6 +28,7 @@ import AddKey from '@/page/keychain/components/add.tsx';
 import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
 import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
 import ReinstallDialog from '@/components/server/reinstall.tsx';
+import { notifyServerMutation } from '@/utils/server-events';
 
 const EditServer = ({
     open,
@@ -142,6 +143,7 @@ const EditServer = ({
         )
             .then(() => {
                 onOpenChange(false);
+                notifyServerMutation();
                 toast.success('Server updated successfully', {
                     description: 'The changes will take effect shortly.',
                 });

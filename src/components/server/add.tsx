@@ -30,6 +30,7 @@ import AddKey from '@/page/keychain/components/add.tsx';
 import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
 import AgentInstall from '@/components/server/agent-install.tsx';
 import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
+import { notifyServerMutation } from '@/utils/server-events';
 
 const AddServer = () => {
     const { categories, keys } = useUser();
@@ -156,6 +157,7 @@ const AddServer = () => {
         ApiServer.add(data)
             .then((res) => {
                 toast.success('Server added successfully');
+                notifyServerMutation();
                 setOpen(false);
                 if (mode === 'agent') {
                     setIsInstallOpen(true);
