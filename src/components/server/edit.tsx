@@ -388,7 +388,6 @@ const EditServer = ({
                                                     type={'button'}
                                                     size={'sm'}
                                                     variant={'outline'}
-                                                    onClick={() => onOpenChange(false)}
                                                 >
                                                     Reinstall
                                                 </Button>
