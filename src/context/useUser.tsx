@@ -47,7 +47,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [keys, setKeys] = useState<KeyType[] | undefined>(undefined);
 
     const refresh = async () => {
-        ApiUser.me()
+        return ApiUser.me()
             .then((res) => {
                 if (res.code === 'init_required') {
                     navigator('/init');
