@@ -102,29 +102,36 @@ const Team = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const onSubmit = () => {
         setIsSubmitting(true);
-        ApiTeam.edit(
-            team!.id,
-            teamName,
-            teamDescription,
-            avatarColorRef.current,
-            avatarImageRef.current instanceof File ? avatarImageRef.current : null,
-            JSON.stringify(
-                members.map((m) => ({
-                    id: m.id,
-                    email: m.email,
-                    role: m.role,
-                }))
+        try {
+            ApiTeam.edit(
+                team!.id,
+                teamName,
+                teamDescription,
+                avatarColorRef.current,
+                avatarImageRef.current instanceof File ? avatarImageRef.current : null,
+                JSON.stringify(
+                    members.map((m) => ({
+                        id: m.id,
+                        email: m.email,
+                        role: m.role,
+                    }))
+                )
             )
-        )
-            .then(() => {
-                toast.success('Success', { description: 'Team updated successfully.' });
-                setIsLoading(true);
-                refresh().then();
-            })
-            .catch(ToastError)
-            .finally(() => {
-                setIsSubmitting(false);
-            });
+                .then(() => {
+                    toast.success('Success', { description: 'Team updated successfully.' });
+                    setIsLoading(true);
+                    return refresh().catch(ToastError);
+                })
+                .catch(ToastError)
+                .finally(() => {
+                    setIsSubmitting(false);
+                    setIsLoading(false);
+                });
+        } catch (error) {
+            ToastError(error);
+            setIsSubmitting(false);
+            setIsLoading(false);
+        }
     };
 
     const downloadBundle = (bundle: TeamExportBundle) => {

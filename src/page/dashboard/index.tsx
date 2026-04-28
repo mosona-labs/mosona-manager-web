@@ -70,8 +70,9 @@ const Dashboard = () => {
         for (const server of servers) {
             if (categoryFilter !== null && server.category !== categoryFilter) continue;
 
-            if (typeof server.core_c === 'number' || typeof server.core_t === 'number') {
-                totalCpuCores += server.core_c ?? server.core_t ?? 0;
+            const coreCount = server.core_c ?? server.core_t;
+            if (typeof coreCount === 'number') {
+                totalCpuCores += coreCount;
                 hasCpuCores = true;
             }
 
