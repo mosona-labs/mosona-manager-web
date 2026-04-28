@@ -74,7 +74,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
             {/* Sidebar */}
             <div
                 className={cn(
-                    'overflow-hidden absolute z-10 bg-background h-screen border-e px-3 py-4 transition-all w-[300px] duration-300 ease-in-out shrink-0 gap-2 flex flex-col select-none',
+                    'overflow-hidden fixed z-30 bg-background h-screen border-e px-3 py-4 transition-all w-[300px] duration-300 ease-in-out shrink-0 gap-2 flex flex-col select-none md:absolute',
                     open ? 'translate-x-0' : '-translate-x-full'
                 )}
             >
@@ -214,7 +214,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
             {/* Sidebar Background */}
             <div
                 className={cn(
-                    'absolute w-full h-full bg-[#141414a2] transition-opacity duration-300 ease-in-out md:hidden',
+                    'fixed inset-0 z-20 bg-[#141414a2] transition-opacity duration-300 ease-in-out md:hidden',
                     open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                 )}
                 onClick={() => setOpen(false)}
