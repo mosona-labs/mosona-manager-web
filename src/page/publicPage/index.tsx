@@ -25,6 +25,7 @@ type FormErrors = {
     domain?: string;
     title?: string;
     description?: string;
+    customCSS?: string;
     general?: string;
 };
 
@@ -151,6 +152,7 @@ const PublicPage = () => {
     const [urlByDomain, setUrlByDomain] = useState<string | null>(null);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
+    const [customCSS, setCustomCSS] = useState('');
     const [errors, setErrors] = useState<FormErrors>({});
 
     const applyConfig = (config: TeamPublicPageConfigType) => {
@@ -161,6 +163,7 @@ const PublicPage = () => {
         setUrlByDomain(config.url_by_domain ?? null);
         setTitle(config.title ?? '');
         setDescription(config.description ?? '');
+        setCustomCSS(config.custom_css ?? '');
         setErrors({});
     };
 
@@ -206,6 +209,7 @@ const PublicPage = () => {
         const normalizedDomain = normalizeValue(nextDomain);
         const normalizedTitle = title.trim();
         const normalizedDescription = description.trim();
+        const nextCustomCSS = customCSS;
         const nextEnabled = enabled && (!!normalizedName || !!normalizedDomain);
 
         const nextErrors: FormErrors = nextEnabled
@@ -234,6 +238,7 @@ const PublicPage = () => {
             domain: normalizedDomain || undefined,
             title: normalizedTitle || undefined,
             description: normalizedDescription || undefined,
+            custom_css: nextCustomCSS.trim() ? nextCustomCSS : undefined,
         })
             .then((res) => {
                 applyConfig(res.data);
@@ -379,8 +384,8 @@ const PublicPage = () => {
                             <div className="grid gap-1">
                                 <Label htmlFor="public-page-enabled">Enable public page</Label>
                                 <p className="text-sm text-muted-foreground">
-                                    When disabled, existing links stay saved but the public page is not
-                                    served.
+                                    When disabled, existing links stay saved but the public page is
+                                    not served.
                                 </p>
                             </div>
                             <Switch
@@ -435,10 +440,13 @@ const PublicPage = () => {
                                             </Button>
                                         </div>
                                         <p className="text-xs text-muted-foreground">
-                                            3-32 chars, lowercase letters, numbers, and hyphens only.
+                                            3-32 chars, lowercase letters, numbers, and hyphens
+                                            only.
                                         </p>
                                         {errors.name && (
-                                            <p className="text-sm text-destructive">{errors.name}</p>
+                                            <p className="text-sm text-destructive">
+                                                {errors.name}
+                                            </p>
                                         )}
                                     </div>
 
@@ -472,11 +480,13 @@ const PublicPage = () => {
                                             </Button>
                                         </div>
                                         <p className="text-xs text-muted-foreground">
-                                            Host only. Do not include https://, paths, query strings, or
-                                            @.
+                                            Host only. Do not include https://, paths, query
+                                            strings, or @.
                                         </p>
                                         {errors.domain && (
-                                            <p className="text-sm text-destructive">{errors.domain}</p>
+                                            <p className="text-sm text-destructive">
+                                                {errors.domain}
+                                            </p>
                                         )}
                                     </div>
                                 </div>
@@ -502,7 +512,9 @@ const PublicPage = () => {
                                             The title shown on the public status page.
                                         </p>
                                         {errors.title && (
-                                            <p className="text-sm text-destructive">{errors.title}</p>
+                                            <p className="text-sm text-destructive">
+                                                {errors.title}
+                                            </p>
                                         )}
                                     </div>
 
@@ -528,6 +540,34 @@ const PublicPage = () => {
                                         {errors.description && (
                                             <p className="text-sm text-destructive">
                                                 {errors.description}
+                                            </p>
+                                        )}
+                                    </div>
+
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="public-page-custom-css">Custom CSS</Label>
+                                        <Textarea
+                                            id="public-page-custom-css"
+                                            placeholder={`#root {\n  background: #22c55e;\n}`}
+                                            value={customCSS}
+                                            disabled={isLoading || isSubmitting}
+                                            aria-invalid={!!errors.customCSS}
+                                            className="min-h-33 font-mono text-sm"
+                                            spellCheck={false}
+                                            onChange={(e) => {
+                                                setCustomCSS(e.target.value);
+                                                setErrors((prev) => ({
+                                                    ...prev,
+                                                    customCSS: undefined,
+                                                }));
+                                            }}
+                                        />
+                                        <p className="text-xs text-muted-foreground">
+                                            Optional CSS injected into the public status page.
+                                        </p>
+                                        {errors.customCSS && (
+                                            <p className="text-sm text-destructive">
+                                                {errors.customCSS}
                                             </p>
                                         )}
                                     </div>

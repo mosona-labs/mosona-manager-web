@@ -32,6 +32,7 @@ export type TeamPublicPageConfigType = {
     domain?: string | null;
     title?: string | null;
     description?: string | null;
+    custom_css?: string | null;
     url_by_name?: string | null;
     url_by_domain?: string | null;
 };
@@ -99,6 +100,7 @@ class ApiTeamClass extends baseAPI {
         domain?: string;
         title?: string;
         description?: string;
+        custom_css?: string;
     }) {
         return this.putData<ResponseInterface<TeamPublicPageConfigType>>(
             '/v1/team/public-page',
