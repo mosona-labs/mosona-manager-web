@@ -37,6 +37,18 @@ export type TeamPublicPageConfigType = {
     url_by_domain?: string | null;
 };
 
+export type TeamExportBundle = {
+    version: 1;
+    exported_at: string;
+    team: Record<string, unknown>;
+    categories: unknown[];
+    keys: unknown[];
+    team_alerts: unknown[];
+    notifications: unknown[];
+    public_page?: Record<string, unknown> | null;
+    servers: unknown[];
+};
+
 class ApiTeamClass extends baseAPI {
     async info() {
         return this.getData<
@@ -107,6 +119,18 @@ class ApiTeamClass extends baseAPI {
             data,
             false
         );
+    }
+
+    async exportData(totp_code: string) {
+        return this.postData<ResponseInterface<TeamExportBundle>>(
+            '/v1/team/export',
+            { totp_code },
+            false
+        );
+    }
+
+    async importData(totp_code: string, data: TeamExportBundle) {
+        return this.postData<ResponseInterface>('/v1/team/import', { totp_code, data }, false);
     }
 }
 

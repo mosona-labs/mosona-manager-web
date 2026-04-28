@@ -1,8 +1,8 @@
-import type { TeamMemberType } from '@/api/team';
+import type { TeamExportBundle, TeamMemberType } from '@/api/team';
 
-import { Plus } from 'lucide-react';
+import { Download, Plus, Shield, Upload } from 'lucide-react';
 import { toast } from 'sonner';
-import { useEffect, useRef, useState } from 'react';
+import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import AvatarEditor from '../../components/team/avatar';
 import Member from '../../components/team/member';
@@ -19,15 +19,35 @@ import ApiTeam from '@/api/team';
 import { ToastError } from '@/utils/toast';
 import LoadingButton from '@/components/loading-button.tsx';
 import LeaveTeam from '@/components/leave-team.tsx';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { notifyServerMutation } from '@/utils/server-events';
+import EnableTOTP from '@/components/totp/enable';
 
 const Team = () => {
-    const { user, team, refresh } = useUser();
+    const { user, team, refresh, refreshCategories, refreshKeys } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [showSkeleton, setShowSkeleton] = useState(true);
 
     const [members, setMembers] = useState<Array<TeamMemberType>>([]);
+    const [exportOpen, setExportOpen] = useState(false);
+    const [importOpen, setImportOpen] = useState(false);
+    const [exportTOTP, setExportTOTP] = useState('');
+    const [importTOTP, setImportTOTP] = useState('');
+    const [importBundle, setImportBundle] = useState<TeamExportBundle | null>(null);
+    const [importFileName, setImportFileName] = useState('');
+    const [isExporting, setIsExporting] = useState(false);
+    const [isImporting, setIsImporting] = useState(false);
+    const [enableTOTPOpen, setEnableTOTPOpen] = useState(false);
 
     const [teamName, setTeamName] = useState(team?.name || '');
     const [teamDescription, setTeamDescription] = useState(team?.description || '');
@@ -59,7 +79,7 @@ const Team = () => {
             .finally(() => {
                 setIsLoading(false);
             });
-    }, [team]);
+    }, [team?.id]);
 
     useEffect(() => {
         let fadeInTimer: number | undefined;
@@ -104,6 +124,101 @@ const Team = () => {
             .catch(ToastError)
             .finally(() => {
                 setIsSubmitting(false);
+            });
+    };
+
+    const downloadBundle = (bundle: TeamExportBundle) => {
+        const blob = new Blob([JSON.stringify(bundle, null, 2)], {
+            type: 'application/json',
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${team?.name || 'team'}-export-${new Date()
+            .toISOString()
+            .slice(0, 10)}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleExport = () => {
+        if (!user?.totp_enabled) {
+            setEnableTOTPOpen(true);
+            return;
+        }
+        if (!exportTOTP.trim()) {
+            toast.warning('TOTP code required');
+            return;
+        }
+
+        setIsExporting(true);
+        ApiTeam.exportData(exportTOTP.trim())
+            .then((res) => {
+                downloadBundle(res.data);
+                setExportOpen(false);
+                setExportTOTP('');
+                toast.success('Team data exported successfully.');
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsExporting(false);
+            });
+    };
+
+    const handleImportFile = (event: ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        event.target.value = '';
+        if (!file) return;
+
+        file.text()
+            .then((text) => {
+                const data = JSON.parse(text) as TeamExportBundle;
+                if (data.version !== 1 || !Array.isArray(data.servers)) {
+                    throw new Error('Invalid team export bundle.');
+                }
+                setImportBundle(data);
+                setImportFileName(file.name);
+            })
+            .catch((err) => {
+                setImportBundle(null);
+                setImportFileName('');
+                toast.error('Invalid import file', {
+                    description: err instanceof Error ? err.message : 'Unable to parse JSON.',
+                });
+            });
+    };
+
+    const handleImport = () => {
+        if (!user?.totp_enabled) {
+            setEnableTOTPOpen(true);
+            return;
+        }
+        if (!importBundle) {
+            toast.warning('Please select a valid team export JSON file.');
+            return;
+        }
+        if (!importTOTP.trim()) {
+            toast.warning('TOTP code required');
+            return;
+        }
+
+        setIsImporting(true);
+        ApiTeam.importData(importTOTP.trim(), importBundle)
+            .then(() => {
+                setImportOpen(false);
+                setImportTOTP('');
+                setImportBundle(null);
+                setImportFileName('');
+                notifyServerMutation();
+                Promise.all([refresh(), refreshCategories(), refreshKeys()]).then(() => {
+                    toast.success('Team data imported successfully.');
+                });
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsImporting(false);
             });
     };
 
@@ -283,6 +398,38 @@ const Team = () => {
                     </Card>
                 </div>
 
+                {team.owner_id === user?.id && (
+                    <Card
+                        className="mt-6 p-4"
+                        style={{
+                            transition: 'opacity 400ms ease, transform 400ms ease',
+                            transitionDelay: '260ms',
+                            opacity: mounted ? 1 : 0,
+                            transform: mounted ? 'none' : 'translateY(8px)',
+                        }}
+                    >
+                        <div className="flex flex-col gap-3 md:flex-row md:items-center">
+                            <div className="flex-1">
+                                <h2 className="text-sm font-semibold">Import / Export</h2>
+                                <p className="text-sm text-muted-foreground">
+                                    Export includes decrypted secrets. Import overwrites the active
+                                    team configuration.
+                                </p>
+                            </div>
+                            <div className="flex flex-row gap-2">
+                                <Button variant="outline" onClick={() => setExportOpen(true)}>
+                                    <Upload />
+                                    Export
+                                </Button>
+                                <Button variant="outline" onClick={() => setImportOpen(true)}>
+                                    <Download />
+                                    Import
+                                </Button>
+                            </div>
+                        </div>
+                    </Card>
+                )}
+
                 <div
                     className="mt-4 flex flex-row justify-end items-center gap-3"
                     style={{
@@ -302,6 +449,126 @@ const Team = () => {
                     </LoadingButton>
                 </div>
             </div>
+
+            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Export Team Data</DialogTitle>
+                        <DialogDescription>
+                            The exported JSON contains decrypted secrets. Store it securely.
+                        </DialogDescription>
+                    </DialogHeader>
+                    {user?.totp_enabled ? (
+                        <div className="grid gap-2">
+                            <Label htmlFor="team-export-totp">TOTP code</Label>
+                            <Input
+                                id="team-export-totp"
+                                value={exportTOTP}
+                                inputMode="numeric"
+                                maxLength={6}
+                                onChange={(e) => setExportTOTP(e.target.value)}
+                            />
+                        </div>
+                    ) : (
+                        <div className="flex items-start gap-3 rounded-lg border p-4">
+                            <Shield className="mt-0.5 h-5 w-5 text-primary" />
+                            <div className="grid gap-1">
+                                <p className="text-sm font-medium">TOTP is required</p>
+                                <p className="text-sm text-muted-foreground">
+                                    Enable Two-Factor Authentication before exporting sensitive team
+                                    data.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        {user?.totp_enabled ? (
+                            <LoadingButton isLoading={isExporting} onClick={handleExport}>
+                                Export
+                            </LoadingButton>
+                        ) : (
+                            <Button onClick={() => setEnableTOTPOpen(true)}>Enable TOTP</Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={importOpen} onOpenChange={setImportOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Import Team Data</DialogTitle>
+                        <DialogDescription>
+                            Import overwrites this team&apos;s categories, keys, notifications,
+                            public page, servers, and alerts. Members and owner are preserved.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="team-import-file">Export JSON file</Label>
+                            <Input
+                                id="team-import-file"
+                                type="file"
+                                accept="application/json,.json"
+                                onChange={handleImportFile}
+                            />
+                            {importFileName && (
+                                <p className="text-sm text-muted-foreground">
+                                    Selected: {importFileName}
+                                </p>
+                            )}
+                        </div>
+                        {user?.totp_enabled ? (
+                            <div className="grid gap-2">
+                                <Label htmlFor="team-import-totp">TOTP code</Label>
+                                <Input
+                                    id="team-import-totp"
+                                    value={importTOTP}
+                                    inputMode="numeric"
+                                    maxLength={6}
+                                    onChange={(e) => setImportTOTP(e.target.value)}
+                                />
+                            </div>
+                        ) : (
+                            <div className="flex items-start gap-3 rounded-lg border p-4">
+                                <Shield className="mt-0.5 h-5 w-5 text-primary" />
+                                <div className="grid gap-1">
+                                    <p className="text-sm font-medium">TOTP is required</p>
+                                    <p className="text-sm text-muted-foreground">
+                                        Enable Two-Factor Authentication before importing team data.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        {user?.totp_enabled ? (
+                            <LoadingButton
+                                variant="destructive"
+                                isLoading={isImporting}
+                                onClick={handleImport}
+                            >
+                                Import and Overwrite
+                            </LoadingButton>
+                        ) : (
+                            <Button onClick={() => setEnableTOTPOpen(true)}>Enable TOTP</Button>
+                        )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <EnableTOTP
+                open={enableTOTPOpen}
+                setOpen={setEnableTOTPOpen}
+                callback={() => {
+                    refresh().then();
+                }}
+            />
         </div>
     );
 };
