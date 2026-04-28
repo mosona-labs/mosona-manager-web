@@ -59,7 +59,7 @@ const AgentInstall = ({
     const script = [
         os === 'windows'
             ? `curl -L -o ${binaryName} ${downloadUrl} && ./${binaryName} install`
-            : `curl -L -o ${binaryName} ${downloadUrl} && chmod +x ./${binaryName} && ./${binaryName} install`,
+            : `curl -L -o ${binaryName} ${downloadUrl} && sudo chmod +x ./${binaryName} && sudo ./${binaryName} install`,
         mode === 'active' ? 'active' : `passive`,
     ];
     if (!allow_monitor) {

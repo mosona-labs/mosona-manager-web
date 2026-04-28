@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Copy, ExternalLink, Globe, RadioTower } from 'lucide-react';
+import { Copy, ExternalLink, Globe, RadioTower, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import ApiTeam, { type TeamPublicPageConfigType } from '@/api/team.ts';
@@ -199,20 +199,23 @@ const PublicPage = () => {
         };
     }, [isLoading]);
 
-    const onSave = () => {
-        const normalizedName = normalizeValue(name);
-        const normalizedDomain = normalizeValue(domain);
+    const submitPublicPage = (overrides?: { name?: string; domain?: string }) => {
+        const nextName = overrides?.name ?? name;
+        const nextDomain = overrides?.domain ?? domain;
+        const normalizedName = normalizeValue(nextName);
+        const normalizedDomain = normalizeValue(nextDomain);
         const normalizedTitle = title.trim();
         const normalizedDescription = description.trim();
+        const nextEnabled = enabled && (!!normalizedName || !!normalizedDomain);
 
-        const nextErrors: FormErrors = enabled
+        const nextErrors: FormErrors = nextEnabled
             ? {
                   name: validateName(normalizedName),
                   domain: validateDomain(normalizedDomain),
               }
             : {};
 
-        if (enabled && !normalizedName && !normalizedDomain) {
+        if (nextEnabled && !normalizedName && !normalizedDomain) {
             nextErrors.general =
                 'At least one of name or domain is required when public page is enabled.';
         }
@@ -226,7 +229,7 @@ const PublicPage = () => {
         setErrors({});
 
         ApiTeam.updatePublicPage({
-            enabled,
+            enabled: nextEnabled,
             name: normalizedName || undefined,
             domain: normalizedDomain || undefined,
             title: normalizedTitle || undefined,
@@ -249,6 +252,18 @@ const PublicPage = () => {
             .finally(() => {
                 setIsSubmitting(false);
             });
+    };
+
+    const onSave = () => submitPublicPage();
+
+    const onClearName = () => {
+        setName('');
+        submitPublicPage({ name: '' });
+    };
+
+    const onClearDomain = () => {
+        setDomain('');
+        submitPublicPage({ domain: '' });
     };
 
     if (!team && !isLoading) {
@@ -392,21 +407,33 @@ const PublicPage = () => {
                                 <div className="grid gap-4 lg:grid-cols-2">
                                     <div className="grid gap-2">
                                         <Label htmlFor="public-page-name">Path name</Label>
-                                        <Input
-                                            id="public-page-name"
-                                            placeholder="acme-status"
-                                            value={name}
-                                            disabled={isLoading || isSubmitting}
-                                            aria-invalid={!!errors.name}
-                                            onChange={(e) => {
-                                                setName(e.target.value);
-                                                setErrors((prev) => ({
-                                                    ...prev,
-                                                    name: undefined,
-                                                    general: undefined,
-                                                }));
-                                            }}
-                                        />
+                                        <div className="flex gap-2">
+                                            <Input
+                                                id="public-page-name"
+                                                placeholder="acme-status"
+                                                value={name}
+                                                disabled={isLoading || isSubmitting}
+                                                aria-invalid={!!errors.name}
+                                                onChange={(e) => {
+                                                    setName(e.target.value);
+                                                    setErrors((prev) => ({
+                                                        ...prev,
+                                                        name: undefined,
+                                                        general: undefined,
+                                                    }));
+                                                }}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="icon"
+                                                disabled={isLoading || isSubmitting || !name}
+                                                onClick={onClearName}
+                                                aria-label="Clear path name"
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </div>
                                         <p className="text-xs text-muted-foreground">
                                             3-32 chars, lowercase letters, numbers, and hyphens only.
                                         </p>
@@ -417,21 +444,33 @@ const PublicPage = () => {
 
                                     <div className="grid gap-2">
                                         <Label htmlFor="public-page-domain">Custom domain</Label>
-                                        <Input
-                                            id="public-page-domain"
-                                            placeholder="status.example.com"
-                                            value={domain}
-                                            disabled={isLoading || isSubmitting}
-                                            aria-invalid={!!errors.domain}
-                                            onChange={(e) => {
-                                                setDomain(e.target.value);
-                                                setErrors((prev) => ({
-                                                    ...prev,
-                                                    domain: undefined,
-                                                    general: undefined,
-                                                }));
-                                            }}
-                                        />
+                                        <div className="flex gap-2">
+                                            <Input
+                                                id="public-page-domain"
+                                                placeholder="status.example.com"
+                                                value={domain}
+                                                disabled={isLoading || isSubmitting}
+                                                aria-invalid={!!errors.domain}
+                                                onChange={(e) => {
+                                                    setDomain(e.target.value);
+                                                    setErrors((prev) => ({
+                                                        ...prev,
+                                                        domain: undefined,
+                                                        general: undefined,
+                                                    }));
+                                                }}
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                size="icon"
+                                                disabled={isLoading || isSubmitting || !domain}
+                                                onClick={onClearDomain}
+                                                aria-label="Clear custom domain"
+                                            >
+                                                <Trash2 />
+                                            </Button>
+                                        </div>
                                         <p className="text-xs text-muted-foreground">
                                             Host only. Do not include https://, paths, query strings, or
                                             @.
