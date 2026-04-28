@@ -51,6 +51,7 @@ const AgentInstall = ({
 }) => {
     const [os, setOs] = useState<string>('linux');
     const [arch, setArch] = useState<string>('amd64');
+    const [ipPreference, setIpPreference] = useState<'none' | 'ipv4' | 'ipv6'>('none');
     const binaryName = `agent${os === 'windows' ? '.exe' : ''}`;
     const downloadUrl = `https://github.com/mosona-labs/mosona-manager/releases/latest/download/agent_${os}_${arch}${
         os === 'windows' ? '.exe' : ''
@@ -67,6 +68,9 @@ const AgentInstall = ({
     }
     if (!allow_terminal) {
         script.push('--no-terminal');
+    }
+    if (mode === 'passive' && ipPreference !== 'none') {
+        script.push(`--${ipPreference}`);
     }
     script.push(
         mode === 'active'
@@ -119,6 +123,25 @@ const AgentInstall = ({
                             </SelectContent>
                         </Select>
                     </div>
+                    {mode === 'passive' && (
+                        <Select
+                            onValueChange={(e) => {
+                                setIpPreference(e as 'none' | 'ipv4' | 'ipv6');
+                            }}
+                            value={ipPreference}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="none">No preference</SelectItem>
+                                    <SelectItem value="ipv4">Use IPv4</SelectItem>
+                                    <SelectItem value="ipv6">Use IPv6</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    )}
                     <p className={'font-mono break-all bg-muted p-3 rounded-md'}>
                         {script.join(' ')}
                     </p>
