@@ -22,6 +22,8 @@ export type MonitorType = {
     traffic: string;
     traffic_type: number;
     note_public: string;
+    core_c?: number;
+    core_t?: number;
 };
 
 export type MonitorDetailType = MonitorType & {

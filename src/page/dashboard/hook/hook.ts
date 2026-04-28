@@ -67,7 +67,7 @@ export default function useMonitors() {
         setAvgMemory(memAcc);
         setSumRX(rxAcc);
         setSumTX(txAcc);
-    }, [servers, categoryFilter]);
+    }, [servers, statuses, time, categoryFilter]);
 
     const reconnectInterval = useRef<number | null>(null);
     const eventSourceRef = useRef<EventSource | null>(null);

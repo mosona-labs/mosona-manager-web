@@ -4,12 +4,15 @@ import {
     ArrowUp,
     ArrowUpDown,
     Cpu,
+    Database,
     HardDrive,
+    MemoryStick,
     Plus,
     Server,
     Settings,
+    StretchHorizontal,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CategoryCard from './components/category';
@@ -28,16 +31,19 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import LayoutBtn from '@/page/dashboard/components/layout-btn.tsx';
 import { MemoryUnit } from '@/utils/unit.ts';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 
 const Dashboard = () => {
     const navigator = useNavigate();
     const { categories } = useUser();
     const [mounted, setMounted] = useState(false);
     const [showSkeleton, setShowSkeleton] = useState(true);
+    const [showAllOverviewCards, setShowAllOverviewCards] = useState(false);
 
     const {
         isLoading,
         time,
+        servers,
         statuses,
         total,
         online,
@@ -52,6 +58,69 @@ const Dashboard = () => {
 
     const isDefaultCategory = (categoryName: string) =>
         categoryName.trim().toLowerCase() === 'default';
+
+    const extraOverviewStats = useMemo(() => {
+        let totalCpuCores = 0;
+        let hasCpuCores = false;
+        let totalMemoryMb = 0;
+        let totalStorageGb = 0;
+        let totalBandwidthRxMb = 0;
+        let totalBandwidthTxMb = 0;
+
+        for (const server of servers) {
+            if (categoryFilter !== null && server.category !== categoryFilter) continue;
+
+            if (typeof server.core_c === 'number' || typeof server.core_t === 'number') {
+                totalCpuCores += server.core_c ?? server.core_t ?? 0;
+                hasCpuCores = true;
+            }
+
+            const status = statuses[server.id];
+            if (!status) continue;
+
+            totalMemoryMb += status.mem_total_mb || 0;
+            totalStorageGb +=
+                status.disks?.reduce((sum, disk) => sum + (disk.total_gb || 0), 0) || 0;
+            totalBandwidthRxMb += status.rx_total_mb || 0;
+            totalBandwidthTxMb += status.tx_total_mb || 0;
+        }
+
+        return {
+            totalCpuCores: hasCpuCores ? totalCpuCores.toString() : '--',
+            totalMemory: MemoryUnit(totalMemoryMb, 'mb'),
+            totalStorage: MemoryUnit(totalStorageGb, 'gb'),
+            totalBandwidthRx: MemoryUnit(totalBandwidthRxMb, 'mb'),
+            totalBandwidthTx: MemoryUnit(totalBandwidthTxMb, 'mb'),
+        };
+    }, [servers, statuses, categoryFilter]);
+
+    const extraOverviewCards = [
+        {
+            label: 'Total Storage',
+            value: extraOverviewStats.totalStorage,
+            icon: <Database className="h-3 w-3 md:h-5 md:w-5 text-chart-4" />,
+            iconClassName: 'bg-chart-4/10',
+        },
+        {
+            label: 'Total CPU Cores',
+            value: extraOverviewStats.totalCpuCores,
+            icon: <Cpu className="h-3 w-3 md:h-5 md:w-5 text-chart-1" />,
+            iconClassName: 'bg-chart-1/10',
+        },
+        {
+            label: 'Total Memory',
+            value: extraOverviewStats.totalMemory,
+            icon: <MemoryStick className="h-3 w-3 md:h-5 md:w-5 text-chart-3" />,
+            iconClassName: 'bg-chart-3/10',
+        },
+        {
+            label: 'Bandwidth (Total)',
+            value: '',
+            icon: <ArrowUpDown className="h-3 w-3 md:h-5 md:w-5 text-chart-2" />,
+            iconClassName: 'bg-chart-2/10',
+            bandwidthTotal: true,
+        },
+    ];
 
     useEffect(() => {
         let fadeInTimer: number | undefined;
@@ -261,6 +330,66 @@ const Dashboard = () => {
                     </Card>
                 </div>
 
+                <div
+                    className={cn(
+                        'overflow-hidden transition-[max-height,opacity,transform,margin-top] duration-200 ease-out',
+                        showAllOverviewCards
+                            ? 'mt-4 max-h-80 opacity-100 translate-y-0'
+                            : 'mt-0 max-h-0 opacity-0 -translate-y-2'
+                    )}
+                >
+                    <div className="grid gap-4 grid-cols-2 xl:grid-cols-4">
+                        {extraOverviewCards.map((item, index) => (
+                            <Card
+                                key={item.label}
+                                className="border-border bg-card p-4"
+                                style={{
+                                    transition: 'opacity 200ms ease, transform 200ms ease',
+                                    transitionDelay: showAllOverviewCards
+                                        ? `${index * 35}ms`
+                                        : '0ms',
+                                    opacity: mounted && showAllOverviewCards ? 1 : 0,
+                                    transform:
+                                        mounted && showAllOverviewCards
+                                            ? 'none'
+                                            : 'translateY(-6px)',
+                                }}
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className={cn('rounded-lg p-2', item.iconClassName)}>
+                                        {item.icon}
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-xs md:text-sm text-muted-foreground">
+                                            {item.label}
+                                        </p>
+                                        {item.bandwidthTotal ? (
+                                            <div className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-[2rem]">
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <ArrowUp className="h-3 w-3 2xl:h-4 2xl:w-4" />
+                                                    {isLoading
+                                                        ? '--'
+                                                        : extraOverviewStats.totalBandwidthTx}
+                                                </div>
+                                                <div className="flex flex-row items-center gap-1">
+                                                    <ArrowDown className="h-3 w-3 2xl:h-4 2xl:w-4" />
+                                                    {isLoading
+                                                        ? '--'
+                                                        : extraOverviewStats.totalBandwidthRx}
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <p className="truncate text-xl md:text-2xl font-semibold text-card-foreground">
+                                                {isLoading ? '--' : item.value}
+                                            </p>
+                                        )}
+                                    </div>
+                                </div>
+                            </Card>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Config */}
                 <div
                     className="mt-4 flex flex-col gap-2 lg:flex-row justify-between lg:items-center"
@@ -347,6 +476,25 @@ const Dashboard = () => {
                                 </AddCategory>
                             </ButtonGroup>
                             <ButtonGroup className={'sm:hidden'}>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="outline"
+                                            onClick={() =>
+                                                setShowAllOverviewCards((visible) => !visible)
+                                            }
+                                        >
+                                            <StretchHorizontal />
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="bottom" className="me-2">
+                                        {showAllOverviewCards ? (
+                                            <p>Hide Overview Cards</p>
+                                        ) : (
+                                            <p>Show All Overview Cards</p>
+                                        )}
+                                    </TooltipContent>
+                                </Tooltip>
                                 <LayoutBtn />
                                 <DetailBtn />
                             </ButtonGroup>
@@ -354,6 +502,25 @@ const Dashboard = () => {
                     </div>
                     <div className="flex-row justify-end gap-2 hidden sm:flex">
                         <ButtonGroup>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() =>
+                                            setShowAllOverviewCards((visible) => !visible)
+                                        }
+                                    >
+                                        <StretchHorizontal />
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent side="bottom" className="me-2">
+                                    {showAllOverviewCards ? (
+                                        <p>Hide Overview Cards</p>
+                                    ) : (
+                                        <p>Show All Overview Cards</p>
+                                    )}
+                                </TooltipContent>
+                            </Tooltip>
                             <LayoutBtn />
                             <DetailBtn />
                         </ButtonGroup>
