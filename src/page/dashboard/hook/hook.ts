@@ -33,7 +33,8 @@ export default function useMonitors() {
     }, [servers]);
 
     useEffect(() => {
-        let totalCount = 0,
+        let visibleServerCount = 0,
+            totalCount = 0,
             onlineCount = 0,
             cpuAcc = 0,
             memAcc = 0,
@@ -45,6 +46,7 @@ export default function useMonitors() {
                 continue;
             }
 
+            visibleServerCount++;
             const status = statuses[server.id];
             if (status) {
                 totalCount++;
@@ -61,7 +63,7 @@ export default function useMonitors() {
         cpuAcc = totalCount > 0 ? cpuAcc / totalCount : 0;
         memAcc = totalCount > 0 ? memAcc / totalCount : 0;
 
-        setTotal(totalCount);
+        setTotal(visibleServerCount);
         setOnline(onlineCount);
         setAvgCpu(cpuAcc);
         setAvgMemory(memAcc);
