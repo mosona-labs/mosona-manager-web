@@ -12,7 +12,7 @@ import {
     Settings,
     StretchHorizontal,
 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import CategoryCard from './components/category';
@@ -39,6 +39,9 @@ const Dashboard = () => {
     const [mounted, setMounted] = useState(false);
     const [showSkeleton, setShowSkeleton] = useState(true);
     const [showAllOverviewCards, setShowAllOverviewCards] = useState(false);
+    const [visibleCategoryCount, setVisibleCategoryCount] = useState(0);
+    const categoryControlsRef = useRef<HTMLDivElement>(null);
+    const categoryMeasureRef = useRef<HTMLDivElement>(null);
 
     const {
         isLoading,
@@ -58,6 +61,16 @@ const Dashboard = () => {
 
     const isDefaultCategory = (categoryName: string) =>
         categoryName.trim().toLowerCase() === 'default';
+
+    const dashboardCategories = useMemo(() => categories?.slice(1) ?? [], [categories]);
+    const visibleCategories = useMemo(
+        () => dashboardCategories.slice(0, visibleCategoryCount),
+        [dashboardCategories, visibleCategoryCount]
+    );
+    const overflowCategories = useMemo(
+        () => dashboardCategories.slice(visibleCategoryCount),
+        [dashboardCategories, visibleCategoryCount]
+    );
 
     const extraOverviewStats = useMemo(() => {
         let totalCpuCores = 0;
@@ -94,6 +107,64 @@ const Dashboard = () => {
             totalBandwidthTx: MemoryUnit(totalBandwidthTxMb, 'mb'),
         };
     }, [servers, statuses, categoryFilter]);
+
+    useLayoutEffect(() => {
+        const controls = categoryControlsRef.current;
+        const measureRoot = categoryMeasureRef.current;
+        if (!controls || !measureRoot) return;
+
+        const measure = () => {
+            const availableWidth = controls.getBoundingClientRect().width;
+            const allButton = measureRoot.querySelector<HTMLButtonElement>(
+                '[data-category-measure="all"]'
+            );
+            const moreButton = measureRoot.querySelector<HTMLButtonElement>(
+                '[data-category-measure="more"]'
+            );
+            const categoryButtons = Array.from(
+                measureRoot.querySelectorAll<HTMLButtonElement>(
+                    '[data-category-measure="category"]'
+                )
+            );
+
+            if (!availableWidth || !allButton || !moreButton) {
+                setVisibleCategoryCount(dashboardCategories.length);
+                return;
+            }
+
+            let usedWidth = allButton.getBoundingClientRect().width;
+            let nextVisibleCount = 0;
+            const moreWidth = moreButton.getBoundingClientRect().width;
+
+            for (const categoryButton of categoryButtons) {
+                const categoryWidth = categoryButton.getBoundingClientRect().width;
+                const hasOverflowAfterThis = nextVisibleCount + 1 < dashboardCategories.length;
+                const requiredWidth =
+                    usedWidth + categoryWidth + (hasOverflowAfterThis ? moreWidth : 0);
+
+                if (requiredWidth > availableWidth) {
+                    break;
+                }
+
+                usedWidth += categoryWidth;
+                nextVisibleCount++;
+            }
+
+            setVisibleCategoryCount(nextVisibleCount);
+        };
+
+        measure();
+
+        if (typeof ResizeObserver === 'undefined') {
+            window.addEventListener('resize', measure);
+            return () => window.removeEventListener('resize', measure);
+        }
+
+        const resizeObserver = new ResizeObserver(measure);
+        resizeObserver.observe(controls);
+
+        return () => resizeObserver.disconnect();
+    }, [dashboardCategories]);
 
     const extraOverviewCards = [
         {
@@ -401,24 +472,25 @@ const Dashboard = () => {
                         transform: mounted ? 'none' : 'translateY(8px)',
                     }}
                 >
-                    <div className="flex flex-col sm:flex-row justify-between lg:justify-start gap-2">
-                        <ButtonGroup className="border rounded-lg">
-                            <Button
-                                variant={'ghost'}
-                                className={categoryFilter == null ? 'bg-accent' : ''}
-                                onClick={() => setCategoryFilter(null)}
-                            >
-                                All
-                            </Button>
-                            {categories
-                                ?.slice(1)
-                                .slice(0, 3)
-                                ?.map((category, index) => (
+                    <div className="flex min-w-0 flex-col sm:flex-row justify-between lg:justify-start gap-2 lg:flex-1">
+                        <div ref={categoryControlsRef} className="min-w-0 max-w-full sm:flex-1">
+                            <ButtonGroup className="max-w-full overflow-hidden border rounded-lg">
+                                <Button
+                                    variant={'ghost'}
+                                    className={categoryFilter == null ? 'bg-accent' : ''}
+                                    onClick={() => setCategoryFilter(null)}
+                                >
+                                    All
+                                </Button>
+                                {visibleCategories.map((category, index) => (
                                     <Button
                                         key={category.id}
                                         variant={'ghost'}
                                         className={cn(
-                                            index < categories.length - 1 ? 'border-e' : undefined,
+                                            index < visibleCategories.length - 1 ||
+                                                overflowCategories.length > 0
+                                                ? 'border-e'
+                                                : undefined,
                                             categoryFilter == category.id ? 'bg-accent' : ''
                                         )}
                                         onClick={() => setCategoryFilter(category.id)}
@@ -426,43 +498,69 @@ const Dashboard = () => {
                                         {category.name}
                                     </Button>
                                 ))}
-                            {categories && categories.length > 4 && (
-                                <Popover>
-                                    <PopoverTrigger asChild>
+                                {overflowCategories.length > 0 && (
+                                    <Popover>
+                                        <PopoverTrigger asChild>
+                                            <Button
+                                                variant={'ghost'}
+                                                className={cn(
+                                                    categoryFilter &&
+                                                        overflowCategories.some(
+                                                            (c) => c.id === categoryFilter
+                                                        )
+                                                        ? 'bg-accent'
+                                                        : ''
+                                                )}
+                                            >
+                                                ...
+                                            </Button>
+                                        </PopoverTrigger>
+                                        <PopoverContent className="w-40 mt-2 p-0 bg-background">
+                                            <div className="space-y-2">
+                                                {overflowCategories.map((item) => (
+                                                    <Button
+                                                        key={item.id}
+                                                        variant={'ghost'}
+                                                        className={cn(
+                                                            'w-full justify-start',
+                                                            categoryFilter == item.id
+                                                                ? 'bg-accent'
+                                                                : ''
+                                                        )}
+                                                        onClick={() => setCategoryFilter(item.id)}
+                                                    >
+                                                        {item.name}
+                                                    </Button>
+                                                ))}
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                )}
+                            </ButtonGroup>
+                            <div
+                                ref={categoryMeasureRef}
+                                className="fixed -left-[9999px] top-0 pointer-events-none opacity-0"
+                                aria-hidden="true"
+                            >
+                                <ButtonGroup className="border rounded-lg">
+                                    <Button variant={'ghost'} data-category-measure="all">
+                                        All
+                                    </Button>
+                                    {dashboardCategories.map((category) => (
                                         <Button
+                                            key={category.id}
                                             variant={'ghost'}
-                                            className={cn(
-                                                categoryFilter &&
-                                                    categories
-                                                        .slice(4)
-                                                        .some((c) => c.id === categoryFilter)
-                                                    ? 'bg-accent'
-                                                    : ''
-                                            )}
+                                            data-category-measure="category"
                                         >
-                                            ...
+                                            {category.name}
                                         </Button>
-                                    </PopoverTrigger>
-                                    <PopoverContent className="w-40 mt-2 p-0 bg-background">
-                                        <div className="space-y-2">
-                                            {categories.slice(4).map((item) => (
-                                                <Button
-                                                    key={item.id}
-                                                    variant={'ghost'}
-                                                    className={cn(
-                                                        'w-full justify-start',
-                                                        categoryFilter == item.id ? 'bg-accent' : ''
-                                                    )}
-                                                    onClick={() => setCategoryFilter(item.id)}
-                                                >
-                                                    {item.name}
-                                                </Button>
-                                            ))}
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                            )}
-                        </ButtonGroup>
+                                    ))}
+                                    <Button variant={'ghost'} data-category-measure="more">
+                                        ...
+                                    </Button>
+                                </ButtonGroup>
+                            </div>
+                        </div>
                         <div className={'flex flex-row justify-between'}>
                             <ButtonGroup className="border rounded-lg">
                                 <ManageCategory>
