@@ -384,7 +384,7 @@ const Dashboard = () => {
                                 <ArrowUpDown className="h-3 w-3 md:h-5 md:w-5 text-chart-2" />
                             </div>
                             <div>
-                                <p className="text-xs md:text-sm text-muted-foreground">
+                                <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">
                                     Network Traffic
                                 </p>
                                 <p className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-[2rem]">
