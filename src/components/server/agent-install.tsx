@@ -19,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select.tsx';
+import { Switch } from '@/components/ui/switch.tsx';
 
 const AgentInstall = ({
     open,
@@ -52,15 +53,17 @@ const AgentInstall = ({
     const [os, setOs] = useState<string>('linux');
     const [arch, setArch] = useState<string>('amd64');
     const [ipPreference, setIpPreference] = useState<'none' | 'ipv4' | 'ipv6'>('none');
+    const [sudo, setSudo] = useState<boolean>(true);
     const binaryName = `agent${os === 'windows' ? '.exe' : ''}`;
     const downloadUrl = `https://github.com/mosona-labs/mosona-manager/releases/latest/download/agent_${os}_${arch}${
         os === 'windows' ? '.exe' : ''
     }`;
 
+    const useSudo = sudo ? 'sudo ' : '';
     const script = [
         os === 'windows'
             ? `curl -L -o ${binaryName} ${downloadUrl} && ./${binaryName} install`
-            : `curl -L -o ${binaryName} ${downloadUrl} && sudo chmod +x ./${binaryName} && sudo ./${binaryName} install`,
+            : `curl -L -o ${binaryName} ${downloadUrl} && ${useSudo}chmod +x ./${binaryName} && ${useSudo}./${binaryName} install`,
         mode === 'active' ? 'active' : `passive`,
     ];
     if (!allow_monitor) {
@@ -69,14 +72,14 @@ const AgentInstall = ({
     if (!allow_terminal) {
         script.push('--no-terminal');
     }
-    if (mode === 'passive' && ipPreference !== 'none') {
-        script.push(`--${ipPreference}`);
-    }
     script.push(
         mode === 'active'
             ? `${agent_uid} ${public_key} ${host} ${port}`
             : `"${hub}" "${enroll_token}"`
     );
+    if (mode === 'passive' && ipPreference !== 'none') {
+        script.push(`--${ipPreference}`);
+    }
 
     return (
         <Dialog open={open}>
@@ -157,6 +160,13 @@ const AgentInstall = ({
                     >
                         <Copy />
                     </Button>
+                    <Switch
+                        className={'data-[state=checked]:bg-amber-700'}
+                        checked={sudo}
+                        onCheckedChange={setSudo}
+                    >
+                        Use sudo
+                    </Switch>
                     <div className={'flex-1'} />
                     <Button variant="outline" onClick={() => setOpen(false)}>
                         Cancel
