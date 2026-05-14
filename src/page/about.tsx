@@ -58,8 +58,8 @@ const About = () => {
                 >
                     <p>
                         Designed as a team-oriented / personal project management server monitor and
-                        terminal management tool, featuring comprehensive project permission control and
-                        SSH-driven remote management protocol.
+                        terminal management tool, featuring comprehensive project permission control
+                        and SSH-driven remote management protocol.
                     </p>
                 </div>
 

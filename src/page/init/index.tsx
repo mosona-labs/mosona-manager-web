@@ -22,9 +22,11 @@ import StepCard from '@/page/init/components/step-card.tsx';
 import EnableCard from '@/components/enable-card.tsx';
 import ApiInit from '@/api/init.ts';
 import { ToastError } from '@/utils/toast.ts';
+import { useSiteBranding } from '@/hooks/useSiteBranding.ts';
 
 const Init = () => {
     const navigate = useNavigate();
+    const { title } = useSiteBranding();
 
     const [installed, setInstalled] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
@@ -136,7 +138,7 @@ const Init = () => {
             <div className="flex w-full flex-col items-center gap-3 px-4 py-8 md:justify-center">
                 <div className="w-full mb-4 flex flex-col gap-2 items-center">
                     <Logo />
-                    <h1 className="text-3xl font-bold mt-2">Mosona Manager</h1>
+                    <h1 className="text-3xl font-bold mt-2">{title}</h1>
                     <p className="text-muted-foreground">Server Monitor & Remote Management</p>
                 </div>
 

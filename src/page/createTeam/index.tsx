@@ -21,10 +21,12 @@ import { useUser } from '@/context/useUser';
 import { ToastError } from '@/utils/toast';
 import ApiUser from '@/api/user.ts';
 import LoadingButton from '@/components/loading-button.tsx';
+import { useSiteBranding } from '@/hooks/useSiteBranding';
 
 const CreateTeam = () => {
     const navigator = useNavigate();
     const { user, refresh } = useUser();
+    const { title } = useSiteBranding();
 
     const avatarColorRef = useRef('#61390b');
     const avatarImageRef = useRef<File | null>(null);
@@ -93,8 +95,8 @@ const CreateTeam = () => {
                 <Terminal />
                 <AlertTitle>Hey There !</AlertTitle>
                 <AlertDescription>
-                    Mosona Manager manages servers by team. As long as you don’t invite anyone else
-                    to your team, it can also be private!
+                    {title} manages servers by team. As long as you don’t invite anyone else to your
+                    team, it can also be private!
                 </AlertDescription>
             </Alert>
             <div className="mt-4 flex flex-row gap-3">

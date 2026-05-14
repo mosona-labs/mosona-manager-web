@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils';
 import { useUser } from '@/context/useUser';
 import { useSession } from '@/context/useSession';
 import { osIcons } from '@/utils/icon';
+import { useSiteBranding } from '@/hooks/useSiteBranding';
 
 const sidebarItems: {
     title: string;
@@ -64,6 +65,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
     const navigator = useNavigate();
     const { team, teams } = useUser();
     const { sessions, closeSession } = useSession();
+    const { title } = useSiteBranding();
 
     const sessionList = useMemo(() => Array.from(sessions.values()), [sessions]);
 
@@ -83,8 +85,8 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     onClick={() => navigator('/')}
                 >
                     <Logo />
-                    <div>
-                        <h1 className="text-xl font-bold">Mosona Manager</h1>
+                    <div className="min-w-0">
+                        <h1 className="truncate text-xl font-bold">{title}</h1>
                         <p className="text-sm text-muted-foreground">Server Monitor & Management</p>
                     </div>
                 </div>

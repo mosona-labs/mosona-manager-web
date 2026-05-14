@@ -17,9 +17,11 @@ import ApiAuth from '@/api/auth';
 import { ToastError } from '@/utils/toast';
 import OAuthBtn from '@/page/auth/components/oauth.tsx';
 import ApiUser from '@/api/user.ts';
+import { useSiteBranding } from '@/hooks/useSiteBranding';
 
 const SignIn = () => {
     const navigate = useNavigate();
+    const { title } = useSiteBranding();
 
     const [mode, setMode] = useState<'signin' | 'signup'>('signin');
 
@@ -144,7 +146,7 @@ const SignIn = () => {
         <div className="flex flex-col h-screen gap-3 justify-center items-center w-full">
             <div className="w-full mb-4 flex flex-col gap-2 items-center">
                 <Logo />
-                <h1 className="text-3xl font-bold mt-2">Mosona Manager</h1>
+                <h1 className="text-3xl font-bold mt-2">{title}</h1>
                 <p className="text-muted-foreground">Server Monitor & Remote Management</p>
             </div>
             <Card className="w-[90vw] md:w-md py-4">

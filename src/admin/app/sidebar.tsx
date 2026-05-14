@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import SidebarItem from '@/components/sidebar/sidebarItem.tsx';
 import Logo from '@/components/logo.tsx';
+import { useSiteBranding } from '@/hooks/useSiteBranding.ts';
 
 const sidebarItems: {
     title: string;
@@ -68,6 +69,7 @@ const sidebarItems: {
 
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {
     const navigator = useNavigate();
+    const { title } = useSiteBranding();
 
     return (
         <>
@@ -83,8 +85,8 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     onClick={() => navigator('/')}
                 >
                     <Logo />
-                    <div>
-                        <h1 className="text-xl font-bold">Mosona Manager</h1>
+                    <div className="min-w-0">
+                        <h1 className="truncate text-xl font-bold">{title}</h1>
                         <p className="text-sm text-muted-foreground">Administration Dashboard</p>
                     </div>
                 </div>

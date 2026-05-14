@@ -15,7 +15,7 @@ export const SettingsProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const [settings, setSettings] = useState<AdminSettingsType | undefined>(undefined);
 
     const refresh = async () => {
-        ApiAdminSettings.get()
+        return ApiAdminSettings.get()
             .then((res) => {
                 setSettings(res.data);
             })

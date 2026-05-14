@@ -3,6 +3,9 @@ import { baseAPI, type ResponseInterface } from '@/api/base.ts';
 export type AdminSettingsType = {
     debug: boolean;
 
+    title: string;
+    favicon: string;
+
     // Domain
     domain: string;
 
@@ -25,6 +28,10 @@ export type AdminSettingsType = {
     captcha_secret_key: string;
 };
 
+export type UploadFaviconResponse = {
+    favicon: string;
+};
+
 class ApiAdminSettingsClass extends baseAPI {
     async get() {
         return this.getData<ResponseInterface<AdminSettingsType>>('/admin/settings');
@@ -32,6 +39,17 @@ class ApiAdminSettingsClass extends baseAPI {
 
     async set(data: { key: string; value: string }[]) {
         return this.postData<ResponseInterface>('/admin/settings', data, false);
+    }
+
+    async uploadFavicon(file: File) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        return this.postData<ResponseInterface<UploadFaviconResponse>>(
+            '/admin/settings/favicon',
+            formData,
+            false
+        );
     }
 
     // Test
