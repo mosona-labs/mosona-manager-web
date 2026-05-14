@@ -1,6 +1,8 @@
 import type { LogType } from '@/api/logs';
 
 import { useEffect, useState } from 'react';
+import { Download } from 'lucide-react';
+import { toast } from 'sonner';
 
 import OS from './components/os';
 import Browser from './components/browser';
@@ -29,6 +31,17 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { ToastError } from '@/utils/toast.ts';
 import BottomPagination from '@/components/bottom-pagination.tsx';
 import ApiAdminLogs from '@/api/admin/logs.ts';
+import { Button } from '@/components/ui/button.tsx';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog.tsx';
+import { Label } from '@/components/ui/label.tsx';
+import LoadingButton from '@/components/loading-button.tsx';
 
 const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     const [page, setPage] = useState(1);
@@ -45,6 +58,10 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
 
     const [inputEmail, setInputEmail] = useState('');
     const [inputMessage, setInputMessage] = useState('');
+    const [exportOpen, setExportOpen] = useState(false);
+    const [exportLimit, setExportLimit] = useState('100');
+    const [isExporting, setIsExporting] = useState(false);
+
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             setEmail(inputEmail);
@@ -75,6 +92,56 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             });
     }, [page, perPage, category, level, email, message]);
 
+    const downloadLogs = (exportedLogs: LogType[], total: number, limit: number) => {
+        const bundle = {
+            exported_at: new Date().toISOString(),
+            source: isAdmin ? 'admin' : 'team',
+            limit,
+            total,
+            filters: {
+                category,
+                level,
+                email,
+                message,
+            },
+            logs: exportedLogs,
+        };
+        const blob = new Blob([JSON.stringify(bundle, null, 2)], {
+            type: 'application/json',
+        });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${isAdmin ? 'admin-' : ''}logs-export-${new Date()
+            .toISOString()
+            .slice(0, 10)}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleExportLogs = () => {
+        const limit = parseInt(exportLimit, 10);
+        if (!Number.isFinite(limit) || limit <= 0) {
+            toast.warning('Please enter a valid number of records.');
+            return;
+        }
+
+        setIsExporting(true);
+        (isAdmin ? ApiAdminLogs : ApiLogs)
+            .list(1, limit, category, level, email, message)
+            .then((data) => {
+                downloadLogs(data.data.logs, data.data.total, limit);
+                setExportOpen(false);
+                toast.success('Logs exported successfully.');
+            })
+            .catch(ToastError)
+            .finally(() => {
+                setIsExporting(false);
+            });
+    };
+
     useEffect(() => {
         const fadeInTimer = window.setTimeout(() => setMounted(true), 40);
 
@@ -102,6 +169,10 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                                 : 'View and manage user & system logs for audit and troubleshooting purposes'}
                         </p>
                     </div>
+                    <Button variant="outline" onClick={() => setExportOpen(true)}>
+                        <Download />
+                        Export Logs
+                    </Button>
                 </div>
                 <div
                     className="flex flex-row gap-3"
@@ -228,7 +299,8 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                                         <TableRow
                                             key={log.time}
                                             style={{
-                                                transition: 'opacity 400ms ease, transform 400ms ease',
+                                                transition:
+                                                    'opacity 400ms ease, transform 400ms ease',
                                                 transitionDelay: `${160 + index * 35}ms`,
                                                 opacity: mounted ? 1 : 0,
                                                 transform: mounted ? 'none' : 'translateY(6px)',
@@ -276,10 +348,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                                                             <Browser browser={browser} />
                                                         </div>
                                                     </TooltipTrigger>
-                                                    <TooltipContent
-                                                        className="me-2"
-                                                        side="bottom"
-                                                    >
+                                                    <TooltipContent className="me-2" side="bottom">
                                                         <p>{log.user_agent}</p>
                                                     </TooltipContent>
                                                 </Tooltip>
@@ -309,6 +378,41 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                     />
                 </div>
             </div>
+            <Dialog open={exportOpen} onOpenChange={setExportOpen}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Export Logs</DialogTitle>
+                        <DialogDescription>
+                            Export recent logs as JSON. Current filters will be applied.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-3">
+                        <Label htmlFor="logs-export-limit">Recent records</Label>
+                        <Input
+                            id="logs-export-limit"
+                            type="number"
+                            min={1}
+                            step={1}
+                            value={exportLimit}
+                            onChange={(e) => setExportLimit(e.target.value)}
+                            placeholder="100"
+                        />
+                    </div>
+                    <DialogFooter>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setExportOpen(false)}
+                            disabled={isExporting}
+                        >
+                            Cancel
+                        </Button>
+                        <LoadingButton isLoading={isExporting} onClick={handleExportLogs}>
+                            Export
+                        </LoadingButton>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 };
