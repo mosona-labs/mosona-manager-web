@@ -259,7 +259,7 @@ const ServerStatusCard = ({
                 <div className="flex flex-col gap-4 h-full">
                     {/* Header */}
                     <div className="flex items-start justify-between w-full">
-                        <div className="flex items-center gap-3 flex-1">
+                        <div className="flex min-w-0 items-center gap-3 flex-1">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
                                 <img
                                     src={`/icons/${server.os && osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
@@ -267,14 +267,19 @@ const ServerStatusCard = ({
                                     className="h-6 w-6"
                                 />
                             </div>
-                            <div>
-                                <h3 className="font-mono text-sm font-semibold text-card-foreground">
+                            <div className="min-w-0">
+                                <h3 className="truncate font-mono text-sm font-semibold text-card-foreground">
                                     {server.name}
                                 </h3>
                                 <Tags server={server} />
                             </div>
                         </div>
-                        <Badge className={cn('text-xs font-medium', STATUS_COLORS[server.status])}>
+                        <Badge
+                            className={cn(
+                                'shrink-0 text-xs font-medium',
+                                STATUS_COLORS[server.status]
+                            )}
+                        >
                             {server.status}
                         </Badge>
                     </div>
