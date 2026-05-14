@@ -26,8 +26,7 @@ const ServerTerminalCard = ({
         <Card
             className="border-border bg-card p-4 transition-all hover:border-primary/50 cursor-pointer flex-row flex items-center gap-3"
             style={{
-                transition:
-                    'opacity 400ms ease, transform 400ms ease, border-color 200ms ease',
+                transition: 'opacity 400ms ease, transform 400ms ease, border-color 200ms ease',
                 transitionDelay: `${180 + index * 60}ms`,
                 opacity: mounted ? 1 : 0,
                 transform: mounted ? 'none' : 'translateY(10px)',
@@ -50,22 +49,21 @@ const ServerTerminalCard = ({
                 );
             }}
         >
-            <div className="w-10 p-2 bg-accent rounded-md">
+            <div className="w-10 shrink-0 p-2 bg-accent rounded-md">
                 <img
                     src={`/icons/${server.os && osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
                     alt={server.os}
                 />
             </div>
-            <div>
-                <h3 className="font-mono text-sm font-semibold text-card-foreground">
+            <div className="min-w-0 flex-1">
+                <h3 className="truncate font-mono text-sm font-semibold text-card-foreground">
                     {server.name}
                 </h3>
                 <p className="text-xs text-muted-foreground">{server.username}</p>
             </div>
-            <div className="flex-1" />
             <Button
                 variant="ghost"
-                className="bg-accent"
+                className="shrink-0 bg-accent"
                 onClick={(e) => {
                     e.stopPropagation();
                     openEdit();
