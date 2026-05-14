@@ -1,5 +1,6 @@
 import { Loader, Plus } from 'lucide-react';
-import { type FormEvent, memo, useEffect, useState } from 'react';
+import { addMonths } from 'date-fns';
+import { type FormEvent, memo, useEffect, useState, type SetStateAction } from 'react';
 import { toast } from 'sonner';
 
 import { Input } from '../ui/input';
@@ -32,6 +33,13 @@ import AgentInstall from '@/components/server/agent-install.tsx';
 import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
 import { notifyServerMutation } from '@/utils/server-events';
 
+const cycleMonths: Record<number, number> = {
+    1: 1,
+    2: 3,
+    3: 6,
+    4: 12,
+};
+
 const AddServer = () => {
     const { categories, keys } = useUser();
 
@@ -62,6 +70,7 @@ const AddServer = () => {
     const [enableTerminal, setEnableTerminal] = useState(true);
 
     // Billing Information
+    const [cycle, setCycle] = useState(-1);
     const [startTime, setStartTime] = useState<Date>();
     const [endTime, setEndTime] = useState<Date>();
     const [amount, setAmount] = useState<string>();
@@ -80,11 +89,23 @@ const AddServer = () => {
             setCategory(categories && categories.length > 0 ? categories[0].id : undefined);
             setEnableMonitor(true);
             setEnableTerminal(true);
+            setCycle(-1);
             setStartTime(undefined);
             setEndTime(undefined);
             setAmount(undefined);
         }
     }, [open]);
+
+    const setStartTimeWithEndInference = (value: SetStateAction<Date | undefined>) => {
+        setStartTime((prev) => {
+            const nextStartTime = typeof value === 'function' ? value(prev) : value;
+            const months = cycleMonths[cycle];
+            if (nextStartTime && months) {
+                setEndTime(addMonths(nextStartTime, months));
+            }
+            return nextStartTime;
+        });
+    };
 
     const onSubmit = (e: FormEvent) => {
         e.preventDefault();
@@ -100,7 +121,6 @@ const AddServer = () => {
         // Information
         const note = formData.get('note') as string;
         const provider = formData.get('provider') as string;
-        const cycle = parseInt(formData.get('cycle') as string);
         const bill_start_time = startTime;
         const bill_end_time = endTime;
         const bill_amount = formData.get('amount') as string;
@@ -470,7 +490,11 @@ const AddServer = () => {
                                             </div>
                                             <div className="grid gap-3">
                                                 <Label>Cycle</Label>
-                                                <Select defaultValue="-1" name="cycle">
+                                                <Select
+                                                    value={cycle.toString()}
+                                                    onValueChange={(v) => setCycle(parseInt(v))}
+                                                    name="cycle"
+                                                >
                                                     <SelectTrigger className="w-full">
                                                         <SelectValue placeholder="Select Cycle" />
                                                     </SelectTrigger>
@@ -501,7 +525,7 @@ const AddServer = () => {
                                                 </Label>
                                                 <DatePicker
                                                     date={startTime}
-                                                    setDate={setStartTime}
+                                                    setDate={setStartTimeWithEndInference}
                                                 />
                                             </div>
                                             <div className="grid gap-1.5">
