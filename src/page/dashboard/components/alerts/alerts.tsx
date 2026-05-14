@@ -47,7 +47,7 @@ const AlertDialog = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-xl">
+            <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto sm:max-w-xl">
                 <DialogHeader>
                     <DialogTitle>Alerts</DialogTitle>
                     <DialogDescription>
@@ -65,13 +65,19 @@ const AlertDialog = ({
                         to configure how you receive alerts.
                     </DialogDescription>
                 </DialogHeader>
-                <Tabs value={tab} onValueChange={(v) => setTab(v as 'server' | 'all')}>
-                    <TabsList>
-                        <TabsTrigger value="server">
+                <Tabs
+                    value={tab}
+                    onValueChange={(v) => setTab(v as 'server' | 'all')}
+                    className="min-w-0"
+                >
+                    <TabsList className="max-w-full">
+                        <TabsTrigger value="server" className="min-w-0">
                             <ServerIcon />
-                            {serverName}
+                            <span className="block max-w-44 truncate sm:max-w-72">
+                                {serverName}
+                            </span>
                         </TabsTrigger>
-                        <TabsTrigger value="all">
+                        <TabsTrigger value="all" className="shrink-0">
                             <GlobeIcon />
                             All Server
                         </TabsTrigger>
