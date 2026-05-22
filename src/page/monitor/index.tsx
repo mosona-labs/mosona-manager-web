@@ -33,7 +33,7 @@ import { Badge } from '@/components/ui/badge';
 import { formatUptimeDays } from '@/utils/time';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { osIcons } from '@/utils/icon';
+import { getOsIconName } from '@/utils/icon';
 import { MemoryUnit, NetUnit } from '@/utils/unit';
 import { getDiskLabel, getDiskUsagePercentage, getStatusDisks } from '@/utils/disk';
 import {
@@ -456,7 +456,7 @@ const Monitor = () => {
                         </div>
                         <div className="font-mono text-lg">
                             <img
-                                src={`/icons/${server?.os && osIcons.includes(server?.os?.toLowerCase() || '') ? server?.os?.toLowerCase() : 'linux'}.svg`}
+                                src={`/icons/${getOsIconName(server?.os)}.svg`}
                                 className="inline-block h-5 w-5 mr-2"
                                 alt={'System Icon'}
                             />

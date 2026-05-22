@@ -160,13 +160,14 @@ const AgentInstall = ({
                     >
                         <Copy />
                     </Button>
-                    <Switch
-                        className={'data-[state=checked]:bg-amber-700'}
-                        checked={sudo}
-                        onCheckedChange={setSudo}
-                    >
+                    <div className="flex flex-row text-sm items-center gap-1.5">
+                        <Switch
+                            className={'data-[state=checked]:bg-amber-700'}
+                            checked={sudo}
+                            onCheckedChange={setSudo}
+                        />
                         Use sudo
-                    </Switch>
+                    </div>
                     <div className={'flex-1'} />
                     <Button variant="outline" onClick={() => setOpen(false)}>
                         Cancel

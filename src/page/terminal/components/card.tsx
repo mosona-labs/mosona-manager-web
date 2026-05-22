@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { osIcons } from '@/utils/icon';
+import { getOsIconName } from '@/utils/icon';
 import { useSession } from '@/context/useSession';
 
 const ServerTerminalCard = ({
@@ -50,10 +50,7 @@ const ServerTerminalCard = ({
             }}
         >
             <div className="w-10 shrink-0 p-2 bg-accent rounded-md">
-                <img
-                    src={`/icons/${server.os && osIcons.includes(server.os.toLowerCase()) ? server.os.toLowerCase() : 'linux'}.svg`}
-                    alt={server.os}
-                />
+                <img src={`/icons/${getOsIconName(server.os)}.svg`} alt={server.os} />
             </div>
             <div className="min-w-0 flex-1">
                 <h3 className="truncate font-mono text-sm font-semibold text-card-foreground">

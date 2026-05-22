@@ -32,7 +32,7 @@ import TeamItem from './teamItem';
 import { cn } from '@/lib/utils';
 import { useUser } from '@/context/useUser';
 import { useSession } from '@/context/useSession';
-import { osIcons } from '@/utils/icon';
+import { getOsIconName } from '@/utils/icon';
 import { useSiteBranding } from '@/hooks/useSiteBranding';
 
 const sidebarItems: {
@@ -104,7 +104,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                                         title={session.name}
                                         icon={
                                             <img
-                                                src={`/icons/${session?.os && osIcons.includes(session.os.toLowerCase() || '') ? session.os.toLowerCase() : 'linux'}.svg`}
+                                                src={`/icons/${getOsIconName(session?.os)}.svg`}
                                                 alt=""
                                                 className="w-6"
                                             />

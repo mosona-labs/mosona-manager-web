@@ -64,6 +64,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
     const reconnectTimersRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
     const pendingInputRef = useRef<Map<string, PendingInput[]>>(new Map());
     const manualDisconnectRef = useRef<Set<string>>(new Set());
+    const outputDecoderRef = useRef<Map<string, TextDecoder>>(new Map());
 
     const navigator = useNavigate();
 
@@ -112,6 +113,17 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
             });
         },
         [patchSession]
+    );
+
+    const appendOutputBytes = useCallback(
+        (sessionId: string, bytes: ArrayBuffer) => {
+            const decoder =
+                outputDecoderRef.current.get(sessionId) ??
+                new TextDecoder('utf-8', { fatal: false });
+            outputDecoderRef.current.set(sessionId, decoder);
+            appendContent(sessionId, decoder.decode(bytes, { stream: true }));
+        },
+        [appendContent]
     );
 
     const createSession = useCallback(
@@ -163,6 +175,7 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
                 clearReconnectTimer(sessionId);
                 pendingInputRef.current.delete(sessionId);
+                outputDecoderRef.current.delete(sessionId);
                 manualDisconnectRef.current.add(sessionId);
 
                 // Close WebSocket connection
@@ -302,15 +315,12 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
                 websocket.onmessage = (event) => {
                     if (event.data instanceof ArrayBuffer) {
-                        const decoder = new TextDecoder('utf-8', { fatal: false });
-                        appendContent(sessionId, decoder.decode(event.data));
+                        appendOutputBytes(sessionId, event.data);
                     } else if (event.data instanceof Blob) {
                         event.data
                             .arrayBuffer()
                             .then((buffer) => {
-                                const decoder = new TextDecoder('utf-8', { fatal: false });
-                                const text = decoder.decode(buffer);
-                                appendContent(sessionId, text);
+                                appendOutputBytes(sessionId, buffer);
                             })
                             .catch((err) => {
                                 console.log('Failed to decode blob:', err);
@@ -332,6 +342,13 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     const latestSession = sessionsRef.current.get(sessionId);
                     if (!latestSession) return;
                     if (latestSession.ws && latestSession.ws !== websocket) return;
+
+                    const decoder = outputDecoderRef.current.get(sessionId);
+                    if (decoder) {
+                        const pendingText = decoder.decode();
+                        if (pendingText) appendContent(sessionId, pendingText);
+                        outputDecoderRef.current.delete(sessionId);
+                    }
 
                     if (manualDisconnectRef.current.has(sessionId)) {
                         patchSession(sessionId, (session) => {
