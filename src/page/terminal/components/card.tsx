@@ -21,13 +21,13 @@ const ServerTerminalCard = ({
 }) => {
     const navigator = useNavigate();
     const { createSession } = useSession();
+    const enterDelay = `${180 + index * 60}ms`;
 
     return (
         <Card
             className="border-border bg-card p-4 transition-all hover:border-primary/50 cursor-pointer flex-row flex items-center gap-3"
             style={{
-                transition: 'opacity 400ms ease, transform 400ms ease, border-color 200ms ease',
-                transitionDelay: `${180 + index * 60}ms`,
+                transition: `opacity 400ms ease ${enterDelay}, transform 400ms ease ${enterDelay}, border-color 150ms cubic-bezier(0.4, 0, 0.2, 1)`,
                 opacity: mounted ? 1 : 0,
                 transform: mounted ? 'none' : 'translateY(10px)',
             }}

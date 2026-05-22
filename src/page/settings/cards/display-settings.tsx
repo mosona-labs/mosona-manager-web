@@ -166,6 +166,26 @@ const DisplaySettings = () => {
                         'Show monitor details such as status, I/O, IOPS, Connections on the dashboard.'
                     }
                 />
+                <div className={'border-t my-1'} />
+                <div className="grid gap-3">
+                    <Label>Terminal Renderer</Label>
+                    <Select
+                        value={config.terminalRenderer}
+                        onValueChange={(e) => {
+                            updateConfig({ terminalRenderer: e as 'xterm' | 'ghostty-web' });
+                        }}
+                    >
+                        <SelectTrigger className="w-full">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="xterm">xterm.js</SelectItem>
+                                <SelectItem value="ghostty-web">Ghostty Web</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
             </CardContent>
         </Card>
     );

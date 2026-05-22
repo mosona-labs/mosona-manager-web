@@ -1,16 +1,59 @@
-import { useEffect, useRef } from 'react';
-import { Terminal } from '@xterm/xterm';
-import { FitAddon } from '@xterm/addon-fit';
+import { useEffect, useRef, useState } from 'react';
+import { Terminal as XtermTerminal } from '@xterm/xterm';
+import { FitAddon as XtermFitAddon } from '@xterm/addon-fit';
 import { RefreshCw } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { useSession } from '@/context/useSession';
+import { useUser } from '@/context/useUser';
 
 import '@xterm/xterm/css/xterm.css';
 
+type TerminalInstance = {
+    cols: number;
+    rows: number;
+    open: (parent: HTMLElement) => void;
+    focus: () => void;
+    clear: () => void;
+    write: (data: string) => void;
+    dispose: () => void;
+    loadAddon: (addon: unknown) => void;
+    onData: (listener: (data: string) => void) => { dispose: () => void };
+};
+
+type FitAddonInstance = {
+    fit: () => void;
+};
+
+const terminalTheme = {
+    background: '#000',
+    foreground: '#fff',
+    cursor: '#fff',
+    selectionBackground: '#334155',
+};
+
+const commonTerminalOptions = {
+    cursorBlink: true,
+    fontSize: 14,
+    fontFamily: 'Menlo, Monaco, "Courier New", monospace',
+    scrollback: 5000,
+    theme: terminalTheme,
+    allowTransparency: false,
+    disableStdin: false,
+    cursorStyle: 'block' as const,
+};
+
+const isTerminalQueryResponse = (data: string) =>
+    data.match(/^\x1b\[[\d;]*R$/) ||
+    data.match(/^\x1b\[>[\d;]*c$/) ||
+    data.match(/^\x1b\[\?[\d;]*\$?[a-zA-Z]$/) ||
+    data.match(/^\x1b\][\d;]+;[^\x07\x1b]*(\x07|\x1b\\)/) ||
+    data.match(/^\x1b\][\d;]+;rgb:[0-9a-f]{4}\/[0-9a-f]{4}\/[0-9a-f]{4}\\?$/);
+
 const Session = () => {
     const { id } = useParams<{ id: string }>();
+    const { config } = useUser();
 
     const {
         session,
@@ -23,77 +66,106 @@ const Session = () => {
 
     const initLock = useRef<boolean>(false);
     const terminalRef = useRef<HTMLDivElement>(null);
-    const xtermRef = useRef<Terminal | null>(null);
-    const fitAddonRef = useRef<FitAddon | null>(null);
+    const xtermRef = useRef<TerminalInstance | null>(null);
+    const fitAddonRef = useRef<FitAddonInstance | null>(null);
     const lastContentLengthRef = useRef<number>(0);
+    const [terminalReadyKey, setTerminalReadyKey] = useState(0);
+    const [terminalLoadError, setTerminalLoadError] = useState<string | null>(null);
+    const terminalRenderer = config.terminalRenderer ?? 'xterm';
 
     // Init
     useEffect(() => {
-        if (!terminalRef.current || xtermRef.current) return;
+        const terminalContainer = terminalRef.current;
+        if (!terminalContainer) return;
 
-        const terminal = new Terminal({
-            cursorBlink: true,
-            fontSize: 14,
-            fontFamily: 'Menlo, Monaco, "Courier New", monospace',
-            scrollback: 5000,
-            fastScrollModifier: 'alt',
-            macOptionIsMeta: true,
-            theme: {
-                background: '#000',
-                foreground: '#fff',
-                cursor: '#fff',
-                selectionBackground: '#334155',
-            },
-            allowTransparency: false,
-            disableStdin: false,
-            cursorStyle: 'block',
-            allowProposedApi: false,
-        });
+        let disposed = false;
+        let cleanupTerminal: (() => void) | undefined;
 
-        const fitAddon = new FitAddon();
-        terminal.loadAddon(fitAddon);
+        initLock.current = false;
+        setTerminalLoadError(null);
+        lastContentLengthRef.current = 0;
 
-        terminal.open(terminalRef.current);
-        fitAddon.fit();
-        terminal.focus();
+        const initTerminal = async () => {
+            try {
+                let terminal: TerminalInstance;
+                let fitAddon: FitAddonInstance;
 
-        xtermRef.current = terminal;
-        fitAddonRef.current = fitAddon;
+                if (terminalRenderer === 'ghostty-web') {
+                    const ghostty = await import('ghostty-web');
+                    await ghostty.init();
+                    if (disposed) return;
 
-        xtermRef.current.onData((data) => {
-            if (
-                initLock.current &&
-                (data.match(/^\x1b\[[\d;]*R$/) ||
-                    data.match(/^\x1b\[>[\d;]*c$/) ||
-                    data.match(/^\x1b\[\?[\d;]*\$?[a-zA-Z]$/) ||
-                    data.match(/^\x1b\][\d;]+;[^\x07\x1b]*(\x07|\x1b\\)/) ||
-                    data.match(/^\x1b\][\d;]+;rgb:[0-9a-f]{4}\/[0-9a-f]{4}\/[0-9a-f]{4}\\?$/))
-            ) {
-                return;
+                    terminal = new ghostty.Terminal(
+                        commonTerminalOptions
+                    ) as unknown as TerminalInstance;
+                    fitAddon = new ghostty.FitAddon();
+                } else {
+                    terminal = new XtermTerminal({
+                        ...commonTerminalOptions,
+                        fastScrollModifier: 'alt',
+                        macOptionIsMeta: true,
+                        allowProposedApi: false,
+                    }) as TerminalInstance;
+                    fitAddon = new XtermFitAddon();
+                }
+
+                if (disposed) {
+                    terminal.dispose();
+                    return;
+                }
+
+                terminal.loadAddon(fitAddon);
+                terminal.open(terminalContainer);
+                fitAddon.fit();
+                terminal.focus();
+
+                xtermRef.current = terminal;
+                fitAddonRef.current = fitAddon;
+
+                const dataDisposable = terminal.onData((data) => {
+                    if (initLock.current && isTerminalQueryResponse(data)) {
+                        return;
+                    }
+                    if (id) sendData(id, data);
+                });
+
+                const handleResize = () => {
+                    if (!terminalRef.current) return;
+                    fitAddon.fit();
+                    resizeTerminal(terminal.cols, terminal.rows);
+                };
+                const resizeObserver = new ResizeObserver(() => {
+                    requestAnimationFrame(handleResize);
+                });
+
+                resizeObserver.observe(terminalContainer);
+                window.addEventListener('resize', handleResize);
+                setTerminalReadyKey((key) => key + 1);
+
+                cleanupTerminal = () => {
+                    dataDisposable.dispose();
+                    resizeObserver.disconnect();
+                    window.removeEventListener('resize', handleResize);
+                    terminal.dispose();
+                    xtermRef.current = null;
+                    fitAddonRef.current = null;
+                };
+            } catch (err) {
+                if (!disposed) {
+                    setTerminalLoadError(
+                        err instanceof Error ? err.message : 'Failed to initialize terminal'
+                    );
+                }
             }
-            if (id) sendData(id, data);
-        });
-
-        // Handle window resize
-        const handleResize = () => {
-            if (!terminalRef.current) return;
-            fitAddon.fit();
-            resizeTerminal(terminal.cols, terminal.rows);
         };
-        const resizeObserver = new ResizeObserver(() => {
-            requestAnimationFrame(handleResize);
-        });
 
-        resizeObserver.observe(terminalRef.current);
-        window.addEventListener('resize', handleResize);
+        void initTerminal();
 
         return () => {
-            resizeObserver.disconnect();
-            window.removeEventListener('resize', handleResize);
-            terminal.dispose();
-            xtermRef.current = null;
+            disposed = true;
+            cleanupTerminal?.();
         };
-    }, [id]);
+    }, [id, terminalRenderer]);
 
     // Create/get session and connect WebSocket
     useEffect(() => {
@@ -128,7 +200,7 @@ const Session = () => {
                 }
             }, 100);
         }
-    }, [id]);
+    }, [id, terminalReadyKey]);
 
     useEffect(() => {
         initLock.current = !!session?.isConnected;
@@ -146,7 +218,7 @@ const Session = () => {
             terminal.write(session.content);
             lastContentLengthRef.current = session.content.length;
         }
-    }, [session?.id]);
+    }, [session?.id, terminalReadyKey]);
 
     useEffect(() => {
         if (!session || !xtermRef.current) return;
@@ -160,7 +232,7 @@ const Session = () => {
             terminal.write(newContent);
             lastContentLengthRef.current = content.length;
         }
-    }, [session?.content]);
+    }, [session?.content, terminalReadyKey]);
 
     const statusClassName =
         session?.connectionStatus === 'connected'
@@ -202,6 +274,11 @@ const Session = () => {
                             </Button>
                         )}
                     </>
+                )}
+                {terminalLoadError && (
+                    <span className="text-red-400 shrink-0">
+                        Terminal renderer failed: {terminalLoadError}
+                    </span>
                 )}
             </div>
             <div ref={terminalRef} className="w-full h-[calc(100%-1rem)]" />

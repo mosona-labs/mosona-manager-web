@@ -25,6 +25,8 @@ type UserContextType = {
     updateConfig: (newConfig: Partial<UserConfigType>) => void;
 };
 
+export type TerminalRendererType = 'xterm' | 'ghostty-web';
+
 type UserConfigType = {
     defaultTimeFrame: string;
     autoRefresh: boolean;
@@ -33,9 +35,37 @@ type UserConfigType = {
     defaultLayout: 'grid-3' | 'grid-2' | 'list';
     dashboardLayout: 'grid' | 'list' | 'list2';
     dashboardShowDetails: boolean;
+    terminalRenderer: TerminalRendererType;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
+
+const defaultUserConfig: UserConfigType = {
+    defaultTimeFrame: '1h',
+    autoRefresh: true,
+    defaultMonitorMode: 'avg',
+    defaultMinMaxMode: 'min-auto',
+    defaultLayout: 'grid-2',
+    dashboardLayout: 'grid',
+    dashboardShowDetails: false,
+    terminalRenderer: 'ghostty-web',
+};
+
+const readUserConfig = (): UserConfigType => {
+    const conf = localStorage.getItem('mosona-config');
+    if (!conf) return defaultUserConfig;
+
+    try {
+        const parsed = JSON.parse(conf || '{}') as Partial<UserConfigType>;
+        return {
+            ...defaultUserConfig,
+            ...parsed,
+            terminalRenderer: parsed.terminalRenderer === 'xterm' ? 'xterm' : 'ghostty-web',
+        };
+    } catch {
+        return defaultUserConfig;
+    }
+};
 
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const navigator = useNavigate();
@@ -86,22 +116,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     // Config
-    const [config, setConfig] = useState<UserConfigType>(
-        (() => {
-            const conf = localStorage.getItem('mosona-config');
-            return conf
-                ? (JSON.parse(conf || '{}') as UserConfigType)
-                : {
-                      defaultTimeFrame: '1h',
-                      autoRefresh: true,
-                      defaultMonitorMode: 'avg',
-                      defaultMinMaxMode: 'min-auto',
-                      defaultLayout: 'grid-2',
-                      dashboardLayout: 'grid',
-                      dashboardShowDetails: false,
-                  };
-        })()
-    );
+    const [config, setConfig] = useState<UserConfigType>(() => readUserConfig());
     const updateConfig = (newConfig: Partial<UserConfigType>) => {
         setConfig((prev) => {
             const updated = { ...prev, ...newConfig };
