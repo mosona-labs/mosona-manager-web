@@ -4,6 +4,7 @@ export const osIcons = [
     'debian',
     'redhat',
     'ubuntu',
+    'fedora',
     'rockylinux',
     'alpine',
     'windows',
@@ -20,6 +21,7 @@ const osIconAliases: Record<string, string[]> = {
     centos: ['centos'],
     alpine: ['alpine'],
     arch: ['arch'],
+    fedora: ['fedora'],
 };
 
 export const getOsIconName = (os?: string | null) => {
