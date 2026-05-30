@@ -31,11 +31,7 @@ const osIconAliases: Record<string, string[]> = {
 };
 
 const normalizeOsName = (os: string) =>
-    os
-        .toLowerCase()
-        .replace(/[_-]+/g, ' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+    os.toLowerCase().replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
 
 export const getOsIconName = (os?: string | null) => {
     const normalized = os ? normalizeOsName(os) : '';
