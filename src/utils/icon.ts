@@ -19,7 +19,7 @@ const osIconAliases: Record<string, string[]> = {
     macos: ['macos', 'mac os', 'darwin'],
     almalinux: ['almalinux', 'alma linux'],
     freebsd: ['freebsd'],
-    'opensuse-leap': ['opensuse leap', 'open suse leap'],
+    'opensuse-leap': ['opensuse', 'opensuse leap', 'open suse leap'],
     rockylinux: ['rockylinux', 'rocky linux', 'rocky'],
     redhat: ['redhat', 'red hat', 'rhel'],
     ubuntu: ['ubuntu'],
