@@ -19,6 +19,7 @@ export type AdminSettingsType = {
     smtp_tls: boolean;
 
     // Login
+    session_bind_ip: boolean;
     email_verify_login: boolean;
 
     // Registration

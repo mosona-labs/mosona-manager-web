@@ -66,6 +66,7 @@ const General = () => {
 
     const [title, setTitle] = useState('');
     const [domain, setDomain] = useState('');
+    const [sessionBindIp, setSessionBindIp] = useState(false);
     const [debugMode, setDebugMode] = useState(false);
     const [faviconFile, setFaviconFile] = useState<File | null>(null);
     const [faviconPreview, setFaviconPreview] = useState('');
@@ -101,6 +102,12 @@ const General = () => {
                 updates.push({
                     key: 'domain',
                     value: domain.endsWith('/') ? domain.slice(0, -1) : domain,
+                });
+            }
+            if (settings?.session_bind_ip !== sessionBindIp) {
+                updates.push({
+                    key: 'session_bind_ip',
+                    value: sessionBindIp ? 'true' : 'false',
                 });
             }
             if (settings?.debug !== debugMode) {
@@ -204,6 +211,7 @@ const General = () => {
         if (settings) {
             setTitle(settings.title || '');
             setDomain(settings.domain);
+            setSessionBindIp(settings.session_bind_ip);
             setDebugMode(settings.debug);
             setFaviconFile(null);
             setFaviconPreview(settings.favicon || '');
@@ -228,7 +236,7 @@ const General = () => {
                         }}
                         placeholder={'Mosona Manager'}
                         maxLength={255}
-                        className={'max-w-[26rem] w-full'}
+                        className={'max-w-104 w-full'}
                     />
                     <p className={'text-xs text-muted-foreground'}>
                         The browser title for your application. Leave it empty to use the built
@@ -237,7 +245,7 @@ const General = () => {
                 </div>
                 <div className={'space-y-2'}>
                     <Label className={'text-xs'}>Favicon</Label>
-                    <div className="flex max-w-[26rem] flex-row items-center gap-3">
+                    <div className="flex max-w-104 flex-row items-center gap-3">
                         {faviconPreview ? (
                             <img
                                 src={faviconPreview}
@@ -267,12 +275,24 @@ const General = () => {
                             setDomain(e.target.value);
                         }}
                         placeholder={'https://example.com'}
-                        className={'max-w-[26rem] w-full'}
+                        className={'max-w-104 w-full'}
                     />
                     <p className={'text-xs text-muted-foreground'}>
                         The base URL of your application. This is used for generating links, oauth
                         and emails.
                     </p>
+                </div>
+                <div className={'space-y-2'}>
+                    <Label className={'text-xs'}>Session Bind IP</Label>
+                    <EnableCard
+                        value={sessionBindIp}
+                        onChange={setSessionBindIp}
+                        title={'Bind session to login IP'}
+                        description={
+                            'When enabled, sessions are tied to the IP address used at login. Requests from a different IP will be rejected.'
+                        }
+                        className={'max-w-104'}
+                    />
                 </div>
                 <div className={'space-y-2'}>
                     <Label className={'text-xs'}>Debug Mode</Label>
@@ -283,7 +303,7 @@ const General = () => {
                         description={
                             'When enabled, detailed error messages and stack traces will be shown.'
                         }
-                        className={'max-w-[26rem]'}
+                        className={'max-w-104'}
                     />
                 </div>
                 <div>
