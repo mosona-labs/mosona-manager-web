@@ -37,16 +37,12 @@ export type TeamPublicPageConfigType = {
     url_by_domain?: string | null;
 };
 
-export type TeamExportBundle = {
-    version: 1;
-    exported_at: string;
-    team: Record<string, unknown>;
-    categories: unknown[];
-    keys: unknown[];
-    team_alerts: unknown[];
-    notifications: unknown[];
-    public_page?: Record<string, unknown> | null;
-    servers: unknown[];
+export type TeamEncryptedExportFile = {
+    format: string;
+    kdf: string;
+    salt: string;
+    nonce: string;
+    ciphertext: string;
 };
 
 class ApiTeamClass extends baseAPI {
@@ -121,16 +117,28 @@ class ApiTeamClass extends baseAPI {
         );
     }
 
-    async exportData(totp_code: string) {
-        return this.postData<ResponseInterface<TeamExportBundle>>(
+    async exportData(totp_code: string, export_password: string) {
+        return this.postData<ResponseInterface<TeamEncryptedExportFile>>(
             '/v1/team/export',
-            { totp_code },
+            { totp_code, export_password },
             false
         );
     }
 
-    async importData(totp_code: string, data: TeamExportBundle) {
-        return this.postData<ResponseInterface>('/v1/team/import', { totp_code, data }, false);
+    async importData(
+        totp_code: string,
+        export_password: string,
+        encrypted: TeamEncryptedExportFile
+    ) {
+        return this.postData<ResponseInterface>(
+            '/v1/team/import',
+            {
+                totp_code,
+                export_password,
+                encrypted,
+            },
+            false
+        );
     }
 }
 

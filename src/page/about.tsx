@@ -1,13 +1,27 @@
 import { useEffect, useState } from 'react';
 
+import ApiVersion from '@/api/version.ts';
 import { Card } from '@/components/ui/card';
 
 const About = () => {
     const [mounted, setMounted] = useState(false);
+    const [version, setVersion] = useState<string | null>(null);
 
     useEffect(() => {
         const timer = window.setTimeout(() => setMounted(true), 40);
         return () => window.clearTimeout(timer);
+    }, []);
+
+    useEffect(() => {
+        ApiVersion.get()
+            .then((res) => {
+                if (res.code === 'ok' && res.version) {
+                    setVersion(res.version);
+                }
+            })
+            .catch(() => {
+                setVersion(null);
+            });
     }, []);
 
     return (
@@ -72,11 +86,40 @@ const About = () => {
                         transform: mounted ? 'none' : 'translateY(8px)',
                     }}
                 >
-                    <h2 className="font-bold space-x-2">Version: v0.0.1</h2>
+                    <h2 className="font-bold space-x-2">
+                        Version:{' '}
+                        {version
+                            ? version === '0.0.1'
+                                ? 'Self-built / Beta Version'
+                                : 'v' + version
+                            : '…'}
+                    </h2>
                     <p className="text-muted-foreground">
-                        Automatic updates are currently not supported. Please visit the GitHub
-                        repository for the latest releases and update instructions.
+                        When automatic updates are enabled, Docker Compose will always keep itself
+                        up to date with the latest version. If you prefer to manually check for
+                        updates or rebuild the containers, please refer to the following external
+                        links:
                     </p>
+                    <div className="flex flex-col ps-4.5">
+                        <li className="text-muted-foreground">
+                            <a
+                                className="underline text-green-600"
+                                href="https://github.com/mosona-labs/mosona-manager/pkgs/container/mosona-manager"
+                                target="_blank"
+                            >
+                                Docker (ghcr.io)
+                            </a>
+                        </li>
+                        <li className="text-muted-foreground">
+                            <a
+                                className="underline text-green-600"
+                                href="https://manager.mosona.cc/docs/quickstart#upgrade"
+                                target="_blank"
+                            >
+                                Upgrade Guide
+                            </a>
+                        </li>
+                    </div>
                 </Card>
 
                 <div

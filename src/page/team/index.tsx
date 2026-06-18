@@ -1,4 +1,4 @@
-import type { TeamExportBundle, TeamMemberType } from '@/api/team';
+import type { TeamEncryptedExportFile, TeamMemberType } from '@/api/team';
 
 import { Download, Plus, Shield, Upload } from 'lucide-react';
 import { toast } from 'sonner';
@@ -42,8 +42,10 @@ const Team = () => {
     const [exportOpen, setExportOpen] = useState(false);
     const [importOpen, setImportOpen] = useState(false);
     const [exportTOTP, setExportTOTP] = useState('');
+    const [exportPassword, setExportPassword] = useState('');
     const [importTOTP, setImportTOTP] = useState('');
-    const [importBundle, setImportBundle] = useState<TeamExportBundle | null>(null);
+    const [importPassword, setImportPassword] = useState('');
+    const [importEncrypted, setImportEncrypted] = useState<TeamEncryptedExportFile | null>(null);
     const [importFileName, setImportFileName] = useState('');
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
@@ -134,8 +136,8 @@ const Team = () => {
         }
     };
 
-    const downloadBundle = (bundle: TeamExportBundle) => {
-        const blob = new Blob([JSON.stringify(bundle, null, 2)], {
+    const downloadEncryptedExport = (file: TeamEncryptedExportFile) => {
+        const blob = new Blob([JSON.stringify(file, null, 2)], {
             type: 'application/json',
         });
         const url = URL.createObjectURL(blob);
@@ -159,13 +161,18 @@ const Team = () => {
             toast.warning('TOTP code required');
             return;
         }
+        if (exportPassword.length < 8) {
+            toast.warning('Export password must be at least 8 characters.');
+            return;
+        }
 
         setIsExporting(true);
-        ApiTeam.exportData(exportTOTP.trim())
+        ApiTeam.exportData(exportTOTP.trim(), exportPassword)
             .then((res) => {
-                downloadBundle(res.data);
+                downloadEncryptedExport(res.data);
                 setExportOpen(false);
                 setExportTOTP('');
+                setExportPassword('');
                 toast.success('Team data exported successfully.');
             })
             .catch(ToastError)
@@ -181,15 +188,20 @@ const Team = () => {
 
         file.text()
             .then((text) => {
-                const data = JSON.parse(text) as TeamExportBundle;
-                if (data.version !== 1 || !Array.isArray(data.servers)) {
-                    throw new Error('Invalid team export bundle.');
+                const data = JSON.parse(text) as TeamEncryptedExportFile;
+                if (
+                    data.format !== 'mosona-team-export-v1' ||
+                    !data.ciphertext ||
+                    !data.salt ||
+                    !data.nonce
+                ) {
+                    throw new Error('Invalid encrypted team export file.');
                 }
-                setImportBundle(data);
+                setImportEncrypted(data);
                 setImportFileName(file.name);
             })
             .catch((err) => {
-                setImportBundle(null);
+                setImportEncrypted(null);
                 setImportFileName('');
                 toast.error('Invalid import file', {
                     description: err instanceof Error ? err.message : 'Unable to parse JSON.',
@@ -202,21 +214,26 @@ const Team = () => {
             setEnableTOTPOpen(true);
             return;
         }
-        if (!importBundle) {
-            toast.warning('Please select a valid team export JSON file.');
+        if (!importEncrypted) {
+            toast.warning('Please select a valid encrypted team export JSON file.');
             return;
         }
         if (!importTOTP.trim()) {
             toast.warning('TOTP code required');
             return;
         }
+        if (importPassword.length < 8) {
+            toast.warning('Export password must be at least 8 characters.');
+            return;
+        }
 
         setIsImporting(true);
-        ApiTeam.importData(importTOTP.trim(), importBundle)
+        ApiTeam.importData(importTOTP.trim(), importPassword, importEncrypted)
             .then(() => {
                 setImportOpen(false);
                 setImportTOTP('');
-                setImportBundle(null);
+                setImportPassword('');
+                setImportEncrypted(null);
                 setImportFileName('');
                 notifyServerMutation();
                 Promise.all([refresh(), refreshCategories(), refreshKeys()]).then(() => {
@@ -419,8 +436,8 @@ const Team = () => {
                             <div className="flex-1">
                                 <h2 className="text-sm font-semibold">Import / Export</h2>
                                 <p className="text-sm text-muted-foreground">
-                                    Export includes decrypted secrets. Import overwrites the active
-                                    team configuration.
+                                    Export is encrypted with a password you choose. Import
+                                    overwrites the active team configuration.
                                 </p>
                             </div>
                             <div className="flex flex-row gap-2">
@@ -462,19 +479,37 @@ const Team = () => {
                     <DialogHeader>
                         <DialogTitle>Export Team Data</DialogTitle>
                         <DialogDescription>
-                            The exported JSON contains decrypted secrets. Store it securely.
+                            Choose an export password to encrypt the file. You will need it when
+                            importing.
                         </DialogDescription>
                     </DialogHeader>
                     {user?.totp_enabled ? (
-                        <div className="grid gap-2">
-                            <Label htmlFor="team-export-totp">TOTP code</Label>
-                            <Input
-                                id="team-export-totp"
-                                value={exportTOTP}
-                                inputMode="numeric"
-                                maxLength={6}
-                                onChange={(e) => setExportTOTP(e.target.value)}
-                            />
+                        <div className="grid gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="team-export-password">Export password</Label>
+                                <Input
+                                    id="team-export-password"
+                                    type="password"
+                                    value={exportPassword}
+                                    autoComplete="new-password"
+                                    minLength={8}
+                                    onChange={(e) => setExportPassword(e.target.value)}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    At least 8 characters. Store it securely; it cannot be
+                                    recovered.
+                                </p>
+                            </div>
+                            <div className="grid gap-2">
+                                <Label htmlFor="team-export-totp">TOTP code</Label>
+                                <Input
+                                    id="team-export-totp"
+                                    value={exportTOTP}
+                                    inputMode="numeric"
+                                    maxLength={6}
+                                    onChange={(e) => setExportTOTP(e.target.value)}
+                                />
+                            </div>
                         </div>
                     ) : (
                         <div className="flex items-start gap-3 rounded-lg border p-4">
@@ -528,16 +563,29 @@ const Team = () => {
                             )}
                         </div>
                         {user?.totp_enabled ? (
-                            <div className="grid gap-2">
-                                <Label htmlFor="team-import-totp">TOTP code</Label>
-                                <Input
-                                    id="team-import-totp"
-                                    value={importTOTP}
-                                    inputMode="numeric"
-                                    maxLength={6}
-                                    onChange={(e) => setImportTOTP(e.target.value)}
-                                />
-                            </div>
+                            <>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="team-import-password">Export password</Label>
+                                    <Input
+                                        id="team-import-password"
+                                        type="password"
+                                        value={importPassword}
+                                        autoComplete="current-password"
+                                        minLength={8}
+                                        onChange={(e) => setImportPassword(e.target.value)}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label htmlFor="team-import-totp">TOTP code</Label>
+                                    <Input
+                                        id="team-import-totp"
+                                        value={importTOTP}
+                                        inputMode="numeric"
+                                        maxLength={6}
+                                        onChange={(e) => setImportTOTP(e.target.value)}
+                                    />
+                                </div>
+                            </>
                         ) : (
                             <div className="flex items-start gap-3 rounded-lg border p-4">
                                 <Shield className="mt-0.5 h-5 w-5 text-primary" />
