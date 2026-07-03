@@ -1,14 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
 
 import { type MonitorType, type ServerStatusType } from '@/api/monitor.ts';
 import { useUser } from '@/context/useUser.tsx';
 import { SERVER_MUTATION_EVENT } from '@/utils/server-events';
 
+const STATUS_FRESHNESS_MS = 15 * 1000;
+const SSE_STALE_TIMEOUT_MS = 30 * 1000;
+const SSE_RECONNECT_DELAY_MS = 5 * 1000;
+
 export default function useMonitors() {
     const { team } = useUser();
-    const navigator = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
     const [time, setTime] = useState<Date>(new Date());
@@ -51,7 +53,7 @@ export default function useMonitors() {
             if (status) {
                 totalCount++;
                 const nowMs = time.getTime();
-                if (nowMs - new Date(status.time).getTime() < 5 * 1000) {
+                if (nowMs - new Date(status.time).getTime() < STATUS_FRESHNESS_MS) {
                     onlineCount++;
                     cpuAcc = cpuAcc + status.cpu;
                     memAcc = memAcc + (status.mem_used_mb / status.mem_total_mb) * 100;
@@ -95,14 +97,14 @@ export default function useMonitors() {
             if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current); // Ref
             heartbeatTimeout.current = setTimeout(() => {
                 toast.error('Connection lost', {
-                    description: 'Client will try to reconnect at 5 seconds interval.',
+                    description: 'Client will try to reconnect in 5 seconds.',
                 });
                 setIsLoading(true);
                 eventSource.close();
                 reconnectInterval.current = setTimeout(() => {
                     subscribe();
-                }, 5000);
-            }, 10000);
+                }, SSE_RECONNECT_DELAY_MS);
+            }, SSE_STALE_TIMEOUT_MS);
         };
 
         eventSource.addEventListener('open', () => {
@@ -119,12 +121,7 @@ export default function useMonitors() {
         });
 
         eventSource.addEventListener('error', () => {
-            fetch('/api/v1/server/monitor/sse')
-                .then(async (res) => {
-                    const data = await res.json();
-                    if (data.code === 'login') navigator('/auth');
-                })
-                .finally(resetHeartbeat);
+            resetHeartbeat();
         });
 
         return () => {
@@ -134,7 +131,7 @@ export default function useMonitors() {
                 clearTimeout(reconnectInterval.current);
             }
         };
-    }, [navigator, team]);
+    }, [team]);
 
     useEffect(() => {
         return subscribe();

@@ -196,15 +196,29 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                             <SelectItem value="all">All Categories</SelectItem>
                             {isAdmin
                                 ? [
-                                      <SelectItem value="user">User</SelectItem>,
-                                      <SelectItem value="oauth">OAuth</SelectItem>,
-                                      <SelectItem value="settings">Settings</SelectItem>,
+                                      <SelectItem key="user" value="user">
+                                          User
+                                      </SelectItem>,
+                                      <SelectItem key="oauth" value="oauth">
+                                          OAuth
+                                      </SelectItem>,
+                                      <SelectItem key="settings" value="settings">
+                                          Settings
+                                      </SelectItem>,
                                   ]
                                 : [
-                                      <SelectItem value="team">Team</SelectItem>,
-                                      <SelectItem value="server">Server</SelectItem>,
-                                      <SelectItem value="terminal">Terminal</SelectItem>,
-                                      <SelectItem value="category">Category</SelectItem>,
+                                      <SelectItem key="team" value="team">
+                                          Team
+                                      </SelectItem>,
+                                      <SelectItem key="server" value="server">
+                                          Server
+                                      </SelectItem>,
+                                      <SelectItem key="terminal" value="terminal">
+                                          Terminal
+                                      </SelectItem>,
+                                      <SelectItem key="category" value="category">
+                                          Category
+                                      </SelectItem>,
                                   ]}
                         </SelectContent>
                     </Select>
