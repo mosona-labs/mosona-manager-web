@@ -26,6 +26,8 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { useAlert } from '@/page/dashboard/hook/useAlert.tsx';
 
+const GLOBAL_ALERT_TARGET_ID = -1;
+
 const AlertDialog = ({
     open,
     onOpenChange,
@@ -43,7 +45,7 @@ const AlertDialog = ({
     const [tab, setTab] = useState<'server' | 'all'>('server');
     const [overrideTeamAlerts, setOverrideTeamAlerts] = useState<boolean>(false);
     const scope = tab === 'all' ? 'team' : 'server';
-    const alertTargetId = scope === 'team' ? 0 : serverID;
+    const alertTargetId = scope === 'team' ? GLOBAL_ALERT_TARGET_ID : serverID;
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>

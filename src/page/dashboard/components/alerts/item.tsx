@@ -143,6 +143,7 @@ const AlertItem = ({
 
     useEffect(() => {
         if (!enabled || isSyncingRef.current) return;
+        if (!currentAlert) return;
 
         if (
             currentAlert?.threshold === normalizedThreshold &&
