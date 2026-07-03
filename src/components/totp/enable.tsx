@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import QRCode from 'react-qr-code';
+import QRCodeModule from 'react-qr-code';
 import { LoaderCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -17,6 +17,9 @@ import ApiUser from '@/api/user.ts';
 import { ToastError } from '@/utils/toast.ts';
 import { Input } from '@/components/ui/input.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
+
+const QRCode =
+    (QRCodeModule as unknown as { default?: typeof QRCodeModule }).default ?? QRCodeModule;
 
 const EnableTOTP = ({
     open,
