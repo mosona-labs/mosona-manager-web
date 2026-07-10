@@ -1,4 +1,4 @@
-import type { TeamEncryptedExportFile, TeamMemberType } from '@/api/team';
+import type { TeamEncryptedExportFile, TeamImportFile, TeamMemberType } from '@/api/team';
 
 import { Download, Plus, Shield, Upload } from 'lucide-react';
 import { toast } from 'sonner';
@@ -31,6 +31,14 @@ import {
 import { notifyServerMutation } from '@/utils/server-events';
 import EnableTOTP from '@/components/totp/enable';
 
+const encryptedTeamExportFormat = 'mosona-team-export-v1';
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+    typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const isEncryptedTeamExport = (file: TeamImportFile): file is TeamEncryptedExportFile =>
+    file.format === encryptedTeamExportFormat;
+
 const Team = () => {
     const { user, team, refresh, refreshCategories, refreshKeys } = useUser();
 
@@ -45,7 +53,7 @@ const Team = () => {
     const [exportPassword, setExportPassword] = useState('');
     const [importTOTP, setImportTOTP] = useState('');
     const [importPassword, setImportPassword] = useState('');
-    const [importEncrypted, setImportEncrypted] = useState<TeamEncryptedExportFile | null>(null);
+    const [importFile, setImportFile] = useState<TeamImportFile | null>(null);
     const [importFileName, setImportFileName] = useState('');
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
@@ -188,20 +196,24 @@ const Team = () => {
 
         file.text()
             .then((text) => {
-                const data = JSON.parse(text) as TeamEncryptedExportFile;
-                if (
-                    data.format !== 'mosona-team-export-v1' ||
-                    !data.ciphertext ||
-                    !data.salt ||
-                    !data.nonce
-                ) {
-                    throw new Error('Invalid encrypted team export file.');
+                const data: unknown = JSON.parse(text);
+                if (!isRecord(data)) {
+                    throw new Error('Invalid team export file.');
                 }
-                setImportEncrypted(data);
+
+                if (data.format === encryptedTeamExportFormat) {
+                    if (!data.ciphertext || !data.salt || !data.nonce) {
+                        throw new Error('Invalid encrypted team export file.');
+                    }
+                } else {
+                    setImportPassword('');
+                }
+
+                setImportFile(data);
                 setImportFileName(file.name);
             })
             .catch((err) => {
-                setImportEncrypted(null);
+                setImportFile(null);
                 setImportFileName('');
                 toast.error('Invalid import file', {
                     description: err instanceof Error ? err.message : 'Unable to parse JSON.',
@@ -214,26 +226,27 @@ const Team = () => {
             setEnableTOTPOpen(true);
             return;
         }
-        if (!importEncrypted) {
-            toast.warning('Please select a valid encrypted team export JSON file.');
+        if (!importFile) {
+            toast.warning('Please select a valid team export JSON file.');
             return;
         }
         if (!importTOTP.trim()) {
             toast.warning('TOTP code required');
             return;
         }
-        if (importPassword.length < 8) {
+        const encrypted = isEncryptedTeamExport(importFile);
+        if (encrypted && importPassword.length < 8) {
             toast.warning('Export password must be at least 8 characters.');
             return;
         }
 
         setIsImporting(true);
-        ApiTeam.importData(importTOTP.trim(), importPassword, importEncrypted)
+        ApiTeam.importData(importTOTP.trim(), importFile, encrypted ? importPassword : undefined)
             .then(() => {
                 setImportOpen(false);
                 setImportTOTP('');
                 setImportPassword('');
-                setImportEncrypted(null);
+                setImportFile(null);
                 setImportFileName('');
                 notifyServerMutation();
                 Promise.all([refresh(), refreshCategories(), refreshKeys()]).then(() => {
@@ -564,17 +577,21 @@ const Team = () => {
                         </div>
                         {user?.totp_enabled ? (
                             <>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="team-import-password">Export password</Label>
-                                    <Input
-                                        id="team-import-password"
-                                        type="password"
-                                        value={importPassword}
-                                        autoComplete="current-password"
-                                        minLength={8}
-                                        onChange={(e) => setImportPassword(e.target.value)}
-                                    />
-                                </div>
+                                {(!importFile || isEncryptedTeamExport(importFile)) && (
+                                    <div className="grid gap-2">
+                                        <Label htmlFor="team-import-password">
+                                            Export password
+                                        </Label>
+                                        <Input
+                                            id="team-import-password"
+                                            type="password"
+                                            value={importPassword}
+                                            autoComplete="current-password"
+                                            minLength={8}
+                                            onChange={(e) => setImportPassword(e.target.value)}
+                                        />
+                                    </div>
+                                )}
                                 <div className="grid gap-2">
                                     <Label htmlFor="team-import-totp">TOTP code</Label>
                                     <Input

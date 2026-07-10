@@ -45,6 +45,8 @@ export type TeamEncryptedExportFile = {
     ciphertext: string;
 };
 
+export type TeamImportFile = TeamEncryptedExportFile | Record<string, unknown>;
+
 class ApiTeamClass extends baseAPI {
     async info() {
         return this.getData<
@@ -125,20 +127,13 @@ class ApiTeamClass extends baseAPI {
         );
     }
 
-    async importData(
-        totp_code: string,
-        export_password: string,
-        encrypted: TeamEncryptedExportFile
-    ) {
-        return this.postData<ResponseInterface>(
-            '/v1/team/import',
-            {
-                totp_code,
-                export_password,
-                encrypted,
-            },
-            false
-        );
+    async importData(totp_code: string, file: TeamImportFile, export_password?: string) {
+        const payload =
+            export_password === undefined
+                ? { totp_code, data: file }
+                : { totp_code, export_password, encrypted: file };
+
+        return this.postData<ResponseInterface>('/v1/team/import', payload, false);
     }
 }
 
