@@ -67,6 +67,7 @@ const General = () => {
     const [title, setTitle] = useState('');
     const [domain, setDomain] = useState('');
     const [sessionBindIp, setSessionBindIp] = useState(false);
+    const [trustProxy, setTrustProxy] = useState(false);
     const [debugMode, setDebugMode] = useState(false);
     const [faviconFile, setFaviconFile] = useState<File | null>(null);
     const [faviconPreview, setFaviconPreview] = useState('');
@@ -108,6 +109,12 @@ const General = () => {
                 updates.push({
                     key: 'session_bind_ip',
                     value: sessionBindIp ? 'true' : 'false',
+                });
+            }
+            if (settings?.trust_proxy !== trustProxy) {
+                updates.push({
+                    key: 'trust_proxy',
+                    value: trustProxy ? 'true' : 'false',
                 });
             }
             if (settings?.debug !== debugMode) {
@@ -212,6 +219,7 @@ const General = () => {
             setTitle(settings.title || '');
             setDomain(settings.domain);
             setSessionBindIp(settings.session_bind_ip);
+            setTrustProxy(settings.trust_proxy);
             setDebugMode(settings.debug);
             setFaviconFile(null);
             setFaviconPreview(settings.favicon || '');
@@ -290,6 +298,18 @@ const General = () => {
                         title={'Bind session to login IP'}
                         description={
                             'When enabled, sessions are tied to the IP address used at login. Requests from a different IP will be rejected.'
+                        }
+                        className={'max-w-104'}
+                    />
+                </div>
+                <div className={'space-y-2'}>
+                    <Label className={'text-xs'}>Trust Proxy</Label>
+                    <EnableCard
+                        value={trustProxy}
+                        onChange={setTrustProxy}
+                        title={'Trust CDN / reverse proxy headers'}
+                        description={
+                            'When enabled, the server will trust IP headers from reverse proxies or CDNs when determining client IPs and protocol.'
                         }
                         className={'max-w-104'}
                     />

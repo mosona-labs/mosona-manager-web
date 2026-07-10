@@ -18,6 +18,9 @@ export type AdminSettingsType = {
     smtp_password: string;
     smtp_tls: boolean;
 
+    // Proxy
+    trust_proxy: boolean;
+
     // Login
     session_bind_ip: boolean;
     email_verify_login: boolean;
