@@ -8,11 +8,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-    languageMeta,
-    sortedLanguages,
-    type SupportedLanguage,
-} from '@/i18n';
+import { changeLanguage, languageMeta, sortedLanguages, type SupportedLanguage } from '@/i18n';
 import { cn } from '@/lib/utils';
 
 const LanguageSwitcher = ({ compact = true }: { compact?: boolean }) => {
@@ -59,9 +55,9 @@ const LanguageSwitcher = ({ compact = true }: { compact?: boolean }) => {
                             <button
                                 key={language}
                                 type="button"
-                                onClick={() => void i18n.changeLanguage(language)}
+                                onClick={() => void changeLanguage(language)}
                                 className={cn(
-                                    'flex min-w-0 items-center gap-1.5 rounded-md px-2 py-2 text-start text-sm outline-hidden transition-colors',
+                                    'flex min-w-0 items-center gap-1.5 rounded-md px-2 py-2 text-start text-sm outline-hidden transition-colors cursor-pointer',
                                     'hover:bg-accent hover:text-accent-foreground',
                                     'focus-visible:bg-accent focus-visible:text-accent-foreground',
                                     selected && 'bg-accent/70 text-accent-foreground'
