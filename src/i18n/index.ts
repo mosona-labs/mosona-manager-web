@@ -4,10 +4,23 @@ import { initReactI18next } from 'react-i18next';
 
 import en from './locales/en';
 import es from './locales/es';
+import fr from './locales/fr';
+import ja from './locales/ja';
+import pt from './locales/pt';
+import ru from './locales/ru';
 import zhCN from './locales/zh-CN';
 import zhHK from './locales/zh-HK';
 
-export const supportedLanguages = ['en', 'zh-CN', 'zh-HK', 'es'] as const;
+export const supportedLanguages = [
+    'en',
+    'zh-CN',
+    'zh-HK',
+    'es',
+    'fr',
+    'ja',
+    'pt',
+    'ru',
+] as const;
 export type SupportedLanguage = (typeof supportedLanguages)[number];
 
 export type LanguageMeta = {
@@ -19,6 +32,10 @@ export type LanguageMeta = {
 export const languageMeta: Record<SupportedLanguage, LanguageMeta> = {
     en: { code: 'en', name: 'English', flag: '🇺🇸' },
     es: { code: 'es', name: 'Español', flag: '🇪🇸' },
+    fr: { code: 'fr', name: 'Français', flag: '🇫🇷' },
+    ja: { code: 'ja', name: '日本語', flag: '🇯🇵' },
+    pt: { code: 'pt', name: 'Português', flag: '🇧🇷' },
+    ru: { code: 'ru', name: 'Русский', flag: '🇷🇺' },
     'zh-CN': { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
     'zh-HK': { code: 'zh-HK', name: '繁體中文', flag: '🇭🇰' },
 };
@@ -26,6 +43,10 @@ export const languageMeta: Record<SupportedLanguage, LanguageMeta> = {
 export const languageNames: Record<SupportedLanguage, string> = {
     en: languageMeta.en.name,
     es: languageMeta.es.name,
+    fr: languageMeta.fr.name,
+    ja: languageMeta.ja.name,
+    pt: languageMeta.pt.name,
+    ru: languageMeta.ru.name,
     'zh-CN': languageMeta['zh-CN'].name,
     'zh-HK': languageMeta['zh-HK'].name,
 };
@@ -43,6 +64,10 @@ void i18n
             'zh-CN': { translation: zhCN },
             'zh-HK': { translation: zhHK },
             es: { translation: es },
+            fr: { translation: fr },
+            ja: { translation: ja },
+            pt: { translation: pt },
+            ru: { translation: ru },
         },
         fallbackLng: 'en',
         supportedLngs: supportedLanguages,
@@ -60,6 +85,10 @@ void i18n
                 }
                 if (normalized.startsWith('zh')) return 'zh-CN';
                 if (normalized.startsWith('es')) return 'es';
+                if (normalized.startsWith('fr')) return 'fr';
+                if (normalized.startsWith('ja')) return 'ja';
+                if (normalized.startsWith('pt')) return 'pt';
+                if (normalized.startsWith('ru')) return 'ru';
                 return 'en';
             },
         },
