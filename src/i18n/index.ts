@@ -10,12 +10,29 @@ import zhHK from './locales/zh-HK';
 export const supportedLanguages = ['en', 'zh-CN', 'zh-HK', 'es'] as const;
 export type SupportedLanguage = (typeof supportedLanguages)[number];
 
-export const languageNames: Record<SupportedLanguage, string> = {
-    en: 'English',
-    'zh-CN': '简体中文',
-    'zh-HK': '繁體中文（香港）',
-    es: 'Español',
+export type LanguageMeta = {
+    code: SupportedLanguage;
+    name: string;
+    flag: string;
 };
+
+export const languageMeta: Record<SupportedLanguage, LanguageMeta> = {
+    en: { code: 'en', name: 'English', flag: '🇺🇸' },
+    es: { code: 'es', name: 'Español', flag: '🇪🇸' },
+    'zh-CN': { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
+    'zh-HK': { code: 'zh-HK', name: '繁體中文', flag: '🇭🇰' },
+};
+
+export const languageNames: Record<SupportedLanguage, string> = {
+    en: languageMeta.en.name,
+    es: languageMeta.es.name,
+    'zh-CN': languageMeta['zh-CN'].name,
+    'zh-HK': languageMeta['zh-HK'].name,
+};
+
+export const sortedLanguages = [...supportedLanguages].sort((a, b) =>
+    languageMeta[a].name.localeCompare(languageMeta[b].name, 'en', { sensitivity: 'base' })
+);
 
 void i18n
     .use(LanguageDetector)
