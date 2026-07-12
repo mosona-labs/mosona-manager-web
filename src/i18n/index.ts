@@ -1,5 +1,4 @@
 import i18n from 'i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
 import en from './locales/en';
@@ -40,10 +39,6 @@ export const languageMeta: Record<SupportedLanguage, LanguageMeta> = {
     'zh-CN': { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
     'zh-HK': { code: 'zh-HK', name: '繁體中文', flag: '🇭🇰' },
 };
-
-export const languageNames: Record<SupportedLanguage, string> = Object.fromEntries(
-    supportedLanguages.map((code) => [code, languageMeta[code].name])
-) as Record<SupportedLanguage, string>;
 
 // Fixed display order: Latin Romance/Germanic first, then Malay, Slavic, CJK, Arabic
 export const sortedLanguages: SupportedLanguage[] = [
@@ -156,8 +151,49 @@ export async function loadLanguage(language: string): Promise<SupportedLanguage>
     return lng;
 }
 
+export const LANGUAGE_STORAGE_KEY = 'mosona-language';
+
+export function getStoredLanguage(): SupportedLanguage | null {
+    try {
+        const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+        if (!stored) return null;
+        return normalizeLanguage(stored);
+    } catch {
+        return null;
+    }
+}
+
+export function setStoredLanguage(language: SupportedLanguage) {
+    try {
+        localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+    } catch {
+        // ignore storage failures (private mode, etc.)
+    }
+}
+
+function detectBrowserLanguage(): SupportedLanguage {
+    if (typeof navigator === 'undefined') return 'en';
+
+    const candidates = [...(navigator.languages ?? []), navigator.language].filter(Boolean);
+
+    for (const candidate of candidates) {
+        const normalized = normalizeLanguage(candidate);
+        // Prefer an exact-family match when browser reports a supported language family
+        if (normalized !== 'en' || candidate.toLowerCase().startsWith('en')) {
+            return normalized;
+        }
+    }
+
+    return 'en';
+}
+
+export function resolvePreferredLanguage(): SupportedLanguage {
+    return getStoredLanguage() ?? detectBrowserLanguage();
+}
+
 export async function changeLanguage(language: string): Promise<string> {
     const lng = await loadLanguage(language);
+    setStoredLanguage(lng);
     await i18n.changeLanguage(lng);
     return lng;
 }
@@ -167,41 +203,32 @@ function updateDocumentDirection(language: string) {
 }
 
 void i18n
-    .use(LanguageDetector)
     .use(initReactI18next)
     .init({
         resources: {
             en: { translation: en },
         },
+        lng: 'en',
         fallbackLng: 'en',
         supportedLngs: supportedLanguages,
         nonExplicitSupportedLngs: false,
         load: 'currentOnly',
         partialBundledLanguages: true,
         interpolation: { escapeValue: false },
-        detection: {
-            order: ['localStorage', 'navigator', 'htmlTag'],
-            lookupLocalStorage: 'mosona-language',
-            caches: ['localStorage'],
-            convertDetectedLanguage: normalizeLanguage,
-        },
         react: { useSuspense: false },
     })
     .then(async () => {
-        const detected = normalizeLanguage(i18n.resolvedLanguage || i18n.language || 'en');
-        if (detected !== 'en') {
-            await loadLanguage(detected);
-            if (i18n.language !== detected) {
-                await i18n.changeLanguage(detected);
-            }
+        // Manual preference (localStorage) wins; otherwise infer from browser once.
+        const preferred = resolvePreferredLanguage();
+        await loadLanguage(preferred);
+        if (i18n.language !== preferred) {
+            await i18n.changeLanguage(preferred);
         }
-        document.documentElement.lang = i18n.resolvedLanguage || detected;
-        updateDocumentDirection(i18n.resolvedLanguage || detected);
+        document.documentElement.lang = preferred;
+        updateDocumentDirection(preferred);
     });
 
 i18n.on('languageChanged', (language) => {
     document.documentElement.lang = language;
     updateDocumentDirection(language);
 });
-
-export default i18n;
