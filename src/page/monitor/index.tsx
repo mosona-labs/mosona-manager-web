@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
     ArrowBigDownDash,
     ArrowBigUpDash,
@@ -50,6 +51,7 @@ import { useUser } from '@/context/useUser';
 import SettingsDialog from '@/page/monitor/components/settings-dialog.tsx';
 
 const Monitor = () => {
+    const { t } = useTranslation();
     const { id } = useParams<{ id: string }>();
 
     const navigate = useNavigate();
@@ -436,23 +438,25 @@ const Monitor = () => {
                     <div className="flex flex-col col-span-12 md:col-span-6">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <WorkflowIcon size={16} />
-                            <span>IP Address</span>
+                            <span>{t('pages.monitor.ipAddress')}</span>
                         </div>
-                        <div className="font-mono text-lg">{server?.ip || 'N/A'}</div>
+                        <div className="font-mono text-lg">
+                            {server?.ip || t('pages.monitor.na')}
+                        </div>
                     </div>
                     <div className="flex flex-col col-span-12 md:col-span-6">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <MonitorIcon size={16} />
-                            <span>Hostname</span>
+                            <span>{t('pages.monitor.hostname')}</span>
                         </div>
                         <div className="font-mono text-lg line-clamp-1">
-                            {server?.hostname || 'N/A'}
+                            {server?.hostname || t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-6 lg:col-span-2 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <Shell size={16} />
-                            <span>System</span>
+                            <span>{t('pages.monitor.system')}</span>
                         </div>
                         <div className="font-mono text-lg">
                             <img
@@ -460,74 +464,82 @@ const Monitor = () => {
                                 className="inline-block h-5 w-5 mr-2"
                                 alt={'System Icon'}
                             />
-                            {server?.os || 'N/A'}
+                            {server?.os || t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-6 lg:col-span-2 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <Triangle size={16} />
-                            <span>Arch</span>
+                            <span>{t('pages.monitor.arch')}</span>
                         </div>
-                        <div className="font-mono text-lg">{server?.arch || 'N/A'}</div>
+                        <div className="font-mono text-lg">
+                            {server?.arch || t('pages.monitor.na')}
+                        </div>
                     </div>
                     <div className="flex flex-col col-span-6 lg:col-span-6 xl:col-span-4">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <Triangle size={16} />
-                            <span>Kernel</span>
+                            <span>{t('pages.monitor.kernel')}</span>
                         </div>
-                        <div className="font-mono text-lg">{server?.kernel || 'N/A'}</div>
+                        <div className="font-mono text-lg">
+                            {server?.kernel || t('pages.monitor.na')}
+                        </div>
                     </div>
                     <div className="xl:col-span-4 " />
                     <div className="flex flex-col col-span-12 2xl:col-span-6">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <CpuIcon size={16} />
-                            <span>CPU</span>
+                            <span>{t('pages.monitor.cpu')}</span>
                         </div>
                         <div className="font-mono text-lg">
                             {server?.cpu_name
                                 ? `${server?.cpu_name} (${server?.core_c}C/${server?.core_t}T)`
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-6 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <ArrowBigUpDash size={16} />
-                            <span>Upload Total</span>
+                            <span>{t('pages.monitor.uploadTotal')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {tx ? `${tx.value} ${tx.unit}` : 'N/A'}
+                            {tx ? `${tx.value} ${tx.unit}` : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-6 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <ArrowBigDownDash size={16} />
-                            <span>Download Total</span>
+                            <span>{t('pages.monitor.downloadTotal')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {rx ? `${rx.value} ${rx.unit}` : 'N/A'}
+                            {rx ? `${rx.value} ${rx.unit}` : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="hidden xl:block xl:col-span-1" />
                     <div className="flex flex-col col-span-6 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <PercentCircle size={16} />
-                            <span>CPU Usage</span>
+                            <span>{t('pages.monitor.cpuUsage')}</span>
                         </div>
                         <div className="font-mono text-lg">
                             {realTimeStatus
                                 ? parseFloat(realTimeStatus.cpu.toFixed(2)) + '%'
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <MemoryStick size={16} />
-                            <span>Memory</span>
+                            <span>{t('pages.monitor.memory')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {realTimeStatus ? MemoryUnit(realTimeStatus.mem_used_mb, 'mb') : 'N/A'}{' '}
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.mem_used_mb, 'mb')
+                                : t('pages.monitor.na')}{' '}
                             /{' '}
-                            {realTimeStatus ? MemoryUnit(realTimeStatus.mem_total_mb, 'mb') : 'N/A'}{' '}
+                            {realTimeStatus
+                                ? MemoryUnit(realTimeStatus.mem_total_mb, 'mb')
+                                : t('pages.monitor.na')}{' '}
                             (
                             {realTimeStatus
                                 ? parseFloat(
@@ -537,14 +549,14 @@ const Monitor = () => {
                                           100
                                       ).toFixed(2)
                                   ) + '%'
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                             )
                         </div>
                     </div>
                     <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <HardDrive size={16} />
-                            <span>Disk</span>
+                            <span>{t('pages.monitor.disk')}</span>
                         </div>
                         <div className="space-y-1 font-mono text-sm lg:text-base">
                             {realtimeDisks.length > 0 ? (
@@ -565,58 +577,62 @@ const Monitor = () => {
                                     </div>
                                 ))
                             ) : (
-                                <div className="text-lg">N/A</div>
+                                <div className="text-lg">{t('pages.monitor.na')}</div>
                             )}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <HardDrive size={16} />
-                            <span>I/O</span>
+                            <span>{t('pages.monitor.io')}</span>
                         </div>
                         <div className="font-mono text-lg flex items-center gap-2">
                             <HardDriveUpload className="h-4 w-4" />
                             {realTimeStatus
                                 ? MemoryUnit(realTimeStatus.disk_read_kib_s, 'kb') + '/s'
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                             <HardDriveDownload className="h-4 w-4" />
                             {realTimeStatus
                                 ? MemoryUnit(realTimeStatus.disk_write_kib_s, 'kb') + '/s'
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-12 md:col-span-6 xl:col-span-4 2xl:col-span-3">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <EthernetPort size={16} />
-                            <span>Network</span>
+                            <span>{t('pages.monitor.network')}</span>
                         </div>
                         <div className="font-mono text-lg flex items-center gap-2">
                             <ArrowUp className="h-4 w-4" />
                             {realTimeStatus
                                 ? MemoryUnit(realTimeStatus.tx_kib_s, 'kb') + '/s'
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                             <ArrowDown className="h-4 w-4" />
                             {realTimeStatus
                                 ? MemoryUnit(realTimeStatus.rx_kib_s, 'kb') + '/s'
-                                : 'N/A'}
+                                : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-6 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <Unplug size={16} />
-                            <span>TCP Connections</span>
+                            <span>{t('pages.monitor.tcpConnections')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {realTimeStatus?.tcp_total ? realTimeStatus?.tcp_total : 'N/A'}
+                            {realTimeStatus?.tcp_total
+                                ? realTimeStatus?.tcp_total
+                                : t('pages.monitor.na')}
                         </div>
                     </div>
                     <div className="flex flex-col col-span-6 xl:col-span-2">
                         <div className="flex flex-row gap-2 items-center text-muted-foreground">
                             <Unplug size={16} />
-                            <span>UDP Connections</span>
+                            <span>{t('pages.monitor.udpConnections')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {realTimeStatus?.udp_total ? realTimeStatus?.udp_total : 'N/A'}
+                            {realTimeStatus?.udp_total
+                                ? realTimeStatus?.udp_total
+                                : t('pages.monitor.na')}
                         </div>
                     </div>
                 </Card>
@@ -640,7 +656,9 @@ const Monitor = () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="real-time">Real-Time (3M)</SelectItem>
+                                <SelectItem value="real-time">
+                                    {t('pages.display.realtime')}
+                                </SelectItem>
                                 <SelectItem value="1h">1H</SelectItem>
                                 <SelectItem value="12h">12H</SelectItem>
                                 <SelectItem value="24h">24H</SelectItem>
@@ -673,9 +691,9 @@ const Monitor = () => {
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="me-2">
                                 {autoRefresh ? (
-                                    <p>Auto-refresh is ON</p>
+                                    <p>{t('pages.monitor.autoRefreshOn')}</p>
                                 ) : (
-                                    <p>Auto-refresh is OFF</p>
+                                    <p>{t('pages.monitor.autoRefreshOff')}</p>
                                 )}
                             </TooltipContent>
                         </Tooltip>
@@ -709,8 +727,8 @@ const Monitor = () => {
                         timeFrame={timeFrame}
                         enableModeSwitch={timeFrame !== 'real-time'}
                         nowTime={nowTime}
-                        title="CPU Usage"
-                        description="System-wide CPU utilization overview"
+                        title={t('pages.monitor.cpuUsage')}
+                        description={t('pages.monitor.cpuDescription')}
                         keyName="Usage"
                         keyUnit="%"
                         keyObj="cpu"
@@ -724,8 +742,8 @@ const Monitor = () => {
                         enableModeSwitch={false}
                         timeFrame={timeFrame}
                         nowTime={nowTime}
-                        title="Memory Usage"
-                        description="System memory consumption overview"
+                        title={t('pages.monitor.memoryUsage')}
+                        description={t('pages.monitor.memoryDescription')}
                         keyName={'Used'}
                         autoUnit={'mb'}
                         keyObj={'mem_used_mb'}
@@ -740,8 +758,8 @@ const Monitor = () => {
                         enableModeSwitch={timeFrame !== 'real-time'}
                         timeFrame={timeFrame}
                         nowTime={nowTime}
-                        title="Disk I/O"
-                        description={'Aggregated read and write speed across all disks'}
+                        title={t('pages.monitor.diskIo')}
+                        description={t('pages.monitor.diskIoDescription')}
                         keyName={['Read', 'Write', 'Read IOPS', 'Write IOPS']}
                         keyUnit={['/s', '/s']}
                         autoUnit={'kb'}
@@ -761,8 +779,8 @@ const Monitor = () => {
                         enableModeSwitch={timeFrame !== 'real-time'}
                         timeFrame={timeFrame}
                         nowTime={nowTime}
-                        title="Bandwidth"
-                        description={'Network bandwidth usage for all network interfaces'}
+                        title={t('pages.monitor.bandwidth')}
+                        description={t('pages.monitor.bandwidthDescription')}
                         keyName={['Receive', 'Transmit']}
                         keyUnit={['/s', '/s']}
                         autoUnit={'kb'}
@@ -777,8 +795,8 @@ const Monitor = () => {
                         enableModeSwitch={false}
                         timeFrame={timeFrame}
                         nowTime={nowTime}
-                        title="Swap Usage"
-                        description={'Amount of swap space used'}
+                        title={t('pages.monitor.swapUsage')}
+                        description={t('pages.monitor.swapDescription')}
                         keyName={'Used'}
                         autoUnit={'mb'}
                         keyObj={'swap_used_mb'}
@@ -796,8 +814,8 @@ const Monitor = () => {
                                 enableModeSwitch={false}
                                 timeFrame={timeFrame}
                                 nowTime={nowTime}
-                                title={`${label} Usage`}
-                                description={`Usage of ${disk.mp} filesystem`}
+                                title={t('pages.monitor.diskUsage', { label })}
+                                description={t('pages.monitor.filesystemUsage', { mount: disk.mp })}
                                 keyName={'Used'}
                                 autoUnit={'gb'}
                                 keyObj={'used_gb'}
@@ -815,8 +833,8 @@ const Monitor = () => {
                             enableModeSwitch={false}
                             timeFrame={timeFrame}
                             nowTime={nowTime}
-                            title="Disk Usage"
-                            description="No disk usage data available"
+                            title={t('pages.monitor.diskUsage', { label: 'Disk' })}
+                            description={t('pages.monitor.noDiskData')}
                             keyName={'Used'}
                             autoUnit={'gb'}
                             keyObj={'used_gb'}

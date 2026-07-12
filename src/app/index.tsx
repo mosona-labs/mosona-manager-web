@@ -24,6 +24,7 @@ import Settings from '@/page/settings';
 import PublicPage from '@/page/publicPage';
 import TOTPAlert from '@/components/alert-dialog/totp.tsx';
 import { useUser } from '@/context/useUser';
+import LanguageSwitcher from '@/components/language-switcher';
 
 const RequireTeam = ({ children }: { children: ReactNode }) => {
     const { team } = useUser();
@@ -56,6 +57,7 @@ function App() {
                         <SidebarIcon />
                     </Button>
                     <div className="flex flex-row gap-2">
+                        <LanguageSwitcher />
                         <Button
                             variant="outline"
                             onClick={() => {

@@ -1,4 +1,5 @@
 import { TvMinimal } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Card,
@@ -21,6 +22,7 @@ import { useUser } from '@/context/useUser.tsx';
 import EnableCard from '@/components/enable-card.tsx';
 
 const DisplaySettings = () => {
+    const { t } = useTranslation();
     const { config, updateConfig } = useUser();
 
     return (
@@ -28,15 +30,13 @@ const DisplaySettings = () => {
             <CardHeader>
                 <CardTitle className="text-lg font-medium flex items-center gap-2">
                     <TvMinimal className="h-5 w-5 text-primary" />
-                    Display Settings
+                    {t('pages.display.title')}
                 </CardTitle>
-                <CardDescription>
-                    Customize the appearance and layout of the application.
-                </CardDescription>
+                <CardDescription>{t('pages.display.description')}</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 w-full">
                 <div className="grid gap-3">
-                    <Label>Layout for Graphs</Label>
+                    <Label>{t('pages.display.graphLayout')}</Label>
                     <Select
                         value={config.defaultLayout}
                         onValueChange={(e) => {
@@ -50,13 +50,13 @@ const DisplaySettings = () => {
                             <SelectGroup>
                                 <SelectItem value="grid-3">3-Column Grid Layout</SelectItem>
                                 <SelectItem value="grid-2">2-Column Grid Layout</SelectItem>
-                                <SelectItem value="list">List Layout</SelectItem>
+                                <SelectItem value="list">{t('pages.display.list')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="grid gap-3">
-                    <Label>Timeframe for Graphs</Label>
+                    <Label>{t('pages.display.timeframe')}</Label>
                     <Select
                         value={config.defaultTimeFrame}
                         onValueChange={(e) => {
@@ -68,21 +68,23 @@ const DisplaySettings = () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel>Timeframe</SelectLabel>
+                                <SelectLabel>{t('pages.display.timeframeLabel')}</SelectLabel>
                                 <SelectItem value="1h">1H</SelectItem>
                                 <SelectItem value="12h">12H</SelectItem>
                                 <SelectItem value="24h">24H</SelectItem>
                                 <SelectItem value="7d">7D</SelectItem>
                                 <SelectItem value="30d">30D</SelectItem>
                                 <SelectItem value="365d">365D</SelectItem>
-                                <SelectLabel>Special</SelectLabel>
-                                <SelectItem value="real-time">Real-Time (3M)</SelectItem>
+                                <SelectLabel>{t('pages.display.special')}</SelectLabel>
+                                <SelectItem value="real-time">
+                                    {t('pages.display.realtime')}
+                                </SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="grid gap-3">
-                    <Label>Aggregation Mode for Graphs</Label>
+                    <Label>{t('pages.display.aggregation')}</Label>
                     <Select
                         value={config.defaultMonitorMode}
                         onValueChange={(e) => {
@@ -94,15 +96,15 @@ const DisplaySettings = () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="avg">Average</SelectItem>
-                                <SelectItem value="max">Maximum</SelectItem>
-                                <SelectItem value="raw">Raw Data</SelectItem>
+                                <SelectItem value="avg">{t('pages.display.average')}</SelectItem>
+                                <SelectItem value="max">{t('pages.display.maximum')}</SelectItem>
+                                <SelectItem value="raw">{t('pages.display.raw')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
                 <div className="grid gap-3">
-                    <Label>Max & Min Lines on Graphs</Label>
+                    <Label>{t('pages.display.minMax')}</Label>
                     <Select
                         value={config.defaultMinMaxMode}
                         onValueChange={(e) => {
@@ -116,7 +118,9 @@ const DisplaySettings = () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="min-auto">Min - Auto</SelectItem>
+                                <SelectItem value="min-auto">
+                                    {t('pages.display.minAuto')}
+                                </SelectItem>
                                 <SelectItem value="0-auto">0 - Auto</SelectItem>
                                 <SelectItem value="0-max">0 - Max</SelectItem>
                             </SelectGroup>
@@ -128,14 +132,14 @@ const DisplaySettings = () => {
                     onChange={(v) => {
                         updateConfig({ autoRefresh: v });
                     }}
-                    title={'Enable Auto Refresh for Graphs'}
+                    title={t('pages.display.autoRefresh')}
                     description={
                         'Automatically refresh graphs at regular intervals to display the most recent data.'
                     }
                 />
                 <div className={'border-t my-1'} />
                 <div className="grid gap-3">
-                    <Label>Layout for Dashboard</Label>
+                    <Label>{t('pages.display.dashboardLayout')}</Label>
                     <Select
                         value={config.dashboardLayout}
                         onValueChange={(e) => {
@@ -147,11 +151,9 @@ const DisplaySettings = () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="grid">Grid Layout</SelectItem>
-                                <SelectItem value="list">1-Column List Layout</SelectItem>
-                                <SelectItem value="list2">
-                                    2-Column List Layout (Compact)
-                                </SelectItem>
+                                <SelectItem value="grid">{t('pages.display.grid')}</SelectItem>
+                                <SelectItem value="list">{t('pages.display.list1')}</SelectItem>
+                                <SelectItem value="list2">{t('pages.display.list2')}</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -161,14 +163,12 @@ const DisplaySettings = () => {
                     onChange={(v) => {
                         updateConfig({ dashboardShowDetails: v });
                     }}
-                    title={'Always Show Details on Dashboard'}
-                    description={
-                        'Show monitor details such as status, I/O, IOPS, Connections on the dashboard.'
-                    }
+                    title={t('pages.display.alwaysShowDetails')}
+                    description={t('pages.display.alwaysShowDetailsDesc')}
                 />
                 <div className={'border-t my-1'} />
                 <div className="grid gap-3">
-                    <Label>Terminal Renderer</Label>
+                    <Label>{t('pages.display.renderer')}</Label>
                     <Select
                         value={config.terminalRenderer}
                         onValueChange={(e) => {

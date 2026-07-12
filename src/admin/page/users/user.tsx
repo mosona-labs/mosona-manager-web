@@ -2,6 +2,7 @@ import type { UserType } from '@/api/user.ts';
 
 import { EditIcon, MoreHorizontal, Trash } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { TableCell, TableRow } from '@/components/ui/table.tsx';
 import { Badge } from '@/components/ui/badge.tsx';
@@ -16,6 +17,7 @@ import Edit from '@/admin/page/users/edit.tsx';
 import Del from '@/admin/page/users/del.tsx';
 
 const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) => {
+    const { t } = useTranslation();
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
 
@@ -27,7 +29,9 @@ const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) =>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>
                     <Badge variant={user.verified ? 'default' : 'outline'}>
-                        {user.verified ? 'Verified' : 'Unverified'}
+                        {user.verified
+                            ? t('pages.adminUsers.verified')
+                            : t('pages.adminUsers.unverified')}
                     </Badge>
                 </TableCell>
                 <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
@@ -48,14 +52,14 @@ const UserItem = ({ user, refresh }: { user: UserType; refresh: () => void }) =>
                         <DropdownMenuContent className="w-46 me-5" align="start">
                             <DropdownMenuItem onClick={() => setOpenEdit(true)}>
                                 <EditIcon className={'text-foreground'} />
-                                Edit
+                                {t('common.edit')}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                                 variant={'destructive'}
                                 onClick={() => setOpenDelete(true)}
                             >
                                 <Trash />
-                                Delete
+                                {t('common.delete')}
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>

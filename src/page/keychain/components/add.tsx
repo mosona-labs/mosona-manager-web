@@ -1,5 +1,6 @@
 import { ImportIcon, Loader, Plus } from 'lucide-react';
 import { type ChangeEvent, type DragEvent, type ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -22,6 +23,7 @@ import { ToastError } from '@/utils/toast.ts';
 import { useUser } from '@/context/useUser.tsx';
 
 const AddKey = ({ children }: { children?: ReactNode }) => {
+    const { t } = useTranslation();
     const { refreshKeys } = useUser();
 
     const [open, setOpen] = useState(false);
@@ -107,38 +109,35 @@ const AddKey = ({ children }: { children?: ReactNode }) => {
                 ) : (
                     <Button>
                         <Plus />
-                        Add Key
+                        {t('pages.keychain.add')}
                     </Button>
                 )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Add New SSH Key</DialogTitle>
-                    <DialogDescription>
-                        Fill in the details below to add a new SSH key to your keychain. All keys &
-                        passwords are encrypted.
-                    </DialogDescription>
+                    <DialogTitle>{t('pages.keychain.addTitle')}</DialogTitle>
+                    <DialogDescription>{t('pages.keychain.addDescription')}</DialogDescription>
                 </DialogHeader>
                 <div className={'space-y-4'}>
                     <div className={'grid gap-3'}>
                         <Label>
-                            Name
+                            {t('pages.keychain.name')}
                             <IsRequired />
                         </Label>
                         <Input
                             type="text"
-                            placeholder="Enter a name"
+                            placeholder={t('pages.keychain.namePlaceholder')}
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
                     </div>
                     <div className={'grid gap-3'}>
                         <Label>
-                            Private Key
+                            {t('pages.keychain.privateKey')}
                             <IsRequired />
                         </Label>
                         <Textarea
-                            placeholder="Enter the private key"
+                            placeholder={t('pages.keychain.privateKeyPlaceholder')}
                             value={privateKey}
                             onChange={(e) => setPrivateKey(e.target.value)}
                             rows={6}
@@ -146,10 +145,10 @@ const AddKey = ({ children }: { children?: ReactNode }) => {
                         />
                     </div>
                     <div className={'grid gap-3'}>
-                        <Label>Password</Label>
+                        <Label>{t('pages.keychain.password')}</Label>
                         <Input
                             type="password"
-                            placeholder="If the key is encrypted, enter the password here"
+                            placeholder={t('pages.keychain.passwordPlaceholder')}
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -166,7 +165,7 @@ const AddKey = ({ children }: { children?: ReactNode }) => {
                             >
                                 <ImportIcon className={'mx-auto'} size={42} />
                                 <p className={'text-xs text-muted-foreground'}>
-                                    Drag and drop or select a private key file to import
+                                    {t('pages.keychain.importHint')}
                                 </p>
                             </Card>
                         </label>
@@ -181,7 +180,7 @@ const AddKey = ({ children }: { children?: ReactNode }) => {
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                     <Button
                         type="submit"
@@ -192,7 +191,7 @@ const AddKey = ({ children }: { children?: ReactNode }) => {
                             className="animate-spin"
                             style={{ display: isLoading ? 'inline-block' : 'none' }}
                         />
-                        Add Key
+                        {t('pages.keychain.add')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

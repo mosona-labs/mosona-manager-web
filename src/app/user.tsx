@@ -3,6 +3,7 @@ import { memo, useEffect, useState } from 'react';
 import { BookTextIcon, BugIcon, Cable, LogOut, Settings, Terminal, User2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -16,6 +17,7 @@ import GithubIcon from '@/components/icons/github.tsx';
 const User = ({ adminMode = false }: { adminMode?: boolean }) => {
     const navigator = useNavigate();
     const { user } = useUser();
+    const { t } = useTranslation();
 
     const [isOpen, setIsOpen] = useState(false);
 
@@ -34,9 +36,9 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         });
                 }),
             {
-                loading: 'Signing out in progress...',
-                success: 'Signed out successfully',
-                error: 'Error',
+                loading: t('common.signingOut'),
+                success: t('common.signedOut'),
+                error: t('common.error'),
             }
         );
 
@@ -78,7 +80,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         }}
                     >
                         <User2 />
-                        Profile
+                        {t('common.profile')}
                     </Button>
                     <Button
                         variant={'ghost'}
@@ -100,7 +102,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         }}
                     >
                         <Settings />
-                        Settings
+                        {t('common.settings')}
                     </Button>
                     <DropdownMenuSeparator />
                     <a href={'https://github.com/mosona-labs/mosona-manager'} target={'_blank'}>
@@ -118,7 +120,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                             className="w-full rounded-none py-3 justify-start"
                         >
                             <BookTextIcon />
-                            Documentation
+                            {t('common.documentation')}
                         </Button>
                     </a>
                     <a
@@ -132,7 +134,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                             className="w-full rounded-none py-3 justify-start"
                         >
                             <BugIcon />
-                            Report Issue
+                            {t('common.reportIssue')}
                         </Button>
                     </a>
                     {!adminMode && user?.is_admin && (
@@ -147,7 +149,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                                 }}
                             >
                                 <Settings />
-                                Admin Dashboard
+                                {t('common.adminDashboard')}
                             </Button>
                         </>
                     )}
@@ -163,7 +165,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                                 }}
                             >
                                 <Terminal />
-                                Back to Manager
+                                {t('common.backToManager')}
                             </Button>
                         </>
                     )}
@@ -174,7 +176,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                         onClick={signOut}
                     >
                         <LogOut />
-                        Sign Out
+                        {t('common.signOut')}
                     </Button>
                 </div>
             </PopoverContent>

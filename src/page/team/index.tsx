@@ -3,6 +3,7 @@ import type { TeamEncryptedExportFile, TeamImportFile, TeamMemberType } from '@/
 import { Download, Plus, Shield, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import AvatarEditor from '../../components/team/avatar';
 import Member from '../../components/team/member';
@@ -40,6 +41,7 @@ const isEncryptedTeamExport = (file: TeamImportFile): file is TeamEncryptedExpor
     file.format === encryptedTeamExportFormat;
 
 const Team = () => {
+    const { t } = useTranslation();
     const { user, team, refresh, refreshCategories, refreshKeys } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -128,7 +130,9 @@ const Team = () => {
                 )
             )
                 .then(() => {
-                    toast.success('Success', { description: 'Team updated successfully.' });
+                    toast.success(t('common.success'), {
+                        description: t('pages.team.updated'),
+                    });
                     setIsLoading(true);
                     return refresh().catch(ToastError);
                 })
@@ -166,11 +170,11 @@ const Team = () => {
             return;
         }
         if (!exportTOTP.trim()) {
-            toast.warning('TOTP code required');
+            toast.warning(t('pages.team.totpRequiredToast'));
             return;
         }
         if (exportPassword.length < 8) {
-            toast.warning('Export password must be at least 8 characters.');
+            toast.warning(t('pages.team.passwordMinLength'));
             return;
         }
 
@@ -181,7 +185,7 @@ const Team = () => {
                 setExportOpen(false);
                 setExportTOTP('');
                 setExportPassword('');
-                toast.success('Team data exported successfully.');
+                toast.success(t('pages.team.exportSuccess'));
             })
             .catch(ToastError)
             .finally(() => {
@@ -198,12 +202,12 @@ const Team = () => {
             .then((text) => {
                 const data: unknown = JSON.parse(text);
                 if (!isRecord(data)) {
-                    throw new Error('Invalid team export file.');
+                    throw new Error(t('pages.team.invalidExport'));
                 }
 
                 if (data.format === encryptedTeamExportFormat) {
                     if (!data.ciphertext || !data.salt || !data.nonce) {
-                        throw new Error('Invalid encrypted team export file.');
+                        throw new Error(t('pages.team.invalidEncrypted'));
                     }
                 } else {
                     setImportPassword('');
@@ -215,8 +219,8 @@ const Team = () => {
             .catch((err) => {
                 setImportFile(null);
                 setImportFileName('');
-                toast.error('Invalid import file', {
-                    description: err instanceof Error ? err.message : 'Unable to parse JSON.',
+                toast.error(t('pages.team.invalidFile'), {
+                    description: err instanceof Error ? err.message : t('pages.team.parseError'),
                 });
             });
     };
@@ -227,16 +231,16 @@ const Team = () => {
             return;
         }
         if (!importFile) {
-            toast.warning('Please select a valid team export JSON file.');
+            toast.warning(t('pages.team.selectFile'));
             return;
         }
         if (!importTOTP.trim()) {
-            toast.warning('TOTP code required');
+            toast.warning(t('pages.team.totpRequiredToast'));
             return;
         }
         const encrypted = isEncryptedTeamExport(importFile);
         if (encrypted && importPassword.length < 8) {
-            toast.warning('Export password must be at least 8 characters.');
+            toast.warning(t('pages.team.passwordMinLength'));
             return;
         }
 
@@ -250,7 +254,7 @@ const Team = () => {
                 setImportFileName('');
                 notifyServerMutation();
                 Promise.all([refresh(), refreshCategories(), refreshKeys()]).then(() => {
-                    toast.success('Team data imported successfully.');
+                    toast.success(t('pages.team.importSuccess'));
                 });
             })
             .catch(ToastError)
@@ -301,8 +305,8 @@ const Team = () => {
                     }}
                 >
                     <div>
-                        <h1 className="text-2xl font-bold">Current Team</h1>
-                        <p className="opacity-65">Manage your team settings and members here</p>
+                        <h1 className="text-2xl font-bold">{t('pages.team.title')}</h1>
+                        <p className="opacity-65">{t('pages.team.description')}</p>
                     </div>
                 </div>
                 <div
@@ -316,7 +320,7 @@ const Team = () => {
                 >
                     <div>
                         <div className="grid gap-3">
-                            <Label>Profile picture</Label>
+                            <Label>{t('pages.team.profilePicture')}</Label>
                             <AvatarEditor
                                 name={teamName}
                                 colorRef={avatarColorRef}
@@ -329,10 +333,10 @@ const Team = () => {
                     <div className="flex-1">
                         <div className="grid gap-4">
                             <div className="grid gap-3">
-                                <Label htmlFor="name">Name</Label>
+                                <Label htmlFor="name">{t('pages.team.name')}</Label>
                                 <Input
                                     id="name"
-                                    placeholder="Mosona Team"
+                                    placeholder={t('pages.team.namePlaceholder')}
                                     value={teamName}
                                     onChange={(e) => {
                                         setTeamName(e.target.value);
@@ -340,10 +344,12 @@ const Team = () => {
                                 />
                             </div>
                             <div className="grid gap-3">
-                                <Label htmlFor="description">Description</Label>
+                                <Label htmlFor="description">
+                                    {t('pages.team.descriptionLabel')}
+                                </Label>
                                 <Textarea
                                     id="description"
-                                    placeholder="Some text..."
+                                    placeholder={t('pages.team.descriptionPlaceholder')}
                                     value={teamDescription}
                                     onChange={(e) => {
                                         setTeamDescription(e.target.value);
@@ -362,7 +368,7 @@ const Team = () => {
                         transform: mounted ? 'none' : 'translateY(8px)',
                     }}
                 >
-                    Members
+                    {t('pages.team.members')}
                 </Label>
                 <div
                     className="mt-2 flex flex-col gap-3"
@@ -383,8 +389,8 @@ const Team = () => {
                                 isOwner={team?.owner_id === item?.id}
                                 onRemove={() => {
                                     if (members[index].id === user?.id) {
-                                        toast.warning('Warning', {
-                                            description: "You can't remove yourself from the team.",
+                                        toast.warning(t('common.warning'), {
+                                            description: t('pages.team.cannotRemoveSelf'),
                                         });
                                         return;
                                     }
@@ -447,20 +453,21 @@ const Team = () => {
                     >
                         <div className="flex flex-col gap-3 md:flex-row md:items-center">
                             <div className="flex-1">
-                                <h2 className="text-sm font-semibold">Import / Export</h2>
+                                <h2 className="text-sm font-semibold">
+                                    {t('pages.team.importExport')}
+                                </h2>
                                 <p className="text-sm text-muted-foreground">
-                                    Export is encrypted with a password you choose. Import
-                                    overwrites the active team configuration.
+                                    {t('pages.team.importExportHint')}
                                 </p>
                             </div>
                             <div className="flex flex-row gap-2">
                                 <Button variant="outline" onClick={() => setExportOpen(true)}>
                                     <Upload />
-                                    Export
+                                    {t('pages.team.export')}
                                 </Button>
                                 <Button variant="outline" onClick={() => setImportOpen(true)}>
                                     <Download />
-                                    Import
+                                    {t('pages.team.import')}
                                 </Button>
                             </div>
                         </div>
@@ -478,11 +485,11 @@ const Team = () => {
                 >
                     {team && (
                         <LeaveTeam team={team}>
-                            <Button variant={'destructive'}>Leave Team</Button>
+                            <Button variant={'destructive'}>{t('pages.team.leaveTeam')}</Button>
                         </LeaveTeam>
                     )}
                     <LoadingButton isLoading={isSubmitting} onClick={onSubmit}>
-                        Saved Change
+                        {t('pages.team.save')}
                     </LoadingButton>
                 </div>
             </div>
@@ -490,16 +497,15 @@ const Team = () => {
             <Dialog open={exportOpen} onOpenChange={setExportOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Export Team Data</DialogTitle>
-                        <DialogDescription>
-                            Choose an export password to encrypt the file. You will need it when
-                            importing.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.team.exportTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.team.exportDescription')}</DialogDescription>
                     </DialogHeader>
                     {user?.totp_enabled ? (
                         <div className="grid gap-4">
                             <div className="grid gap-2">
-                                <Label htmlFor="team-export-password">Export password</Label>
+                                <Label htmlFor="team-export-password">
+                                    {t('pages.team.exportPassword')}
+                                </Label>
                                 <Input
                                     id="team-export-password"
                                     type="password"
@@ -509,12 +515,11 @@ const Team = () => {
                                     onChange={(e) => setExportPassword(e.target.value)}
                                 />
                                 <p className="text-xs text-muted-foreground">
-                                    At least 8 characters. Store it securely; it cannot be
-                                    recovered.
+                                    {t('pages.team.exportPasswordHint')}
                                 </p>
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="team-export-totp">TOTP code</Label>
+                                <Label htmlFor="team-export-totp">{t('pages.team.totpCode')}</Label>
                                 <Input
                                     id="team-export-totp"
                                     value={exportTOTP}
@@ -528,24 +533,27 @@ const Team = () => {
                         <div className="flex items-start gap-3 rounded-lg border p-4">
                             <Shield className="mt-0.5 h-5 w-5 text-primary" />
                             <div className="grid gap-1">
-                                <p className="text-sm font-medium">TOTP is required</p>
+                                <p className="text-sm font-medium">
+                                    {t('pages.team.totpRequired')}
+                                </p>
                                 <p className="text-sm text-muted-foreground">
-                                    Enable Two-Factor Authentication before exporting sensitive team
-                                    data.
+                                    {t('pages.team.totpRequiredExport')}
                                 </p>
                             </div>
                         </div>
                     )}
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         {user?.totp_enabled ? (
                             <LoadingButton isLoading={isExporting} onClick={handleExport}>
-                                Export
+                                {t('pages.team.export')}
                             </LoadingButton>
                         ) : (
-                            <Button onClick={() => setEnableTOTPOpen(true)}>Enable TOTP</Button>
+                            <Button onClick={() => setEnableTOTPOpen(true)}>
+                                {t('pages.team.enableTotp')}
+                            </Button>
                         )}
                     </DialogFooter>
                 </DialogContent>
@@ -554,15 +562,14 @@ const Team = () => {
             <Dialog open={importOpen} onOpenChange={setImportOpen}>
                 <DialogContent>
                     <DialogHeader>
-                        <DialogTitle>Import Team Data</DialogTitle>
-                        <DialogDescription>
-                            Import overwrites this team&apos;s categories, keys, notifications,
-                            public page, servers, and alerts. Members and owner are preserved.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.team.importTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.team.importDescription')}</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4">
                         <div className="grid gap-2">
-                            <Label htmlFor="team-import-file">Export JSON file</Label>
+                            <Label htmlFor="team-import-file">
+                                {t('pages.team.exportJsonFile')}
+                            </Label>
                             <Input
                                 id="team-import-file"
                                 type="file"
@@ -571,7 +578,7 @@ const Team = () => {
                             />
                             {importFileName && (
                                 <p className="text-sm text-muted-foreground">
-                                    Selected: {importFileName}
+                                    {t('pages.team.selected', { name: importFileName })}
                                 </p>
                             )}
                         </div>
@@ -580,7 +587,7 @@ const Team = () => {
                                 {(!importFile || isEncryptedTeamExport(importFile)) && (
                                     <div className="grid gap-2">
                                         <Label htmlFor="team-import-password">
-                                            Export password
+                                            {t('pages.team.exportPassword')}
                                         </Label>
                                         <Input
                                             id="team-import-password"
@@ -593,7 +600,9 @@ const Team = () => {
                                     </div>
                                 )}
                                 <div className="grid gap-2">
-                                    <Label htmlFor="team-import-totp">TOTP code</Label>
+                                    <Label htmlFor="team-import-totp">
+                                        {t('pages.team.totpCode')}
+                                    </Label>
                                     <Input
                                         id="team-import-totp"
                                         value={importTOTP}
@@ -607,9 +616,11 @@ const Team = () => {
                             <div className="flex items-start gap-3 rounded-lg border p-4">
                                 <Shield className="mt-0.5 h-5 w-5 text-primary" />
                                 <div className="grid gap-1">
-                                    <p className="text-sm font-medium">TOTP is required</p>
+                                    <p className="text-sm font-medium">
+                                        {t('pages.team.totpRequired')}
+                                    </p>
                                     <p className="text-sm text-muted-foreground">
-                                        Enable Two-Factor Authentication before importing team data.
+                                        {t('pages.team.totpRequiredImport')}
                                     </p>
                                 </div>
                             </div>
@@ -617,7 +628,7 @@ const Team = () => {
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         {user?.totp_enabled ? (
                             <LoadingButton
@@ -625,10 +636,12 @@ const Team = () => {
                                 isLoading={isImporting}
                                 onClick={handleImport}
                             >
-                                Import and Overwrite
+                                {t('pages.team.importOverwrite')}
                             </LoadingButton>
                         ) : (
-                            <Button onClick={() => setEnableTOTPOpen(true)}>Enable TOTP</Button>
+                            <Button onClick={() => setEnableTOTPOpen(true)}>
+                                {t('pages.team.enableTotp')}
+                            </Button>
                         )}
                     </DialogFooter>
                 </DialogContent>

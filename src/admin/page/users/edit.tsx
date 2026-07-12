@@ -2,6 +2,7 @@ import type { UserType } from '@/api/user.ts';
 
 import { Dice5 } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import {
@@ -39,6 +40,7 @@ const Edit = ({
     open: boolean;
     setOpen: (open: boolean) => void;
 }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
 
     const [password, setPassword] = useState('');
@@ -63,8 +65,8 @@ const Edit = ({
             is_admin: data.is_admin,
         })
             .then(() => {
-                toast.success('Edit successful', {
-                    description: 'The user has been edited successfully.',
+                toast.success(t('pages.adminUsers.editSuccess'), {
+                    description: t('pages.adminUsers.editSuccessDesc'),
                 });
                 refresh();
                 setOpen(false);
@@ -83,15 +85,13 @@ const Edit = ({
                     onOpenAutoFocus={(e) => e.preventDefault()}
                 >
                     <DialogHeader>
-                        <DialogTitle>Edit User</DialogTitle>
-                        <DialogDescription>
-                            Fill in the form below to edit the user.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.adminUsers.editTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.adminUsers.editDesc')}</DialogDescription>
                     </DialogHeader>
                     <form onSubmit={onSubmit}>
                         <div className="grid gap-4">
                             <div className="grid gap-3">
-                                <Label>Username</Label>
+                                <Label>{t('pages.adminUsers.username')}</Label>
                                 <Input
                                     name="username"
                                     placeholder={'John Doe'}
@@ -100,7 +100,7 @@ const Edit = ({
                                 />
                             </div>
                             <div className="grid gap-3">
-                                <Label>Email</Label>
+                                <Label>{t('pages.adminUsers.email')}</Label>
                                 <Input
                                     name="email"
                                     type={'email'}
@@ -110,11 +110,11 @@ const Edit = ({
                                 />
                             </div>
                             <div className="grid gap-3">
-                                <Label>Password</Label>
+                                <Label>{t('pages.adminUsers.password')}</Label>
                                 <div className={'flex flex-row gap-2'}>
                                     <Input
                                         name="password"
-                                        placeholder={"Empty to keep user's current password"}
+                                        placeholder={t('pages.adminUsers.keepPassword')}
                                         value={password}
                                         onChange={(e) => {
                                             setPassword(e.target.value);
@@ -132,7 +132,7 @@ const Edit = ({
                                 </div>
                             </div>
                             <div className={'grid gap-3'}>
-                                <Label>Verified</Label>
+                                <Label>{t('pages.adminUsers.verified')}</Label>
                                 <Select
                                     name={'verified'}
                                     defaultValue={user.verified ? 'true' : 'false'}
@@ -142,14 +142,16 @@ const Edit = ({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="true">True</SelectItem>
-                                            <SelectItem value="false">False</SelectItem>
+                                            <SelectItem value="true">{t('common.true')}</SelectItem>
+                                            <SelectItem value="false">
+                                                {t('common.false')}
+                                            </SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div className={'grid gap-3'}>
-                                <Label>IsAdmin</Label>
+                                <Label>{t('pages.adminUsers.isAdmin')}</Label>
                                 <Select
                                     name={'is_admin'}
                                     defaultValue={user.is_admin ? 'true' : 'false'}
@@ -159,8 +161,10 @@ const Edit = ({
                                     </SelectTrigger>
                                     <SelectContent>
                                         <SelectGroup>
-                                            <SelectItem value="true">True</SelectItem>
-                                            <SelectItem value="false">False</SelectItem>
+                                            <SelectItem value="true">{t('common.true')}</SelectItem>
+                                            <SelectItem value="false">
+                                                {t('common.false')}
+                                            </SelectItem>
                                         </SelectGroup>
                                     </SelectContent>
                                 </Select>
@@ -168,10 +172,10 @@ const Edit = ({
                         </div>
                         <DialogFooter className={'mt-4'}>
                             <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t('common.cancel')}</Button>
                             </DialogClose>
                             <LoadingButton type="submit" isLoading={isLoading}>
-                                Save Changes
+                                {t('pages.adminUsers.save')}
                             </LoadingButton>
                         </DialogFooter>
                     </form>

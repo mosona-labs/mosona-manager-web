@@ -3,6 +3,7 @@ import type { LogType } from '@/api/logs';
 import { useEffect, useState } from 'react';
 import { Download } from 'lucide-react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import OS from './components/os';
 import Browser from './components/browser';
@@ -44,6 +45,7 @@ import { Label } from '@/components/ui/label.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
 
 const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
+    const { t } = useTranslation();
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(20);
 
@@ -124,7 +126,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     const handleExportLogs = () => {
         const limit = parseInt(exportLimit, 10);
         if (!Number.isFinite(limit) || limit <= 0) {
-            toast.warning('Please enter a valid number of records.');
+            toast.warning(t('pages.logs.invalidCount'));
             return;
         }
 
@@ -134,7 +136,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             .then((data) => {
                 downloadLogs(data.data.logs, data.data.total, limit);
                 setExportOpen(false);
-                toast.success('Logs exported successfully.');
+                toast.success(t('pages.logs.exported'));
             })
             .catch(ToastError)
             .finally(() => {
@@ -162,7 +164,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                     }}
                 >
                     <div>
-                        <h1 className="text-2xl font-bold">Logs</h1>
+                        <h1 className="text-2xl font-bold">{t('pages.logs.title')}</h1>
                         <p className="opacity-65">
                             {isAdmin
                                 ? 'View and manage system logs for audit and troubleshooting purposes'
@@ -190,10 +192,10 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         }}
                     >
                         <SelectTrigger className="w-[180px] border-0">
-                            <SelectValue placeholder="All Categories" />
+                            <SelectValue placeholder={t('pages.logs.allCategories')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Categories</SelectItem>
+                            <SelectItem value="all">{t('pages.logs.allCategories')}</SelectItem>
                             {isAdmin
                                 ? [
                                       <SelectItem key="user" value="user">
@@ -229,10 +231,10 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         }}
                     >
                         <SelectTrigger className="w-[180px] border-0">
-                            <SelectValue placeholder="All Level" />
+                            <SelectValue placeholder={t('pages.logs.allLevels')} />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">All Level</SelectItem>
+                            <SelectItem value="all">{t('pages.logs.allLevels')}</SelectItem>
                             <SelectItem className="text-green-500" value="low">
                                 Low
                             </SelectItem>
@@ -245,7 +247,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         </SelectContent>
                     </Select>
                     <Input
-                        placeholder="Search user email..."
+                        placeholder={t('pages.logs.searchUser')}
                         className="border-0 w-64"
                         value={inputEmail}
                         onChange={(e) => {
@@ -253,7 +255,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         }}
                     />
                     <Input
-                        placeholder="Search message..."
+                        placeholder={t('pages.logs.searchMessage')}
                         className="border-0 w-64"
                         value={inputMessage}
                         onChange={(e) => {
@@ -273,14 +275,26 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[50px]">Level</TableHead>
-                                <TableHead className="min-w-[180px]">Time</TableHead>
-                                <TableHead className="min-w-[220px]">User</TableHead>
-                                <TableHead className="min-w-[140px]">Category</TableHead>
-                                <TableHead>Message</TableHead>
-                                <TableHead className="min-w-[100px]">IP Address</TableHead>
-                                <TableHead className="min-w-[160px]">Location</TableHead>
-                                <TableHead className="text-right min-w-[60px]">Device</TableHead>
+                                <TableHead className="w-[50px]">{t('pages.logs.level')}</TableHead>
+                                <TableHead className="min-w-[180px]">
+                                    {t('pages.logs.time')}
+                                </TableHead>
+                                <TableHead className="min-w-[220px]">
+                                    {t('pages.logs.user')}
+                                </TableHead>
+                                <TableHead className="min-w-[140px]">
+                                    {t('pages.logs.category')}
+                                </TableHead>
+                                <TableHead>{t('pages.logs.message')}</TableHead>
+                                <TableHead className="min-w-[100px]">
+                                    {t('pages.logs.ip')}
+                                </TableHead>
+                                <TableHead className="min-w-[160px]">
+                                    {t('pages.logs.location')}
+                                </TableHead>
+                                <TableHead className="text-right min-w-[60px]">
+                                    {t('pages.logs.device')}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -395,13 +409,13 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
             <Dialog open={exportOpen} onOpenChange={setExportOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                        <DialogTitle>Export Logs</DialogTitle>
+                        <DialogTitle>{t('pages.logs.export')}</DialogTitle>
                         <DialogDescription>
                             Export recent logs as JSON. Current filters will be applied.
                         </DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-3">
-                        <Label htmlFor="logs-export-limit">Recent records</Label>
+                        <Label htmlFor="logs-export-limit">{t('pages.logs.recent')}</Label>
                         <Input
                             id="logs-export-limit"
                             type="number"

@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import CategoryCard from './components/category';
 import useMonitors from './hook/hook.ts';
@@ -34,6 +35,7 @@ import { MemoryUnit } from '@/utils/unit.ts';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip.tsx';
 
 const Dashboard = () => {
+    const { t } = useTranslation();
     const navigator = useNavigate();
     const { categories } = useUser();
     const [mounted, setMounted] = useState(false);
@@ -168,25 +170,25 @@ const Dashboard = () => {
 
     const extraOverviewCards = [
         {
-            label: 'Total Storage',
+            label: t('pages.dashboard.totalStorage'),
             value: extraOverviewStats.totalStorage,
             icon: <Database className="h-3 w-3 md:h-5 md:w-5 text-chart-4" />,
             iconClassName: 'bg-chart-4/10',
         },
         {
-            label: 'Total CPU Cores',
+            label: t('pages.dashboard.totalCpuCores'),
             value: extraOverviewStats.totalCpuCores,
             icon: <Cpu className="h-3 w-3 md:h-5 md:w-5 text-chart-1" />,
             iconClassName: 'bg-chart-1/10',
         },
         {
-            label: 'Total Memory',
+            label: t('pages.dashboard.totalMemory'),
             value: extraOverviewStats.totalMemory,
             icon: <MemoryStick className="h-3 w-3 md:h-5 md:w-5 text-chart-3" />,
             iconClassName: 'bg-chart-3/10',
         },
         {
-            label: 'Bandwidth (Total)',
+            label: t('pages.dashboard.totalBandwidth'),
             value: '',
             icon: <ArrowUpDown className="h-3 w-3 md:h-5 md:w-5 text-chart-2" />,
             iconClassName: 'bg-chart-2/10',
@@ -285,8 +287,8 @@ const Dashboard = () => {
                     }}
                 >
                     <div>
-                        <h1 className="text-2xl font-bold">Dashboard</h1>
-                        <p className="opacity-65">Monitor your infrastructure in real-time</p>
+                        <h1 className="text-2xl font-bold">{t('pages.dashboard.title')}</h1>
+                        <p className="opacity-65">{t('pages.dashboard.description')}</p>
                     </div>
                     <div className="flex flex-row gap-2">
                         <Button
@@ -318,7 +320,7 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <p className="text-xs md:text-sm text-muted-foreground">
-                                    Total Servers
+                                    {t('pages.dashboard.totalServers')}
                                 </p>
                                 <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : online} / {isLoading ? '--' : total}
@@ -340,7 +342,9 @@ const Dashboard = () => {
                                 <Cpu className="h-3 w-3 md:h-5 md:w-5  text-chart-1" />
                             </div>
                             <div>
-                                <p className="text-xs md:text-sm text-muted-foreground">Avg CPU</p>
+                                <p className="text-xs md:text-sm text-muted-foreground">
+                                    {t('pages.dashboard.avgCpu')}
+                                </p>
                                 <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : avgCpu.toFixed(2) + '%'}
                                 </p>
@@ -362,7 +366,7 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <p className="text-xs md:text-sm text-muted-foreground">
-                                    Avg Memory
+                                    {t('pages.dashboard.avgMemory')}
                                 </p>
                                 <p className="text-xl md:text-2xl font-semibold text-card-foreground">
                                     {isLoading ? '--' : avgMemory.toFixed(2) + '%'}
@@ -385,7 +389,7 @@ const Dashboard = () => {
                             </div>
                             <div>
                                 <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">
-                                    Network Traffic
+                                    {t('pages.dashboard.networkTraffic')}
                                 </p>
                                 <div className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-[2rem]">
                                     <div className={'flex flex-row items-center gap-1'}>
@@ -588,9 +592,9 @@ const Dashboard = () => {
                                     </TooltipTrigger>
                                     <TooltipContent side="bottom" className="me-2">
                                         {showAllOverviewCards ? (
-                                            <p>Hide Overview Cards</p>
+                                            <p>{t('pages.dashboard.hideOverview')}</p>
                                         ) : (
-                                            <p>Show All Overview Cards</p>
+                                            <p>{t('pages.dashboard.showOverview')}</p>
                                         )}
                                     </TooltipContent>
                                 </Tooltip>
@@ -614,9 +618,9 @@ const Dashboard = () => {
                                 </TooltipTrigger>
                                 <TooltipContent side="bottom" className="me-2">
                                     {showAllOverviewCards ? (
-                                        <p>Hide Overview Cards</p>
+                                        <p>{t('pages.dashboard.hideOverview')}</p>
                                     ) : (
-                                        <p>Show All Overview Cards</p>
+                                        <p>{t('pages.dashboard.showOverview')}</p>
                                     )}
                                 </TooltipContent>
                             </Tooltip>

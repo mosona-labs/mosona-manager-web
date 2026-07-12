@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -38,6 +39,7 @@ const ReinstallDialog = ({
     allow_terminal: boolean;
     children?: ReactNode;
 }) => {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
 
     const [listenAddress, setListenAddress] = useState<string>(address || '');
@@ -67,8 +69,8 @@ const ReinstallDialog = ({
     const [isLoading, setIsLoading] = useState(false);
     const onSubmit = () => {
         if (mode === 'active' && (!listenAddress || !listenPort)) {
-            toast.warning('Empty', {
-                description: 'Please provide both Listen IP / Hostname and Port for Active mode.',
+            toast.warning(t('pages.serverForm.reinstallEmpty'), {
+                description: t('pages.serverForm.reinstallEmptyDesc'),
             });
             return;
         }
@@ -77,8 +79,8 @@ const ReinstallDialog = ({
         setIsLoading(true);
         ApiServer.reinstallAgent(id, mode === 'active' ? 1 : 2, listenAddress, listenPort)
             .then((res) => {
-                toast.success('Success', {
-                    description: 'Agent reinstall initiated successfully.',
+                toast.success(t('common.success'), {
+                    description: t('pages.serverForm.reinstallSuccess'),
                 });
                 // Set command dialog data
                 if (mode === 'active') {
@@ -111,18 +113,15 @@ const ReinstallDialog = ({
                     }}
                 >
                     <DialogHeader>
-                        <DialogTitle>Reinstall Agent</DialogTitle>
-                        <DialogDescription>
-                            This action will mark the Agent as not installed, revoke the existing
-                            keys, and generate a new set of keys for a fresh Agent installation.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.serverForm.reinstallTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.serverForm.reinstallDesc')}</DialogDescription>
                     </DialogHeader>
                     <div className={'grid gap-3'}>
                         {mode === 'active' && (
                             <div className="flex flex-row gap-2">
                                 <div className="grid gap-3 flex-3">
                                     <Label>
-                                        Listen IP / Hostname
+                                        {t('pages.serverForm.listenAddress')}
                                         <IsRequired />
                                     </Label>
                                     <Input
@@ -134,7 +133,7 @@ const ReinstallDialog = ({
                                 </div>
                                 <div className="grid gap-3 flex-1">
                                     <Label>
-                                        Port
+                                        {t('pages.serverForm.port')}
                                         <IsRequired />
                                     </Label>
                                     <Input
@@ -148,7 +147,7 @@ const ReinstallDialog = ({
                             </div>
                         )}
                         <div className="flex flex-row justify-between mt-1 gap-3">
-                            <Label>Monitor Access</Label>
+                            <Label>{t('pages.serverForm.monitorAccess')}</Label>
                             <Switch
                                 checked={enableMonitor}
                                 onCheckedChange={(v) => {
@@ -158,7 +157,7 @@ const ReinstallDialog = ({
                             />
                         </div>
                         <div className="flex flex-row justify-between mt-1 gap-3">
-                            <Label>Terminal Access</Label>
+                            <Label>{t('pages.serverForm.terminalAccess')}</Label>
                             <Switch
                                 checked={enableTerminal}
                                 onCheckedChange={(v) => {
@@ -170,10 +169,10 @@ const ReinstallDialog = ({
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         <LoadingButton isLoading={isLoading} onClick={onSubmit}>
-                            Confirm Reinstall
+                            {t('pages.serverForm.reinstallConfirm')}
                         </LoadingButton>
                     </DialogFooter>
                 </DialogContent>

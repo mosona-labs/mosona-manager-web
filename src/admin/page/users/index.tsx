@@ -2,6 +2,7 @@ import type { UserType } from '@/api/user.ts';
 
 import { LoaderCircle } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Card } from '@/components/ui/card.tsx';
 import {
@@ -28,6 +29,7 @@ import UserItem from '@/admin/page/users/user.tsx';
 import Add from '@/admin/page/users/add.tsx';
 
 const Users = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const [page, setPage] = useState(1);
@@ -69,8 +71,8 @@ const Users = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">Users</h1>
-                    <p className="opacity-65">Manage all registered users in the system.</p>
+                    <h1 className="text-2xl font-bold">{t('pages.adminUsers.title')}</h1>
+                    <p className="opacity-65">{t('pages.adminUsers.description')}</p>
                 </div>
             </div>
             <div className={'flex flex-col gap-3'}>
@@ -81,15 +83,21 @@ const Users = () => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value={'all'}>All Status</SelectItem>
-                                <SelectItem value={'true'}>Verified</SelectItem>
-                                <SelectItem value={'false'}>Unverified</SelectItem>
+                                <SelectItem value={'all'}>
+                                    {t('pages.adminUsers.allStatus')}
+                                </SelectItem>
+                                <SelectItem value={'true'}>
+                                    {t('pages.adminUsers.verified')}
+                                </SelectItem>
+                                <SelectItem value={'false'}>
+                                    {t('pages.adminUsers.unverified')}
+                                </SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                     <Input
                         type="text"
-                        placeholder="Search by username or email..."
+                        placeholder={t('pages.adminUsers.search')}
                         value={searchInput}
                         className={'border-0 max-w-64'}
                         onChange={(e) => setSearchInput(e.target.value)}
@@ -101,13 +109,27 @@ const Users = () => {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-[100px]">ID</TableHead>
-                                <TableHead className="min-w-[140px]">Username</TableHead>
-                                <TableHead className="min-w-[180px]">Email</TableHead>
-                                <TableHead className="min-w-[100px]">Verified</TableHead>
-                                <TableHead className="min-w-[160px]">Created At</TableHead>
-                                <TableHead className="min-w-[160px]">Last Login</TableHead>
-                                <TableHead className="text-right min-w-[40px]">Actions</TableHead>
+                                <TableHead className="w-[100px]">
+                                    {t('pages.adminUsers.id')}
+                                </TableHead>
+                                <TableHead className="min-w-[140px]">
+                                    {t('pages.adminUsers.username')}
+                                </TableHead>
+                                <TableHead className="min-w-[180px]">
+                                    {t('pages.adminUsers.email')}
+                                </TableHead>
+                                <TableHead className="min-w-[100px]">
+                                    {t('pages.adminUsers.verified')}
+                                </TableHead>
+                                <TableHead className="min-w-[160px]">
+                                    {t('pages.adminUsers.createdAt')}
+                                </TableHead>
+                                <TableHead className="min-w-[160px]">
+                                    {t('pages.adminUsers.lastLogin')}
+                                </TableHead>
+                                <TableHead className="text-right min-w-[40px]">
+                                    {t('common.actions')}
+                                </TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -115,13 +137,13 @@ const Users = () => {
                                 <TableRow>
                                     <TableCell colSpan={8} className="text-center py-10">
                                         <LoaderCircle className={'mx-auto mb-2 animate-spin'} />
-                                        Loading
+                                        {t('common.loading')}
                                     </TableCell>
                                 </TableRow>
                             ) : users.length === 0 ? (
                                 <TableRow>
                                     <TableCell colSpan={8} className="text-center py-10">
-                                        No records found.
+                                        {t('common.noRecords')}
                                     </TableCell>
                                 </TableRow>
                             ) : (

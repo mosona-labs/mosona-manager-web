@@ -1,6 +1,7 @@
 import { LoaderCircle } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import ApiAuth from '@/api/auth.ts';
 import { ToastError } from '@/utils/toast.ts';
@@ -21,6 +22,7 @@ import LoadingButton from '@/components/loading-button.tsx';
 import { cn } from '@/lib/utils.ts';
 
 const TwoFA = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
 
@@ -52,7 +54,7 @@ const TwoFA = () => {
             })
             .catch((err) => {
                 ToastError(err);
-                setError(err.response.data.msg || 'An error occurred while checking 2FA status.');
+                setError(err.response.data.msg || t('pages.twofa.statusError'));
             });
     }, []);
 
@@ -80,11 +82,14 @@ const TwoFA = () => {
         if (!status.verified || !status.totp) {
             ApiAuth.twoFAVerifyMFA(code)
                 .then(() => {
-                    toast.success(!status.verified ? 'Account Activated' : '2FA Verified', {
-                        description: !status.verified
-                            ? 'Your account has been activated successfully.'
-                            : 'Two-Factor Authentication verified successfully.',
-                    });
+                    toast.success(
+                        !status.verified ? t('pages.twofa.activated') : t('pages.twofa.verified'),
+                        {
+                            description: !status.verified
+                                ? t('pages.twofa.activatedDesc')
+                                : t('pages.twofa.verifiedDesc'),
+                        }
+                    );
                     window.location.href = '/';
                 })
                 .catch((err) => {
@@ -94,8 +99,8 @@ const TwoFA = () => {
         } else {
             ApiAuth.twoFAVerifyTOTP(code)
                 .then(() => {
-                    toast.success('2FA Verified', {
-                        description: 'Two-Factor Authentication verified successfully.',
+                    toast.success(t('pages.twofa.verified'), {
+                        description: t('pages.twofa.verifiedDesc'),
                     });
                     window.location.href = '/';
                 })
@@ -119,9 +124,9 @@ const TwoFA = () => {
             {isLoading ? (
                 <>
                     <LoaderCircle className={'w-12 h-12 animate-spin'} />
-                    <h1 className={'text-3xl'}>Two-Factor Authentication (2FA)</h1>
+                    <h1 className={'text-3xl'}>{t('pages.twofa.title')}</h1>
                     <p className={'max-w-[80%] text-center'}>
-                        {error || 'Checking your 2FA status...'}
+                        {error || t('pages.twofa.checking')}
                     </p>
                 </>
             ) : (
@@ -129,13 +134,13 @@ const TwoFA = () => {
                     <CardHeader>
                         <CardTitle>
                             {!status?.verified
-                                ? 'Activate Account'
-                                : 'Two-Factor Authentication (2FA)'}
+                                ? t('pages.twofa.activateTitle')
+                                : t('pages.twofa.title')}
                         </CardTitle>
                         <CardDescription>
                             {status?.verified && status?.totp
-                                ? 'Please enter the 6-digit code from your authenticator app to proceed.'
-                                : 'Please enter the 6-digit code from your email to proceed.'}
+                                ? t('pages.twofa.enterTotp')
+                                : t('pages.twofa.enterEmail')}
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -164,7 +169,9 @@ const TwoFA = () => {
                                     disabled={cooling > 0}
                                     onClick={() => sendMFA(!!status?.verified)}
                                 >
-                                    {cooling > 0 ? `Waiting ${cooling}s` : 'Send Again'}
+                                    {cooling > 0
+                                        ? t('pages.twofa.waiting', { seconds: cooling })
+                                        : t('pages.twofa.sendAgain')}
                                 </LoadingButton>
                             </div>
                         )}

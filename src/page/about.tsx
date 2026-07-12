@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ApiVersion from '@/api/version.ts';
 import { Card } from '@/components/ui/card';
 
 const About = () => {
+    const { t } = useTranslation();
     const [mounted, setMounted] = useState(false);
     const [version, setVersion] = useState<string | null>(null);
 
@@ -58,7 +60,7 @@ const About = () => {
                         transform: mounted ? 'none' : 'translateY(8px)',
                     }}
                 >
-                    Server Monitor & Remote Management
+                    {t('brand.remoteSubtitle')}
                 </p>
 
                 <div
@@ -70,11 +72,7 @@ const About = () => {
                         transform: mounted ? 'none' : 'translateY(8px)',
                     }}
                 >
-                    <p>
-                        Designed as a team-oriented / personal project management server monitor and
-                        terminal management tool, featuring comprehensive project permission control
-                        and SSH-driven remote management protocol.
-                    </p>
+                    <p>{t('pages.about.description')}</p>
                 </div>
 
                 <Card
@@ -87,19 +85,14 @@ const About = () => {
                     }}
                 >
                     <h2 className="font-bold space-x-2">
-                        Version:{' '}
+                        {t('pages.about.version')}{' '}
                         {version
                             ? version === '0.0.1'
-                                ? 'Self-built / Beta Version'
-                                : 'v' + version
+                                ? t('pages.about.selfBuilt')
+                                : version
                             : '…'}
                     </h2>
-                    <p className="text-muted-foreground">
-                        When automatic updates are enabled, Docker Compose will always keep itself
-                        up to date with the latest version. If you prefer to manually check for
-                        updates or rebuild the containers, please refer to the following external
-                        links:
-                    </p>
+                    <p className="text-muted-foreground">{t('pages.about.updateHint')}</p>
                     <div className="flex flex-col ps-4.5">
                         <li className="text-muted-foreground">
                             <a
@@ -107,7 +100,7 @@ const About = () => {
                                 href="https://github.com/mosona-labs/mosona-manager/pkgs/container/mosona-manager"
                                 target="_blank"
                             >
-                                Docker (ghcr.io)
+                                {t('pages.about.docker')}
                             </a>
                         </li>
                         <li className="text-muted-foreground">
@@ -116,7 +109,7 @@ const About = () => {
                                 href="https://manager.mosona.cc/docs/quickstart#upgrade"
                                 target="_blank"
                             >
-                                Upgrade Guide
+                                {t('pages.about.upgradeGuide')}
                             </a>
                         </li>
                     </div>
@@ -136,7 +129,7 @@ const About = () => {
                         href="https://github.com/mosona-labs/mosona-manager"
                         target="_blank"
                     >
-                        Github
+                        {t('pages.about.github')}
                     </a>
                     <div className={'rounded-full w-1 h-1 bg-muted-foreground'} />
                     <a
@@ -144,7 +137,7 @@ const About = () => {
                         href="https://manager.mosona.cc"
                         target="_blank"
                     >
-                        Documentation
+                        {t('common.documentation')}
                     </a>
                 </div>
             </div>

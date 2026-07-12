@@ -17,6 +17,7 @@ const Init = lazy(() => import('@/page/init/index.tsx'));
 
 import './index.css';
 import './style.css';
+import './i18n';
 
 createRoot(document.getElementById('root')!).render(
     <ThemeProvider>

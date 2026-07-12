@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Label } from '@/components/ui/label.tsx';
@@ -18,11 +19,12 @@ import { ToastError } from '@/utils/toast.ts';
 import LoadingButton from '@/components/loading-button.tsx';
 
 const Register = () => {
+    const { t } = useTranslation();
     const { settings, refresh } = useSettings();
 
     const success = () =>
-        toast.success('Success', {
-            description: 'Settings updated successfully.',
+        toast.success(t('common.success'), {
+            description: t('pages.adminRegister.updated'),
         });
 
     // Registration Enabled
@@ -140,53 +142,48 @@ const Register = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">Register & Login</h1>
-                    <p className="opacity-65">
-                        Manage registration & login settings for all users.
-                    </p>
+                    <h1 className="text-2xl font-bold">{t('pages.adminRegister.title')}</h1>
+                    <p className="opacity-65">{t('pages.adminRegister.description')}</p>
                 </div>
             </div>
             <div className={'flex flex-col gap-3'}>
                 <EnableCard
                     value={registrationEnabled}
                     onChange={changeRegistrationEnabled}
-                    title={'Enable User Registration'}
-                    description={'Allow new users to register an account on the platform.'}
+                    title={t('pages.adminRegister.enableRegistration')}
+                    description={t('pages.adminRegister.enableRegistrationDesc')}
                     disabled={registrationEnabledLoading}
                 />
                 <div className={'border-t my-2'} />
                 <div>
-                    <Label>Email</Label>
+                    <Label>{t('pages.adminRegister.email')}</Label>
                     <p className={'text-muted-foreground text-xs mt-1'}>
-                        If email configuration is not set up, email verification cannot be enabled.
+                        {t('pages.adminRegister.emailHint')}
                     </p>
                 </div>
                 <EnableCard
                     value={registrationVerifyEmail}
                     onChange={changeRegistrationVerifyEmail}
-                    title={'Registration Require Email Verification'}
-                    description={
-                        'Require users to verify their email addresses during registration.'
-                    }
+                    title={t('pages.adminRegister.regVerify')}
+                    description={t('pages.adminRegister.regVerifyDesc')}
                     disabled={registrationVerifyEmailLoading}
                 />
                 <EnableCard
                     value={loginVerifyEmail}
                     onChange={changeLoginVerifyEmail}
-                    title={'Login Require Email Verification'}
-                    description={'Require users to verify their email addresses during login.'}
+                    title={t('pages.adminRegister.loginVerify')}
+                    description={t('pages.adminRegister.loginVerifyDesc')}
                     disabled={loginVerifyEmailLoading}
                 />
                 <div className={'border-t my-2'} />
                 <div>
-                    <Label>Captcha</Label>
+                    <Label>{t('pages.adminRegister.captcha')}</Label>
                     <p className={'text-muted-foreground text-xs mt-1'}>
-                        Now only Cloudflare Turnstile is supported, more captcha providers will be
-                        added in the future.
+                        {t('pages.adminRegister.captchaHint')}
                     </p>
                 </div>
                 <div className={'space-y-1.5'}>
-                    <Label className={'text-xs'}>Provider</Label>
+                    <Label className={'text-xs'}>{t('pages.adminRegister.provider')}</Label>
                     <Select value={'turnstile'}>
                         <SelectTrigger className="max-w-[26rem] w-full" disabled>
                             <SelectValue />
@@ -199,7 +196,7 @@ const Register = () => {
                     </Select>
                 </div>
                 <div className={'space-y-1.5'}>
-                    <Label className={'text-xs'}>Site Key</Label>
+                    <Label className={'text-xs'}>{t('pages.adminRegister.siteKey')}</Label>
                     <Input
                         value={captchaSiteKey}
                         onChange={(e) => {
@@ -210,7 +207,7 @@ const Register = () => {
                     />
                 </div>
                 <div className={'space-y-1.5'}>
-                    <Label className={'text-xs'}>Secret</Label>
+                    <Label className={'text-xs'}>{t('pages.adminRegister.secret')}</Label>
                     <Input
                         value={captchaSecretKey}
                         onChange={(e) => {
@@ -226,7 +223,7 @@ const Register = () => {
                         isLoading={captchaLoading}
                         variant={'outline'}
                     >
-                        Save Changes
+                        {t('pages.adminRegister.save')}
                     </LoadingButton>
                 </div>
             </div>

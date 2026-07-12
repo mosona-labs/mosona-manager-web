@@ -2,6 +2,7 @@ import { Loader, Plus } from 'lucide-react';
 import { addMonths } from 'date-fns';
 import { type FormEvent, memo, useEffect, useState, type SetStateAction } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Input } from '../ui/input';
 import { Button } from '../ui/button';
@@ -41,6 +42,7 @@ const cycleMonths: Record<number, number> = {
 };
 
 const AddServer = () => {
+    const { t } = useTranslation();
     const { categories, keys } = useUser();
 
     const [authType, setAuthType] = useState<'password' | 'key'>('password');
@@ -176,7 +178,7 @@ const AddServer = () => {
         setIsLoading(true);
         ApiServer.add(data)
             .then((res) => {
-                toast.success('Server added successfully');
+                toast.success(t('pages.serverForm.added'));
                 notifyServerMutation();
                 setOpen(false);
                 if (mode === 'agent') {
@@ -209,24 +211,22 @@ const AddServer = () => {
                 <DialogTrigger asChild>
                     <Button>
                         <Plus />
-                        Add Server
+                        {t('pages.serverForm.add')}
                     </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-4xl px-4">
                     <form onSubmit={onSubmit} className="space-y-4">
                         <DialogHeader className="px-2">
-                            <DialogTitle>Add Server</DialogTitle>
+                            <DialogTitle>{t('pages.serverForm.add')}</DialogTitle>
                             <DialogDescription>
-                                To add a new server for monitoring, please enter its details below.
-                                Providing SSH information allows remote terminal access while
-                                monitoring, but this is optional.
+                                {t('pages.serverForm.addDescription')}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="md:flex flex-col max-h-[60vh] overflow-y-auto md:max-h-none md:flex-row">
                             <div className="flex-1 md:max-h-[75vh] overflow-y-auto px-2">
                                 <div className="grid gap-4">
                                     <div className="grid gap-3">
-                                        <Label>Category</Label>
+                                        <Label>{t('pages.serverForm.category')}</Label>
                                         <div className="flex flex-row gap-2">
                                             <Select
                                                 name="category"
@@ -236,7 +236,11 @@ const AddServer = () => {
                                                 }}
                                             >
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Select Category" />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'pages.serverForm.selectCategory'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {categories &&
@@ -259,7 +263,7 @@ const AddServer = () => {
                                     </div>
                                     <div className="grid gap-3">
                                         <Label>
-                                            Name
+                                            {t('pages.serverForm.name')}
                                             <IsRequired />
                                         </Label>
                                         <Input name="name" placeholder="LAX1" />
@@ -278,14 +282,14 @@ const AddServer = () => {
                                             <div className="flex flex-row gap-2">
                                                 <div className="flex-2 grid gap-3">
                                                     <Label>
-                                                        IP / Hostname
+                                                        {t('pages.serverForm.address')}
                                                         <IsRequired />
                                                     </Label>
                                                     <Input name="address" placeholder="1.2.3.4" />
                                                 </div>
                                                 <div className="flex-1 grid gap-3">
                                                     <Label>
-                                                        Port
+                                                        {t('pages.serverForm.port')}
                                                         <IsRequired />
                                                     </Label>
                                                     <Input
@@ -301,7 +305,7 @@ const AddServer = () => {
                                             </div>
                                             <div className="grid gap-3">
                                                 <Label>
-                                                    Username
+                                                    {t('pages.serverForm.username')}
                                                     <IsRequired />
                                                 </Label>
                                                 <Input
@@ -310,7 +314,7 @@ const AddServer = () => {
                                                     placeholder="root"
                                                 />
                                             </div>
-                                            <Label>Authorization</Label>
+                                            <Label>{t('pages.serverForm.authorization')}</Label>
                                             <Tabs
                                                 defaultValue="password"
                                                 value={authType}
@@ -322,26 +326,34 @@ const AddServer = () => {
                                             >
                                                 <TabsList className="w-full">
                                                     <TabsTrigger value="password">
-                                                        Password
+                                                        {t('pages.serverForm.password')}
                                                     </TabsTrigger>
-                                                    <TabsTrigger value="key">Key</TabsTrigger>
+                                                    <TabsTrigger value="key">
+                                                        {t('pages.serverForm.key')}
+                                                    </TabsTrigger>
                                                 </TabsList>
                                                 <TabsContent value="password">
-                                                    <Input name="password" placeholder="Password" />
+                                                    <Input
+                                                        name="password"
+                                                        placeholder={t('pages.serverForm.password')}
+                                                    />
                                                     <p className="mt-1 text-xs text-muted-foreground">
-                                                        We will use encrypted storage to protect
-                                                        your password.
+                                                        {t('pages.serverForm.passwordHint')}
                                                     </p>
                                                 </TabsContent>
                                                 <TabsContent value="key">
                                                     <div className="flex flex-row gap-1.5">
                                                         <Select name="key" defaultValue={'0'}>
                                                             <SelectTrigger className="w-full">
-                                                                <SelectValue placeholder="Select Key" />
+                                                                <SelectValue
+                                                                    placeholder={t(
+                                                                        'pages.serverForm.selectKey'
+                                                                    )}
+                                                                />
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectItem value="0">
-                                                                    None
+                                                                    {t('pages.serverForm.none')}
                                                                 </SelectItem>
                                                                 {keys?.map((item) => (
                                                                     <SelectItem
@@ -367,7 +379,7 @@ const AddServer = () => {
                                         </TabsContent>
                                         <TabsContent value="agent" className={'grid gap-3 mt-1'}>
                                             <Label>
-                                                Agent Mode <HelpAgentMode />
+                                                {t('pages.serverForm.agentMode')} <HelpAgentMode />
                                             </Label>
                                             <Tabs
                                                 value={agentMode}
@@ -378,16 +390,20 @@ const AddServer = () => {
                                                 }}
                                             >
                                                 <TabsList className="w-full">
-                                                    <TabsTrigger value="active">Active</TabsTrigger>
+                                                    <TabsTrigger value="active">
+                                                        {t('pages.serverForm.active')}
+                                                    </TabsTrigger>
                                                     <TabsTrigger value="passive">
-                                                        Passive
+                                                        {t('pages.serverForm.passive')}
                                                     </TabsTrigger>
                                                 </TabsList>
                                                 <TabsContent value="active" className="mt-1">
                                                     <div className="flex flex-row gap-2">
                                                         <div className="flex-2 grid gap-3">
                                                             <Label>
-                                                                Listen IP / Hostname
+                                                                {t(
+                                                                    'pages.serverForm.listenAddress'
+                                                                )}
                                                                 <IsRequired />
                                                             </Label>
                                                             <Input
@@ -397,7 +413,7 @@ const AddServer = () => {
                                                         </div>
                                                         <div className="flex-1 grid gap-3">
                                                             <Label>
-                                                                Port
+                                                                {t('pages.serverForm.port')}
                                                                 <IsRequired />
                                                             </Label>
                                                             <Input
@@ -416,14 +432,12 @@ const AddServer = () => {
                                                             'mt-2 text-xs text-muted-foreground'
                                                         }
                                                     >
-                                                        Once the server is added, the installation
-                                                        command will be generated.
+                                                        {t('pages.serverForm.commandHint')}
                                                     </p>
                                                 </TabsContent>
                                                 <TabsContent value="passive" className="mt-1">
                                                     <p className={'text-xs text-muted-foreground'}>
-                                                        Once the server is added, the installation
-                                                        command will be generated.
+                                                        {t('pages.serverForm.commandHint')}
                                                     </p>
                                                 </TabsContent>
                                             </Tabs>
@@ -431,7 +445,7 @@ const AddServer = () => {
                                     </Tabs>
 
                                     <div className="flex flex-row justify-between mt-1 gap-3">
-                                        <Label>Monitor Access</Label>
+                                        <Label>{t('pages.serverForm.monitorAccess')}</Label>
                                         <Switch
                                             name="monitor"
                                             checked={enableMonitor}
@@ -442,7 +456,7 @@ const AddServer = () => {
                                         />
                                     </div>
                                     <div className="flex flex-row justify-between gap-3">
-                                        <Label>Terminal Access</Label>
+                                        <Label>{t('pages.serverForm.terminalAccess')}</Label>
                                         <Switch
                                             name="terminal"
                                             checked={enableTerminal}
@@ -457,11 +471,11 @@ const AddServer = () => {
                             <div className="border-s border-b md:mx-1 mb-4 mt-5 md:my-0 mx-2" />
                             <div className="flex-2 md:max-h-[75vh] overflow-y-auto mx-2">
                                 <div className="flex flex-col gap-3">
-                                    <Label>Display</Label>
+                                    <Label>{t('pages.serverForm.display')}</Label>
                                     <Card className="py-4">
                                         <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                             <div className="grid gap-3">
-                                                <Label>Weight (Sort)</Label>
+                                                <Label>{t('pages.serverForm.weight')}</Label>
                                                 <Input
                                                     name="weight"
                                                     placeholder="0"
@@ -472,16 +486,16 @@ const AddServer = () => {
                                                 />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label>Note (Private)</Label>
+                                                <Label>{t('pages.serverForm.privateNote')}</Label>
                                                 <Input name="note" max={255} maxLength={255} />
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    <Label>Billing Information</Label>
+                                    <Label>{t('pages.serverForm.billing')}</Label>
                                     <Card className="py-4">
                                         <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                             <div className="grid gap-3">
-                                                <Label>Provider / Data Center</Label>
+                                                <Label>{t('pages.serverForm.provider')}</Label>
                                                 <Input
                                                     name="provider"
                                                     placeholder="AWS, DigitalOcean, etc."
@@ -489,30 +503,44 @@ const AddServer = () => {
                                                 />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label>Cycle</Label>
+                                                <Label>{t('pages.serverForm.cycle')}</Label>
                                                 <Select
                                                     value={cycle.toString()}
                                                     onValueChange={(v) => setCycle(parseInt(v))}
                                                     name="cycle"
                                                 >
                                                     <SelectTrigger className="w-full">
-                                                        <SelectValue placeholder="Select Cycle" />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'pages.serverForm.selectCycle'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="-1">None</SelectItem>
-                                                        <SelectItem value="0">One-Time</SelectItem>
-                                                        <SelectItem value="1">Monthly</SelectItem>
-                                                        <SelectItem value="2">Quarterly</SelectItem>
-                                                        <SelectItem value="3">
-                                                            Semi-Annually
+                                                        <SelectItem value="-1">
+                                                            {t('pages.serverForm.none')}
                                                         </SelectItem>
-                                                        <SelectItem value="4">Annually</SelectItem>
+                                                        <SelectItem value="0">
+                                                            {t('pages.serverForm.oneTime')}
+                                                        </SelectItem>
+                                                        <SelectItem value="1">
+                                                            {t('pages.serverForm.monthly')}
+                                                        </SelectItem>
+                                                        <SelectItem value="2">
+                                                            {t('pages.serverForm.quarterly')}
+                                                        </SelectItem>
+                                                        <SelectItem value="3">
+                                                            {t('pages.serverForm.semiAnnually')}
+                                                        </SelectItem>
+                                                        <SelectItem value="4">
+                                                            {t('pages.serverForm.annually')}
+                                                        </SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>
                                             <div className="grid gap-1.5">
                                                 <Label>
-                                                    Start Time{' '}
+                                                    {t('pages.serverForm.startTime')}{' '}
                                                     <Button
                                                         type="button"
                                                         variant={'outline'}
@@ -520,7 +548,7 @@ const AddServer = () => {
                                                         size="sm"
                                                         onClick={() => setStartTime(undefined)}
                                                     >
-                                                        Clear
+                                                        {t('pages.serverForm.clear')}
                                                     </Button>
                                                 </Label>
                                                 <DatePicker
@@ -530,7 +558,7 @@ const AddServer = () => {
                                             </div>
                                             <div className="grid gap-1.5">
                                                 <Label>
-                                                    End Time
+                                                    {t('pages.serverForm.endTime')}
                                                     <Button
                                                         type="button"
                                                         variant={'outline'}
@@ -538,14 +566,14 @@ const AddServer = () => {
                                                         size="sm"
                                                         onClick={() => setEndTime(undefined)}
                                                     >
-                                                        Clear
+                                                        {t('pages.serverForm.clear')}
                                                     </Button>
                                                 </Label>
                                                 <DatePicker date={endTime} setDate={setEndTime} />
                                             </div>
                                             <div className="grid gap-1.5">
                                                 <Label>
-                                                    Amount
+                                                    {t('pages.serverForm.amount')}
                                                     <Button
                                                         type="button"
                                                         variant={'outline'}
@@ -553,7 +581,7 @@ const AddServer = () => {
                                                         size="sm"
                                                         onClick={() => setAmount('0')}
                                                     >
-                                                        Free
+                                                        {t('pages.serverForm.free')}
                                                     </Button>
                                                     <Button
                                                         type="button"
@@ -562,7 +590,7 @@ const AddServer = () => {
                                                         size="sm"
                                                         onClick={() => setAmount('-1')}
                                                     >
-                                                        Pay as you go
+                                                        {t('pages.serverForm.payg')}
                                                     </Button>
                                                 </Label>
                                                 <Input
@@ -575,42 +603,55 @@ const AddServer = () => {
                                             </div>
                                             <div className="grid gap-3">
                                                 <Label>
-                                                    Auto Renew <HelpAutoRenew />
+                                                    {t('pages.serverForm.autoRenew')}{' '}
+                                                    <HelpAutoRenew />
                                                 </Label>
                                                 <Switch name="auto_renew" defaultChecked />
                                             </div>
                                         </CardContent>
                                     </Card>
-                                    <Label>Network Information</Label>
+                                    <Label>{t('pages.serverForm.network')}</Label>
                                     <Card className="py-4">
                                         <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                             <div className="grid gap-3">
-                                                <Label>Bandwidth</Label>
+                                                <Label>{t('pages.serverForm.bandwidth')}</Label>
                                                 <Input name="bandwidth" placeholder="1Gbps" />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label>Traffic</Label>
+                                                <Label>{t('pages.serverForm.traffic')}</Label>
                                                 <Input name="traffic" placeholder="1TB/Mo" />
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label>Traffic Type</Label>
+                                                <Label>{t('pages.serverForm.trafficType')}</Label>
                                                 <Select defaultValue="-1" name="traffic_type">
                                                     <SelectTrigger
                                                         name="traffic_type"
                                                         className="w-full"
                                                     >
-                                                        <SelectValue placeholder="Select Type" />
+                                                        <SelectValue
+                                                            placeholder={t(
+                                                                'pages.serverForm.selectType'
+                                                            )}
+                                                        />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="-1">None</SelectItem>
-                                                        <SelectItem value="0">Inbound</SelectItem>
-                                                        <SelectItem value="1">Outbound</SelectItem>
-                                                        <SelectItem value="2">Both</SelectItem>
+                                                        <SelectItem value="-1">
+                                                            {t('pages.serverForm.none')}
+                                                        </SelectItem>
+                                                        <SelectItem value="0">
+                                                            {t('pages.serverForm.inbound')}
+                                                        </SelectItem>
+                                                        <SelectItem value="1">
+                                                            {t('pages.serverForm.outbound')}
+                                                        </SelectItem>
+                                                        <SelectItem value="2">
+                                                            {t('pages.serverForm.both')}
+                                                        </SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                             </div>
                                             <div className="grid gap-3">
-                                                <Label>Note (Public)</Label>
+                                                <Label>{t('pages.serverForm.publicNote')}</Label>
                                                 <Input name="note_public" placeholder="AS114514" />
                                             </div>
                                         </CardContent>
@@ -620,14 +661,14 @@ const AddServer = () => {
                         </div>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t('common.cancel')}</Button>
                             </DialogClose>
                             <Button type="submit" disabled={isLoading}>
                                 <Loader
                                     className="animate-spin"
                                     style={{ display: isLoading ? 'inline-block' : 'none' }}
                                 />
-                                Add Server
+                                {t('pages.serverForm.add')}
                             </Button>
                         </DialogFooter>
                     </form>

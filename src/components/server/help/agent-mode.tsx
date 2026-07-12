@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { InfoIcon, MoveDownLeft, MoveUpRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -15,6 +16,8 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 
 const HelpAgentMode = ({ children }: { children?: ReactNode }) => {
+    const { t } = useTranslation();
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -22,39 +25,29 @@ const HelpAgentMode = ({ children }: { children?: ReactNode }) => {
                     children
                 ) : (
                     <div className={'text-muted-foreground flex items-center gap-1 cursor-pointer'}>
-                        <InfoIcon size={14} /> Help
+                        <InfoIcon size={14} /> {t('pages.serverForm.help')}
                     </div>
                 )}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Introduction to Agent Mode</DialogTitle>
-                    <DialogDescription>
-                        You can choose agent mode when installing the agent on your server.
-                    </DialogDescription>
+                    <DialogTitle>{t('pages.serverForm.agentModeTitle')}</DialogTitle>
+                    <DialogDescription>{t('pages.serverForm.agentModeDesc')}</DialogDescription>
                 </DialogHeader>
                 <div>
                     <h2 className={'text-lg font-semibold flex flex-row items-center gap-2'}>
-                        <MoveUpRight size={16} /> Active Mode
+                        <MoveUpRight size={16} /> {t('pages.serverForm.activeModeTitle')}
                     </h2>
-                    <p className={'opacity-80'}>
-                        Hub will connects to the agent. This mode is suitable for servers with
-                        public IP addresses or those within the same local network as the Mosona
-                        Manager Hub.
-                    </p>
+                    <p className={'opacity-80'}>{t('pages.serverForm.activeModeDesc')}</p>
                     <h2 className={'text-lg font-semibold flex flex-row items-center gap-2 mt-3'}>
                         <MoveDownLeft size={16} />
-                        Passive Mode
+                        {t('pages.serverForm.passiveModeTitle')}
                     </h2>
-                    <p className={'opacity-80'}>
-                        Agent will connects to the Hub. This mode is ideal for devices behind NAT or
-                        firewalls, as it allows them to connect without requiring inbound ports to
-                        be open.
-                    </p>
+                    <p className={'opacity-80'}>{t('pages.serverForm.passiveModeDesc')}</p>
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>

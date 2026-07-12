@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { Switch } from '@/components/ui/switch.tsx';
 import { useUser } from '@/context/useUser.tsx';
@@ -9,6 +10,7 @@ import ApiUser from '@/api/user.ts';
 import TwoFA from '@/components/2fa.tsx';
 
 const TOTPCard = () => {
+    const { t } = useTranslation();
     const { user, refresh } = useUser();
 
     // Dialog
@@ -28,8 +30,8 @@ const TOTPCard = () => {
         setLocked(true);
         ApiUser.disableTOTP(code)
             .then(() => {
-                toast.success('Success', {
-                    description: 'Two-Factor Authentication (TOTP) has been disabled successfully.',
+                toast.success(t('common.success'), {
+                    description: t('pages.profile.totpDisabled'),
                 });
                 callback().then();
             })
@@ -46,13 +48,9 @@ const TOTPCard = () => {
         <div className="flex items-center justify-between rounded-lg border border-border bg-secondary/30 p-4">
             <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-foreground">
-                        Two-Factor Authentication (TOTP)
-                    </p>
+                    <p className="text-sm font-medium text-foreground">{t('pages.profile.totp')}</p>
                 </div>
-                <p className="text-xs text-muted-foreground">
-                    Add an extra layer of security to your account using an authenticator app.
-                </p>
+                <p className="text-xs text-muted-foreground">{t('pages.profile.totpDesc')}</p>
             </div>
             <Switch
                 checked={user?.totp_enabled}

@@ -1,5 +1,6 @@
 import { Briefcase, Shield } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useUser } from '@/context/useUser.tsx';
 import {
@@ -17,6 +18,7 @@ import TOTPCard from '@/page/profile/components/totp.tsx';
 import OAuthCard from '@/page/profile/components/oauth.tsx';
 
 const Profile = () => {
+    const { t } = useTranslation();
     const { user, teams } = useUser();
     const [mounted, setMounted] = useState(false);
 
@@ -36,13 +38,14 @@ const Profile = () => {
                 }}
             >
                 <div>
-                    <h1 className="text-2xl font-bold">Profile</h1>
-                    <p className="opacity-65">
-                        Manage your personal profile, account settings and sessions
-                    </p>
+                    <h1 className="text-2xl font-bold">{t('pages.profile.title')}</h1>
+                    <p className="opacity-65">{t('pages.profile.description')}</p>
                 </div>
             </div>
-            <div className={'flex flex-col gap-4'} style={{ transition: 'opacity 400ms ease', opacity: mounted ? 1 : 0 }}>
+            <div
+                className={'flex flex-col gap-4'}
+                style={{ transition: 'opacity 400ms ease', opacity: mounted ? 1 : 0 }}
+            >
                 <Card
                     className={'py-4 overflow-hidden'}
                     style={{
@@ -58,7 +61,9 @@ const Profile = () => {
                             <h2 className={'text-xl break-all'}>{user?.username}</h2>
                             <p className={'opacity-75 break-all text-sm'}>{user?.email}</p>
                             <p className={'opacity-50 break-all text-xs mt-0.5'}>
-                                Member since {new Date(user?.created_at || '').toLocaleDateString()}
+                                {t('pages.profile.memberSince', {
+                                    date: new Date(user?.created_at || '').toLocaleDateString(),
+                                })}
                             </p>
                         </div>
                     </CardContent>
@@ -89,11 +94,9 @@ const Profile = () => {
                     <CardHeader>
                         <CardTitle className="text-lg font-medium flex items-center gap-2">
                             <Shield className="h-5 w-5 text-primary" />
-                            Security
+                            {t('pages.profile.security')}
                         </CardTitle>
-                        <CardDescription>
-                            Manage your account security and authentication methods.
-                        </CardDescription>
+                        <CardDescription>{t('pages.profile.securityDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         {/*TOTP*/}
@@ -126,14 +129,14 @@ const Profile = () => {
                     <CardHeader>
                         <CardTitle className="text-lg font-medium flex items-center gap-2">
                             <Briefcase className="h-5 w-5 text-primary" />
-                            Teams
+                            {t('pages.profile.teams')}
                         </CardTitle>
-                        <CardDescription>Manage your joined teams.</CardDescription>
+                        <CardDescription>{t('pages.profile.teamsDesc')}</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-2">
                         {teams.length === 0 ? (
                             <p className="text-sm text-center py-3 text-muted-foreground">
-                                You have not joined any teams yet.
+                                {t('pages.profile.noTeams')}
                             </p>
                         ) : (
                             teams.map((team) => <TeamCard key={team.id} team={team} />)

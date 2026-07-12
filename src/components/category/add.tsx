@@ -1,4 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader } from 'lucide-react';
 
 import { Input } from '../ui/input';
@@ -20,6 +21,7 @@ import ApiCategory from '@/api/category';
 import { ToastError } from '@/utils/toast';
 
 const AddCategory = ({ children }: { children?: ReactNode }) => {
+    const { t } = useTranslation();
     const { categories, refreshCategories } = useUser();
 
     const [open, setOpen] = useState(false);
@@ -57,14 +59,12 @@ const AddCategory = ({ children }: { children?: ReactNode }) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Create Category</DialogTitle>
-                    <DialogDescription>
-                        Add a new category to organize your servers.
-                    </DialogDescription>
+                    <DialogTitle>{t('pages.category.createTitle')}</DialogTitle>
+                    <DialogDescription>{t('pages.category.createDesc')}</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
                     <div className="grid gap-1">
-                        <Label htmlFor="name">Name</Label>
+                        <Label htmlFor="name">{t('pages.category.name')}</Label>
                         <Input
                             id="name"
                             name="name"
@@ -80,13 +80,15 @@ const AddCategory = ({ children }: { children?: ReactNode }) => {
                             }}
                         />
                         {isCategoryNameExists && (
-                            <p className="text-sm text-red-500/80">Category name already exists.</p>
+                            <p className="text-sm text-red-500/80">
+                                {t('pages.category.nameExists')}
+                            </p>
                         )}
                     </div>
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                     <Button
                         disabled={isCategoryNameExists || !categoryName || isLoading}
@@ -96,7 +98,7 @@ const AddCategory = ({ children }: { children?: ReactNode }) => {
                             className="animate-spin"
                             style={{ display: isLoading ? 'inline-block' : 'none' }}
                         />
-                        Create
+                        {t('common.create')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

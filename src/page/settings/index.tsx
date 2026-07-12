@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import DisplaySettings from '@/page/settings/cards/display-settings.tsx';
 import NotificationSettings from '@/page/settings/cards/notification-settings.tsx';
 
 const Settings = () => {
+    const { t } = useTranslation();
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -22,8 +24,8 @@ const Settings = () => {
                 }}
             >
                 <div>
-                    <h1 className="text-2xl font-bold">Settings</h1>
-                    <p className="opacity-65">Manage your client settings and notifications</p>
+                    <h1 className="text-2xl font-bold">{t('settings.title')}</h1>
+                    <p className="opacity-65">{t('settings.description')}</p>
                 </div>
             </div>
             <div className={'flex flex-col gap-4'}>

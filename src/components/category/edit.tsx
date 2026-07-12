@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { Loader } from 'lucide-react';
 
@@ -37,6 +38,7 @@ const EditCategory = ({
     category_id: number;
     server_id: number;
 }) => {
+    const { t } = useTranslation();
     const { categories } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -47,8 +49,8 @@ const EditCategory = ({
         ApiServer.setCategory(server_id, parseInt(value))
             .then(() => {
                 onOpenChange(false);
-                toast.success('Category updated successfully', {
-                    description: `The changes will take effect in 3 seconds.`,
+                toast.success(t('pages.category.updatedServer'), {
+                    description: t('pages.category.updatedServerDesc'),
                 });
             })
             .catch(ToastError)
@@ -61,17 +63,17 @@ const EditCategory = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Edit Category</DialogTitle>
+                    <DialogTitle>{t('pages.category.editTitle')}</DialogTitle>
                     <DialogDescription>
-                        Change the category information for server ID {server_id}.
+                        {t('pages.category.editDesc', { id: server_id })}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
                     <div className="grid gap-3">
-                        <Label htmlFor="name-1">Category</Label>
+                        <Label htmlFor="name-1">{t('pages.serverForm.category')}</Label>
                         <Select value={value} onValueChange={setValue}>
                             <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a fruit" />
+                                <SelectValue placeholder={t('pages.category.selectCategory')} />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
@@ -90,14 +92,14 @@ const EditCategory = ({
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                     <Button type="submit" disabled={isLoading} onClick={handleSubmit}>
                         <Loader
                             className="animate-spin"
                             style={{ display: isLoading ? 'inline-block' : 'none' }}
                         />
-                        Save changes
+                        {t('pages.serverForm.save')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

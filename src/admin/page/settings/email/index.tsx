@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useSettings } from '@/admin/page/settings/useSettings.tsx';
 import { Label } from '@/components/ui/label.tsx';
@@ -18,6 +19,7 @@ import ApiAdminSettings from '@/api/admin/settings.ts';
 import { ToastError } from '@/utils/toast.ts';
 
 const Email = () => {
+    const { t } = useTranslation();
     const { settings, refresh } = useSettings();
 
     const [emailProvider, setEmailProvider] = useState('smtp');
@@ -69,14 +71,14 @@ const Email = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">Email</h1>
-                    <p className="opacity-65">Manage email settings for your application.</p>
+                    <h1 className="text-2xl font-bold">{t('pages.adminEmail.title')}</h1>
+                    <p className="opacity-65">{t('pages.adminEmail.description')}</p>
                 </div>
             </div>
             <div className={'flex flex-col gap-3'}>
                 <TestEmail />
                 <div className={'space-y-1.5'}>
-                    <Label className={'text-xs'}>Email Provider</Label>
+                    <Label className={'text-xs'}>{t('pages.adminEmail.provider')}</Label>
                     <Select
                         value={emailProvider}
                         onValueChange={(e) => {
@@ -97,7 +99,7 @@ const Email = () => {
                 {emailProvider === 'smtp' && (
                     <>
                         <div className={'space-y-1.5'}>
-                            <Label className={'text-xs'}>SMTP Host</Label>
+                            <Label className={'text-xs'}>{t('pages.adminEmail.smtpHost')}</Label>
                             <Input
                                 value={smtpHost}
                                 onChange={(e) => {
@@ -108,7 +110,7 @@ const Email = () => {
                             />
                         </div>
                         <div className={'space-y-1.5'}>
-                            <Label className={'text-xs'}>SMTP Port</Label>
+                            <Label className={'text-xs'}>{t('pages.adminEmail.smtpPort')}</Label>
                             <Input
                                 type={'number'}
                                 step={1}
@@ -121,7 +123,9 @@ const Email = () => {
                             />
                         </div>
                         <div className={'space-y-1.5'}>
-                            <Label className={'text-xs'}>SMTP Username</Label>
+                            <Label className={'text-xs'}>
+                                {t('pages.adminEmail.smtpUsername')}
+                            </Label>
                             <Input
                                 value={smtpUsername}
                                 onChange={(e) => {
@@ -132,7 +136,9 @@ const Email = () => {
                             />
                         </div>
                         <div className={'space-y-1.5'}>
-                            <Label className={'text-xs'}>SMTP Password</Label>
+                            <Label className={'text-xs'}>
+                                {t('pages.adminEmail.smtpPassword')}
+                            </Label>
                             <Input
                                 value={smtpPassword}
                                 onChange={(e) => {
@@ -143,15 +149,17 @@ const Email = () => {
                             />
                         </div>
                         <div className={'space-y-1.5'}>
-                            <Label className={'text-xs'}>SMTP Encryption</Label>
+                            <Label className={'text-xs'}>
+                                {t('pages.adminEmail.smtpEncryption')}
+                            </Label>
                             <EnableCard
                                 value={smtpEncryption}
                                 onChange={(v) => {
                                     setSmtpEncryption(v);
                                 }}
                                 className={'max-w-[26rem]'}
-                                title={'Use TLS'}
-                                description={'Enable TLS for secure email transmission.'}
+                                title={t('pages.adminEmail.useTls')}
+                                description={t('pages.adminEmail.useTlsDesc')}
                             />
                         </div>
                     </>
@@ -162,7 +170,7 @@ const Email = () => {
                         isLoading={isSubmitting}
                         variant={'outline'}
                     >
-                        Save Changes
+                        {t('pages.adminEmail.save')}
                     </LoadingButton>
                 </div>
             </div>

@@ -4,6 +4,7 @@ import type { MonitorType, ServerStatusType } from '@/api/monitor';
 import { Trash2, Settings, Package, Terminal, Eye, Bell } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import ServerStatusCard from './card.tsx';
 
@@ -34,6 +35,7 @@ const MonitorCard = ({
     mounted: boolean;
     index: number;
 }) => {
+    const { t } = useTranslation();
     const navigator = useNavigate();
     const { createSession } = useSession();
 
@@ -90,14 +92,14 @@ const MonitorCard = ({
                 className={'h-full'}
                 items={[
                     {
-                        label: 'View Details',
+                        label: t('pages.contextMenu.viewDetails'),
                         icon: <Eye className="h-4 w-4" />,
                         onClick: () => navigator(`/${server.id}/monitor`),
                     },
                     ...(server.allow_terminal
                         ? [
                               {
-                                  label: 'Terminal',
+                                  label: t('pages.contextMenu.terminal'),
                                   icon: <Terminal className="h-4 w-4" />,
                                   onClick: () => {
                                       createSession(
@@ -124,7 +126,7 @@ const MonitorCard = ({
                         label: '',
                     },
                     {
-                        label: 'Notifications',
+                        label: t('pages.contextMenu.notifications'),
                         icon: <Bell className="h-4 w-4" />,
                         onClick: () => {
                             setOpenAlert(true);
@@ -135,14 +137,14 @@ const MonitorCard = ({
                         label: '',
                     },
                     {
-                        label: 'Edit',
+                        label: t('pages.contextMenu.edit'),
                         icon: <Settings className="h-4 w-4" />,
                         onClick: () => {
                             setOpenEdit(true);
                         },
                     },
                     {
-                        label: 'Category',
+                        label: t('pages.contextMenu.category'),
                         icon: <Package className="h-4 w-4" />,
                         onClick: () => {
                             setOpenCategory(true);
@@ -153,7 +155,7 @@ const MonitorCard = ({
                         label: '',
                     },
                     {
-                        label: 'Delete',
+                        label: t('pages.contextMenu.delete'),
                         icon: <Trash2 className="h-4 w-4" />,
                         onClick: () => {
                             setOpenDelete(true);

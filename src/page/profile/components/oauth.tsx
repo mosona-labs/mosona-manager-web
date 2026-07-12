@@ -1,5 +1,6 @@
 import { FingerprintIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ApiUser, { type AuthIdentityType } from '@/api/user.ts';
 import {
@@ -26,6 +27,7 @@ import LoadingButton from '@/components/loading-button.tsx';
 import ApiAuth from '@/api/auth.ts';
 
 const OAuthItem = ({ item, refresh }: { item: AuthIdentityType; refresh: () => void }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
 
     const onConnect = () => {
@@ -62,38 +64,40 @@ const OAuthItem = ({ item, refresh }: { item: AuthIdentityType; refresh: () => v
             <div className="flex-1">
                 <p className="text-sm font-medium text-foreground">{item.name}</p>
                 <p className="text-xs text-muted-foreground">
-                    {item.linked.email ? item.linked.email : 'No linked account'}
+                    {item.linked.email ? item.linked.email : t('pages.profile.noLinked')}
                 </p>
             </div>
             {item.linked.email ? (
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="destructive">Disconnect</Button>
+                        <Button variant="destructive">{t('pages.profile.disconnect')}</Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                            <DialogTitle>Confirm Disconnecting "{item.name}"</DialogTitle>
+                            <DialogTitle>
+                                {t('pages.profile.disconnectTitle', { name: item.name })}
+                            </DialogTitle>
                             <DialogDescription>
-                                Are you sure you want to disconnect your account?
+                                {t('pages.profile.disconnectDesc')}
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t('common.cancel')}</Button>
                             </DialogClose>
                             <LoadingButton
                                 isLoading={isLoading}
                                 variant={'destructive'}
                                 onClick={onDisconnect}
                             >
-                                Disconnect
+                                {t('pages.profile.disconnect')}
                             </LoadingButton>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
             ) : (
                 <LoadingButton isLoading={isLoading} variant="outline" onClick={onConnect}>
-                    Connect
+                    {t('pages.profile.connect')}
                 </LoadingButton>
             )}
         </div>
@@ -101,6 +105,7 @@ const OAuthItem = ({ item, refresh }: { item: AuthIdentityType; refresh: () => v
 };
 
 const OAuthCard = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [items, setItems] = useState<AuthIdentityType[]>([]);
 
@@ -120,20 +125,18 @@ const OAuthCard = () => {
             <CardHeader>
                 <CardTitle className="text-lg font-medium flex items-center gap-2">
                     <FingerprintIcon className="h-5 w-5 text-primary" />
-                    OAuth
+                    {t('pages.profile.oauth')}
                 </CardTitle>
-                <CardDescription>
-                    Manage your connected OAuth providers and applications.
-                </CardDescription>
+                <CardDescription>{t('pages.profile.oauthDesc')}</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-2 xl:grid-cols-2 2xl:grid-cols-3 3xl:grid-cols-4">
                 {isLoading ? (
                     <p className="text-sm text-center py-3 text-muted-foreground xl:col-span-2 2xl:col-span-3 3xl:col-span-4">
-                        Loading connected OAuth providers...
+                        {t('pages.profile.loadingOauth')}
                     </p>
                 ) : items.length === 0 ? (
                     <p className="text-sm text-center py-3 text-muted-foreground xl:col-span-2 2xl:col-span-3 3xl:col-span-4">
-                        No OAuth providers available.
+                        {t('pages.profile.noOauth')}
                     </p>
                 ) : (
                     items.map((item) => <OAuthItem key={item.id} item={item} refresh={refresh} />)

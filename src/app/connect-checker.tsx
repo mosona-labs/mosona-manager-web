@@ -1,9 +1,11 @@
 import { memo, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '../components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 
 const ConnectChecker = () => {
+    const { t } = useTranslation();
     const [isConnected, setIsConnected] = useState(false);
     const [pingHistory, setPingHistory] = useState<number[]>([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
 
@@ -39,18 +41,18 @@ const ConnectChecker = () => {
             <PopoverTrigger asChild>
                 <Button variant="outline">
                     <span className={isConnected ? 'text-green-500' : 'text-red-500'}>◉</span>
-                    {isConnected ? 'Connected' : 'Disconnected'}
+                    {isConnected ? t('common.connected') : t('common.disconnected')}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-38 mt-1">
                 <div className="grid gap-2">
-                    <h4 className="leading-none font-medium">Network Status</h4>
+                    <h4 className="leading-none font-medium">{t('status.network')}</h4>
                     <div className="space-y-1 text-muted-foreground">
                         <p className="text-sm">
                             {pingHistory.length > 0
                                 ? pingHistory[pingHistory.length - 1] >= 0
                                     ? `${pingHistory[pingHistory.length - 1].toFixed(2)} ms`
-                                    : 'Failed'
+                                    : t('common.failed')
                                 : 'N/A'}{' '}
                             <br />
                             {pingHistory.length > 0
@@ -59,7 +61,7 @@ const ConnectChecker = () => {
                                           pingHistory.reduce((a, b) => (b > 0 ? a + b : a), 0) /
                                           pingHistory.filter((p) => p > 0).length
                                       ).toFixed(2)} ms`
-                                    : 'Failed'
+                                    : t('common.failed')
                                 : 'N/A'}
                         </p>
                         <div className="mt-2.5 flex flex-row gap-1">
@@ -77,7 +79,7 @@ const ConnectChecker = () => {
                                         height:
                                             ping >= 0 ? Math.min(Math.max(ping / 10, 4), 40) : 4,
                                     }}
-                                    title={ping >= 0 ? `${ping} ms` : 'Ping failed'}
+                                    title={ping >= 0 ? `${ping} ms` : t('status.pingFailed')}
                                 />
                             ))}
                         </div>

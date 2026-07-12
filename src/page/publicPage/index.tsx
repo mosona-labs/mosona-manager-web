@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Copy, ExternalLink, Globe, RadioTower, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -44,32 +45,38 @@ const generateRandomPathName = (teamName?: string) => {
     return `${base}-${randomSuffix}`.slice(0, 32).replace(/-+$/g, '');
 };
 
-const generateDefaultTitle = (teamName?: string) => {
-    const base = (teamName || 'Status Page').trim();
-    return `${base} Status`;
+const generateDefaultTitle = (
+    t: (key: string, opts?: Record<string, string>) => string,
+    teamName?: string
+) => {
+    const base = (teamName || t('pages.publicPage.statusPage')).trim();
+    return t('pages.publicPage.defaultTitle', { name: base });
 };
 
-const generateDefaultDescription = (teamName?: string) => {
-    const base = (teamName || 'This team').trim();
-    return `The public status page for ${base}.`;
+const generateDefaultDescription = (
+    t: (key: string, opts?: Record<string, string>) => string,
+    teamName?: string
+) => {
+    const base = (teamName || t('pages.publicPage.thisTeam')).trim();
+    return t('pages.publicPage.defaultDescription', { name: base });
 };
 
-const validateName = (value: string) => {
+const validateName = (value: string, t: (key: string) => string) => {
     if (!value) return undefined;
     if (!NAME_PATTERN.test(value)) {
-        return 'Use 3-32 lowercase letters, numbers, or hyphens. Hyphens cannot be at the start or end.';
+        return t('pages.publicPage.nameInvalid');
     }
     return undefined;
 };
 
-const validateDomain = (value: string) => {
+const validateDomain = (value: string, t: (key: string) => string) => {
     if (!value) return undefined;
     if (value.includes('://') || /[/?#@]/.test(value) || /\s/.test(value)) {
-        return 'Enter a host only, without https://, paths, queries, fragments, or @.';
+        return t('pages.publicPage.domainInvalidHost');
     }
     const labels = value.split('.');
     if (labels.some((label) => !label || !DOMAIN_LABEL_PATTERN.test(label))) {
-        return 'Enter a valid hostname, such as status.example.com.';
+        return t('pages.publicPage.domainInvalid');
     }
     return undefined;
 };
@@ -91,16 +98,17 @@ const mapApiError = (msg?: string): FormErrors | null => {
 };
 
 const PreviewUrlAlert = ({ value }: { value?: string | null }) => {
+    const { t } = useTranslation();
     const copyLink = () => {
         if (!value) return;
         navigator.clipboard
             .writeText(value)
             .then(() => {
-                toast.success('Link copied to clipboard.');
+                toast.success(t('pages.publicPage.linkCopied'));
             })
             .catch(() => {
-                toast.error('Copy failed', {
-                    description: 'Unable to copy the link to your clipboard.',
+                toast.error(t('pages.publicPage.copyFailed'), {
+                    description: t('pages.publicPage.copyFailedDesc'),
                 });
             });
     };
@@ -138,6 +146,7 @@ const PreviewUrlAlert = ({ value }: { value?: string | null }) => {
 };
 
 const PublicPage = () => {
+    const { t } = useTranslation();
     const { team } = useUser();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -214,14 +223,13 @@ const PublicPage = () => {
 
         const nextErrors: FormErrors = nextEnabled
             ? {
-                  name: validateName(normalizedName),
-                  domain: validateDomain(normalizedDomain),
+                  name: validateName(normalizedName, t),
+                  domain: validateDomain(normalizedDomain, t),
               }
             : {};
 
         if (nextEnabled && !normalizedName && !normalizedDomain) {
-            nextErrors.general =
-                'At least one of name or domain is required when public page is enabled.';
+            nextErrors.general = t('pages.publicPage.nameOrDomainRequired');
         }
 
         if (nextErrors.name || nextErrors.domain || nextErrors.general) {
@@ -242,8 +250,8 @@ const PublicPage = () => {
         })
             .then((res) => {
                 applyConfig(res.data);
-                toast.success('Update Success', {
-                    description: 'Public page settings have been updated successfully.',
+                toast.success(t('pages.publicPage.updateSuccess'), {
+                    description: t('pages.publicPage.updated'),
                 });
             })
             .catch((err) => {
@@ -276,10 +284,8 @@ const PublicPage = () => {
             <div className="w-full p-5 h-full overflow-y-auto pb-24">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Public Page</CardTitle>
-                        <CardDescription>
-                            Create or switch to a team to manage this page.
-                        </CardDescription>
+                        <CardTitle>{t('pages.publicPage.title')}</CardTitle>
+                        <CardDescription>{t('pages.publicPage.noTeam')}</CardDescription>
                     </CardHeader>
                 </Card>
             </div>
@@ -334,14 +340,11 @@ const PublicPage = () => {
                     }}
                 >
                     <div>
-                        <h1 className="text-2xl font-bold">Public Page</h1>
-                        <p className="opacity-65">
-                            Manage your public status page — set the path, custom domain, title, and
-                            description.
-                        </p>
+                        <h1 className="text-2xl font-bold">{t('pages.publicPage.title')}</h1>
+                        <p className="opacity-65">{t('pages.publicPage.description')}</p>
                     </div>
                     <LoadingButton isLoading={isSubmitting || isLoading} onClick={onSave}>
-                        Save Changes
+                        {t('pages.publicPage.save')}
                     </LoadingButton>
                 </div>
 
@@ -372,20 +375,18 @@ const PublicPage = () => {
                     <CardHeader>
                         <CardTitle className="text-lg font-medium flex items-center gap-2">
                             <RadioTower className="h-5 w-5 text-primary" />
-                            Public Page Configuration
+                            {t('pages.publicPage.configTitle')}
                         </CardTitle>
-                        <CardDescription>
-                            Enable a shareable status page and manage its path-based name or custom
-                            domain.
-                        </CardDescription>
+                        <CardDescription>{t('pages.publicPage.configDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="grid gap-6">
                         <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
                             <div className="grid gap-1">
-                                <Label htmlFor="public-page-enabled">Enable public page</Label>
+                                <Label htmlFor="public-page-enabled">
+                                    {t('pages.publicPage.enable')}
+                                </Label>
                                 <p className="text-sm text-muted-foreground">
-                                    When disabled, existing links stay saved but the public page is
-                                    not served.
+                                    {t('pages.publicPage.enableHint')}
                                 </p>
                             </div>
                             <Switch
@@ -398,9 +399,11 @@ const PublicPage = () => {
                                         setName(generateRandomPathName(team?.name));
                                     }
                                     if (checked) {
-                                        if (!title) setTitle(generateDefaultTitle(team?.name));
+                                        if (!title) setTitle(generateDefaultTitle(t, team?.name));
                                         if (!description)
-                                            setDescription(generateDefaultDescription(team?.name));
+                                            setDescription(
+                                                generateDefaultDescription(t, team?.name)
+                                            );
                                     }
                                     setErrors({});
                                 }}
@@ -411,7 +414,9 @@ const PublicPage = () => {
                             <>
                                 <div className="grid gap-4 lg:grid-cols-2">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="public-page-name">Path name</Label>
+                                        <Label htmlFor="public-page-name">
+                                            {t('pages.publicPage.pathName')}
+                                        </Label>
                                         <div className="flex gap-2">
                                             <Input
                                                 id="public-page-name"
@@ -434,14 +439,13 @@ const PublicPage = () => {
                                                 size="icon"
                                                 disabled={isLoading || isSubmitting || !name}
                                                 onClick={onClearName}
-                                                aria-label="Clear path name"
+                                                aria-label={t('pages.publicPage.clearPath')}
                                             >
                                                 <Trash2 />
                                             </Button>
                                         </div>
                                         <p className="text-xs text-muted-foreground">
-                                            3-32 chars, lowercase letters, numbers, and hyphens
-                                            only.
+                                            {t('pages.publicPage.pathHint')}
                                         </p>
                                         {errors.name && (
                                             <p className="text-sm text-destructive">
@@ -451,7 +455,9 @@ const PublicPage = () => {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="public-page-domain">Custom domain</Label>
+                                        <Label htmlFor="public-page-domain">
+                                            {t('pages.publicPage.customDomain')}
+                                        </Label>
                                         <div className="flex gap-2">
                                             <Input
                                                 id="public-page-domain"
@@ -474,14 +480,13 @@ const PublicPage = () => {
                                                 size="icon"
                                                 disabled={isLoading || isSubmitting || !domain}
                                                 onClick={onClearDomain}
-                                                aria-label="Clear custom domain"
+                                                aria-label={t('pages.publicPage.clearDomain')}
                                             >
                                                 <Trash2 />
                                             </Button>
                                         </div>
                                         <p className="text-xs text-muted-foreground">
-                                            Host only. Do not include https://, paths, query
-                                            strings, or @.
+                                            {t('pages.publicPage.domainHint')}
                                         </p>
                                         {errors.domain && (
                                             <p className="text-sm text-destructive">
@@ -493,7 +498,9 @@ const PublicPage = () => {
 
                                 <div className="grid gap-4">
                                     <div className="grid gap-2">
-                                        <Label htmlFor="public-page-title">Title</Label>
+                                        <Label htmlFor="public-page-title">
+                                            {t('pages.publicPage.pageTitle')}
+                                        </Label>
                                         <Input
                                             id="public-page-title"
                                             placeholder="Acme Status"
@@ -509,7 +516,7 @@ const PublicPage = () => {
                                             }}
                                         />
                                         <p className="text-xs text-muted-foreground">
-                                            The title shown on the public status page.
+                                            {t('pages.publicPage.titleHint')}
                                         </p>
                                         {errors.title && (
                                             <p className="text-sm text-destructive">
@@ -519,7 +526,9 @@ const PublicPage = () => {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="public-page-description">Description</Label>
+                                        <Label htmlFor="public-page-description">
+                                            {t('pages.publicPage.pageDescription')}
+                                        </Label>
                                         <Textarea
                                             id="public-page-description"
                                             placeholder="The public status page for Acme."
@@ -535,7 +544,7 @@ const PublicPage = () => {
                                             }}
                                         />
                                         <p className="text-xs text-muted-foreground">
-                                            A short description shown on the public status page.
+                                            {t('pages.publicPage.descriptionHint')}
                                         </p>
                                         {errors.description && (
                                             <p className="text-sm text-destructive">
@@ -545,7 +554,9 @@ const PublicPage = () => {
                                     </div>
 
                                     <div className="grid gap-2">
-                                        <Label htmlFor="public-page-custom-css">Custom CSS</Label>
+                                        <Label htmlFor="public-page-custom-css">
+                                            {t('pages.publicPage.customCss')}
+                                        </Label>
                                         <Textarea
                                             id="public-page-custom-css"
                                             placeholder={`#root {\n  background: #22c55e;\n}`}
@@ -563,7 +574,7 @@ const PublicPage = () => {
                                             }}
                                         />
                                         <p className="text-xs text-muted-foreground">
-                                            Optional CSS injected into the public status page.
+                                            {t('pages.publicPage.customCssHint')}
                                         </p>
                                         {errors.customCSS && (
                                             <p className="text-sm text-destructive">

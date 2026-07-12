@@ -1,4 +1,5 @@
 import { InfoIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -13,6 +14,8 @@ import {
 import { Button } from '@/components/ui/button.tsx';
 
 const HelpAutoRenew = () => {
+    const { t } = useTranslation();
+
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -20,32 +23,22 @@ const HelpAutoRenew = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Introduction to Auto Renew</DialogTitle>
-                    <DialogDescription>
-                        This feature only affects Alerts and End Time.
-                    </DialogDescription>
+                    <DialogTitle>{t('pages.serverForm.autoRenewTitle')}</DialogTitle>
+                    <DialogDescription>{t('pages.serverForm.autoRenewDesc')}</DialogDescription>
                 </DialogHeader>
                 <div>
                     <h2 className={'text-lg font-semibold flex flex-row items-center gap-2'}>
-                        1. Effect
+                        {t('pages.serverForm.autoRenewEffect')}
                     </h2>
-                    <p className={'opacity-80'}>
-                        Once the end time is reached, the Hub will automatically extend it to the
-                        end of the next cycle. <br />
-                        Expiration alerts configured for this server or globally will continue to
-                        function as usual.
-                    </p>
+                    <p className={'opacity-80'}>{t('pages.serverForm.autoRenewEffectDesc')}</p>
                     <h2 className={'text-lg font-semibold flex flex-row items-center gap-2 mt-3'}>
-                        2. Condition
+                        {t('pages.serverForm.autoRenewCondition')}
                     </h2>
-                    <p className={'opacity-80'}>
-                        Auto Renew only works when a valid recurring cycle is configured (one-time
-                        or None is not supported) and an End Time is set.
-                    </p>
+                    <p className={'opacity-80'}>{t('pages.serverForm.autoRenewConditionDesc')}</p>
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>

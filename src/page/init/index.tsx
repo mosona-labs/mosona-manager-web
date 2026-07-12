@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import PasswordCheck from '../auth/components/PasswordCheck';
 
@@ -25,6 +26,7 @@ import { ToastError } from '@/utils/toast.ts';
 import { useSiteBranding } from '@/hooks/useSiteBranding.ts';
 
 const Init = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { title } = useSiteBranding();
 
@@ -53,49 +55,51 @@ const Init = () => {
     const onSubmit = () => {
         if (!username || !email || !password || !confirmPassword) {
             setStep(1);
-            toast.warning('Warning', { description: 'Please fill in all required fields.' });
+            toast.warning(t('common.warning'), { description: t('auth.required') });
             return;
         }
         if (!websiteURL) {
             setStep(2);
-            toast.warning('Warning', { description: 'Please provide the website URL.' });
+            toast.warning(t('common.warning'), {
+                description: t('pages.init.provideWebsiteUrl'),
+            });
             return;
         }
         if (password !== confirmPassword) {
             setStep(1);
-            toast.warning('Warning', { description: 'Passwords do not match.' });
+            toast.warning(t('common.warning'), { description: t('auth.mismatch') });
             return;
         }
         if (email.indexOf('@') === -1) {
             setStep(1);
-            toast.warning('Warning', { description: 'Please provide a valid email address.' });
+            toast.warning(t('common.warning'), { description: t('pages.init.validEmail') });
             return;
         }
         const failed = [
-            { ok: password.length >= 8, text: 'At least 8 characters' },
-            { ok: /[A-Z]/.test(password), text: 'At least one uppercase letter' },
-            { ok: /[a-z]/.test(password), text: 'At least one lowercase letter' },
-            { ok: /[0-9]/.test(password), text: 'At least one number' },
-            { ok: /[^A-Za-z0-9]/.test(password), text: 'At least one special character' },
+            { ok: password.length >= 8, text: t('auth.minLength') },
+            { ok: /[A-Z]/.test(password), text: t('auth.uppercase') },
+            { ok: /[a-z]/.test(password), text: t('auth.lowercase') },
+            { ok: /[0-9]/.test(password), text: t('auth.number') },
+            { ok: /[^A-Za-z0-9]/.test(password), text: t('auth.special') },
         ].filter((it) => !it.ok);
         if (failed.length > 0) {
             setStep(1);
-            toast.warning('Weak password', {
+            toast.warning(t('auth.weakPassword'), {
                 description: failed.map((f) => f.text).join(', '),
             });
             return;
         }
         if (!websiteURL.startsWith('http://') && !websiteURL.startsWith('https://')) {
             setStep(2);
-            toast.warning('Warning', {
-                description: 'Website URL must start with http:// or https://.',
+            toast.warning(t('common.warning'), {
+                description: t('pages.init.urlProtocol'),
             });
             return;
         }
         if (websiteURL.endsWith('/')) {
             setStep(2);
-            toast.warning('Warning', {
-                description: 'Website URL must not end with a trailing slash (/).',
+            toast.warning(t('common.warning'), {
+                description: t('pages.init.urlTrailingSlash'),
             });
             return;
         }
@@ -115,19 +119,19 @@ const Init = () => {
         <div className="flex flex-col h-screen gap-3 justify-center items-center w-full px-4 overflow-hidden">
             <div className="w-full mb-4 flex flex-col gap-2 items-center">
                 <p className={'text-5xl'}>🎉</p>
-                <h1 className="text-3xl font-bold mt-2">Installation Successfully!</h1>
-                <p className="text-muted-foreground">Now, start your journey by logging in.</p>
+                <h1 className="text-3xl font-bold mt-2">{t('pages.init.successTitle')}</h1>
+                <p className="text-muted-foreground">{t('pages.init.successDesc')}</p>
                 <div className={'flex flex-row mt-3 gap-2'}>
                     <a href={'/'}>
                         <Button>
                             <LayoutDashboard />
-                            Go Dashboard
+                            {t('pages.init.goDashboard')}
                         </Button>
                     </a>
                     <a href={'/admin/'}>
                         <Button variant={'outline'}>
                             <Settings />
-                            Go Admin Panel
+                            {t('pages.init.goAdmin')}
                         </Button>
                     </a>
                 </div>
@@ -139,7 +143,7 @@ const Init = () => {
                 <div className="w-full mb-4 flex flex-col gap-2 items-center">
                     <Logo />
                     <h1 className="text-3xl font-bold mt-2">{title}</h1>
-                    <p className="text-muted-foreground">Server Monitor & Remote Management</p>
+                    <p className="text-muted-foreground">{t('pages.init.subtitle')}</p>
                 </div>
 
                 <StepCard
@@ -147,21 +151,18 @@ const Init = () => {
                     setStep={() => {
                         setStep(1);
                     }}
-                    title={'Step 1: Create Admin Account'}
-                    description={'Set up the initial administrator account.'}
+                    title={t('pages.init.step1Title')}
+                    description={t('pages.init.step1Desc')}
                 >
                     <div className="mt-4 flex flex-col gap-3">
                         <Alert variant="default">
                             <InfoIcon />
-                            <AlertTitle>Attention</AlertTitle>
-                            <AlertDescription>
-                                Admin account is not support the "forgot password". Please keep your
-                                credentials safe.
-                            </AlertDescription>
+                            <AlertTitle>{t('pages.init.attention')}</AlertTitle>
+                            <AlertDescription>{t('pages.init.adminWarning')}</AlertDescription>
                         </Alert>
                         <div className="grid gap-3 mt-1">
                             <Label>
-                                Username
+                                {t('auth.username')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -172,7 +173,7 @@ const Init = () => {
                         </div>
                         <div className="grid gap-3 mt-1">
                             <Label>
-                                Email
+                                {t('auth.email')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -184,12 +185,12 @@ const Init = () => {
                         </div>
                         <div>
                             <Label>
-                                Password
+                                {t('auth.password')}
                                 <IsRequired />
                             </Label>
                             <Input
                                 type="password"
-                                placeholder="Your password"
+                                placeholder={t('auth.passwordPlaceholder')}
                                 className="mt-3"
                                 value={password}
                                 onChange={(e) => {
@@ -200,12 +201,12 @@ const Init = () => {
                         </div>
                         <div className="grid gap-3">
                             <Label>
-                                Confirm Password
+                                {t('auth.confirmPassword')}
                                 <IsRequired />
                             </Label>
                             <Input
                                 type="password"
-                                placeholder="Confirm your password"
+                                placeholder={t('auth.confirmPlaceholder')}
                                 value={confirmPassword}
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                             />
@@ -218,7 +219,7 @@ const Init = () => {
                             }}
                         >
                             <SquareChevronRight />
-                            Next Step
+                            {t('pages.init.nextStep')}
                         </Button>
                     </div>
                 </StepCard>
@@ -228,13 +229,13 @@ const Init = () => {
                     setStep={() => {
                         setStep(2);
                     }}
-                    title={'Step 2: Base URL & Registration'}
-                    description={'Configure base settings.'}
+                    title={t('pages.init.step2Title')}
+                    description={t('pages.init.step2Desc')}
                 >
                     <div className="mt-4 flex flex-col gap-3">
                         <div className="grid gap-3">
                             <Label>
-                                Website URL
+                                {t('pages.init.websiteUrl')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -243,30 +244,26 @@ const Init = () => {
                                 onChange={(e) => setWebsiteURL(e.target.value)}
                             />
                             <p className={'text-xs text-muted-foreground -mt-1'}>
-                                Used for email links and OAuth redirects. Ensure correctness.
+                                {t('pages.init.websiteUrlHint')}
                             </p>
                         </div>
                         <div className={'border-t border-border my-1'}></div>
                         <div className="grid gap-3">
                             <Label>
-                                User Registration
+                                {t('pages.init.userRegistration')}
                                 <IsRequired />
                             </Label>
                             <p className={'text-xs text-muted-foreground'}>
-                                If you wish to allow user self-registration, please configure the
-                                email sender under <b>Admin Settings → Email</b> after
-                                initialization, and enable activation emails in{' '}
-                                <b>Admin Settings → Register & Login</b>.
+                                {t('pages.init.registrationHint')}
                                 <br />
                             </p>
                             <i className={'text-xs text-muted-foreground -mt-2'}>
-                                Please note that exposing this service to unknown users may involve
-                                certain <b>legal risks</b>.
+                                {t('pages.init.legalRisk')}
                             </i>
                             <EnableCard
                                 value={registrationEnabled}
                                 onChange={setRegistrationEnabled}
-                                title={'Enable User Registration'}
+                                title={t('pages.init.enableRegistration')}
                             />
                         </div>
                         <Button
@@ -276,7 +273,7 @@ const Init = () => {
                             disabled={loading}
                         >
                             {loading ? <LoaderCircle className="animate-spin" /> : <CirclePlay />}
-                            Finish Initialization
+                            {t('pages.init.finish')}
                         </Button>
                     </div>
                 </StepCard>

@@ -1,4 +1,5 @@
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { Plus, Save, GripVertical, Trash, Loader } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 import {
@@ -48,6 +49,7 @@ import { useUser } from '@/context/useUser';
 import ApiCategory, { type CategoryType } from '@/api/category';
 
 const CategoryItem = ({ id, name }: { id: number; name: string }) => {
+    const { t } = useTranslation();
     const { refreshCategories } = useUser();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id,
@@ -70,7 +72,7 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
             .then(() => {
                 refreshCategories().finally(() => {
                     setIsDeleting(false);
-                    toast.success('Category deleted successfully');
+                    toast.success(t('pages.category.deleted'));
                 });
             })
             .catch((err) => {
@@ -85,7 +87,7 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
             .then(() => {
                 refreshCategories().finally(() => {
                     setIsSaving(false);
-                    toast.success('Category updated successfully');
+                    toast.success(t('pages.category.updated'));
                 });
             })
             .catch((err) => {
@@ -104,7 +106,7 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
                 <GripVertical className="h-5 w-5 text-gray-400" />
             </button>
             <Input
-                placeholder="Category Name"
+                placeholder={t('pages.category.namePlaceholder')}
                 value={nameInput}
                 onChange={(e) => {
                     setNameInput(e.target.value);
@@ -121,22 +123,19 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>
-                            Are you sure you want to delete this category?
-                        </AlertDialogTitle>
+                        <AlertDialogTitle>{t('pages.category.deleteTitle')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. All servers under this category will be
-                            moved to the default category.
+                            {t('pages.category.deleteDesc')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
                         <AlertDialogAction disabled={isDeleting} onClick={handleDelete}>
                             <Loader
                                 className="animate-spin"
                                 style={{ display: isDeleting ? 'inline-block' : 'none' }}
                             />
-                            Continue
+                            {t('common.continue')}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
@@ -146,6 +145,7 @@ const CategoryItem = ({ id, name }: { id: number; name: string }) => {
 };
 
 const ManageCategory = ({ children }: { children?: ReactNode }) => {
+    const { t } = useTranslation();
     const { categories, refreshCategories } = useUser();
     const [sortedCategories, setSortedCategories] = useState<CategoryType[]>([]);
     useEffect(() => {
@@ -174,7 +174,7 @@ const ManageCategory = ({ children }: { children?: ReactNode }) => {
                 ApiCategory.sort(newItems.map((item) => item.id))
                     .then(() => {
                         refreshCategories().finally(() => {
-                            toast.success('Category order updated successfully');
+                            toast.success(t('pages.category.orderUpdated'));
                         });
                     })
                     .catch(ToastError);
@@ -189,8 +189,8 @@ const ManageCategory = ({ children }: { children?: ReactNode }) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]" onOpenAutoFocus={(e) => e.preventDefault()}>
                 <DialogHeader>
-                    <DialogTitle>Manage Category</DialogTitle>
-                    <DialogDescription>Manage your existing categories here.</DialogDescription>
+                    <DialogTitle>{t('pages.category.manageTitle')}</DialogTitle>
+                    <DialogDescription>{t('pages.category.manageDesc')}</DialogDescription>
                 </DialogHeader>
                 <DndContext
                     sensors={sensors}

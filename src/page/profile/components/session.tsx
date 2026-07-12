@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Cable } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import ApiUser, { type UserSessionType } from '@/api/user.ts';
 import GetUAInfo from '@/utils/ua.ts';
@@ -36,6 +37,7 @@ const SessionCard = ({
     isCurrent: boolean;
     reload: () => void;
 }) => {
+    const { t } = useTranslation();
     const deviceInfo = GetUAInfo(session.user_agent);
 
     const [isLoading, setIsLoading] = useState(false);
@@ -71,31 +73,28 @@ const SessionCard = ({
                 </p>
                 <p className="text-xs text-muted-foreground">
                     {new Date(session.time * 1000).toLocaleString()}
-                    {isCurrent && ' • Current Session'}
+                    {isCurrent && ` • ${t('pages.profile.currentSession')}`}
                 </p>
             </div>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button variant="destructive">Revoke</Button>
+                    <Button variant="destructive">{t('pages.profile.revoke')}</Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Revoke Session</DialogTitle>
-                        <DialogDescription>
-                            Are you sure you want to revoke this session? This will log out the
-                            device associated with this session.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.profile.revokeTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.profile.revokeDesc')}</DialogDescription>
                     </DialogHeader>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         <LoadingButton
                             variant={'destructive'}
                             onClick={revokeSession}
                             isLoading={isLoading}
                         >
-                            Revoke Session
+                            {t('pages.profile.revokeAction')}
                         </LoadingButton>
                     </DialogFooter>
                 </DialogContent>
@@ -105,6 +104,7 @@ const SessionCard = ({
 };
 
 const SessionsCard = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(true);
 
     const [currentSession, setCurrentSession] = useState<string>('');
@@ -147,11 +147,9 @@ const SessionsCard = () => {
                 <div className={'gap-2 flex flex-col'}>
                     <CardTitle className="text-lg font-medium flex items-center gap-2">
                         <Cable className="h-5 w-5 text-primary" />
-                        Sessions
+                        {t('pages.profile.sessions')}
                     </CardTitle>
-                    <CardDescription>
-                        View and manage your active sessions across different devices.
-                    </CardDescription>
+                    <CardDescription>{t('pages.profile.sessionsDesc')}</CardDescription>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
@@ -159,27 +157,26 @@ const SessionsCard = () => {
                             variant={'secondary'}
                             className={'hover:bg-rose-500/50 transition duration-300'}
                         >
-                            Revoke All
+                            {t('pages.profile.revokeAll')}
                         </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                         <DialogHeader>
-                            <DialogTitle>Revoke All Sessions</DialogTitle>
+                            <DialogTitle>{t('pages.profile.revokeAllTitle')}</DialogTitle>
                             <DialogDescription>
-                                Are you sure you want to revoke all sessions? This will log out all
-                                devices.
+                                {t('pages.profile.revokeAllDesc')}
                             </DialogDescription>
                         </DialogHeader>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t('common.cancel')}</Button>
                             </DialogClose>
                             <LoadingButton
                                 variant={'destructive'}
                                 isLoading={revokingAll}
                                 onClick={revokeAllSessions}
                             >
-                                Revoke All
+                                {t('pages.profile.revokeAll')}
                             </LoadingButton>
                         </DialogFooter>
                     </DialogContent>
@@ -188,7 +185,7 @@ const SessionsCard = () => {
             <CardContent className="space-y-2">
                 {isLoading ? (
                     <p className="text-sm text-center py-3 text-muted-foreground">
-                        Loading sessions...
+                        {t('pages.profile.loadingSessions')}
                     </p>
                 ) : (
                     sessions.map((session) => (

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { AlertCircleIcon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import ApiKey, { type KeyType } from '@/api/key.ts';
 import { ToastError } from '@/utils/toast.ts';
@@ -26,6 +27,7 @@ const DelKey = ({
     onOpenChange: (open: boolean) => void;
     item: KeyType;
 }) => {
+    const { t } = useTranslation();
     const { refreshKeys } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -47,26 +49,22 @@ const DelKey = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Delete Key</DialogTitle>
+                    <DialogTitle>{t('pages.keychain.deleteTitle')}</DialogTitle>
                     <DialogDescription>
-                        Are you sure you want to delete the key "{item.name}"? This action cannot be
-                        undone.
+                        {t('pages.keychain.deleteDescription', { name: item.name })}
                     </DialogDescription>
                 </DialogHeader>
                 <Alert variant="destructive">
                     <AlertCircleIcon />
-                    <AlertTitle>Attention</AlertTitle>
+                    <AlertTitle>{t('pages.keychain.attention')}</AlertTitle>
                     <AlertDescription>
-                        <p>
-                            If any servers are still using this key, the deletion will fail. Please
-                            remove all dependencies beforehand.
-                        </p>
+                        <p>{t('pages.keychain.deleteWarning')}</p>
                     </AlertDescription>
                 </Alert>
                 <DialogFooter>
                     <DialogClose asChild>
                         <Button variant="ghost" disabled={isLoading}>
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                     </DialogClose>
                     <LoadingButton
@@ -74,7 +72,7 @@ const DelKey = ({
                         onClick={handleDelete}
                         isLoading={isLoading}
                     >
-                        Delete
+                        {t('common.delete')}
                     </LoadingButton>
                 </DialogFooter>
             </DialogContent>

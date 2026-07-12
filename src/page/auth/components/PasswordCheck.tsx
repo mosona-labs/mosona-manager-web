@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Card } from '@/components/ui/card';
 
 const PasswordCheck = ({ password }: { password: string }) => {
+    const { t } = useTranslation();
     const [show, setShow] = useState<boolean>(false);
     useEffect(() => {
         setShow(password.length > 0);
     }, [password]);
 
     const items = [
-        { ok: password.length >= 8, text: 'At least 8 characters' },
-        { ok: /[A-Z]/.test(password), text: 'At least one uppercase letter' },
-        { ok: /[a-z]/.test(password), text: 'At least one lowercase letter' },
-        { ok: /[0-9]/.test(password), text: 'At least one number' },
-        { ok: /[^A-Za-z0-9]/.test(password), text: 'At least one special character' },
+        { ok: password.length >= 8, text: t('auth.minLength') },
+        { ok: /[A-Z]/.test(password), text: t('auth.uppercase') },
+        { ok: /[a-z]/.test(password), text: t('auth.lowercase') },
+        { ok: /[0-9]/.test(password), text: t('auth.number') },
+        { ok: /[^A-Za-z0-9]/.test(password), text: t('auth.special') },
     ];
 
     return (

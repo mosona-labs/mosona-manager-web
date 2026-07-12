@@ -2,21 +2,15 @@ import type { KeyType } from '@/api/key.ts';
 
 import { Pencil, Settings, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { ContextMenu } from '@/components/context-menu.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import EditKey from '@/page/keychain/components/edit.tsx';
 import DelKey from '@/page/keychain/components/del.tsx';
 
-const KeyCard = ({
-    item,
-    mounted,
-    index,
-}: {
-    item: KeyType;
-    mounted: boolean;
-    index: number;
-}) => {
+const KeyCard = ({ item, mounted, index }: { item: KeyType; mounted: boolean; index: number }) => {
+    const { t } = useTranslation();
     const [editOpen, setEditOpen] = useState(false);
     const [delOpen, setDelOpen] = useState(false);
 
@@ -32,7 +26,7 @@ const KeyCard = ({
             <ContextMenu
                 items={[
                     {
-                        label: 'Edit',
+                        label: t('common.edit'),
                         icon: <Settings className="h-4 w-4" />,
                         onClick: () => {
                             setEditOpen(true);
@@ -43,7 +37,7 @@ const KeyCard = ({
                         label: '',
                     },
                     {
-                        label: 'Delete',
+                        label: t('common.delete'),
                         icon: <Trash2 className="h-4 w-4" />,
                         onClick: () => {
                             setDelOpen(true);
@@ -56,7 +50,9 @@ const KeyCard = ({
                     <div>
                         <h2 className="font-medium font-mono">{item.name}</h2>
                         <p className="text-xs text-muted-foreground">
-                            Added on {new Date(item.created_at).toLocaleDateString()}
+                            {t('pages.keychain.addedOn', {
+                                date: new Date(item.created_at).toLocaleDateString(),
+                            })}
                         </p>
                     </div>
                     <div className={'flex-1'} />

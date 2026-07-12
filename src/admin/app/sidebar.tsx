@@ -11,6 +11,7 @@ import {
     UserRoundPlus,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@/lib/utils';
 import SidebarItem from '@/components/sidebar/sidebarItem.tsx';
@@ -22,46 +23,46 @@ const sidebarItems: {
     icon?: ReactNode;
     path?: string;
 }[] = [
-    { title: 'Overview' },
-    { title: 'Dashboard', icon: <Container size={22} />, path: '/admin/' },
-    { title: 'Projects' },
+    { title: 'nav.overview' },
+    { title: 'nav.dashboard', icon: <Container size={22} />, path: '/admin/' },
+    { title: 'nav.projects' },
     {
-        title: 'Users',
+        title: 'nav.users',
         icon: <User size={22} />,
         path: '/admin/users',
     },
     {
-        title: 'Teams',
+        title: 'nav.teams',
         icon: <Briefcase size={22} />,
     },
     {
-        title: 'Servers',
+        title: 'nav.servers',
         icon: <Server size={22} />,
     },
-    { title: 'Logging' },
+    { title: 'nav.logging' },
     {
-        title: 'Admin Logs',
+        title: 'nav.adminLogs',
         icon: <LogsIcon size={22} />,
         path: '/admin/logs',
     },
-    { title: 'Settings' },
+    { title: 'common.settings' },
     {
-        title: 'General',
+        title: 'nav.general',
         icon: <Settings size={22} />,
         path: '/admin/settings/general',
     },
     {
-        title: 'Email',
+        title: 'nav.email',
         icon: <Mail size={22} />,
         path: '/admin/settings/email',
     },
     {
-        title: 'OAuth2',
+        title: 'nav.oauth2',
         icon: <FingerprintIcon size={22} />,
         path: '/admin/settings/oauth',
     },
     {
-        title: 'Register & Login',
+        title: 'nav.registerLogin',
         icon: <UserRoundPlus size={22} />,
         path: '/admin/settings/register_login',
     },
@@ -70,6 +71,7 @@ const sidebarItems: {
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {
     const navigator = useNavigate();
     const { title } = useSiteBranding();
+    const { t } = useTranslation();
 
     return (
         <>
@@ -87,7 +89,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     <Logo />
                     <div className="min-w-0">
                         <h1 className="truncate text-xl font-bold">{title}</h1>
-                        <p className="text-sm text-muted-foreground">Administration Dashboard</p>
+                        <p className="text-sm text-muted-foreground">{t('nav.administration')}</p>
                     </div>
                 </div>
 
@@ -96,14 +98,14 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                         item.icon ? (
                             <SidebarItem
                                 key={item.title}
-                                title={item.title}
+                                title={t(item.title)}
                                 icon={item.icon}
                                 path={item.path || ''}
                                 enabled={!!item.path}
                             />
                         ) : (
                             <p key={item.title} className="text-sm mt-3 mx-1 opacity-65">
-                                {item.title}
+                                {t(item.title)}
                             </p>
                         )
                     )}

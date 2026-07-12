@@ -2,6 +2,7 @@ import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import Cropper, { type Area } from 'react-easy-crop';
 import 'react-easy-crop/react-easy-crop.css';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { useSettings } from '@/admin/page/settings/useSettings.tsx';
 import { Label } from '@/components/ui/label.tsx';
@@ -62,6 +63,7 @@ const getCroppedImageFile = async (imageUrl: string, crop: Area) => {
 };
 
 const General = () => {
+    const { t } = useTranslation();
     const { settings, refresh } = useSettings();
 
     const [title, setTitle] = useState('');
@@ -142,8 +144,8 @@ const General = () => {
 
             await refresh();
             setFaviconFile(null);
-            toast.success('Success', {
-                description: 'Settings updated successfully.',
+            toast.success(t('common.success'), {
+                description: t('pages.adminGeneral.updated'),
             });
         } catch (err) {
             ToastError(err);
@@ -230,13 +232,13 @@ const General = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">General</h1>
-                    <p className="opacity-65">Manage general settings for your application.</p>
+                    <h1 className="text-2xl font-bold">{t('pages.adminGeneral.title')}</h1>
+                    <p className="opacity-65">{t('pages.adminGeneral.description')}</p>
                 </div>
             </div>
             <div className={'flex flex-col gap-3'}>
                 <div className={'space-y-2'}>
-                    <Label className={'text-xs'}>Site Title</Label>
+                    <Label className={'text-xs'}>{t('pages.adminGeneral.siteTitle')}</Label>
                     <Input
                         value={title}
                         onChange={(e) => {
@@ -247,17 +249,16 @@ const General = () => {
                         className={'max-w-104 w-full'}
                     />
                     <p className={'text-xs text-muted-foreground'}>
-                        The browser title for your application. Leave it empty to use the built
-                        frontend title.
+                        {t('pages.adminGeneral.siteTitleHint')}
                     </p>
                 </div>
                 <div className={'space-y-2'}>
-                    <Label className={'text-xs'}>Favicon</Label>
+                    <Label className={'text-xs'}>{t('pages.adminGeneral.favicon')}</Label>
                     <div className="flex max-w-104 flex-row items-center gap-3">
                         {faviconPreview ? (
                             <img
                                 src={faviconPreview}
-                                alt="Site favicon"
+                                alt={t('pages.adminGeneral.siteFavicon')}
                                 className="h-10 w-10 shrink-0 rounded border object-cover"
                             />
                         ) : (
@@ -271,12 +272,11 @@ const General = () => {
                         />
                     </div>
                     <p className={'text-xs text-muted-foreground'}>
-                        Upload a PNG, JPEG, WebP, or GIF image up to 5 MiB. The stored favicon is
-                        converted by the server.
+                        {t('pages.adminGeneral.faviconHint')}
                     </p>
                 </div>
                 <div className={'space-y-2'}>
-                    <Label className={'text-xs'}>Base URL</Label>
+                    <Label className={'text-xs'}>{t('pages.adminGeneral.baseUrl')}</Label>
                     <Input
                         value={domain}
                         onChange={(e) => {
@@ -286,43 +286,36 @@ const General = () => {
                         className={'max-w-104 w-full'}
                     />
                     <p className={'text-xs text-muted-foreground'}>
-                        The base URL of your application. This is used for generating links, oauth
-                        and emails.
+                        {t('pages.adminGeneral.baseUrlHint')}
                     </p>
                 </div>
                 <div className={'space-y-2'}>
-                    <Label className={'text-xs'}>Session Bind IP</Label>
+                    <Label className={'text-xs'}>{t('pages.adminGeneral.sessionBindIp')}</Label>
                     <EnableCard
                         value={sessionBindIp}
                         onChange={setSessionBindIp}
-                        title={'Bind session to login IP'}
-                        description={
-                            'When enabled, sessions are tied to the IP address used at login. Requests from a different IP will be rejected.'
-                        }
+                        title={t('pages.adminGeneral.sessionBindIpTitle')}
+                        description={t('pages.adminGeneral.sessionBindIpDesc')}
                         className={'max-w-104'}
                     />
                 </div>
                 <div className={'space-y-2'}>
-                    <Label className={'text-xs'}>Trust Proxy</Label>
+                    <Label className={'text-xs'}>{t('pages.adminGeneral.trustProxy')}</Label>
                     <EnableCard
                         value={trustProxy}
                         onChange={setTrustProxy}
-                        title={'Trust CDN / reverse proxy headers'}
-                        description={
-                            'When enabled, the server will trust IP headers from reverse proxies or CDNs when determining client IPs and protocol.'
-                        }
+                        title={t('pages.adminGeneral.trustProxyTitle')}
+                        description={t('pages.adminGeneral.trustProxyDesc')}
                         className={'max-w-104'}
                     />
                 </div>
                 <div className={'space-y-2'}>
-                    <Label className={'text-xs'}>Debug Mode</Label>
+                    <Label className={'text-xs'}>{t('pages.adminGeneral.debugMode')}</Label>
                     <EnableCard
                         value={debugMode}
                         onChange={setDebugMode}
-                        title={'Enable Debug Mode'}
-                        description={
-                            'When enabled, detailed error messages and stack traces will be shown.'
-                        }
+                        title={t('pages.adminGeneral.debugModeTitle')}
+                        description={t('pages.adminGeneral.debugModeDesc')}
                         className={'max-w-104'}
                     />
                 </div>
@@ -332,17 +325,15 @@ const General = () => {
                         isLoading={isSubmitting}
                         variant={'outline'}
                     >
-                        Save Changes
+                        {t('pages.adminGeneral.save')}
                     </LoadingButton>
                 </div>
             </div>
             <Dialog open={cropOpen} onOpenChange={(nextOpen) => !nextOpen && closeCropDialog()}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
-                        <DialogTitle>Crop Favicon</DialogTitle>
-                        <DialogDescription>
-                            Select a square area for the site favicon.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.adminGeneral.cropTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.adminGeneral.cropDesc')}</DialogDescription>
                     </DialogHeader>
                     <div className="relative h-72 overflow-hidden rounded-md bg-muted">
                         {cropImageUrl && (
@@ -358,7 +349,7 @@ const General = () => {
                         )}
                     </div>
                     <div className="grid gap-2">
-                        <Label className="text-xs">Zoom</Label>
+                        <Label className="text-xs">{t('pages.adminGeneral.zoom')}</Label>
                         <Slider
                             value={[zoom]}
                             min={1}
@@ -374,10 +365,10 @@ const General = () => {
                             onClick={closeCropDialog}
                             disabled={isCropping}
                         >
-                            Cancel
+                            {t('common.cancel')}
                         </Button>
                         <LoadingButton isLoading={isCropping} onClick={applyFaviconCrop}>
-                            Apply Crop
+                            {t('pages.adminGeneral.applyCrop')}
                         </LoadingButton>
                     </DialogFooter>
                 </DialogContent>

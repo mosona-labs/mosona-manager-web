@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -30,6 +31,7 @@ const TwoFA = ({
     setOpen: (open: boolean) => void;
     callback: (code: string) => void;
 }) => {
+    const { t } = useTranslation();
     const { user } = useUser();
 
     const [cooling, setCooling] = useState(0);
@@ -69,12 +71,11 @@ const TwoFA = ({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogContent className={'w-[400px]'}>
                 <DialogHeader>
-                    <DialogTitle>⚠️ Two Factor Authentication (2FA)</DialogTitle>
+                    <DialogTitle>{t('pages.twofa.dialogTitle')}</DialogTitle>
                     <DialogDescription>
-                        This is a high-risk operation. We must ensure that it is your own action, so
                         {user?.totp_enabled
-                            ? ' please enter your TOTP code to proceed.'
-                            : ' we will send a verification code to your email.'}
+                            ? t('pages.twofa.dialogDescTotp')
+                            : t('pages.twofa.dialogDescEmail')}
                     </DialogDescription>
                 </DialogHeader>
                 <div className={'mx-auto'}>
@@ -102,13 +103,15 @@ const TwoFA = ({
                             disabled={cooling > 0}
                             onClick={sendMFA}
                         >
-                            {cooling > 0 ? `Waiting ${cooling}s` : 'Send Again'}
+                            {cooling > 0
+                                ? t('pages.twofa.waiting', { seconds: cooling })
+                                : t('pages.twofa.sendAgain')}
                         </LoadingButton>
                     </div>
                 )}
                 <DialogFooter>
                     <DialogClose>
-                        <Button variant={'outline'}>Cancel</Button>
+                        <Button variant={'outline'}>{t('common.cancel')}</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>

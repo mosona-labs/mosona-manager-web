@@ -1,5 +1,6 @@
 import { CheckCheckIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Card, CardContent } from '@/components/ui/card.tsx';
@@ -8,14 +9,15 @@ import { ToastError } from '@/utils/toast.ts';
 import LoadingButton from '@/components/loading-button.tsx';
 
 const TestEmail = () => {
+    const { t } = useTranslation();
     const [isSending, setIsSending] = useState(false);
 
     const onSendTestEmail = () => {
         setIsSending(true);
         ApiAdminSettings.testEmail()
             .then(() => {
-                toast.success('Test email sent', {
-                    description: 'A test email has been sent to your email address.',
+                toast.success(t('pages.adminEmail.testSent'), {
+                    description: t('pages.adminEmail.testSentDesc'),
                 });
             })
             .catch(ToastError)
@@ -30,15 +32,14 @@ const TestEmail = () => {
                 <div className={'space-y-0.5 flex-1'}>
                     <h2 className={'flex flex-row items-center gap-3 text-sm'}>
                         <CheckCheckIcon className={'w-4 hidden md:block'} />
-                        Try to send a test email after saving changes to verify the settings.
+                        {t('pages.adminEmail.testHint')}
                     </h2>
                     <p className={'md:ms-7 text-xs text-muted-foreground'}>
-                        Click the "Send Test Email" button below to send a test email to your email
-                        address.
+                        {t('pages.adminEmail.testHint2')}
                     </p>
                 </div>
                 <LoadingButton isLoading={isSending} onClick={onSendTestEmail} variant={'outline'}>
-                    Send Test Email
+                    {t('pages.adminEmail.sendTest')}
                 </LoadingButton>
             </CardContent>
         </Card>

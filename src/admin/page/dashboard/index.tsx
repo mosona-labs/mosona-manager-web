@@ -1,5 +1,6 @@
 import { Briefcase, Server, User, Voicemail } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { useUser } from '@/context/useUser.tsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.tsx';
@@ -18,6 +19,7 @@ const numberFormatter = (num: number) => {
 };
 
 const Dashboard = () => {
+    const { t } = useTranslation();
     const { user, config } = useUser();
 
     const [isLoading, setIsLoading] = useState(true);
@@ -90,7 +92,7 @@ const Dashboard = () => {
                     <Card className="border-border bg-card hover:shadow-lg transition-shadow">
                         <CardHeader className="flex flex-row items-center justify-between space-y-0">
                             <CardTitle className="text-sm font-medium text-card-foreground">
-                                Total Servers
+                                {t('pages.dashboard.totalServers')}
                             </CardTitle>
                             <Server className="h-4 w-4 text-green-500" />
                         </CardHeader>
@@ -131,8 +133,8 @@ const Dashboard = () => {
                             timeFrame={'24h'}
                             windowSize={90}
                             nowTime={nowTime}
-                            title="CPU Usage"
-                            description="System-wide CPU overview"
+                            title={t('pages.monitor.cpuUsage')}
+                            description={t('pages.monitor.cpuDescription')}
                             keyName="Usage"
                             keyUnit="%"
                             keyObj="cpu_usage"
@@ -153,8 +155,8 @@ const Dashboard = () => {
                             timeFrame={'24h'}
                             windowSize={10}
                             nowTime={nowTime}
-                            title="Memory Usage"
-                            description="System memory consumption overview"
+                            title={t('pages.monitor.memoryUsage')}
+                            description={t('pages.monitor.memoryDescription')}
                             keyName="Usage"
                             keyUnit="%"
                             keyObj="memory"

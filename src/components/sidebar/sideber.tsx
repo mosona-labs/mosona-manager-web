@@ -13,6 +13,7 @@ import {
     RadioTower,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import {
     DropdownMenu,
@@ -40,25 +41,25 @@ const sidebarItems: {
     icon?: ReactNode;
     path?: string;
 }[] = [
-    { title: 'Overview' },
-    { title: 'Dashboard', icon: <Container size={22} />, path: '/' },
-    { title: 'Terminal', icon: <Terminal size={22} />, path: '/terminal' },
-    { title: 'Keychain ', icon: <KeyRound size={22} />, path: '/keychain' },
+    { title: 'nav.overview' },
+    { title: 'nav.dashboard', icon: <Container size={22} />, path: '/' },
+    { title: 'nav.terminal', icon: <Terminal size={22} />, path: '/terminal' },
+    { title: 'nav.keychain', icon: <KeyRound size={22} />, path: '/keychain' },
     {
-        title: 'Security',
+        title: 'nav.security',
     },
-    { title: 'Logs', icon: <Clock size={22} />, path: '/logs' },
+    { title: 'nav.logs', icon: <Clock size={22} />, path: '/logs' },
     {
-        title: 'Manage',
+        title: 'nav.manage',
     },
-    { title: 'Team', icon: <Briefcase size={22} />, path: '/team' },
-    { title: 'Public Page', icon: <RadioTower size={22} />, path: '/public-page' },
-    { title: 'Profile', icon: <UserRoundCog size={22} />, path: '/profile' },
-    { title: 'Settings', icon: <Settings size={22} />, path: '/settings' },
+    { title: 'nav.team', icon: <Briefcase size={22} />, path: '/team' },
+    { title: 'nav.publicPage', icon: <RadioTower size={22} />, path: '/public-page' },
+    { title: 'common.profile', icon: <UserRoundCog size={22} />, path: '/profile' },
+    { title: 'common.settings', icon: <Settings size={22} />, path: '/settings' },
     {
-        title: 'Other',
+        title: 'nav.other',
     },
-    { title: 'About', icon: <BadgeInfo size={22} />, path: '/about' },
+    { title: 'nav.about', icon: <BadgeInfo size={22} />, path: '/about' },
 ];
 
 const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) => {
@@ -66,6 +67,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
     const { team, teams } = useUser();
     const { sessions, closeSession } = useSession();
     const { title } = useSiteBranding();
+    const { t } = useTranslation();
 
     const sessionList = useMemo(() => Array.from(sessions.values()), [sessions]);
 
@@ -87,7 +89,9 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     <Logo />
                     <div className="min-w-0">
                         <h1 className="truncate text-xl font-bold">{title}</h1>
-                        <p className="text-sm text-muted-foreground">Server Monitor & Management</p>
+                        <p className="text-sm text-muted-foreground">
+                            {t('brand.managerSubtitle')}
+                        </p>
                     </div>
                 </div>
 
@@ -96,7 +100,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                     {sessionList.length > 0 && (
                         <>
                             <div className="border-t my-0.5" />
-                            <p className="text-sm mt-1 mx-1 opacity-65">Sessions</p>
+                            <p className="text-sm mt-1 mx-1 opacity-65">{t('nav.sessions')}</p>
                             {sessionList.length > 0 ? (
                                 sessionList.map((session) => (
                                     <SidebarItem
@@ -125,7 +129,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                                 ))
                             ) : (
                                 <p className="text-sm mt-1 mb-4 mx-1 opacity-50 italic">
-                                    No active sessions
+                                    {t('nav.noSessions')}
                                 </p>
                             )}
                         </>
@@ -135,13 +139,13 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                         item.path ? (
                             <SidebarItem
                                 key={item.title}
-                                title={item.title}
+                                title={t(item.title)}
                                 icon={item.icon}
                                 path={item.path}
                             />
                         ) : (
                             <p key={item.title} className="text-sm mt-3 mx-1 opacity-65">
-                                {item.title}
+                                {t(item.title)}
                             </p>
                         )
                     )}
@@ -157,13 +161,13 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                                     <TeamAvatar
                                         color={team ? team?.color || '' : '#FFF'}
                                         imageUrl={team?.image || ''}
-                                        name={team ? team?.name || 'Loading...' : 'N'}
+                                        name={team ? team?.name || t('common.loading') : 'N'}
                                     />
                                 </div>
                                 <div className="text-start">
-                                    <p>{team ? team?.name : 'Click here'}</p>
+                                    <p>{team ? team?.name : t('nav.clickHere')}</p>
                                     <p className="font-normal text-xs opacity-65">
-                                        {team ? 'Team' : 'Create your first team now'}
+                                        {team ? t('nav.teamRole') : t('nav.createFirstTeam')}
                                     </p>
                                 </div>
                             </div>
@@ -174,22 +178,22 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                         className="w-full"
                         style={{ width: 'var(--radix-dropdown-menu-trigger-width)' }}
                     >
-                        <DropdownMenuLabel>Teams</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t('nav.teams')}</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        {teams.map((t) => (
+                        {teams.map((teamItem) => (
                             <DropdownMenuItem
-                                key={t.id}
+                                key={teamItem.id}
                                 onClick={(e) => {
                                     e.preventDefault();
                                 }}
                             >
                                 <TeamItem
-                                    id={t.id}
-                                    color={t.color}
-                                    image={t.image}
-                                    name={t.name}
-                                    role={'Team'}
-                                    isCurrent={t.id === team?.id}
+                                    id={teamItem.id}
+                                    color={teamItem.color}
+                                    image={teamItem.image}
+                                    name={teamItem.name}
+                                    role={t('nav.teamRole')}
+                                    isCurrent={teamItem.id === team?.id}
                                     onClose={() => setShowTeams(false)}
                                 />
                             </DropdownMenuItem>
@@ -202,9 +206,9 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
                             <div className="flex flex-row w-full justify-center items-center gap-2 cursor-pointer">
                                 <div className="w-8 h-8 border-2 border-dashed border-zinc-500 rounded-md" />
                                 <div className="text-start">
-                                    <p>Create New Team</p>
+                                    <p>{t('nav.createTeam')}</p>
                                     <p className="font-normal text-xs opacity-65">
-                                        Start a new team workspace
+                                        {t('nav.createTeamHint')}
                                     </p>
                                 </div>
                                 <div className="flex-1" />

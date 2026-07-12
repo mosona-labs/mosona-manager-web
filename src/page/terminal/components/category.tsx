@@ -3,6 +3,7 @@ import type { TerminalType } from '@/api/terminal';
 
 import { Trash2, Settings, Package } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ServerTerminalCard from './card';
 
@@ -21,6 +22,7 @@ const TerminalCard = ({
     mounted: boolean;
     index: number;
 }) => {
+    const { t } = useTranslation();
     const [openCategory, setOpenCategory] = useState<boolean>(false);
 
     const [openEdit, setOpenEdit] = useState<boolean>(false);
@@ -30,14 +32,14 @@ const TerminalCard = ({
             <ContextMenu
                 items={[
                     {
-                        label: 'Edit',
+                        label: t('pages.contextMenu.edit'),
                         icon: <Settings className="h-4 w-4" />,
                         onClick: () => {
                             setOpenEdit(true);
                         },
                     },
                     {
-                        label: 'Category',
+                        label: t('pages.contextMenu.category'),
                         icon: <Package className="h-4 w-4" />,
                         onClick: () => {
                             setOpenCategory(true);
@@ -48,7 +50,7 @@ const TerminalCard = ({
                         label: '',
                     },
                     {
-                        label: 'Delete',
+                        label: t('pages.contextMenu.delete'),
                         icon: <Trash2 className="h-4 w-4" />,
                         onClick: () => console.log('刪除'),
                         danger: true,

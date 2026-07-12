@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { Trans, useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -27,13 +28,14 @@ const DeleteServer = ({
     serverName: string;
     serverID: number;
 }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [name, setName] = useState<string>('');
 
     const onDelete = () => {
         if (name !== serverName) {
-            toast.warning('Server name does not match.', {
-                description: 'Please type the correct server name to confirm deletion.',
+            toast.warning(t('pages.serverForm.deleteNameMismatch'), {
+                description: t('pages.serverForm.deleteNameMismatchDesc'),
             });
             return;
         }
@@ -41,7 +43,7 @@ const DeleteServer = ({
         setIsLoading(true);
         ApiServer.delete(serverID)
             .then(() => {
-                toast.success('Server deleted successfully.', {});
+                toast.success(t('pages.serverForm.deleted'), {});
                 notifyServerMutation();
                 onOpenChange(false);
             })
@@ -55,18 +57,18 @@ const DeleteServer = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Delete Server</DialogTitle>
+                    <DialogTitle>{t('pages.serverForm.deleteTitle')}</DialogTitle>
                 </DialogHeader>
                 <div className="grid gap-4">
-                    <p>Are you sure you want to delete the server {serverName}?</p>
-                    <p>
-                        All data associated with this server will be permanently removed. To
-                        confirm, please type the server name below.
-                    </p>
+                    <p>{t('pages.serverForm.deleteConfirm', { name: serverName })}</p>
+                    <p>{t('pages.serverForm.deleteWarning')}</p>
                     <div className="grid gap-3">
                         <p className={'text-sm font-semibold'}>
-                            Please type the server name{' '}
-                            <b className={'text-destructive'}>{serverName}</b> to confirm.
+                            <Trans
+                                i18nKey="pages.serverForm.deleteTypeHint"
+                                values={{ name: serverName }}
+                                components={{ b: <b className={'text-destructive'} /> }}
+                            />
                         </p>
                         <Input
                             onChange={(e) => {
@@ -77,10 +79,10 @@ const DeleteServer = ({
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                     <LoadingButton isLoading={isLoading} variant={'destructive'} onClick={onDelete}>
-                        Delete
+                        {t('common.delete')}
                     </LoadingButton>
                 </DialogFooter>
             </DialogContent>

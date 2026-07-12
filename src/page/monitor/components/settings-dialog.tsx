@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 import {
     Dialog,
     DialogClose,
@@ -23,6 +25,7 @@ import {
 import { useUser } from '@/context/useUser.tsx';
 
 const SettingsDialog = ({ children }: { children: ReactNode }) => {
+    const { t } = useTranslation();
     const { config, updateConfig } = useUser();
 
     return (
@@ -30,12 +33,12 @@ const SettingsDialog = ({ children }: { children: ReactNode }) => {
             <DialogTrigger asChild>{children}</DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Chart Settings</DialogTitle>
+                    <DialogTitle>{t('pages.monitor.chartSettings')}</DialogTitle>
                     <DialogDescription></DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
                     <div className="grid gap-3">
-                        <Label>Aggregation Mode for Graphs</Label>
+                        <Label>{t('pages.display.aggregation')}</Label>
                         <Select
                             value={config.defaultMonitorMode}
                             onValueChange={(e) => {
@@ -43,19 +46,23 @@ const SettingsDialog = ({ children }: { children: ReactNode }) => {
                             }}
                         >
                             <SelectTrigger className={'w-full'}>
-                                <SelectValue placeholder="Select a mode" />
+                                <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="avg">Average</SelectItem>
-                                    <SelectItem value="max">Maximum</SelectItem>
-                                    <SelectItem value="raw">Raw Data</SelectItem>
+                                    <SelectItem value="avg">
+                                        {t('pages.display.average')}
+                                    </SelectItem>
+                                    <SelectItem value="max">
+                                        {t('pages.display.maximum')}
+                                    </SelectItem>
+                                    <SelectItem value="raw">{t('pages.display.raw')}</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
                     </div>
                     <div className="grid gap-3">
-                        <Label>Max & Min Lines on Graphs</Label>
+                        <Label>{t('pages.display.minMax')}</Label>
                         <Select
                             value={config.defaultMinMaxMode}
                             onValueChange={(e) => {
@@ -65,11 +72,13 @@ const SettingsDialog = ({ children }: { children: ReactNode }) => {
                             }}
                         >
                             <SelectTrigger className={'w-full'}>
-                                <SelectValue placeholder="Select a mode" />
+                                <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="min-auto">Min - Auto</SelectItem>
+                                    <SelectItem value="min-auto">
+                                        {t('pages.display.minAuto')}
+                                    </SelectItem>
                                     <SelectItem value="0-auto">0 - Auto</SelectItem>
                                     <SelectItem value="0-max">0 - Max</SelectItem>
                                 </SelectGroup>
@@ -79,7 +88,7 @@ const SettingsDialog = ({ children }: { children: ReactNode }) => {
                 </div>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                 </DialogFooter>
             </DialogContent>

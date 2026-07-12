@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import AddKey from '@/page/keychain/components/add.tsx';
 import KeyCard from '@/page/keychain/components/card.tsx';
@@ -6,6 +7,7 @@ import KeychainSkeletonCard from '@/page/keychain/components/skeleton-card.tsx';
 import { useUser } from '@/context/useUser.tsx';
 
 const Keychain = () => {
+    const { t } = useTranslation();
     const { keys } = useUser();
     const [mounted, setMounted] = useState(false);
     const [showSkeleton, setShowSkeleton] = useState(true);
@@ -65,10 +67,8 @@ const Keychain = () => {
                     }}
                 >
                     <div>
-                        <h1 className="text-2xl font-bold">Keychain</h1>
-                        <p className="opacity-65">
-                            Manage SSH keys and access credentials for your servers.
-                        </p>
+                        <h1 className="text-2xl font-bold">{t('pages.keychain.title')}</h1>
+                        <p className="opacity-65">{t('pages.keychain.description')}</p>
                     </div>
                     <div className="flex flex-row gap-2">
                         <AddKey />
@@ -85,17 +85,12 @@ const Keychain = () => {
                                 transform: mounted ? 'none' : 'translateY(8px)',
                             }}
                         >
-                            No keys found.
+                            {t('pages.keychain.noKeys')}
                         </p>
                     ) : (
                         <div className={'category-terminal-grid'}>
                             {keys.map((key, index) => (
-                                <KeyCard
-                                    key={key.id}
-                                    item={key}
-                                    mounted={mounted}
-                                    index={index}
-                                />
+                                <KeyCard key={key.id} item={key} mounted={mounted} index={index} />
                             ))}
                         </div>
                     )}

@@ -1,6 +1,7 @@
 import { ArrowLeftRight, Plus, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import useTerminals from './hook';
 import CategoryCard from './components/category';
@@ -17,6 +18,7 @@ import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 
 const Terminal = () => {
+    const { t } = useTranslation();
     const { categories } = useUser();
 
     const navigator = useNavigate();
@@ -92,7 +94,7 @@ const Terminal = () => {
                     }}
                 >
                     <div>
-                        <h1 className="text-2xl font-bold">Terminal</h1>
+                        <h1 className="text-2xl font-bold">{t('pages.terminal.title')}</h1>
                         <p className="opacity-65">
                             Access terminal to manage your servers via command line
                         </p>
@@ -120,7 +122,7 @@ const Terminal = () => {
                 >
                     <p className="absolute h-full flex items-center px-2">$</p>
                     <Input
-                        placeholder="Search server name or address..."
+                        placeholder={t('pages.terminal.search')}
                         className="border-0 ps-6"
                         value={filter}
                         onChange={(e) => setFilter(e.target.value)}

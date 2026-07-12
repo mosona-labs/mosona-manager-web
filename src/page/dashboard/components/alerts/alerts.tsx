@@ -13,6 +13,7 @@ import {
     ServerIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -39,6 +40,7 @@ const AlertDialog = ({
     serverID: number;
     serverName: string;
 }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { itemConfigs, loading } = useAlert();
 
@@ -51,9 +53,9 @@ const AlertDialog = ({
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="max-h-[calc(100svh-2rem)] overflow-y-auto sm:max-w-xl">
                 <DialogHeader>
-                    <DialogTitle>Alerts</DialogTitle>
+                    <DialogTitle>{t('pages.alerts.title')}</DialogTitle>
                     <DialogDescription>
-                        See{' '}
+                        {t('pages.alerts.descriptionPrefix')}{' '}
                         <span
                             className={
                                 'font-semibold text-accent-foreground/80 hover:underline cursor-pointer'
@@ -62,9 +64,9 @@ const AlertDialog = ({
                                 navigate('/settings');
                             }}
                         >
-                            notification settings
+                            {t('pages.alerts.notificationSettings')}
                         </span>{' '}
-                        to configure how you receive alerts.
+                        {t('pages.alerts.descriptionSuffix')}
                     </DialogDescription>
                 </DialogHeader>
                 <Tabs
@@ -81,7 +83,7 @@ const AlertDialog = ({
                         </TabsTrigger>
                         <TabsTrigger value="all" className="shrink-0">
                             <GlobeIcon />
-                            All Server
+                            {t('pages.alerts.allServer')}
                         </TabsTrigger>
                     </TabsList>
                 </Tabs>
@@ -104,7 +106,7 @@ const AlertDialog = ({
                         ) : (
                             <span className={'border-2 border-destructive rounded-sm w-4 h-4'} />
                         )}
-                        Override Team Alerts
+                        {t('pages.alerts.overrideTeam')}
                     </Button>
                 )}
                 <div className="grid gap-2">
@@ -120,7 +122,7 @@ const AlertDialog = ({
                     ))}
                     {!loading && itemConfigs.length === 0 && (
                         <div className="text-sm text-muted-foreground">
-                            No configurable alerts are available right now.
+                            {t('pages.alerts.noAlerts')}
                         </div>
                     )}
                 </div>

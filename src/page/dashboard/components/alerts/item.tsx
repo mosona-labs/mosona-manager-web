@@ -2,6 +2,7 @@ import type { AlertItemConfigType } from '@/api/alert.ts';
 
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import ApiAlert from '@/api/alert.ts';
 import { Switch } from '@/components/ui/switch.tsx';
@@ -23,7 +24,13 @@ const AlertItem = ({
     icon: ReactNode;
     override: boolean;
 }) => {
+    const { t, i18n } = useTranslation();
     const { alerts, teamAlerts, refresh } = useAlert();
+    const itemKey = `pages.alerts.items.${config.item}`;
+    const label = i18n.exists(`${itemKey}.label`) ? t(`${itemKey}.label`) : config.label;
+    const description = i18n.exists(`${itemKey}.description`)
+        ? t(`${itemKey}.description`)
+        : config.description;
 
     const currentAlerts = scope === 'team' ? teamAlerts : alerts[alertTargetId];
     const currentAlert = currentAlerts?.[config.item];
@@ -46,12 +53,12 @@ const AlertItem = ({
     const normalizedThreshold = thresholdEnabled ? threshold : defaultThreshold;
 
     const thresholdText = useMemo(
-        () => formatValue(threshold, config.threshold.unit),
-        [threshold, config.threshold.unit]
+        () => formatValue(threshold, config.threshold.unit, t),
+        [threshold, config.threshold.unit, t]
     );
     const durationText = useMemo(
-        () => formatValue(duration, config.for_duration.unit),
-        [duration, config.for_duration.unit]
+        () => formatValue(duration, config.for_duration.unit, t),
+        [duration, config.for_duration.unit, t]
     );
 
     useEffect(() => {
@@ -98,11 +105,8 @@ const AlertItem = ({
                 .then((res) => {
                     void refresh();
                     if (scope === 'team') {
-                        toast.success('Team alert disabled', {
-                            description:
-                                'There are currently ' +
-                                res.data +
-                                ' servers using the team alert settings.',
+                        toast.success(t('pages.alerts.teamDisabled'), {
+                            description: t('pages.alerts.teamServers', { count: res.data }),
                         });
                     }
                 })
@@ -118,11 +122,8 @@ const AlertItem = ({
                 .then((res) => {
                     void refresh();
                     if (scope === 'team') {
-                        toast.success('Team alert enabled', {
-                            description:
-                                'There are currently ' +
-                                res.data +
-                                ' servers using the team alert settings.',
+                        toast.success(t('pages.alerts.teamEnabled'), {
+                            description: t('pages.alerts.teamServers', { count: res.data }),
                         });
                     }
                 })
@@ -197,12 +198,12 @@ const AlertItem = ({
                 <div className={'space-y-1'}>
                     <div className={'font-semibold flex flex-row items-center gap-2'}>
                         {icon}
-                        {config.label}
+                        {label}
                     </div>
-                    <p className={'text-sm text-muted-foreground'}>{config.description}</p>
+                    <p className={'text-sm text-muted-foreground'}>{description}</p>
                     {enabled && config.notify_once && (
                         <p className={'text-xs text-muted-foreground'}>
-                            This alert is sent once per matching window.
+                            {t('pages.alerts.notifyOnce')}
                         </p>
                     )}
                 </div>
@@ -219,7 +220,7 @@ const AlertItem = ({
                     {thresholdEnabled && (
                         <div className={'py-2 space-y-2.5 flex-1'}>
                             <div className={'text-muted-foreground text-sm font-semibold'}>
-                                Threshold{' '}
+                                {t('pages.alerts.threshold')}{' '}
                                 <span className={'text-accent-foreground'}>{thresholdText}</span>
                             </div>
                             <Slider
@@ -236,7 +237,7 @@ const AlertItem = ({
                     {durationEnabled && (
                         <div className={'py-2 space-y-2.5 flex-1'}>
                             <div className={'text-muted-foreground text-sm font-semibold'}>
-                                Window{' '}
+                                {t('pages.alerts.window')}{' '}
                                 <span className={'text-accent-foreground'}>{durationText}</span>
                             </div>
                             <Slider
@@ -259,14 +260,22 @@ const AlertItem = ({
     );
 };
 
-const formatValue = (value: number, unit?: string) => {
+const formatValue = (
+    value: number,
+    unit: string | undefined,
+    t: (key: string, opts?: Record<string, number>) => string
+) => {
     switch (unit) {
         case 'percent':
             return `${value}%`;
         case 'minute':
-            return `${value} minute${value === 1 ? '' : 's'}`;
+            return value === 1
+                ? t('pages.alerts.minute', { count: value })
+                : t('pages.alerts.minutes', { count: value });
         case 'day':
-            return `${value} day${value === 1 ? '' : 's'}`;
+            return value === 1
+                ? t('pages.alerts.day', { count: value })
+                : t('pages.alerts.days', { count: value });
         default:
             return unit ? `${value} ${unit}` : String(value);
     }

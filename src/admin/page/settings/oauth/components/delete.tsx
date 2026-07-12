@@ -1,5 +1,6 @@
 import { Trash2Icon } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button.tsx';
@@ -18,6 +19,7 @@ import {
 } from '@/components/ui/dialog.tsx';
 
 const Delete = ({ item, refresh }: { item: OAuthProviderType; refresh: () => void }) => {
+    const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -25,8 +27,8 @@ const Delete = ({ item, refresh }: { item: OAuthProviderType; refresh: () => voi
         setIsDeleting(true);
         ApiAdminOAuth.del(item.id)
             .then(() => {
-                toast.success('Delete successful', {
-                    description: 'The OAuth2 provider has been deleted successfully.',
+                toast.success(t('pages.adminOauth.deleteSuccess'), {
+                    description: t('pages.adminOauth.deleteSuccessDesc'),
                 });
                 setOpen(false);
                 refresh();
@@ -46,22 +48,21 @@ const Delete = ({ item, refresh }: { item: OAuthProviderType; refresh: () => voi
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>Are you sure?</DialogTitle>
+                    <DialogTitle>{t('pages.adminOauth.deleteTitle')}</DialogTitle>
                     <DialogDescription>
-                        This action cannot be undone. This will permanently delete the OAuth2
-                        provider <strong>{item.name}</strong>.
+                        {t('pages.adminOauth.deleteDesc', { name: item.name })}
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
                     <DialogClose asChild>
-                        <Button variant="outline">Cancel</Button>
+                        <Button variant="outline">{t('common.cancel')}</Button>
                     </DialogClose>
                     <LoadingButton
                         isLoading={isDeleting}
                         onClick={handleDelete}
                         variant="destructive"
                     >
-                        Delete
+                        {t('common.delete')}
                     </LoadingButton>
                 </DialogFooter>
             </DialogContent>

@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
@@ -682,84 +683,87 @@ const Details = ({
     diskWrite: { value: string; unit: string };
     rxTotal: { value: string; unit: string };
     txTotal: { value: string; unit: string };
-}) => (
-    <div
-        className={cn(
-            'border-t border-border pt-2.5 -mb-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300',
-            showMore ? 'h-24' : 'h-0 border-0 p-0'
-        )}
-    >
-        <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-                <HardDrive className="h-3.5 w-3.5" />
-                <span>I/O</span>
-            </div>
-            <div className="flex items-center">
-                <div className="flex items-center gap-1 text-success">
-                    <HardDriveUpload className="h-3 w-3" />
-                    <span className="font-mono">{diskRead.value}</span>
-                    <span className="text-muted-foreground">{diskRead.unit}/s</span>
+}) => {
+    const { t } = useTranslation();
+    return (
+        <div
+            className={cn(
+                'border-t border-border pt-2.5 -mb-1.5 flex flex-col gap-1.5 overflow-hidden transition-all duration-300',
+                showMore ? 'h-24' : 'h-0 border-0 p-0'
+            )}
+        >
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <HardDrive className="h-3.5 w-3.5" />
+                    <span>{t('pages.dashboard.io')}</span>
                 </div>
-                <div className="flex items-center gap-1 text-info ms-3">
-                    <HardDriveDownload className="h-3 w-3" />
-                    <span className="font-mono">{diskWrite.value}</span>
-                    <span className="text-muted-foreground">{diskWrite.unit}/s</span>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <HardDriveUpload className="h-3 w-3" />
+                        <span className="font-mono">{diskRead.value}</span>
+                        <span className="text-muted-foreground">{diskRead.unit}/s</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <HardDriveDownload className="h-3 w-3" />
+                        <span className="font-mono">{diskWrite.value}</span>
+                        <span className="text-muted-foreground">{diskWrite.unit}/s</span>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <HardDrive className="h-3.5 w-3.5" />
+                    <span>{t('pages.dashboard.iops')}</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <HardDriveUpload className="h-3 w-3" />
+                        <span className="font-mono">{server.diskReadIOPS.toFixed(2)}</span>
+                        <span className="text-muted-foreground">ps</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <HardDriveDownload className="h-3 w-3" />
+                        <span className="font-mono">{server.diskWriteIOPS.toFixed(2)}</span>
+                        <span className="text-muted-foreground">ps</span>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <Unplug className="h-3.5 w-3.5" />
+                    <span>{t('pages.dashboard.connections')}</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <span className="font-mono text-muted-foreground">TCP</span>
+                        <span className="font-mono">{server.tcpTotal}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <span className="font-mono text-muted-foreground">UDP</span>
+                        <span className="font-mono">{server.udpTotal}</span>
+                    </div>
+                </div>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 text-muted-foreground">
+                    <ArrowUpDown className="h-3.5 w-3.5" />
+                    <span>{t('pages.dashboard.totalBandwidth')}</span>
+                </div>
+                <div className="flex items-center">
+                    <div className="flex items-center gap-1 text-success">
+                        <ArrowUp className="h-3 w-3" />
+                        <span className="font-mono">{rxTotal.value}</span>
+                        <span className="text-muted-foreground">{rxTotal.unit}</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-info ms-3">
+                        <ArrowDown className="h-3 w-3" />
+                        <span className="font-mono">{txTotal.value}</span>
+                        <span className="text-muted-foreground">{txTotal.unit}</span>
+                    </div>
                 </div>
             </div>
         </div>
-        <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-                <HardDrive className="h-3.5 w-3.5" />
-                <span>IOPS</span>
-            </div>
-            <div className="flex items-center">
-                <div className="flex items-center gap-1 text-success">
-                    <HardDriveUpload className="h-3 w-3" />
-                    <span className="font-mono">{server.diskReadIOPS.toFixed(2)}</span>
-                    <span className="text-muted-foreground">ps</span>
-                </div>
-                <div className="flex items-center gap-1 text-info ms-3">
-                    <HardDriveDownload className="h-3 w-3" />
-                    <span className="font-mono">{server.diskWriteIOPS.toFixed(2)}</span>
-                    <span className="text-muted-foreground">ps</span>
-                </div>
-            </div>
-        </div>
-        <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-                <Unplug className="h-3.5 w-3.5" />
-                <span>Connections</span>
-            </div>
-            <div className="flex items-center">
-                <div className="flex items-center gap-1 text-success">
-                    <span className="font-mono text-muted-foreground">TCP</span>
-                    <span className="font-mono">{server.tcpTotal}</span>
-                </div>
-                <div className="flex items-center gap-1 text-info ms-3">
-                    <span className="font-mono text-muted-foreground">UDP</span>
-                    <span className="font-mono">{server.udpTotal}</span>
-                </div>
-            </div>
-        </div>
-        <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-1.5 text-muted-foreground">
-                <ArrowUpDown className="h-3.5 w-3.5" />
-                <span>Bandwidth (Total)</span>
-            </div>
-            <div className="flex items-center">
-                <div className="flex items-center gap-1 text-success">
-                    <ArrowUp className="h-3 w-3" />
-                    <span className="font-mono">{rxTotal.value}</span>
-                    <span className="text-muted-foreground">{rxTotal.unit}</span>
-                </div>
-                <div className="flex items-center gap-1 text-info ms-3">
-                    <ArrowDown className="h-3 w-3" />
-                    <span className="font-mono">{txTotal.value}</span>
-                    <span className="text-muted-foreground">{txTotal.unit}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-);
+    );
+};
 
 export default ServerStatusCard;

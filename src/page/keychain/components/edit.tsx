@@ -1,4 +1,5 @@
 import { type FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ApiKey, { type KeyType } from '@/api/key.ts';
 import {
@@ -29,6 +30,7 @@ const EditKey = ({
     onOpenChange: (open: boolean) => void;
     item: KeyType;
 }) => {
+    const { t } = useTranslation();
     const { refreshKeys } = useUser();
 
     const [isLoading, setIsLoading] = useState(false);
@@ -61,27 +63,26 @@ const EditKey = ({
                 <DialogContent className="sm:max-w-md">
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <DialogHeader>
-                            <DialogTitle>Edit Key</DialogTitle>
+                            <DialogTitle>{t('pages.keychain.editTitle')}</DialogTitle>
                             <DialogDescription>
-                                For security reasons, you cannot view or modify the contents of a
-                                key once it has been added.
+                                {t('pages.keychain.editDescription')}
                             </DialogDescription>
                         </DialogHeader>
                         <div className={'grid gap-3'}>
                             <Label>
-                                Name
+                                {t('pages.keychain.name')}
                                 <IsRequired />
                             </Label>
                             <Input
                                 defaultValue={item.name}
                                 name={'name'}
-                                placeholder="Key Name"
+                                placeholder={t('pages.keychain.keyNamePlaceholder')}
                                 required
                             />
                         </div>
                         <div className={'grid gap-3'}>
                             <div className={'flex flex-row items-center gap-2'}>
-                                <Label>Password</Label>
+                                <Label>{t('pages.keychain.password')}</Label>
                                 <Badge
                                     className={'cursor-pointer select-none'}
                                     variant={emptyPassword ? 'default' : 'outline'}
@@ -89,13 +90,13 @@ const EditKey = ({
                                         setEmptyPassword(!emptyPassword);
                                     }}
                                 >
-                                    Reset to empty
+                                    {t('pages.keychain.resetEmpty')}
                                 </Badge>
                             </div>
                             <Input
                                 type={'password'}
                                 name={'password'}
-                                placeholder="Empty to keep key's current password"
+                                placeholder={t('pages.keychain.keepPassword')}
                                 disabled={emptyPassword}
                             />
                         </div>
@@ -108,14 +109,14 @@ const EditKey = ({
                                     setDelOpen(true);
                                 }}
                             >
-                                Delete
+                                {t('common.delete')}
                             </Button>
                             <div className={'flex-1'} />
                             <DialogClose asChild>
-                                <Button variant="outline">Cancel</Button>
+                                <Button variant="outline">{t('common.cancel')}</Button>
                             </DialogClose>
                             <LoadingButton type="submit" isLoading={isLoading}>
-                                Save changes
+                                {t('pages.keychain.save')}
                             </LoadingButton>
                         </DialogFooter>
                     </form>

@@ -4,6 +4,7 @@ import { Plus, Terminal } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import AvatarEditor from '../../components/team/avatar';
 import Member from '../../components/team/member';
@@ -24,6 +25,7 @@ import LoadingButton from '@/components/loading-button.tsx';
 import { useSiteBranding } from '@/hooks/useSiteBranding';
 
 const CreateTeam = () => {
+    const { t } = useTranslation();
     const navigator = useNavigate();
     const { user, refresh } = useUser();
     const { title } = useSiteBranding();
@@ -50,7 +52,7 @@ const CreateTeam = () => {
     const [isLoading, setIsLoading] = useState(false);
     const handleCreateTeam = () => {
         if (!name) {
-            toast.error('Error', { description: 'Please fill in all required fields.' });
+            toast.error(t('common.error'), { description: t('auth.required') });
             return;
         }
         setIsLoading(true);
@@ -67,7 +69,9 @@ const CreateTeam = () => {
             )
         )
             .then((res) => {
-                toast.success('Success', { description: 'Team created successfully.' });
+                toast.success(t('common.success'), {
+                    description: t('pages.createTeam.created'),
+                });
 
                 ApiUser.setActiveTeam(res.data).finally(() => {
                     refresh().finally(() => {
@@ -85,24 +89,19 @@ const CreateTeam = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">New Team</h1>
-                    <p className="opacity-65">
-                        Create a new team to collaborate with your colleagues
-                    </p>
+                    <h1 className="text-2xl font-bold">{t('pages.createTeam.title')}</h1>
+                    <p className="opacity-65">{t('pages.createTeam.description')}</p>
                 </div>
             </div>
             <Alert variant="default">
                 <Terminal />
-                <AlertTitle>Hey There !</AlertTitle>
-                <AlertDescription>
-                    {title} manages servers by team. As long as you don’t invite anyone else to your
-                    team, it can also be private!
-                </AlertDescription>
+                <AlertTitle>{t('pages.createTeam.heyThere')}</AlertTitle>
+                <AlertDescription>{t('pages.createTeam.alert', { title })}</AlertDescription>
             </Alert>
             <div className="mt-4 flex flex-row gap-3">
                 <div>
                     <div className="grid gap-3">
-                        <Label>Profile picture</Label>
+                        <Label>{t('pages.createTeam.profilePicture')}</Label>
                         <AvatarEditor
                             name={name}
                             colorRef={avatarColorRef}
@@ -113,20 +112,22 @@ const CreateTeam = () => {
                 <div className="flex-1">
                     <div className="grid gap-4">
                         <div className="grid gap-3">
-                            <Label htmlFor="name">Name</Label>
+                            <Label htmlFor="name">{t('pages.createTeam.name')}</Label>
                             <Input
                                 id="name"
-                                placeholder="Mosona Team"
+                                placeholder={t('pages.createTeam.namePlaceholder')}
                                 onChange={(e) => {
                                     setName(e.target.value);
                                 }}
                             />
                         </div>
                         <div className="grid gap-3">
-                            <Label htmlFor="description">Description</Label>
+                            <Label htmlFor="description">
+                                {t('pages.createTeam.descriptionLabel')}
+                            </Label>
                             <Textarea
                                 id="description"
-                                placeholder="Some text..."
+                                placeholder={t('pages.createTeam.descriptionPlaceholder')}
                                 onChange={(e) => {
                                     setDescription(e.target.value);
                                 }}
@@ -135,7 +136,7 @@ const CreateTeam = () => {
                     </div>
                 </div>
             </div>
-            <Label className="mt-4 text-md">Members</Label>
+            <Label className="mt-4 text-md">{t('pages.createTeam.members')}</Label>
             <div className="mt-2 flex flex-col gap-3">
                 <Card className="gap-0 p-0">
                     {members.map((item, index) => (
@@ -147,8 +148,8 @@ const CreateTeam = () => {
                             isOwner={false}
                             onRemove={() => {
                                 if (members[index].id === user?.id) {
-                                    toast.warning('Warning', {
-                                        description: "You can't remove yourself from the team.",
+                                    toast.warning(t('common.warning'), {
+                                        description: t('pages.createTeam.cannotRemoveSelf'),
                                     });
                                     return;
                                 }
@@ -195,7 +196,7 @@ const CreateTeam = () => {
             </div>
             <div className="mt-4 flex flex-row justify-end items-center gap-3">
                 <LoadingButton isLoading={isLoading} onClick={handleCreateTeam}>
-                    Create Team
+                    {t('pages.createTeam.create')}
                 </LoadingButton>
             </div>
         </div>

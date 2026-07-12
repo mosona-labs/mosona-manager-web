@@ -1,5 +1,6 @@
 import { type Dispatch, type FormEvent, type SetStateAction, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { CircleSlash, InfoIcon, Loader, MonitorCheck, Plug, Plus } from 'lucide-react';
 
 import {
@@ -39,6 +40,7 @@ const EditServer = ({
     onOpenChange: Dispatch<SetStateAction<boolean>>;
     serverID: number;
 }) => {
+    const { t } = useTranslation();
     const { categories, keys } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -144,8 +146,8 @@ const EditServer = ({
             .then(() => {
                 onOpenChange(false);
                 notifyServerMutation();
-                toast.success('Server updated successfully', {
-                    description: 'The changes will take effect shortly.',
+                toast.success(t('pages.serverForm.updated'), {
+                    description: t('pages.serverForm.changesSoon'),
                 });
             })
             .catch(ToastError)
@@ -159,9 +161,9 @@ const EditServer = ({
             <DialogContent className="sm:max-w-4xl px-4">
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <DialogHeader className="px-2">
-                        <DialogTitle>Edit Server</DialogTitle>
+                        <DialogTitle>{t('pages.serverForm.edit')}</DialogTitle>
                         <DialogDescription>
-                            Edit Detail for server ID {serverID ?? '—'}.
+                            {t('pages.serverForm.editDescription', { id: serverID ?? '—' })}
                         </DialogDescription>
                     </DialogHeader>
                     <div className="md:flex flex-col max-h-[60vh] overflow-y-auto md:max-h-none md:flex-row relative">
@@ -173,13 +175,15 @@ const EditServer = ({
                         <div className="flex-1 md:max-h-[75vh] overflow-y-auto px-2">
                             <div className="grid gap-4">
                                 <div className="grid gap-3">
-                                    <Label>Category</Label>
+                                    <Label>{t('pages.serverForm.category')}</Label>
                                     <Select
                                         value={category ? category.toString() : undefined}
                                         onValueChange={(e) => setCategory(parseInt(e))}
                                     >
                                         <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Select Category" />
+                                            <SelectValue
+                                                placeholder={t('pages.serverForm.selectCategory')}
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {categories &&
@@ -192,7 +196,7 @@ const EditServer = ({
                                     </Select>
                                 </div>
                                 <div className="grid gap-3">
-                                    <Label>Name</Label>
+                                    <Label>{t('pages.serverForm.name')}</Label>
                                     <Input
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
@@ -203,13 +207,10 @@ const EditServer = ({
                                     <div className={'flex flex-row items-center gap-1'}>
                                         <Plug size={18} />
                                         {mode === 0
-                                            ? 'SSH'
+                                            ? t('pages.serverForm.sshMode')
                                             : mode === 1
-                                              ? 'Agent (Active)'
-                                              : mode === 2
-                                                ? 'Agent (Passive)'
-                                                : 'Agent'}{' '}
-                                        Mode
+                                              ? t('pages.serverForm.activeMode')
+                                              : t('pages.serverForm.passiveMode')}
                                         <div className={'flex-1'} />
                                         {mode !== 0 && (
                                             <HelpAgentMode>
@@ -236,7 +237,7 @@ const EditServer = ({
                                     <>
                                         <div className="flex flex-row gap-2">
                                             <div className="flex-2 grid gap-3">
-                                                <Label>IP / Hostname</Label>
+                                                <Label>{t('pages.serverForm.address')}</Label>
                                                 <Input
                                                     value={address}
                                                     onChange={(e) => setAddress(e.target.value)}
@@ -245,7 +246,7 @@ const EditServer = ({
                                                 />
                                             </div>
                                             <div className="flex-1 grid gap-3">
-                                                <Label>Port</Label>
+                                                <Label>{t('pages.serverForm.port')}</Label>
                                                 <Input
                                                     type="number"
                                                     min={1}
@@ -265,14 +266,14 @@ const EditServer = ({
                                 {mode === 0 && (
                                     <>
                                         <div className="grid gap-3">
-                                            <Label>Username</Label>
+                                            <Label>{t('pages.serverForm.username')}</Label>
                                             <Input
                                                 value={username}
                                                 onChange={(e) => setUsername(e.target.value)}
                                                 placeholder="root"
                                             />
                                         </div>
-                                        <Label>Authorization</Label>
+                                        <Label>{t('pages.serverForm.authorization')}</Label>
                                         <Tabs
                                             value={authType}
                                             onValueChange={(v) => {
@@ -285,14 +286,18 @@ const EditServer = ({
                                             }}
                                         >
                                             <TabsList className="w-full">
-                                                <TabsTrigger value="password">Password</TabsTrigger>
-                                                <TabsTrigger value="key">Key</TabsTrigger>
+                                                <TabsTrigger value="password">
+                                                    {t('pages.serverForm.password')}
+                                                </TabsTrigger>
+                                                <TabsTrigger value="key">
+                                                    {t('pages.serverForm.key')}
+                                                </TabsTrigger>
                                             </TabsList>
                                             <TabsContent value="password">
                                                 <Input
                                                     value={password}
                                                     onChange={(e) => setPassword(e.target.value)}
-                                                    placeholder="Password (Keep empty to not change)"
+                                                    placeholder={t('pages.serverForm.keepPassword')}
                                                 />
                                             </TabsContent>
                                             <TabsContent value="key">
@@ -309,10 +314,16 @@ const EditServer = ({
                                                         }
                                                     >
                                                         <SelectTrigger className="w-full">
-                                                            <SelectValue placeholder="Select Key" />
+                                                            <SelectValue
+                                                                placeholder={t(
+                                                                    'pages.serverForm.selectKey'
+                                                                )}
+                                                            />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="0">None</SelectItem>
+                                                            <SelectItem value="0">
+                                                                {t('pages.serverForm.none')}
+                                                            </SelectItem>
                                                             {keys?.map((item) => (
                                                                 <SelectItem
                                                                     key={item.id}
@@ -338,14 +349,14 @@ const EditServer = ({
                                         <Label>UUID</Label>
                                         <Input
                                             value={agentUUID}
-                                            placeholder={'Not Initialized'}
+                                            placeholder={t('pages.serverForm.notInitialized')}
                                             disabled
                                         />
                                     </div>
                                 )}
                                 {mode !== 0 && (
                                     <div className="grid gap-3">
-                                        <Label>Agent</Label>
+                                        <Label>{t('pages.serverForm.agent')}</Label>
                                         <div
                                             className={
                                                 'border p-4 rounded-md gap-3 flex flex-row items-center'
@@ -355,7 +366,7 @@ const EditServer = ({
                                                 <>
                                                     <CircleSlash className={'text-orange-400'} />
                                                     <h1 className={'font-semibold'}>
-                                                        Not Installed
+                                                        {t('pages.serverForm.notInstalled')}
                                                     </h1>
                                                 </>
                                             ) : (
@@ -363,7 +374,7 @@ const EditServer = ({
                                                     <MonitorCheck className={'text-green-400'} />
                                                     <div>
                                                         <h1 className={'font-semibold'}>
-                                                            Installed
+                                                            {t('pages.serverForm.installed')}
                                                         </h1>
                                                         <p
                                                             className={
@@ -389,7 +400,7 @@ const EditServer = ({
                                                     size={'sm'}
                                                     variant={'outline'}
                                                 >
-                                                    Reinstall
+                                                    {t('pages.serverForm.reinstall')}
                                                 </Button>
                                             </ReinstallDialog>
                                         </div>
@@ -397,7 +408,7 @@ const EditServer = ({
                                 )}
 
                                 <div className="flex flex-row justify-between mt-1 gap-3">
-                                    <Label>Monitor Access</Label>
+                                    <Label>{t('pages.serverForm.monitorAccess')}</Label>
                                     <Switch
                                         checked={allowMonitor}
                                         onCheckedChange={(v) => {
@@ -407,7 +418,7 @@ const EditServer = ({
                                     />
                                 </div>
                                 <div className="flex flex-row justify-between gap-3">
-                                    <Label>Terminal Access</Label>
+                                    <Label>{t('pages.serverForm.terminalAccess')}</Label>
                                     <Switch
                                         checked={allowTerminal}
                                         onCheckedChange={(v) => {
@@ -423,11 +434,11 @@ const EditServer = ({
 
                         <div className="flex-2 md:max-h-[75vh] overflow-y-auto mx-2">
                             <div className="flex flex-col gap-3">
-                                <Label>Display</Label>
+                                <Label>{t('pages.serverForm.display')}</Label>
                                 <Card className="py-4">
                                     <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                         <div className="grid gap-3">
-                                            <Label>Weight (Sort)</Label>
+                                            <Label>{t('pages.serverForm.weight')}</Label>
                                             <Input
                                                 type="number"
                                                 value={weight}
@@ -437,7 +448,7 @@ const EditServer = ({
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label>Note (Private)</Label>
+                                            <Label>{t('pages.serverForm.privateNote')}</Label>
                                             <Input
                                                 value={note}
                                                 onChange={(e) => setNote(e.target.value)}
@@ -446,11 +457,11 @@ const EditServer = ({
                                     </CardContent>
                                 </Card>
 
-                                <Label>Billing Information</Label>
+                                <Label>{t('pages.serverForm.billing')}</Label>
                                 <Card className="py-4">
                                     <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                         <div className="grid gap-3">
-                                            <Label>Provider / Data Center</Label>
+                                            <Label>{t('pages.serverForm.provider')}</Label>
                                             <Input
                                                 value={provider}
                                                 onChange={(e) => setProvider(e.target.value)}
@@ -458,28 +469,44 @@ const EditServer = ({
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label>Cycle</Label>
+                                            <Label>{t('pages.serverForm.cycle')}</Label>
                                             <Select
                                                 value={cycle.toString()}
                                                 onValueChange={(v) => setCycle(parseInt(v))}
                                             >
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Select Cycle" />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'pages.serverForm.selectCycle'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="-1">None</SelectItem>
-                                                    <SelectItem value="0">One-Time</SelectItem>
-                                                    <SelectItem value="1">Monthly</SelectItem>
-                                                    <SelectItem value="2">Quarterly</SelectItem>
-                                                    <SelectItem value="3">Semi-Annually</SelectItem>
-                                                    <SelectItem value="4">Annually</SelectItem>
+                                                    <SelectItem value="-1">
+                                                        {t('pages.serverForm.none')}
+                                                    </SelectItem>
+                                                    <SelectItem value="0">
+                                                        {t('pages.serverForm.oneTime')}
+                                                    </SelectItem>
+                                                    <SelectItem value="1">
+                                                        {t('pages.serverForm.monthly')}
+                                                    </SelectItem>
+                                                    <SelectItem value="2">
+                                                        {t('pages.serverForm.quarterly')}
+                                                    </SelectItem>
+                                                    <SelectItem value="3">
+                                                        {t('pages.serverForm.semiAnnually')}
+                                                    </SelectItem>
+                                                    <SelectItem value="4">
+                                                        {t('pages.serverForm.annually')}
+                                                    </SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
 
                                         <div className="grid gap-1.5">
                                             <Label>
-                                                Start Time
+                                                {t('pages.serverForm.startTime')}
                                                 <Button
                                                     type="button"
                                                     variant={'outline'}
@@ -487,14 +514,14 @@ const EditServer = ({
                                                     size="sm"
                                                     onClick={() => setStartTime(undefined)}
                                                 >
-                                                    Clear
+                                                    {t('pages.serverForm.clear')}
                                                 </Button>
                                             </Label>
                                             <DatePicker date={startTime} setDate={setStartTime} />
                                         </div>
                                         <div className="grid gap-1.5">
                                             <Label>
-                                                End Time
+                                                {t('pages.serverForm.endTime')}
                                                 <Button
                                                     type="button"
                                                     variant={'outline'}
@@ -502,7 +529,7 @@ const EditServer = ({
                                                     size="sm"
                                                     onClick={() => setEndTime(undefined)}
                                                 >
-                                                    Clear
+                                                    {t('pages.serverForm.clear')}
                                                 </Button>
                                             </Label>
                                             <DatePicker date={endTime} setDate={setEndTime} />
@@ -510,7 +537,7 @@ const EditServer = ({
 
                                         <div className="grid gap-1.5">
                                             <Label>
-                                                Amount
+                                                {t('pages.serverForm.amount')}
                                                 <Button
                                                     type="button"
                                                     variant={'outline'}
@@ -518,7 +545,7 @@ const EditServer = ({
                                                     size="sm"
                                                     onClick={() => setAmount('0')}
                                                 >
-                                                    Free
+                                                    {t('pages.serverForm.free')}
                                                 </Button>
                                                 <Button
                                                     type="button"
@@ -527,7 +554,7 @@ const EditServer = ({
                                                     size="sm"
                                                     onClick={() => setAmount('-1')}
                                                 >
-                                                    Pay as you go
+                                                    {t('pages.serverForm.payg')}
                                                 </Button>
                                             </Label>
                                             <Input
@@ -538,7 +565,7 @@ const EditServer = ({
                                         </div>
                                         <div className="grid gap-3">
                                             <Label>
-                                                Auto Renew <HelpAutoRenew />
+                                                {t('pages.serverForm.autoRenew')} <HelpAutoRenew />
                                             </Label>
                                             <Switch
                                                 checked={autoRenew}
@@ -548,11 +575,11 @@ const EditServer = ({
                                     </CardContent>
                                 </Card>
 
-                                <Label>Network Information</Label>
+                                <Label>{t('pages.serverForm.network')}</Label>
                                 <Card className="py-4">
                                     <CardContent className="grid md:grid-cols-2 gap-3 px-4">
                                         <div className="grid gap-3">
-                                            <Label>Bandwidth</Label>
+                                            <Label>{t('pages.serverForm.bandwidth')}</Label>
                                             <Input
                                                 value={bandwidth}
                                                 onChange={(e) => setBandwidth(e.target.value)}
@@ -560,7 +587,7 @@ const EditServer = ({
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label>Traffic</Label>
+                                            <Label>{t('pages.serverForm.traffic')}</Label>
                                             <Input
                                                 value={traffic}
                                                 onChange={(e) => setTraffic(e.target.value)}
@@ -568,24 +595,36 @@ const EditServer = ({
                                             />
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label>Traffic Type</Label>
+                                            <Label>{t('pages.serverForm.trafficType')}</Label>
                                             <Select
                                                 value={trafficType.toString()}
                                                 onValueChange={(v) => setTrafficType(parseInt(v))}
                                             >
                                                 <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Select Type" />
+                                                    <SelectValue
+                                                        placeholder={t(
+                                                            'pages.serverForm.selectType'
+                                                        )}
+                                                    />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="-1">None</SelectItem>
-                                                    <SelectItem value="0">Inbound</SelectItem>
-                                                    <SelectItem value="1">Outbound</SelectItem>
-                                                    <SelectItem value="2">Both</SelectItem>
+                                                    <SelectItem value="-1">
+                                                        {t('pages.serverForm.none')}
+                                                    </SelectItem>
+                                                    <SelectItem value="0">
+                                                        {t('pages.serverForm.inbound')}
+                                                    </SelectItem>
+                                                    <SelectItem value="1">
+                                                        {t('pages.serverForm.outbound')}
+                                                    </SelectItem>
+                                                    <SelectItem value="2">
+                                                        {t('pages.serverForm.both')}
+                                                    </SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </div>
                                         <div className="grid gap-3">
-                                            <Label>Note (Public)</Label>
+                                            <Label>{t('pages.serverForm.publicNote')}</Label>
                                             <Input
                                                 value={notePublic}
                                                 onChange={(e) => setNotePublic(e.target.value)}
@@ -599,10 +638,10 @@ const EditServer = ({
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         <LoadingButton type="submit" isLoading={isLoading}>
-                            Save changes
+                            {t('pages.serverForm.save')}
                         </LoadingButton>
                     </DialogFooter>
                 </form>

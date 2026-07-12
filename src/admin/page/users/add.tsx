@@ -1,5 +1,6 @@
 import { Dice5, Plus } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import {
@@ -28,6 +29,7 @@ import ApiAdminUser from '@/api/admin/user.ts';
 import { ToastError } from '@/utils/toast.ts';
 
 const Add = ({ refresh }: { refresh: () => void }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [open, setOpen] = useState(false);
 
@@ -53,8 +55,8 @@ const Add = ({ refresh }: { refresh: () => void }) => {
             is_admin: data.is_admin,
         })
             .then(() => {
-                toast.success('Create successful', {
-                    description: 'The user has been created successfully.',
+                toast.success(t('pages.adminUsers.createSuccess'), {
+                    description: t('pages.adminUsers.createSuccessDesc'),
                 });
                 refresh();
                 setOpen(false);
@@ -74,24 +76,22 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                     }}
                 >
                     <Plus />
-                    Add
+                    {t('pages.adminUsers.add')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <DialogHeader>
-                    <DialogTitle>New User</DialogTitle>
-                    <DialogDescription>
-                        Fill in the information below to create a new user.
-                    </DialogDescription>
+                    <DialogTitle>{t('pages.adminUsers.addTitle')}</DialogTitle>
+                    <DialogDescription>{t('pages.adminUsers.addDesc')}</DialogDescription>
                 </DialogHeader>
                 <form onSubmit={onSubmit}>
                     <div className="grid gap-4">
                         <div className="grid gap-3">
-                            <Label>Username</Label>
+                            <Label>{t('pages.adminUsers.username')}</Label>
                             <Input name="username" placeholder={'John Doe'} required />
                         </div>
                         <div className="grid gap-3">
-                            <Label>Email</Label>
+                            <Label>{t('pages.adminUsers.email')}</Label>
                             <Input
                                 name="email"
                                 type={'email'}
@@ -100,7 +100,7 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                             />
                         </div>
                         <div className="grid gap-3">
-                            <Label>Password</Label>
+                            <Label>{t('pages.adminUsers.password')}</Label>
                             <div className={'flex flex-row gap-2'}>
                                 <Input
                                     name="password"
@@ -122,29 +122,29 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                             </div>
                         </div>
                         <div className={'grid gap-3'}>
-                            <Label>Verified</Label>
+                            <Label>{t('pages.adminUsers.verified')}</Label>
                             <Select name={'verified'} defaultValue={'false'}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value="true">True</SelectItem>
-                                        <SelectItem value="false">False</SelectItem>
+                                        <SelectItem value="true">{t('common.true')}</SelectItem>
+                                        <SelectItem value="false">{t('common.false')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
                         </div>
                         <div className={'grid gap-3'}>
-                            <Label>IsAdmin</Label>
+                            <Label>{t('pages.adminUsers.isAdmin')}</Label>
                             <Select name={'is_admin'} defaultValue={'false'}>
                                 <SelectTrigger className="w-full">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectItem value="true">True</SelectItem>
-                                        <SelectItem value="false">False</SelectItem>
+                                        <SelectItem value="true">{t('common.true')}</SelectItem>
+                                        <SelectItem value="false">{t('common.false')}</SelectItem>
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -152,10 +152,10 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                     </div>
                     <DialogFooter className={'mt-4'}>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         <LoadingButton type="submit" isLoading={isLoading}>
-                            Create
+                            {t('common.create')}
                         </LoadingButton>
                     </DialogFooter>
                 </form>

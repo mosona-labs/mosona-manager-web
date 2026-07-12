@@ -1,6 +1,7 @@
 import type { UserType } from '@/api/user.ts';
 
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import {
@@ -28,14 +29,15 @@ const Del = ({
     open: boolean;
     setOpen: (open: boolean) => void;
 }) => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
 
     const onDelete = () => {
         setIsLoading(true);
         ApiAdminUser.del(user.id)
             .then(() => {
-                toast.success('Delete successful', {
-                    description: 'The user has been deleted successfully.',
+                toast.success(t('pages.adminUsers.deleteSuccess'), {
+                    description: t('pages.adminUsers.deleteSuccessDesc'),
                 });
                 refresh();
                 setOpen(false);
@@ -54,25 +56,26 @@ const Del = ({
                     onOpenAutoFocus={(e) => e.preventDefault()}
                 >
                     <DialogHeader>
-                        <DialogTitle>Delete User "{user.username}"</DialogTitle>
+                        <DialogTitle>
+                            {t('pages.adminUsers.deleteTitle', { name: user.username })}
+                        </DialogTitle>
                         <DialogDescription>
-                            Are you sure you want to delete this user? This action cannot be undone.
+                            {t('pages.adminUsers.deleteDesc')}
                             <p className={'mt-1 text-destructive'}>
-                                This account owns teams, servers and other resources that will also
-                                be deleted.
+                                {t('pages.adminUsers.deleteWarning')}
                             </p>
                         </DialogDescription>
                     </DialogHeader>
                     <DialogFooter className={'mt-4'}>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         <LoadingButton
                             variant={'destructive'}
                             onClick={onDelete}
                             isLoading={isLoading}
                         >
-                            Delete
+                            {t('common.delete')}
                         </LoadingButton>
                     </DialogFooter>
                 </DialogContent>

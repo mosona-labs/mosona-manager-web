@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import ApiAdminOAuth, { type OAuthProviderType } from '@/api/admin/oauth.ts';
 import { Card } from '@/components/ui/card.tsx';
@@ -8,6 +9,7 @@ import BottomPagination from '@/components/bottom-pagination.tsx';
 import OAuthItems from '@/admin/page/settings/oauth/components/items.tsx';
 
 const OAuth = () => {
+    const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
 
     const [page, setPage] = useState(1);
@@ -34,10 +36,8 @@ const OAuth = () => {
         <div className="w-full p-5 h-full overflow-y-auto pb-24">
             <div className="flex flex-row justify-between items-center mb-3">
                 <div>
-                    <h1 className="text-2xl font-bold">OAuth2</h1>
-                    <p className="opacity-65">
-                        Manage OAuth settings for third-party authentication providers.
-                    </p>
+                    <h1 className="text-2xl font-bold">{t('pages.adminOauth.title')}</h1>
+                    <p className="opacity-65">{t('pages.adminOauth.description')}</p>
                 </div>
                 <Add refresh={refresh} />
             </div>

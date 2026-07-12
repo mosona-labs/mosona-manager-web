@@ -1,6 +1,7 @@
 import { Bell, Plus, X } from 'lucide-react';
 import { type KeyboardEvent, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import {
     Card,
@@ -25,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu.tsx';
 
 const NotificationSettings = () => {
+    const { t } = useTranslation();
     const [emails, setEmails] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
@@ -32,8 +34,8 @@ const NotificationSettings = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const test = emailRegex.test(email);
         if (!test) {
-            toast.warning('Invalid email address.', {
-                description: 'Please enter a valid email address.',
+            toast.warning(t('pages.notification.invalidEmail'), {
+                description: t('pages.notification.validEmail'),
             });
         }
 
@@ -82,8 +84,8 @@ const NotificationSettings = () => {
 
         ApiNotification.update(data)
             .then(() => {
-                toast.success('Update Success', {
-                    description: 'Notification settings have been updated successfully.',
+                toast.success(t('common.success'), {
+                    description: t('pages.notification.updated'),
                 });
             })
             .catch(ToastError)
@@ -115,10 +117,10 @@ const NotificationSettings = () => {
             <CardHeader>
                 <CardTitle className="text-lg font-medium flex items-center gap-2">
                     <Bell className="h-5 w-5 text-primary" />
-                    Notification Settings
+                    {t('pages.notification.title')}
                 </CardTitle>
                 <CardDescription>
-                    Configure notification and alert recipients.
+                    {t('pages.notification.description')}
                     <br />
                     Right-click a card in the Monitor Dashboard to add an alert.
                 </CardDescription>
@@ -126,7 +128,7 @@ const NotificationSettings = () => {
             <CardContent className="grid gap-4 w-full">
                 <div className={'border-t'} />
                 <div className={'grid gap-1'}>
-                    <h2 className={'font-semibold'}>Email Notification</h2>
+                    <h2 className={'font-semibold'}>{t('pages.notification.email')}</h2>
                     <p className={'text-sm text-muted-foreground'}>
                         Configure email notifications to receive alerts directly in your inbox.
                         <br />
@@ -134,7 +136,7 @@ const NotificationSettings = () => {
                         configuration; otherwise, alerts cannot be sent.
                     </p>
                     <div className={'grid gap-3 mt-2 text-xs'}>
-                        <Label>Email Addresses</Label>
+                        <Label>{t('pages.notification.addresses')}</Label>
                         <div
                             className={'border rounded-lg px-3 py-3 flex flex-row flex-wrap gap-3'}
                         >
@@ -166,7 +168,7 @@ const NotificationSettings = () => {
                 <div className={'border-t'} />
                 {/*A tribute to Beszel, I really love this design LOL*/}
                 <div className={'grid gap-1'}>
-                    <h2 className={'font-semibold'}>Webhook / Push notifications</h2>
+                    <h2 className={'font-semibold'}>{t('pages.notification.push')}</h2>
                     <p className={'text-sm text-muted-foreground'}>
                         Uses{' '}
                         <a

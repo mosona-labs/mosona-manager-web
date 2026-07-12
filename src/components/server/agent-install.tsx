@@ -1,6 +1,7 @@
 import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
     Dialog,
@@ -50,6 +51,7 @@ const AgentInstall = ({
     hub?: string;
     enroll_token?: string;
 }) => {
+    const { t } = useTranslation();
     const [os, setOs] = useState<string>('linux');
     const [arch, setArch] = useState<string>('amd64');
     const [ipPreference, setIpPreference] = useState<'none' | 'ipv4' | 'ipv6'>('none');
@@ -85,10 +87,8 @@ const AgentInstall = ({
         <Dialog open={open}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>Install Agent with {mode} mode</DialogTitle>
-                    <DialogDescription>
-                        Copy the following command and run it on your server to install the agent.
-                    </DialogDescription>
+                    <DialogTitle>{t('pages.serverForm.installTitle', { mode })}</DialogTitle>
+                    <DialogDescription>{t('pages.serverForm.installDesc')}</DialogDescription>
                 </DialogHeader>
                 <div className="grid gap-4">
                     <div className={'flex items-center gap-2'}>
@@ -138,9 +138,15 @@ const AgentInstall = ({
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
-                                    <SelectItem value="none">No preference</SelectItem>
-                                    <SelectItem value="ipv4">Use IPv4</SelectItem>
-                                    <SelectItem value="ipv6">Use IPv6</SelectItem>
+                                    <SelectItem value="none">
+                                        {t('pages.serverForm.noPreference')}
+                                    </SelectItem>
+                                    <SelectItem value="ipv4">
+                                        {t('pages.serverForm.useIpv4')}
+                                    </SelectItem>
+                                    <SelectItem value="ipv6">
+                                        {t('pages.serverForm.useIpv6')}
+                                    </SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -154,7 +160,7 @@ const AgentInstall = ({
                         variant={'outline'}
                         onClick={() => {
                             navigator.clipboard.writeText(script.join(' ')).then(() => {
-                                toast.success('Installation command copied to clipboard.');
+                                toast.success(t('pages.serverForm.installCopied'));
                             });
                         }}
                     >
@@ -166,14 +172,14 @@ const AgentInstall = ({
                             checked={sudo}
                             onCheckedChange={setSudo}
                         />
-                        Use sudo
+                        {t('pages.serverForm.useSudo')}
                     </div>
                     <div className={'flex-1'} />
                     <Button variant="outline" onClick={() => setOpen(false)}>
-                        Cancel
+                        {t('common.cancel')}
                     </Button>
                     <Button type="submit" onClick={() => setOpen(false)}>
-                        Installed
+                        {t('pages.serverForm.installed')}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -1,5 +1,6 @@
 import { Plus } from 'lucide-react';
 import { type FormEvent, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button.tsx';
@@ -32,6 +33,7 @@ import LoadingButton from '@/components/loading-button.tsx';
 import OAuthIcon from '@/components/icons/oauth-icon.tsx';
 
 const Add = ({ refresh }: { refresh: () => void }) => {
+    const { t } = useTranslation();
     const [selectedProviderName, setSelectedProviderName] = useState('');
 
     // Open
@@ -96,8 +98,8 @@ const Add = ({ refresh }: { refresh: () => void }) => {
             is_enabled: data.enabled,
         })
             .then(() => {
-                toast.success('Create successful', {
-                    description: 'The OAuth2 provider has been created successfully.',
+                toast.success(t('pages.adminOauth.createSuccess'), {
+                    description: t('pages.adminOauth.createSuccessDesc'),
                 });
 
                 setOpen(false);
@@ -114,21 +116,19 @@ const Add = ({ refresh }: { refresh: () => void }) => {
             <DialogTrigger asChild>
                 <Button onClick={() => {}}>
                     <Plus />
-                    Add
+                    {t('pages.adminOauth.add')}
                 </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-lg">
                 <form onSubmit={onSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Create Auth Provider</DialogTitle>
-                        <DialogDescription>
-                            Create a new OAuth2 authentication provider.
-                        </DialogDescription>
+                        <DialogTitle>{t('pages.adminOauth.createTitle')}</DialogTitle>
+                        <DialogDescription>{t('pages.adminOauth.createDesc')}</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 md:grid-cols-2 mt-5">
                         <div className="grid gap-3">
                             <Label>
-                                Authentication Name
+                                {t('pages.adminOauth.authName')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -143,7 +143,7 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                         </div>
                         <div className="grid gap-3">
                             <Label>
-                                OAuth2 Provider
+                                {t('pages.adminOauth.provider')}
                                 <IsRequired />
                             </Label>
                             <Select
@@ -153,7 +153,9 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                                 onValueChange={setSelectedProviderName}
                             >
                                 <SelectTrigger className={'w-full'}>
-                                    <SelectValue placeholder="Select a provider" />
+                                    <SelectValue
+                                        placeholder={t('pages.adminOauth.selectProvider')}
+                                    />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
@@ -168,27 +170,25 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                         </div>
                         <div className="grid gap-3 flex-1 md:col-span-2">
                             <Label>
-                                Icon
+                                {t('pages.adminOauth.icon')}
                                 <IsRequired />
                             </Label>
                             <div className={'flex flex-row items-center gap-2'}>
                                 <Input
                                     name="icon"
-                                    placeholder={
-                                        'e.g. google, github or https://example.com/icon.png'
-                                    }
+                                    placeholder={t('pages.adminOauth.iconPlaceholder')}
                                     value={icon}
                                     onChange={(e) => setIcon(e.target.value)}
                                     required
                                 />
                                 <Button variant={'outline'}>
-                                    {icon ? <OAuthIcon icon={icon} /> : 'None'}
+                                    {icon ? <OAuthIcon icon={icon} /> : t('pages.adminOauth.none')}
                                 </Button>
                             </div>
                         </div>
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                Authorize URL
+                                {t('pages.adminOauth.authorizeUrl')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -203,7 +203,7 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                         </div>
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                Token URL
+                                {t('pages.adminOauth.tokenUrl')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -218,7 +218,7 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                         </div>
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                User Info URL
+                                {t('pages.adminOauth.userInfoUrl')}
                                 <IsRequired />
                             </Label>
                             <Input
@@ -233,14 +233,14 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                         </div>
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                Client ID
+                                {t('pages.adminOauth.clientId')}
                                 <IsRequired />
                             </Label>
                             <Input name="client_id" required />
                         </div>
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                Client Secret
+                                {t('pages.adminOauth.clientSecret')}
                                 <IsRequired />
                             </Label>
                             <Input name="client_secret" required />
@@ -249,14 +249,14 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                             <div className="flex items-center gap-3 md:col-span-2">
                                 <Checkbox id="skip_2fa" name={'skip_2fa'} defaultChecked />
                                 <Label htmlFor="skip_2fa" className={'cursor-pointer'}>
-                                    Skip 2FA
+                                    {t('pages.adminOauth.skip2fa')}
                                 </Label>
                                 <IsRequired className={'-ms-2'} />
                             </div>
                             <div className="flex items-center gap-3 md:col-span-2">
                                 <Checkbox id="enabled" name={'enabled'} defaultChecked />
                                 <Label htmlFor="enabled" className={'cursor-pointer'}>
-                                    Enabled
+                                    {t('pages.adminOauth.enabled')}
                                 </Label>
                                 <IsRequired className={'-ms-2'} />
                             </div>
@@ -264,10 +264,10 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         <LoadingButton isLoading={isSubmitting} type="submit">
-                            Save changes
+                            {t('pages.adminOauth.save')}
                         </LoadingButton>
                     </DialogFooter>
                 </form>
