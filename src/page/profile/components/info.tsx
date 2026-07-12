@@ -79,7 +79,7 @@ const AccountInfoCard = () => {
                             onChange={(e) => {
                                 setUsername(e.target.value);
                             }}
-                            className="bg-input flex-1 border-border pr-10"
+                            className="bg-input flex-1 border-border pe-10"
                         />
                         <LoadingButton isLoading={userIsChange} onClick={changeUsername}>
                             {t('common.save')}

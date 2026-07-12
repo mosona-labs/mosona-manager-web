@@ -2,6 +2,7 @@ import i18n from 'i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import { initReactI18next } from 'react-i18next';
 
+import ar from './locales/ar';
 import en from './locales/en';
 import es from './locales/es';
 import fr from './locales/fr';
@@ -20,6 +21,7 @@ export const supportedLanguages = [
     'ja',
     'pt',
     'ru',
+    'ar',
 ] as const;
 export type SupportedLanguage = (typeof supportedLanguages)[number];
 
@@ -38,6 +40,7 @@ export const languageMeta: Record<SupportedLanguage, LanguageMeta> = {
     ru: { code: 'ru', name: 'Русский', flag: '🇷🇺' },
     'zh-CN': { code: 'zh-CN', name: '简体中文', flag: '🇨🇳' },
     'zh-HK': { code: 'zh-HK', name: '繁體中文', flag: '🇭🇰' },
+    ar: { code: 'ar', name: 'العربية', flag: '🇸🇦' },
 };
 
 export const languageNames: Record<SupportedLanguage, string> = {
@@ -49,6 +52,7 @@ export const languageNames: Record<SupportedLanguage, string> = {
     ru: languageMeta.ru.name,
     'zh-CN': languageMeta['zh-CN'].name,
     'zh-HK': languageMeta['zh-HK'].name,
+    ar: languageMeta.ar.name,
 };
 
 export const sortedLanguages = [...supportedLanguages].sort((a, b) =>
@@ -68,6 +72,7 @@ void i18n
             ja: { translation: ja },
             pt: { translation: pt },
             ru: { translation: ru },
+            ar: { translation: ar },
         },
         fallbackLng: 'en',
         supportedLngs: supportedLanguages,
@@ -89,16 +94,29 @@ void i18n
                 if (normalized.startsWith('ja')) return 'ja';
                 if (normalized.startsWith('pt')) return 'pt';
                 if (normalized.startsWith('ru')) return 'ru';
+                if (normalized.startsWith('ar')) return 'ar';
                 return 'en';
             },
         },
         react: { useSuspense: false },
     });
 
+export const rtlLanguages = new Set<SupportedLanguage>(['ar']);
+
+export const isRTLLanguage = (language: string): boolean =>
+    rtlLanguages.has(language as SupportedLanguage);
+
+function updateDocumentDirection(language: string) {
+    document.documentElement.dir = isRTLLanguage(language) ? 'rtl' : 'ltr';
+}
+
 i18n.on('languageChanged', (language) => {
     document.documentElement.lang = language;
+    updateDocumentDirection(language);
 });
 
-document.documentElement.lang = i18n.resolvedLanguage || 'en';
+const initialLanguage = i18n.resolvedLanguage || 'en';
+document.documentElement.lang = initialLanguage;
+updateDocumentDirection(initialLanguage);
 
 export default i18n;

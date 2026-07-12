@@ -79,7 +79,7 @@ const Sidebar = ({ open, setOpen }: { open: boolean; setOpen: (open: boolean) =>
             <div
                 className={cn(
                     'overflow-hidden fixed z-30 bg-background h-screen border-e px-3 py-4 transition-all w-[300px] duration-300 ease-in-out shrink-0 gap-2 flex flex-col select-none md:absolute',
-                    open ? 'translate-x-0' : '-translate-x-full'
+                    open ? 'translate-x-0' : 'ltr:-translate-x-full rtl:translate-x-full'
                 )}
             >
                 <div

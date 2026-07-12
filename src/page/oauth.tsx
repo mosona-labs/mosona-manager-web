@@ -70,7 +70,7 @@ const OAuth = () => {
                 ) : (
                     <div className={'justify-center mt-3 flex flex-row gap-2'}>
                         <Button onClick={() => navigate(-1)}>
-                            <ChevronLeft />
+                            <ChevronLeft className="rtl:rotate-180" />
                             Go Back
                         </Button>
                         <a target={'_blank'} href={'https://manager.mosona.cc'}>

@@ -292,7 +292,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                                 <TableHead className="min-w-[160px]">
                                     {t('pages.logs.location')}
                                 </TableHead>
-                                <TableHead className="text-right min-w-[60px]">
+                                <TableHead className="text-end min-w-[60px]">
                                     {t('pages.logs.device')}
                                 </TableHead>
                             </TableRow>

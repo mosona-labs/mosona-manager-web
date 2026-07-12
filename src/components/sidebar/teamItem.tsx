@@ -70,7 +70,7 @@ const TeamItem = ({
                     isLoading ? 'opacity-100' : ''
                 )}
             >
-                <LoaderCircle className="animate-spin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-25" />
+                <LoaderCircle className="animate-spin absolute top-1/2 start-1/2 -translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2 opacity-25" />
             </div>
         </div>
     );

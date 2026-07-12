@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as PopoverPrimitive from '@radix-ui/react-popover';
+import { useDirection } from '@radix-ui/react-direction';
 
 import { cn } from '@/lib/utils';
 
@@ -15,12 +16,17 @@ function PopoverContent({
     className,
     align = 'center',
     sideOffset = 4,
+    dir: dirProp,
     ...props
-}: React.ComponentProps<typeof PopoverPrimitive.Content>) {
+}: React.ComponentProps<typeof PopoverPrimitive.Content> & {
+    dir?: 'ltr' | 'rtl';
+}) {
+    const dir = useDirection(dirProp);
     return (
         <PopoverPrimitive.Portal>
             <PopoverPrimitive.Content
                 data-slot="popover-content"
+                dir={dir}
                 align={align}
                 sideOffset={sideOffset}
                 className={cn(

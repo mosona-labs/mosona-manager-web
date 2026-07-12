@@ -121,7 +121,7 @@ const AvatarEditor = ({
                             {name ? name.charAt(0).toUpperCase() : 'A'}
                         </div>
                     )}
-                    <div className="absolute w-full h-full top-0 left-0 bg-black/20 rounded-lg opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                    <div className="absolute w-full h-full top-0 start-0 bg-black/20 rounded-lg opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
                         <Edit2 />
                     </div>
                 </div>

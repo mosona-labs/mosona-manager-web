@@ -25,7 +25,7 @@ export function DatePicker({
                     id={id}
                     variant="outline"
                     data-empty={!date}
-                    className="data-[empty=true]:text-muted-foreground w-full justify-start text-left font-normal"
+                    className="data-[empty=true]:text-muted-foreground w-full justify-start text-start font-normal"
                 >
                     <CalendarIcon />
                     {date ? format(date, 'PPP') : <span>{placeholder}</span>}

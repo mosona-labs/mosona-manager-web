@@ -396,7 +396,7 @@ const Monitor = () => {
                                 else navigate('/');
                             }}
                         >
-                            <ChevronLeft size={100} />
+                            <ChevronLeft size={100} className="rtl:rotate-180" />
                         </Button>
                         <h1 className="text-2xl font-bold">{server?.name}</h1>
                     </div>
@@ -461,7 +461,7 @@ const Monitor = () => {
                         <div className="font-mono text-lg">
                             <img
                                 src={`/icons/${getOsIconName(server?.os)}.svg`}
-                                className="inline-block h-5 w-5 mr-2"
+                                className="inline-block h-5 w-5 me-2"
                                 alt={'System Icon'}
                             />
                             {server?.os || t('pages.monitor.na')}

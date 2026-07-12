@@ -121,7 +121,7 @@ const Dashboard = () => {
                     <div className={'relative'}>
                         <div
                             className={
-                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/20 top-0 left-0 pointer-events-none'
+                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/20 top-0 start-0 pointer-events-none'
                             }
                         >
                             {system.length > 0 ? system[system.length - 1].cpu_usage : '0.00'}%
@@ -143,7 +143,7 @@ const Dashboard = () => {
                     <div className={'relative'}>
                         <div
                             className={
-                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/20 top-0 left-0 pointer-events-none'
+                                'absolute w-full h-full flex items-center justify-center text-6xl font-bold text-foreground/20 top-0 start-0 pointer-events-none'
                             }
                         >
                             {system.length > 0 ? system[system.length - 1].memory : '0.00'}%

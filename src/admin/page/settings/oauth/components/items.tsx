@@ -132,7 +132,7 @@ const OAuthItems = ({
                             <TableHead className="min-w-[120px]">
                                 {t('pages.adminOauth.created')}
                             </TableHead>
-                            <TableHead className="text-right min-w-[40px]">
+                            <TableHead className="text-end min-w-[40px]">
                                 {t('common.actions')}
                             </TableHead>
                         </TableRow>

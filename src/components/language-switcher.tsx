@@ -61,7 +61,7 @@ const LanguageSwitcher = ({ compact = true }: { compact?: boolean }) => {
                                 type="button"
                                 onClick={() => void i18n.changeLanguage(language)}
                                 className={cn(
-                                    'flex min-w-0 items-center gap-1.5 rounded-md px-2 py-2 text-left text-sm outline-hidden transition-colors',
+                                    'flex min-w-0 items-center gap-1.5 rounded-md px-2 py-2 text-start text-sm outline-hidden transition-colors',
                                     'hover:bg-accent hover:text-accent-foreground',
                                     'focus-visible:bg-accent focus-visible:text-accent-foreground',
                                     selected && 'bg-accent/70 text-accent-foreground'

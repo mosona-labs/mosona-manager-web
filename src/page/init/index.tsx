@@ -218,7 +218,7 @@ const Init = () => {
                                 setStep(2);
                             }}
                         >
-                            <SquareChevronRight />
+                            <SquareChevronRight className="rtl:rotate-180" />
                             {t('pages.init.nextStep')}
                         </Button>
                     </div>

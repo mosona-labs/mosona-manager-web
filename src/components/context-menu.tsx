@@ -30,7 +30,7 @@ const MenuBtn = ({
         )}
     >
         {item.icon && <span className="shrink-0">{item.icon}</span>}
-        <span className="flex-1 text-left">{item.label}</span>
+        <span className="flex-1 text-start">{item.label}</span>
     </button>
 );
 

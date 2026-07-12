@@ -141,7 +141,7 @@ const NotificationSettings = () => {
                             className={'border rounded-lg px-3 py-3 flex flex-row flex-wrap gap-3'}
                         >
                             {emails.map((email) => (
-                                <Badge key={email} variant="default" className="gap-1 pr-1">
+                                <Badge key={email} variant="default" className="gap-1 pe-1">
                                     {email}
                                     <button
                                         type="button"

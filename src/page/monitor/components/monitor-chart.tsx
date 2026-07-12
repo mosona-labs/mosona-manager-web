@@ -179,7 +179,7 @@ export function MonitorChart({
                             />
                             <div className="text-muted-foreground flex min-w-[130px] items-center text-xs">
                                 {displayName}
-                                <div className="text-foreground ml-auto flex items-baseline gap-0.5 font-mono font-medium">
+                                <div className="text-foreground ms-auto flex items-baseline gap-0.5 font-mono font-medium">
                                     {(p.value as number).toFixed(2)}
                                     {unit && (
                                         <span className="text-muted-foreground font-normal">

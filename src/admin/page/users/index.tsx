@@ -127,7 +127,7 @@ const Users = () => {
                                 <TableHead className="min-w-[160px]">
                                     {t('pages.adminUsers.lastLogin')}
                                 </TableHead>
-                                <TableHead className="text-right min-w-[40px]">
+                                <TableHead className="text-end min-w-[40px]">
                                     {t('common.actions')}
                                 </TableHead>
                             </TableRow>

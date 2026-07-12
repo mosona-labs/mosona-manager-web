@@ -5,6 +5,7 @@ import { useState } from 'react';
 import NotFound from '@/page/notfound';
 import { useTheme } from '@/components/theme-provider.tsx';
 import { Button } from '@/components/ui/button.tsx';
+import LanguageSwitcher from '@/components/language-switcher.tsx';
 import User from '@/app/user.tsx';
 import Sidebar from '@/admin/app/sidebar.tsx';
 import Dashboard from '@/admin/page/dashboard';
@@ -46,6 +47,7 @@ function AdminApp() {
                         >
                             {theme === 'light' ? <Moon /> : <Sun />}
                         </Button>
+                        <LanguageSwitcher />
                         <User adminMode={true} />
                     </div>
                 </div>
