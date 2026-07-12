@@ -89,6 +89,7 @@ let arabicFontPromise: Promise<void> | null = null;
 
 async function ensureArabicFont() {
     if (!arabicFontPromise) {
+        // @ts-ignore
         arabicFontPromise = import('@fontsource-variable/noto-sans-arabic').then(() => undefined);
     }
     await arabicFontPromise;
