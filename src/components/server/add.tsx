@@ -44,7 +44,7 @@ const cycleMonths: Record<number, number> = {
 
 const AddServer = () => {
     const { t } = useTranslation();
-    const { categories, keys } = useUser();
+    const { categories, keys, refreshCategories } = useUser();
 
     const [authType, setAuthType] = useState<'password' | 'key'>('password');
 
@@ -87,10 +87,10 @@ const AddServer = () => {
     // Auto-create default category if none exist
     useEffect(() => {
         if (open && categories && categories.length === 0) {
-            ApiCategory.create('Default')
-                .catch(() => {});
+            ApiCategory.create('Default').finally(() => refreshCategories());
         }
-    }, [open, categories]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [open]);
 
     useEffect(() => {
         if (!open) {
