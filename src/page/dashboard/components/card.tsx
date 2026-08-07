@@ -28,6 +28,62 @@ import { MemoryUnit, NetUnit } from '@/utils/unit.ts';
 import { getOsIconName } from '@/utils/icon.ts';
 import { useUser } from '@/context/useUser.tsx';
 import { formatUptime, getRemainingTime } from '@/utils/time.ts';
+import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
+import { Button } from '@/components/ui/button.tsx';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import EditServer from '@/components/server/edit';
+import DeleteServer from '@/components/server/delete';
+
+const ServerActions = ({ server }: { server: Server }) => {
+    const { t } = useTranslation();
+    const [openEdit, setOpenEdit] = useState(false);
+    const [openDelete, setOpenDelete] = useState(false);
+
+    return (
+        <>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="ml-auto h-7 w-7 shrink-0 text-muted-foreground"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <EllipsisVertical className="h-4 w-4" />
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setOpenEdit(true); }}>
+                        <Pencil className="h-4 w-4" />
+                        {t('pages.contextMenu.edit')}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        className="text-destructive focus:text-destructive"
+                        onClick={(e) => { e.stopPropagation(); setOpenDelete(true); }}
+                    >
+                        <Trash2 className="h-4 w-4" />
+                        {t('pages.contextMenu.delete')}
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+            <div onClick={(e) => e.stopPropagation()}>
+                <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
+                <DeleteServer
+                    open={openDelete}
+                    onOpenChange={setOpenDelete}
+                    serverName={server.name}
+                    serverID={server.id}
+                />
+            </div>
+        </>
+    );
+};
+
 
 const cycleMap: Record<number, string> = {
     1: 'Mo',
@@ -283,6 +339,7 @@ const ServerStatusCard = ({
                         >
                             {server.status}
                         </Badge>
+                        <ServerActions server={server} />
                     </div>
 
                     {/* Metrics */}
@@ -500,6 +557,7 @@ const ServerStatusCard = ({
                                 </h3>
                                 <Tags server={server} showUptime />
                             </div>
+                            <ServerActions server={server} />
                         </div>
                         <div className={'flex flex-row w-full items-center gap-4 flex-3'}>
                             {/* CPU */}
