@@ -39,19 +39,19 @@ import {
 import EditServer from '@/components/server/edit';
 import DeleteServer from '@/components/server/delete';
 
-const ServerActions = ({ server }: { server: Server }) => {
+const ServerActions = ({ server, className }: { server: Server; className?: string }) => {
     const { t } = useTranslation();
     const [openEdit, setOpenEdit] = useState(false);
     const [openDelete, setOpenDelete] = useState(false);
 
     return (
-        <>
+        <div className={className} onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="ml-auto h-7 w-7 shrink-0 text-muted-foreground"
+                        className="h-7 w-7 shrink-0 text-muted-foreground"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <EllipsisVertical className="h-4 w-4" />
@@ -71,16 +71,14 @@ const ServerActions = ({ server }: { server: Server }) => {
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
-            <div onClick={(e) => e.stopPropagation()}>
-                <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
-                <DeleteServer
-                    open={openDelete}
-                    onOpenChange={setOpenDelete}
-                    serverName={server.name}
-                    serverID={server.id}
-                />
-            </div>
-        </>
+            <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
+            <DeleteServer
+                open={openDelete}
+                onOpenChange={setOpenDelete}
+                serverName={server.name}
+                serverID={server.id}
+            />
+        </div>
     );
 };
 
@@ -305,17 +303,18 @@ const ServerStatusCard = ({
         <a
             href={monitorPath}
             className={cn(
-                'border-border bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm p-5 transition-all hover:border-primary/50 cursor-pointer h-full no-underline',
+                'border-border bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm p-5 transition-all hover:border-primary/50 cursor-pointer h-full no-underline relative',
                 layout !== 'grid' && 'py-3.5 gap-3.5'
             )}
             onClick={handleCardClick}
             onMouseEnter={() => setShowMoreBtn(true)}
             onMouseLeave={() => setShowMoreBtn(false)}
         >
+            <ServerActions server={server} className="absolute right-2 top-2 z-10" />
             {layout === 'grid' ? (
                 <div className="flex flex-col gap-4 h-full">
                     {/* Header */}
-                    <div className="flex items-start justify-between w-full">
+                    <div className="flex items-start justify-between w-full pe-9">
                         <div className="flex min-w-0 items-center gap-3 flex-1">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
                                 <img
@@ -339,7 +338,6 @@ const ServerStatusCard = ({
                         >
                             {server.status}
                         </Badge>
-                        <ServerActions server={server} />
                     </div>
 
                     {/* Metrics */}
@@ -557,9 +555,8 @@ const ServerStatusCard = ({
                                 </h3>
                                 <Tags server={server} showUptime />
                             </div>
-                            <ServerActions server={server} />
                         </div>
-                        <div className={'flex flex-row w-full items-center gap-4 flex-3'}>
+                        <div className={'flex flex-row w-full items-center gap-4 flex-3 lg:pe-9'}>
                             {/* CPU */}
                             <div className="space-y-1 flex-1">
                                 <div className="flex flex-col gap-1">
