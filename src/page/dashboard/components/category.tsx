@@ -77,6 +77,80 @@ const MonitorCard = ({
     const [openDelete, setOpenDelete] = useState<boolean>(false);
     const [openAlert, setOpenAlert] = useState<boolean>(false);
 
+    const menuItems = [
+                    {
+                        label: t('pages.contextMenu.viewDetails'),
+                        icon: <Eye className="h-4 w-4" />,
+                        onClick: () => navigator(`/${server.id}/monitor`),
+                    },
+                    ...(server.allow_terminal
+                        ? [
+                              {
+                                  label: t('pages.contextMenu.terminal'),
+                                  icon: <Terminal className="h-4 w-4" />,
+                                  onClick: () => {
+                                      createSession(
+                                          {
+                                              serverId: server.id,
+                                              name: server.name,
+                                              os: server.os,
+                                              terminalConfig: {
+                                                  cols: 80,
+                                                  rows: 24,
+                                                  term: 'xterm-256color',
+                                              },
+                                          },
+                                          (sessionId) => {
+                                              navigator(`/session/${sessionId}`);
+                                          }
+                                      );
+                                  },
+                              },
+                          ]
+                        : []),
+                    {
+                        separator: true,
+                        label: '',
+                    },
+                    {
+                        label: t('pages.contextMenu.notifications'),
+                        icon: <Bell className="h-4 w-4" />,
+                        onClick: () => {
+                            setOpenAlert(true);
+                        },
+                    },
+                    {
+                        separator: true,
+                        label: '',
+                    },
+                    {
+                        label: t('pages.contextMenu.edit'),
+                        icon: <Settings className="h-4 w-4" />,
+                        onClick: () => {
+                            setOpenEdit(true);
+                        },
+                    },
+                    {
+                        label: t('pages.contextMenu.category'),
+                        icon: <Package className="h-4 w-4" />,
+                        onClick: () => {
+                            setOpenCategory(true);
+                        },
+                    },
+                    {
+                        separator: true,
+                        label: '',
+                    },
+                    {
+                        label: t('pages.contextMenu.delete'),
+                        icon: <Trash2 className="h-4 w-4" />,
+                        onClick: () => {
+                            setOpenDelete(true);
+                        },
+                        danger: true,
+                    },
+                ];
+
     return (
         <div
             key={server.id}
@@ -166,6 +240,7 @@ const MonitorCard = ({
             >
                 <ServerStatusCard
                     key={server.id}
+                    menuItems={menuItems}
                     layout={config.dashboardLayout}
                     server={{
                         id: server.id,

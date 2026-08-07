@@ -18,7 +18,7 @@ import {
     ClockAlert,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge.tsx';
@@ -28,22 +28,31 @@ import { MemoryUnit, NetUnit } from '@/utils/unit.ts';
 import { getOsIconName } from '@/utils/icon.ts';
 import { useUser } from '@/context/useUser.tsx';
 import { formatUptime, getRemainingTime } from '@/utils/time.ts';
-import { EllipsisVertical, Pencil, Trash2 } from 'lucide-react';
+import { EllipsisVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button.tsx';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
+    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import EditServer from '@/components/server/edit';
-import DeleteServer from '@/components/server/delete';
 
-const ServerActions = ({ server, className }: { server: Server; className?: string }) => {
-    const { t } = useTranslation();
-    const [openEdit, setOpenEdit] = useState(false);
-    const [openDelete, setOpenDelete] = useState(false);
+type MenuEntry = {
+    label: string;
+    icon?: ReactNode;
+    onClick?: () => void;
+    danger?: boolean;
+    separator?: boolean;
+};
 
+const ServerActions = ({
+    className,
+    items,
+}: {
+    className?: string;
+    items: MenuEntry[];
+}) => {
     return (
         <div className={className} onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
@@ -58,26 +67,27 @@ const ServerActions = ({ server, className }: { server: Server; className?: stri
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={(e) => { e.stopPropagation(); setOpenEdit(true); }}>
-                        <Pencil className="h-4 w-4" />
-                        {t('pages.contextMenu.edit')}
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={(e) => { e.stopPropagation(); setOpenDelete(true); }}
-                    >
-                        <Trash2 className="h-4 w-4" />
-                        {t('pages.contextMenu.delete')}
-                    </DropdownMenuItem>
+                    {items.map((item, i) =>
+                        item.separator ? (
+                            <DropdownMenuSeparator key={i} />
+                        ) : (
+                            <DropdownMenuItem
+                                key={i}
+                                className={cn(
+                                    item.danger && 'text-destructive focus:text-destructive'
+                                )}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    item.onClick?.();
+                                }}
+                            >
+                                {item.icon}
+                                {item.label}
+                            </DropdownMenuItem>
+                        )
+                    )}
                 </DropdownMenuContent>
             </DropdownMenu>
-            <EditServer open={openEdit} onOpenChange={setOpenEdit} serverID={server.id} />
-            <DeleteServer
-                open={openDelete}
-                onOpenChange={setOpenDelete}
-                serverName={server.name}
-                serverID={server.id}
-            />
         </div>
     );
 };
@@ -208,9 +218,11 @@ const DiskSection = ({
 const ServerStatusCard = ({
     server,
     layout,
+    menuItems,
 }: {
     server: Server;
     layout: 'list' | 'list2' | 'grid';
+    menuItems?: MenuEntry[];
 }) => {
     const navigator = useNavigate();
 
@@ -299,6 +311,7 @@ const ServerStatusCard = ({
         setShowMore((s) => !s);
     }, []);
 
+
     return (
         <a
             href={monitorPath}
@@ -310,11 +323,16 @@ const ServerStatusCard = ({
             onMouseEnter={() => setShowMoreBtn(true)}
             onMouseLeave={() => setShowMoreBtn(false)}
         >
-            <ServerActions server={server} className="absolute right-2 top-2 z-10" />
+            {menuItems && (
+                <ServerActions
+                    className="absolute right-2 top-2 z-10 hidden [@media(pointer:coarse)]:block"
+                    items={menuItems}
+                />
+            )}
             {layout === 'grid' ? (
                 <div className="flex flex-col gap-4 h-full">
                     {/* Header */}
-                    <div className="flex items-start justify-between w-full pe-9">
+                    <div className="flex items-start justify-between w-full [@media(pointer:coarse)]:pe-9">
                         <div className="flex min-w-0 items-center gap-3 flex-1">
                             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
                                 <img
@@ -556,7 +574,7 @@ const ServerStatusCard = ({
                                 <Tags server={server} showUptime />
                             </div>
                         </div>
-                        <div className={'flex flex-row w-full items-center gap-4 flex-3 lg:pe-9'}>
+                        <div className={'flex flex-row w-full items-center gap-4 flex-3 lg:[@media(pointer:coarse)]:pe-9'}>
                             {/* CPU */}
                             <div className="space-y-1 flex-1">
                                 <div className="flex flex-col gap-1">
@@ -652,6 +670,8 @@ const ServerStatusCard = ({
         </a>
     );
 };
+
+
 
 const Tags = ({ server, showUptime }: { server: Server; showUptime?: boolean }) => (
     <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
