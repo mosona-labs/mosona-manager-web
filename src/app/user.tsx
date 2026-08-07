@@ -56,7 +56,7 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
             <PopoverTrigger asChild>
                 <Avatar className="w-9 h-9 cursor-pointer hover:opacity-80 transition-opacity">
                     <AvatarImage
-                        src={`https://gravatar.webp.se/avatar/${md5(user?.email || '')}?d=mm&s=128`}
+                        src={`https://www.gravatar.com/avatar/${md5(user?.email || '')}?d=mm&s=128`}
                         alt={user?.username.substring(0, 1)}
                     />
                     <AvatarFallback>{user?.username.substring(0, 1)}</AvatarFallback>

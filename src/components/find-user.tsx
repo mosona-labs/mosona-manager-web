@@ -83,7 +83,7 @@ const FindUser = ({
                             <div className="flex flex-row gap-2 items-center">
                                 <Avatar>
                                     <AvatarImage
-                                        src={`https://gravatar.webp.se/avatar/${md5(userResults?.email || '')}?d=mm&s=128`}
+                                        src={`https://www.gravatar.com/avatar/${md5(userResults?.email || '')}?d=mm&s=128`}
                                         alt={userResults.username}
                                     />
                                     <AvatarFallback>

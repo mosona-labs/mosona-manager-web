@@ -31,7 +31,7 @@ const GravatarDialog = ({ email, username }: { email?: string; username: string 
                     </div>
                     <Avatar className="w-16 h-16 transition-opacity">
                         <AvatarImage
-                            src={`https://gravatar.webp.se/avatar/${md5(email || '')}?d=mm&s=512`}
+                            src={`https://www.gravatar.com/avatar/${md5(email || '')}?d=mm&s=512`}
                             alt={username.substring(0, 1)}
                         />
                         <AvatarFallback>{username.substring(0, 1)}</AvatarFallback>

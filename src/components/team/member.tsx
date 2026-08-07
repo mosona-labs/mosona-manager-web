@@ -35,7 +35,7 @@ const Member = ({
         <div>
             <Avatar>
                 <AvatarImage
-                    src={`https://gravatar.webp.se/avatar/${item.email ? md5(item.email) : ''}?d=mm&s=128`}
+                    src={`https://www.gravatar.com/avatar/${item.email ? md5(item.email) : ''}?d=mm&s=128`}
                     alt={item.username.substring(0, 1)}
                 />
                 <AvatarFallback>{item.username.substring(0, 1)}</AvatarFallback>
