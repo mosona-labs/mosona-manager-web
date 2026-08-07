@@ -23,6 +23,7 @@ import { Switch } from '../ui/switch';
 import { Card, CardContent } from '../ui/card';
 import { DatePicker } from '../date-picker';
 import AddCategory from '../category/add';
+import ApiCategory from '@/api/category';
 
 import { useUser } from '@/context/useUser';
 import ApiServer, { type ServerAddRequest } from '@/api/server';
@@ -82,6 +83,14 @@ const AddServer = () => {
             setCategory(categories[0].id);
         }
     }, [categories]);
+
+    // Auto-create default category if none exist
+    useEffect(() => {
+        if (open && categories && categories.length === 0) {
+            ApiCategory.create('Default')
+                .catch(() => {});
+        }
+    }, [open, categories]);
 
     useEffect(() => {
         if (!open) {
