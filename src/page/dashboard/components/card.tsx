@@ -16,6 +16,7 @@ import {
     ChevronUp,
     Unplug,
     ClockAlert,
+    EllipsisVertical,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
@@ -23,11 +24,34 @@ import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge.tsx';
 import { Progress } from '@/components/ui/progress.tsx';
+import { useContextMenuTrigger } from '@/components/context-menu';
 import { cn } from '@/lib/utils.ts';
 import { MemoryUnit, NetUnit } from '@/utils/unit.ts';
 import { getOsIconName } from '@/utils/icon.ts';
 import { useUser } from '@/context/useUser.tsx';
 import { formatUptime, getRemainingTime } from '@/utils/time.ts';
+
+const CardMenuTrigger = ({ className }: { className?: string }) => {
+    const openMenu = useContextMenuTrigger();
+    if (!openMenu) return null;
+    return (
+        <button
+            type="button"
+            aria-label="More actions"
+            onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openMenu(e.currentTarget);
+            }}
+            className={cn(
+                'inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-muted-foreground outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50',
+                className
+            )}
+        >
+            <EllipsisVertical className="h-4 w-4" />
+        </button>
+    );
+};
 
 const cycleMap: Record<number, string> = {
     1: 'Mo',
@@ -249,7 +273,7 @@ const ServerStatusCard = ({
         <a
             href={monitorPath}
             className={cn(
-                'border-border bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm p-5 transition-all hover:border-primary/50 cursor-pointer h-full no-underline',
+                'border-border bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm p-5 transition-all hover:border-primary/50 cursor-pointer h-full no-underline relative',
                 layout !== 'grid' && 'py-3.5 gap-3.5'
             )}
             onClick={handleCardClick}
@@ -261,7 +285,7 @@ const ServerStatusCard = ({
                     {/* Header */}
                     <div className="flex items-start justify-between w-full">
                         <div className="flex min-w-0 items-center gap-3 flex-1">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl shrink-0">
                                 <img
                                     src={`/icons/${getOsIconName(server.os)}.svg`}
                                     alt={'OS'}
@@ -275,14 +299,17 @@ const ServerStatusCard = ({
                                 <Tags server={server} />
                             </div>
                         </div>
-                        <Badge
-                            className={cn(
-                                'shrink-0 text-xs font-medium',
-                                STATUS_COLORS[server.status]
-                            )}
-                        >
-                            {server.status}
-                        </Badge>
+                        <div className="flex items-center gap-1.5">
+                            <CardMenuTrigger />
+                            <Badge
+                                className={cn(
+                                    'shrink-0 text-xs font-medium',
+                                    STATUS_COLORS[server.status]
+                                )}
+                            >
+                                {server.status}
+                            </Badge>
+                        </div>
                     </div>
 
                     {/* Metrics */}
@@ -465,7 +492,7 @@ const ServerStatusCard = ({
                     >
                         {/* Header */}
                         <div className="flex items-center gap-3 w-full lg:flex-1">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl flex-shrink-0">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-2xl shrink-0">
                                 <img
                                     src={`/icons/${getOsIconName(server.os)}.svg`}
                                     alt={'OS'}
@@ -500,8 +527,9 @@ const ServerStatusCard = ({
                                 </h3>
                                 <Tags server={server} showUptime />
                             </div>
+                            <CardMenuTrigger className="ms-auto" />
                         </div>
-                        <div className={'flex flex-row w-full items-center gap-4 flex-3'}>
+                        <div className="flex flex-row w-full items-center gap-4 flex-3">
                             {/* CPU */}
                             <div className="space-y-1 flex-1">
                                 <div className="flex flex-col gap-1">

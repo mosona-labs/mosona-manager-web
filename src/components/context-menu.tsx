@@ -1,15 +1,25 @@
 import * as React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect } from 'react';
 
 import { cn } from '@/lib/utils';
 
-interface ContextMenuItem {
-    label: string;
+export interface ContextMenuItem {
+    label?: string;
     icon?: React.ReactNode;
     onClick?: () => void;
     disabled?: boolean;
     separator?: boolean;
     danger?: boolean;
+}
+
+const VIEWPORT_MARGIN = 10;
+
+type OpenMenu = (anchor: HTMLElement) => void;
+
+const MenuTriggerContext = React.createContext<OpenMenu | null>(null);
+
+export function useContextMenuTrigger(): OpenMenu | null {
+    return React.useContext(MenuTriggerContext);
 }
 
 const MenuBtn = ({
@@ -20,7 +30,7 @@ const MenuBtn = ({
     handleItemClick?: (item: ContextMenuItem) => void;
 }) => (
     <button
-        onClick={() => handleItemClick && handleItemClick(item)}
+        onClick={() => handleItemClick?.(item)}
         disabled={item.disabled}
         className={cn(
             'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
@@ -30,7 +40,7 @@ const MenuBtn = ({
         )}
     >
         {item.icon && <span className="shrink-0">{item.icon}</span>}
-        <span className="flex-1 text-start">{item.label}</span>
+        {item.label && <span className="flex-1 text-start">{item.label}</span>}
     </button>
 );
 
@@ -45,20 +55,28 @@ export function ContextMenu({
 }) {
     const [isOpen, setIsOpen] = React.useState(false);
     const [position, setPosition] = React.useState({ x: 0, y: 0 });
+    const wrapperRef = React.useRef<HTMLDivElement>(null);
     const menuRef = React.useRef<HTMLDivElement>(null);
+
+    const anchorRef = React.useRef<DOMRect | null>(null);
+
+    const openAt = React.useCallback((x: number, y: number, anchor: DOMRect | null) => {
+        anchorRef.current = anchor;
+        setPosition({ x, y });
+        setIsOpen(true);
+    }, []);
+
+    const openFromElement = React.useCallback<OpenMenu>(
+        (el) => {
+            const rect = el.getBoundingClientRect();
+            openAt(rect.left, rect.bottom + 4, rect);
+        },
+        [openAt]
+    );
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
-
-        const x = e.clientX;
-        const y = e.clientY;
-
-        setPosition({ x, y });
-        setIsOpen(true);
-    };
-
-    const handleClick = () => {
-        setIsOpen(false);
+        openAt(e.clientX, e.clientY, null);
     };
 
     const handleItemClick = (item: ContextMenuItem) => {
@@ -69,48 +87,53 @@ export function ContextMenu({
     };
 
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
-            if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-                setIsOpen(false);
-            }
-        };
+        if (!isOpen) return;
 
-        const handleScroll = () => {
+        const handlePointerDown = (e: MouseEvent) => {
+            const target = e.target as Node;
+            if (menuRef.current?.contains(target) || wrapperRef.current?.contains(target)) {
+                return;
+            }
             setIsOpen(false);
         };
+        const handleScroll = () => setIsOpen(false);
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsOpen(false);
+        };
 
-        if (isOpen) {
-            document.addEventListener('mousedown', handleClickOutside);
-            document.addEventListener('scroll', handleScroll, true);
-        }
-
+        document.addEventListener('mousedown', handlePointerDown);
+        document.addEventListener('scroll', handleScroll, true);
+        document.addEventListener('keydown', handleKeyDown);
         return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('mousedown', handlePointerDown);
             document.removeEventListener('scroll', handleScroll, true);
+            document.removeEventListener('keydown', handleKeyDown);
         };
     }, [isOpen]);
 
-    useEffect(() => {
-        if (isOpen && menuRef.current) {
-            const menu = menuRef.current;
-            const rect = menu.getBoundingClientRect();
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
+    useLayoutEffect(() => {
+        if (!isOpen || !menuRef.current) return;
 
-            let newX = position.x;
-            let newY = position.y;
+        const rect = menuRef.current.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
 
-            if (rect.right > viewportWidth) {
-                newX = viewportWidth - rect.width - 10;
-            }
+        let { x, y } = position;
+        const anchor = anchorRef.current;
 
-            if (rect.bottom > viewportHeight) {
-                newY = viewportHeight - rect.height - 10;
-            }
+        if (anchor) {
+            x = Math.min(anchor.right - rect.width, viewportWidth - rect.width - VIEWPORT_MARGIN);
+            x = Math.max(x, VIEWPORT_MARGIN);
+        } else if (x + rect.width > viewportWidth) {
+            x = viewportWidth - rect.width - VIEWPORT_MARGIN;
+        }
 
-            if (newX !== position.x || newY !== position.y) {
-                setPosition({ x: newX, y: newY });
-            }
+        if (y + rect.height > viewportHeight) {
+            y = viewportHeight - rect.height - VIEWPORT_MARGIN;
+        }
+
+        if (x !== position.x || y !== position.y) {
+            setPosition({ x, y });
         }
     }, [isOpen, position]);
 
@@ -121,33 +144,32 @@ export function ContextMenu({
     }, [isOpen]);
 
     return (
-        <>
-            <div onContextMenu={handleContextMenu} onClick={handleClick} className={className}>
+        <MenuTriggerContext.Provider value={openFromElement}>
+            <div
+                ref={wrapperRef}
+                onContextMenu={handleContextMenu}
+                onClick={() => setIsOpen(false)}
+                className={className}
+            >
                 {children}
             </div>
 
             {isOpen && (
                 <div
                     ref={menuRef}
-                    className="fixed z-50 min-w-[200px] rounded-lg border border-border bg-popover p-1 shadow-lg"
-                    style={{
-                        left: `${position.x}px`,
-                        top: `${position.y}px`,
-                    }}
+                    tabIndex={-1}
+                    className="fixed z-50 min-w-[200px] rounded-lg border border-border bg-popover p-1 shadow-lg outline-none"
+                    style={{ left: `${position.x}px`, top: `${position.y}px` }}
                 >
-                    {items.map((item, index) => {
-                        if (item.separator) {
-                            return (
-                                <div key={`separator-${index}`} className="my-1 h-px bg-border" />
-                            );
-                        }
-
-                        return (
+                    {items.map((item, index) =>
+                        item.separator ? (
+                            <div key={`separator-${index}`} className="my-1 h-px bg-border" />
+                        ) : (
                             <MenuBtn key={index} item={item} handleItemClick={handleItemClick} />
-                        );
-                    })}
+                        )
+                    )}
                 </div>
             )}
-        </>
+        </MenuTriggerContext.Provider>
     );
 }
