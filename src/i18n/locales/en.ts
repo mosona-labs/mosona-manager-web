@@ -372,6 +372,13 @@ const en = {
             save: 'Save changes',
             added: 'Server added successfully',
             updated: 'Server updated successfully',
+            sshHostKeyTitle: 'Confirm SSH host key',
+            sshHostKeyDescription:
+                'Verify this SHA-256 fingerprint through a trusted channel before continuing.',
+            sshHostKeyChangedTitle: 'SSH host key changed',
+            sshHostKeyChangedDescription:
+                'This fingerprint differs from the previously trusted key. Continue only after verifying the server was intentionally rekeyed.',
+            confirmSSHHostKey: 'Trust this key',
             help: 'Help',
             agentModeTitle: 'Introduction to Agent Mode',
             agentModeDesc: 'You can choose agent mode when installing the agent on your server.',

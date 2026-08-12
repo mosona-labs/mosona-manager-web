@@ -373,6 +373,12 @@ const ar: typeof en = {
             save: 'حفظ التغييرات',
             added: 'تمت إضافة الخادم بنجاح',
             updated: 'تم تحديث الخادم بنجاح',
+            sshHostKeyTitle: 'تأكيد مفتاح مضيف SSH',
+            sshHostKeyDescription: 'تحقق من بصمة SHA-256 هذه عبر قناة موثوقة قبل المتابعة.',
+            sshHostKeyChangedTitle: 'تغير مفتاح مضيف SSH',
+            sshHostKeyChangedDescription:
+                'تختلف هذه البصمة عن المفتاح الموثوق سابقا. تابع فقط بعد التحقق من أن تغيير المفتاح مقصود.',
+            confirmSSHHostKey: 'الوثوق بهذا المفتاح',
             help: 'مساعدة',
             agentModeTitle: 'لمحة عن وضع Agent',
             agentModeDesc: 'يمكنك اختيار وضع Agent عند تثبيته على خادمك.',

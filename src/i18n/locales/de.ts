@@ -377,6 +377,13 @@ const de: typeof en = {
             save: 'Änderungen speichern',
             added: 'Server erfolgreich hinzugefügt',
             updated: 'Server erfolgreich aktualisiert',
+            sshHostKeyTitle: 'SSH-Hostschluessel bestaetigen',
+            sshHostKeyDescription:
+                'Pruefen Sie diesen SHA-256-Fingerabdruck ueber einen vertrauenswuerdigen Kanal.',
+            sshHostKeyChangedTitle: 'SSH-Hostschluessel geaendert',
+            sshHostKeyChangedDescription:
+                'Dieser Fingerabdruck weicht vom bisher vertrauten Schluessel ab. Fahren Sie nur nach einer sicheren Pruefung fort.',
+            confirmSSHHostKey: 'Diesem Schluessel vertrauen',
             help: 'Hilfe',
             agentModeTitle: 'Einführung in den Agent-Modus',
             agentModeDesc:

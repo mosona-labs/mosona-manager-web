@@ -362,6 +362,12 @@ const zhHK: typeof en = {
             save: '儲存變更',
             added: '伺服器新增成功',
             updated: '伺服器更新成功',
+            sshHostKeyTitle: '確認 SSH 主機密鑰',
+            sshHostKeyDescription: '繼續前，請透過可信渠道核對此 SHA-256 指紋。',
+            sshHostKeyChangedTitle: 'SSH 主機密鑰已變更',
+            sshHostKeyChangedDescription:
+                '此指紋與之前信任的密鑰不同。只可在確認伺服器確實更換了密鑰後繼續。',
+            confirmSSHHostKey: '信任此密鑰',
             help: '說明',
             agentModeTitle: 'Agent 模式介紹',
             agentModeDesc: '在伺服器上安裝 Agent 時可選擇模式。',

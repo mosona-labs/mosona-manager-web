@@ -377,6 +377,13 @@ const ms: typeof en = {
             save: 'Simpan perubahan',
             added: 'Pelayan berjaya ditambah',
             updated: 'Pelayan berjaya dikemas kini',
+            sshHostKeyTitle: 'Sahkan kunci hos SSH',
+            sshHostKeyDescription:
+                'Sahkan cap jari SHA-256 ini melalui saluran yang dipercayai sebelum meneruskan.',
+            sshHostKeyChangedTitle: 'Kunci hos SSH telah berubah',
+            sshHostKeyChangedDescription:
+                'Cap jari ini berbeza daripada kunci yang dipercayai sebelum ini. Teruskan hanya selepas mengesahkan perubahan tersebut.',
+            confirmSSHHostKey: 'Percayai kunci ini',
             help: 'Bantuan',
             agentModeTitle: 'Pengenalan kepada Mod Agent',
             agentModeDesc: 'Anda boleh memilih mod agent semasa memasang agent pada pelayan anda.',

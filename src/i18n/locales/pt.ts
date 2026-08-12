@@ -377,6 +377,13 @@ const pt: typeof en = {
             save: 'Salvar alterações',
             added: 'Servidor adicionado com sucesso',
             updated: 'Servidor atualizado com sucesso',
+            sshHostKeyTitle: 'Confirmar chave de host SSH',
+            sshHostKeyDescription:
+                'Verifique esta impressao digital SHA-256 por um canal confiavel antes de continuar.',
+            sshHostKeyChangedTitle: 'A chave de host SSH foi alterada',
+            sshHostKeyChangedDescription:
+                'Esta impressao digital difere da chave confiavel anterior. Continue somente apos verificar a alteracao.',
+            confirmSSHHostKey: 'Confiar nesta chave',
             help: 'Ajuda',
             agentModeTitle: 'Introdução ao modo Agent',
             agentModeDesc: 'Você pode escolher o modo do Agent ao instalá-lo no seu servidor.',

@@ -25,7 +25,11 @@ import { DatePicker } from '../date-picker';
 import AddCategory from '../category/add';
 
 import { useUser } from '@/context/useUser';
-import ApiServer, { type ServerAddRequest } from '@/api/server';
+import ApiServer, {
+    getSSHHostKeyConfirmation,
+    type ServerAddRequest,
+    type SSHHostKeyConfirmation,
+} from '@/api/server';
 import { ToastError } from '@/utils/toast';
 import IsRequired from '@/components/required.tsx';
 import AddKey from '@/page/keychain/components/add.tsx';
@@ -33,6 +37,7 @@ import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
 import AgentInstall from '@/components/server/agent-install.tsx';
 import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
 import { notifyServerMutation } from '@/utils/server-events';
+import SSHHostKeyConfirm from '@/components/server/ssh-host-key-confirm';
 
 const cycleMonths: Record<number, number> = {
     1: 1,
@@ -49,6 +54,9 @@ const AddServer = () => {
 
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [hostKeyConfirmation, setHostKeyConfirmation] = useState<
+        (SSHHostKeyConfirmation & { request: ServerAddRequest }) | null
+    >(null);
 
     // Agent Install
     const [isInstallOpen, setIsInstallOpen] = useState(false);
@@ -95,6 +103,7 @@ const AddServer = () => {
             setStartTime(undefined);
             setEndTime(undefined);
             setAmount(undefined);
+            setHostKeyConfirmation(null);
         }
     }, [open]);
 
@@ -107,6 +116,45 @@ const AddServer = () => {
             }
             return nextStartTime;
         });
+    };
+
+    const submitServer = (data: ServerAddRequest) => {
+        setIsLoading(true);
+        ApiServer.add(data)
+            .then((res) => {
+                setHostKeyConfirmation(null);
+                toast.success(t('pages.serverForm.added'));
+                notifyServerMutation();
+                setOpen(false);
+                if (mode === 'agent') {
+                    setIsInstallOpen(true);
+                    switch (agentMode) {
+                        case 'passive':
+                            return setInstallConfig({
+                                hub: res.data.hub,
+                                enroll_token: res.data.enroll_token,
+                            });
+                        case 'active':
+                            return setInstallConfig({
+                                agent_uid: res.data.agent_uid,
+                                public_key: res.data.public_key,
+                                host: res.data.host,
+                                port: res.data.port,
+                            });
+                    }
+                }
+            })
+            .catch((error) => {
+                const confirmation = getSSHHostKeyConfirmation(error);
+                if (confirmation) {
+                    setHostKeyConfirmation({ ...confirmation, request: data });
+                    return;
+                }
+                ToastError(error);
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     };
 
     const onSubmit = (e: FormEvent) => {
@@ -175,34 +223,7 @@ const AddServer = () => {
             };
         }
 
-        setIsLoading(true);
-        ApiServer.add(data)
-            .then((res) => {
-                toast.success(t('pages.serverForm.added'));
-                notifyServerMutation();
-                setOpen(false);
-                if (mode === 'agent') {
-                    setIsInstallOpen(true);
-                    switch (agentMode) {
-                        case 'passive':
-                            return setInstallConfig({
-                                hub: res.data.hub,
-                                enroll_token: res.data.enroll_token,
-                            });
-                        case 'active':
-                            return setInstallConfig({
-                                agent_uid: res.data.agent_uid,
-                                public_key: res.data.public_key,
-                                host: res.data.host,
-                                port: res.data.port,
-                            });
-                    }
-                }
-            })
-            .catch(ToastError)
-            .finally(() => {
-                setIsLoading(false);
-            });
+        submitServer(data);
     };
 
     return (
@@ -687,6 +708,20 @@ const AddServer = () => {
                 hub={installConfig.hub}
                 enroll_token={installConfig.enroll_token}
             />
+            {hostKeyConfirmation && (
+                <SSHHostKeyConfirm
+                    fingerprint={hostKeyConfirmation.fingerprint}
+                    changed={hostKeyConfirmation.changed}
+                    isLoading={isLoading}
+                    onCancel={() => setHostKeyConfirmation(null)}
+                    onConfirm={() =>
+                        submitServer({
+                            ...hostKeyConfirmation.request,
+                            host_key: hostKeyConfirmation.host_key,
+                        })
+                    }
+                />
+            )}
         </>
     );
 };

@@ -382,6 +382,13 @@ const fr: typeof en = {
             save: 'Enregistrer les modifications',
             added: 'Serveur ajouté avec succès',
             updated: 'Serveur mis à jour avec succès',
+            sshHostKeyTitle: "Confirmer la cle d'hote SSH",
+            sshHostKeyDescription:
+                'Verifiez cette empreinte SHA-256 via un canal fiable avant de continuer.',
+            sshHostKeyChangedTitle: "La cle d'hote SSH a change",
+            sshHostKeyChangedDescription:
+                'Cette empreinte differe de la cle precedemment approuvee. Continuez uniquement apres avoir verifie le changement.',
+            confirmSSHHostKey: 'Faire confiance a cette cle',
             help: 'Aide',
             agentModeTitle: 'Présentation du mode Agent',
             agentModeDesc:

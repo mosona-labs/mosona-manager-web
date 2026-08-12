@@ -374,6 +374,13 @@ const ja: typeof en = {
             save: '変更を保存',
             added: 'サーバーを追加しました',
             updated: 'サーバーを更新しました',
+            sshHostKeyTitle: 'SSH ホストキーを確認',
+            sshHostKeyDescription:
+                '続行する前に、信頼できる経路でこの SHA-256 フィンガープリントを確認してください。',
+            sshHostKeyChangedTitle: 'SSH ホストキーが変更されました',
+            sshHostKeyChangedDescription:
+                'このフィンガープリントは以前信頼したキーと異なります。意図した変更であることを確認した場合のみ続行してください。',
+            confirmSSHHostKey: 'このキーを信頼',
             help: 'ヘルプ',
             agentModeTitle: 'Agentモードの紹介',
             agentModeDesc: 'サーバーにAgentをインストールする際、Agentモードを選択できます。',

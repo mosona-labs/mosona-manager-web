@@ -371,6 +371,13 @@ const ko: typeof en = {
             save: '변경 사항 저장',
             added: '서버가 추가되었습니다',
             updated: '서버가 업데이트되었습니다',
+            sshHostKeyTitle: 'SSH 호스트 키 확인',
+            sshHostKeyDescription:
+                '계속하기 전에 신뢰할 수 있는 경로로 이 SHA-256 지문을 확인하세요.',
+            sshHostKeyChangedTitle: 'SSH 호스트 키가 변경됨',
+            sshHostKeyChangedDescription:
+                '이 지문은 이전에 신뢰한 키와 다릅니다. 서버 키가 의도적으로 변경되었음을 확인한 경우에만 계속하세요.',
+            confirmSSHHostKey: '이 키 신뢰',
             help: '도움말',
             agentModeTitle: 'Agent 모드 소개',
             agentModeDesc: '서버에 Agent를 설치할 때 Agent 모드를 선택할 수 있습니다.',

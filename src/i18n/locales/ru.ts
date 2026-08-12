@@ -375,6 +375,13 @@ const ru: typeof en = {
             save: 'Сохранить изменения',
             added: 'Сервер успешно добавлен',
             updated: 'Сервер успешно обновлён',
+            sshHostKeyTitle: 'Подтвердите ключ хоста SSH',
+            sshHostKeyDescription:
+                'Перед продолжением проверьте этот отпечаток SHA-256 по доверенному каналу.',
+            sshHostKeyChangedTitle: 'Ключ хоста SSH изменился',
+            sshHostKeyChangedDescription:
+                'Этот отпечаток отличается от ранее доверенного ключа. Продолжайте только после проверки смены ключа.',
+            confirmSSHHostKey: 'Доверять этому ключу',
             help: 'Справка',
             agentModeTitle: 'Введение в режим Agent',
             agentModeDesc: 'Вы можете выбрать режим agent при установке agent на сервер.',

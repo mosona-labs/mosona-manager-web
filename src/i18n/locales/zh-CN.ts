@@ -361,6 +361,12 @@ const zhCN: typeof en = {
             save: '保存更改',
             added: '服务器添加成功',
             updated: '服务器更新成功',
+            sshHostKeyTitle: '确认 SSH 主机密钥',
+            sshHostKeyDescription: '继续前，请通过可信渠道核对此 SHA-256 指纹。',
+            sshHostKeyChangedTitle: 'SSH 主机密钥已变更',
+            sshHostKeyChangedDescription:
+                '此指纹与之前信任的密钥不同。仅在确认服务器确实更换了密钥后继续。',
+            confirmSSHHostKey: '信任此密钥',
             help: '帮助',
             agentModeTitle: 'Agent 模式介绍',
             agentModeDesc: '在服务器上安装 Agent 时可选择模式。',

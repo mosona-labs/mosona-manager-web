@@ -378,6 +378,13 @@ const es: typeof en = {
             save: 'Guardar cambios',
             added: 'Servidor añadido correctamente.',
             updated: 'Servidor actualizado correctamente.',
+            sshHostKeyTitle: 'Confirmar clave de host SSH',
+            sshHostKeyDescription:
+                'Verifica esta huella SHA-256 mediante un canal de confianza antes de continuar.',
+            sshHostKeyChangedTitle: 'La clave de host SSH ha cambiado',
+            sshHostKeyChangedDescription:
+                'Esta huella difiere de la clave de confianza anterior. Continua solo despues de verificar el cambio.',
+            confirmSSHHostKey: 'Confiar en esta clave',
             help: 'Ayuda',
             agentModeTitle: 'Introducción al modo agente',
             agentModeDesc: 'Puedes elegir el modo del agente al instalarlo en tu servidor.',
