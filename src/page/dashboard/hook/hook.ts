@@ -120,6 +120,13 @@ export default function useMonitors() {
             resetHeartbeat();
         });
 
+        eventSource.addEventListener('revoked', () => {
+            eventSource.close();
+            if (heartbeatTimeout.current) clearTimeout(heartbeatTimeout.current);
+            if (reconnectInterval.current) clearTimeout(reconnectInterval.current);
+            window.location.replace('/');
+        });
+
         eventSource.addEventListener('error', () => {
             resetHeartbeat();
         });

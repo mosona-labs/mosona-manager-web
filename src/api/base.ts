@@ -3,6 +3,19 @@ import qs from 'qs';
 
 const API_BASE_URL = '/api';
 
+function handleAuthError(error: any, authRequired = true): boolean {
+    const code = error?.response?.data?.code;
+    if (code === 'team_access_revoked') {
+        window.location.replace('/');
+        return true;
+    }
+    if (authRequired && code === 'login') {
+        window.location.href = '/auth?jump=' + window.location.pathname + window.location.hash;
+        return true;
+    }
+    return false;
+}
+
 export interface ResponseInterface<T = undefined> {
     code: string;
     msg: string;
@@ -22,9 +35,7 @@ export class baseAPI {
             }
             return response.data;
         } catch (error: any) {
-            if (error.response.data.code === 'login') {
-                window.location.href =
-                    '/auth?jump=' + window.location.pathname + window.location.hash;
+            if (handleAuthError(error)) {
                 return null as T;
             }
             throw error;
@@ -40,9 +51,7 @@ export class baseAPI {
             }
             return response.data;
         } catch (error: any) {
-            if (authRequired && error.response.data.code === 'login') {
-                window.location.href =
-                    '/auth?jump=' + window.location.pathname + window.location.hash;
+            if (handleAuthError(error, authRequired)) {
                 return null as T;
             }
             throw error;
@@ -57,9 +66,7 @@ export class baseAPI {
             );
             return response.data;
         } catch (error: any) {
-            if (error.response.data.code === 'login') {
-                window.location.href =
-                    '/auth?jump=' + window.location.pathname + window.location.hash;
+            if (handleAuthError(error)) {
                 return null as T;
             }
             throw error;
@@ -71,9 +78,7 @@ export class baseAPI {
             const response = await axios.delete(API_BASE_URL + path);
             return response.data;
         } catch (error: any) {
-            if (authRequired && error.response.data.code === 'login') {
-                window.location.href =
-                    '/auth?jump=' + window.location.pathname + window.location.hash;
+            if (handleAuthError(error, authRequired)) {
                 return null as T;
             }
             throw error;
