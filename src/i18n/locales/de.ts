@@ -99,7 +99,10 @@ const de: typeof en = {
         accountCreated: 'Konto erfolgreich erstellt. Sie können sich jetzt anmelden.',
     },
     status: { network: 'Netzwerkstatus', pingFailed: 'Ping fehlgeschlagen' },
-    settings: { title: 'Einstellungen', description: 'Client-Einstellungen und Benachrichtigungen verwalten' },
+    settings: {
+        title: 'Einstellungen',
+        description: 'Client-Einstellungen und Benachrichtigungen verwalten',
+    },
     notFound: {
         title: '404 - Nicht gefunden',
         line1: 'Die gesuchte Seite existiert nicht.',
@@ -376,7 +379,8 @@ const de: typeof en = {
             updated: 'Server erfolgreich aktualisiert',
             help: 'Hilfe',
             agentModeTitle: 'Einführung in den Agent-Modus',
-            agentModeDesc: 'Sie können den Agent-Modus bei der Installation des Agents auf Ihrem Server wählen.',
+            agentModeDesc:
+                'Sie können den Agent-Modus bei der Installation des Agents auf Ihrem Server wählen.',
             activeModeTitle: 'Aktiver Modus',
             activeModeDesc:
                 'Der Hub verbindet sich mit dem Agent. Dieser Modus eignet sich für Server mit öffentlicher IP oder im gleichen lokalen Netzwerk wie der Mosona Manager Hub.',
@@ -427,7 +431,8 @@ const de: typeof en = {
             step2Title: 'Schritt 2: Basis-URL & Registrierung',
             step2Desc: 'Grundeinstellungen konfigurieren.',
             websiteUrl: 'Website-URL',
-            websiteUrlHint: 'Wird für E-Mail-Links und OAuth-Weiterleitungen verwendet. Bitte korrekt angeben.',
+            websiteUrlHint:
+                'Wird für E-Mail-Links und OAuth-Weiterleitungen verwendet. Bitte korrekt angeben.',
             userRegistration: 'Benutzerregistrierung',
             registrationHint:
                 'Wenn Sie die Selbstregistrierung erlauben möchten, konfigurieren Sie nach der Initialisierung den E-Mail-Absender unter Admin-Einstellungen → E-Mail und aktivieren Sie Aktivierungs-E-Mails unter Admin-Einstellungen → Registrierung & Anmeldung.',
@@ -477,12 +482,14 @@ const de: typeof en = {
             exportDescription:
                 'Wählen Sie ein Export-Passwort zur Verschlüsselung der Datei. Sie benötigen es beim Import.',
             exportPassword: 'Export-Passwort',
-            exportPasswordHint: 'Mindestens 8 Zeichen. Sicher aufbewahren; nicht wiederherstellbar.',
+            exportPasswordHint:
+                'Mindestens 8 Zeichen. Sicher aufbewahren; nicht wiederherstellbar.',
             totpCode: 'TOTP-Code',
             totpRequired: 'TOTP ist erforderlich',
             totpRequiredExport:
                 'Aktivieren Sie die Zwei-Faktor-Authentifizierung, bevor Sie sensible Team-Daten exportieren.',
-            totpRequiredImport: 'Aktivieren Sie die Zwei-Faktor-Authentifizierung, bevor Sie Team-Daten importieren.',
+            totpRequiredImport:
+                'Aktivieren Sie die Zwei-Faktor-Authentifizierung, bevor Sie Team-Daten importieren.',
             enableTotp: 'TOTP aktivieren',
             importTitle: 'Team-Daten importieren',
             importDescription:
@@ -628,7 +635,8 @@ const de: typeof en = {
             editSuccess: 'Bearbeitung erfolgreich',
             editSuccessDesc: 'Der Benutzer wurde erfolgreich bearbeitet.',
             deleteTitle: 'Benutzer „{{name}}“ löschen',
-            deleteDesc: 'Möchten Sie diesen Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+            deleteDesc:
+                'Möchten Sie diesen Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
             deleteWarning:
                 'Dieses Konto besitzt Teams, Server und andere Ressourcen, die ebenfalls gelöscht werden.',
             deleteSuccess: 'Löschen erfolgreich',
@@ -657,7 +665,8 @@ const de: typeof en = {
                 'Wenn aktiviert, vertraut der Server IP-Headern von Reverse-Proxys oder CDNs bei der Bestimmung von Client-IPs und Protokoll.',
             debugMode: 'Debug-Modus',
             debugModeTitle: 'Debug-Modus aktivieren',
-            debugModeDesc: 'Wenn aktiviert, werden detaillierte Fehlermeldungen und Stack-Traces angezeigt.',
+            debugModeDesc:
+                'Wenn aktiviert, werden detaillierte Fehlermeldungen und Stack-Traces angezeigt.',
             save: 'Änderungen speichern',
             updated: 'Einstellungen erfolgreich aktualisiert.',
             cropTitle: 'Favicon zuschneiden',
@@ -678,7 +687,8 @@ const de: typeof en = {
             useTls: 'TLS verwenden',
             useTlsDesc: 'TLS für sichere E-Mail-Übertragung aktivieren.',
             save: 'Änderungen speichern',
-            testHint: 'Senden Sie nach dem Speichern eine Test-E-Mail, um die Einstellungen zu prüfen.',
+            testHint:
+                'Senden Sie nach dem Speichern eine Test-E-Mail, um die Einstellungen zu prüfen.',
             testHint2:
                 'Klicken Sie unten auf „Test-E-Mail senden“, um eine Test-E-Mail an Ihre Adresse zu senden.',
             sendTest: 'Test-E-Mail senden',
@@ -689,12 +699,14 @@ const de: typeof en = {
             title: 'Registrierung & Anmeldung',
             description: 'Registrierungs- und Anmeldeeinstellungen für alle Benutzer verwalten.',
             enableRegistration: 'Benutzerregistrierung aktivieren',
-            enableRegistrationDesc: 'Neuen Benutzern erlauben, sich auf der Plattform zu registrieren.',
+            enableRegistrationDesc:
+                'Neuen Benutzern erlauben, sich auf der Plattform zu registrieren.',
             email: 'E-Mail',
             emailHint:
                 'Ohne konfigurierte E-Mail-Einstellungen kann die E-Mail-Verifizierung nicht aktiviert werden.',
             regVerify: 'Registrierung erfordert E-Mail-Verifizierung',
-            regVerifyDesc: 'Benutzer müssen bei der Registrierung ihre E-Mail-Adresse verifizieren.',
+            regVerifyDesc:
+                'Benutzer müssen bei der Registrierung ihre E-Mail-Adresse verifizieren.',
             loginVerify: 'Anmeldung erfordert E-Mail-Verifizierung',
             loginVerifyDesc: 'Benutzer müssen bei der Anmeldung ihre E-Mail-Adresse verifizieren.',
             captcha: 'Captcha',
@@ -720,6 +732,10 @@ const de: typeof en = {
             icon: 'Symbol',
             iconPlaceholder: 'z. B. google, github oder https://example.com/icon.png',
             none: 'Keine',
+            protocol: 'Protokoll',
+            issuerUrl: 'Aussteller-URL',
+            scopes: 'Berechtigungsbereiche',
+            subjectField: 'Benutzer-ID-Feld',
             authorizeUrl: 'Authorize URL',
             tokenUrl: 'Token URL',
             userInfoUrl: 'User Info URL',
@@ -771,7 +787,8 @@ const de: typeof en = {
                 },
                 cpu_usage: {
                     label: 'CPU-Auslastung',
-                    description: 'Alarm, wenn die CPU-Auslastung im Zeitfenster den Schwellenwert überschreitet.',
+                    description:
+                        'Alarm, wenn die CPU-Auslastung im Zeitfenster den Schwellenwert überschreitet.',
                 },
                 memory_usage: {
                     label: 'Speicherauslastung',

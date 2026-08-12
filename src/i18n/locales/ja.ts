@@ -427,7 +427,8 @@ const ja: typeof en = {
             step2Title: 'ステップ2: ベースURLと登録',
             step2Desc: '基本設定を構成します。',
             websiteUrl: 'ウェブサイトURL',
-            websiteUrlHint: 'メールリンクとOAuthリダイレクトに使用されます。正確に設定してください。',
+            websiteUrlHint:
+                'メールリンクとOAuthリダイレクトに使用されます。正確に設定してください。',
             userRegistration: 'ユーザー登録',
             registrationHint:
                 'ユーザーの自己登録を許可する場合は、初期化後に管理設定 → メールでメール送信者を設定し、管理設定 → 登録とログインでアクティベーションメールを有効にしてください。',
@@ -482,7 +483,8 @@ const ja: typeof en = {
             totpRequired: 'TOTPが必要です',
             totpRequiredExport:
                 '機密性の高いチームデータをエクスポートする前に、二要素認証を有効にしてください。',
-            totpRequiredImport: 'チームデータをインポートする前に、二要素認証を有効にしてください。',
+            totpRequiredImport:
+                'チームデータをインポートする前に、二要素認証を有効にしてください。',
             enableTotp: 'TOTPを有効化',
             importTitle: 'チームデータをインポート',
             importDescription:
@@ -645,8 +647,7 @@ const ja: typeof en = {
             faviconHint:
                 '最大5 MiBのPNG、JPEG、WebP、またはGIF画像をアップロードしてください。保存されたファビコンはサーバーで変換されます。',
             baseUrl: 'ベースURL',
-            baseUrlHint:
-                'アプリケーションのベースURL。リンク、OAuth、メールの生成に使用されます。',
+            baseUrlHint: 'アプリケーションのベースURL。リンク、OAuth、メールの生成に使用されます。',
             sessionBindIp: 'セッションIPバインド',
             sessionBindIpTitle: 'セッションをログインIPにバインド',
             sessionBindIpDesc:
@@ -689,10 +690,10 @@ const ja: typeof en = {
             title: '登録とログイン',
             description: '全ユーザーの登録・ログイン設定を管理します。',
             enableRegistration: 'ユーザー登録を有効化',
-            enableRegistrationDesc: '新しいユーザーがプラットフォームにアカウントを登録できるようにします。',
+            enableRegistrationDesc:
+                '新しいユーザーがプラットフォームにアカウントを登録できるようにします。',
             email: 'メール',
-            emailHint:
-                'メール設定が構成されていない場合、メール確認を有効にできません。',
+            emailHint: 'メール設定が構成されていない場合、メール確認を有効にできません。',
             regVerify: '登録時にメール確認を必須にする',
             regVerifyDesc: '登録時にユーザーにメールアドレスの確認を要求します。',
             loginVerify: 'ログイン時にメール確認を必須にする',
@@ -720,6 +721,10 @@ const ja: typeof en = {
             icon: 'アイコン',
             iconPlaceholder: '例: google, github または https://example.com/icon.png',
             none: 'なし',
+            protocol: 'プロトコル',
+            issuerUrl: '発行者URL',
+            scopes: 'スコープ',
+            subjectField: 'ユーザー識別子フィールド',
             authorizeUrl: 'Authorize URL',
             tokenUrl: 'Token URL',
             userInfoUrl: 'User Info URL',
@@ -767,11 +772,13 @@ const ja: typeof en = {
             items: {
                 status: {
                     label: 'サーバーステータス',
-                    description: 'サーバーがオフラインになるか到達不能になったときにアラートします。',
+                    description:
+                        'サーバーがオフラインになるか到達不能になったときにアラートします。',
                 },
                 cpu_usage: {
                     label: 'CPU使用率',
-                    description: '指定ウィンドウでCPU使用率がしきい値を超えたときにアラートします。',
+                    description:
+                        '指定ウィンドウでCPU使用率がしきい値を超えたときにアラートします。',
                 },
                 memory_usage: {
                     label: 'メモリ使用率',

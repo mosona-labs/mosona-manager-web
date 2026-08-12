@@ -135,7 +135,7 @@ const fr: typeof en = {
         },
         terminal: {
             title: 'Terminal',
-            search: "Rechercher un nom de serveur ou une adresse...",
+            search: 'Rechercher un nom de serveur ou une adresse...',
         },
         keychain: {
             title: 'Trousseau',
@@ -282,11 +282,12 @@ const fr: typeof en = {
             cpuUsage: 'Utilisation du CPU',
             cpuDescription: "Aperçu de l'utilisation CPU à l'échelle du système",
             memoryUsage: 'Utilisation de la mémoire',
-            memoryDescription: "Aperçu de la consommation mémoire du système",
+            memoryDescription: 'Aperçu de la consommation mémoire du système',
             diskIo: 'E/S disque',
             diskIoDescription: 'Vitesse de lecture et d’écriture agrégée sur tous les disques',
             bandwidth: 'Bande passante',
-            bandwidthDescription: 'Utilisation de la bande passante pour toutes les interfaces réseau',
+            bandwidthDescription:
+                'Utilisation de la bande passante pour toutes les interfaces réseau',
             swapUsage: 'Utilisation du swap',
             swapDescription: "Quantité d'espace d'échange utilisée",
             diskUsage: 'Utilisation de {{label}}',
@@ -342,8 +343,7 @@ const fr: typeof en = {
             agentMode: "Mode de l'Agent",
             active: 'Actif',
             passive: 'Passif',
-            commandHint:
-                "Une fois le serveur ajouté, la commande d'installation sera générée.",
+            commandHint: "Une fois le serveur ajouté, la commande d'installation sera générée.",
             monitorAccess: 'Accès à la surveillance',
             terminalAccess: 'Accès au terminal',
             display: 'Affichage',
@@ -383,7 +383,7 @@ const fr: typeof en = {
             added: 'Serveur ajouté avec succès',
             updated: 'Serveur mis à jour avec succès',
             help: 'Aide',
-            agentModeTitle: "Présentation du mode Agent",
+            agentModeTitle: 'Présentation du mode Agent',
             agentModeDesc:
                 "Vous pouvez choisir le mode de l'Agent lors de son installation sur votre serveur.",
             activeModeTitle: 'Mode actif',
@@ -428,13 +428,13 @@ const fr: typeof en = {
         },
         init: {
             subtitle: 'Surveillance et gestion à distance de serveurs',
-            step1Title: "Étape 1 : Créer le compte administrateur",
-            step1Desc: "Configurez le compte administrateur initial.",
+            step1Title: 'Étape 1 : Créer le compte administrateur',
+            step1Desc: 'Configurez le compte administrateur initial.',
             attention: 'Attention',
             adminWarning:
                 'Le compte administrateur ne prend pas en charge la fonction « mot de passe oublié ». Conservez vos identifiants en sécurité.',
             nextStep: 'Étape suivante',
-            step2Title: "Étape 2 : URL de base et inscription",
+            step2Title: 'Étape 2 : URL de base et inscription',
             step2Desc: 'Configurez les paramètres de base.',
             websiteUrl: 'URL du site web',
             websiteUrlHint:
@@ -449,7 +449,8 @@ const fr: typeof en = {
             provideWebsiteUrl: "Veuillez indiquer l'URL du site web.",
             validEmail: 'Veuillez indiquer une adresse e-mail valide.',
             urlProtocol: "L'URL du site web doit commencer par http:// ou https://.",
-            urlTrailingSlash: "L'URL du site web ne doit pas se terminer par une barre oblique (/).",
+            urlTrailingSlash:
+                "L'URL du site web ne doit pas se terminer par une barre oblique (/).",
             successTitle: 'Installation réussie !',
             successDesc: 'Commencez dès maintenant en vous connectant.',
             goDashboard: 'Aller au tableau de bord',
@@ -541,8 +542,7 @@ const fr: typeof en = {
             enableHint:
                 'Lorsqu’elle est désactivée, les liens existants restent enregistrés mais la page publique n’est plus servie.',
             pathName: 'Nom du chemin',
-            pathHint:
-                '3 à 32 caractères, lettres minuscules, chiffres et tirets uniquement.',
+            pathHint: '3 à 32 caractères, lettres minuscules, chiffres et tirets uniquement.',
             clearPath: 'Effacer le nom du chemin',
             customDomain: 'Domaine personnalisé',
             domainHint:
@@ -654,10 +654,10 @@ const fr: typeof en = {
         },
         adminGeneral: {
             title: 'Général',
-            description: "Gérez les paramètres généraux de votre application.",
+            description: 'Gérez les paramètres généraux de votre application.',
             siteTitle: 'Titre du site',
             siteTitleHint:
-                "Le titre du navigateur pour votre application. Laissez vide pour utiliser le titre intégré du frontend.",
+                'Le titre du navigateur pour votre application. Laissez vide pour utiliser le titre intégré du frontend.',
             favicon: 'Favicon',
             faviconHint:
                 'Téléversez une image PNG, JPEG, WebP ou GIF jusqu’à 5 Mio. Le favicon stocké est converti par le serveur.',
@@ -706,7 +706,8 @@ const fr: typeof en = {
         },
         adminRegister: {
             title: 'Inscription et connexion',
-            description: "Gérez les paramètres d'inscription et de connexion pour tous les utilisateurs.",
+            description:
+                "Gérez les paramètres d'inscription et de connexion pour tous les utilisateurs.",
             enableRegistration: "Activer l'inscription des utilisateurs",
             enableRegistrationDesc:
                 'Autoriser les nouveaux utilisateurs à créer un compte sur la plateforme.',
@@ -743,6 +744,10 @@ const fr: typeof en = {
             icon: 'Icône',
             iconPlaceholder: 'ex. google, github ou https://example.com/icon.png',
             none: 'Aucun',
+            protocol: 'Protocole',
+            issuerUrl: "URL de l'émetteur",
+            scopes: 'Portées',
+            subjectField: "Champ d'identifiant utilisateur",
             authorizeUrl: "URL d'autorisation",
             tokenUrl: 'URL du jeton',
             userInfoUrl: 'URL des infos utilisateur',

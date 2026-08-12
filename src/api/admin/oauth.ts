@@ -4,9 +4,13 @@ export type OAuthProviderType = {
     id: number;
     name: string;
     icon: string;
+    protocol: 'oauth2' | 'oidc';
+    issuer_url: string;
     auth_url: string;
     token_url: string;
     userinfo_url: string;
+    scopes: string;
+    subject_field: string;
     client_id: string;
     client_secret: string;
     skip_2fa: boolean;

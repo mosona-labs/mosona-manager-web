@@ -45,6 +45,10 @@ const Add = ({ refresh }: { refresh: () => void }) => {
     const [authorizeUrl, setAuthorizeUrl] = useState('');
     const [tokenUrl, setTokenUrl] = useState('');
     const [userUrl, setUserUrl] = useState('');
+    const [protocol, setProtocol] = useState<'oauth2' | 'oidc'>('oauth2');
+    const [issuerUrl, setIssuerUrl] = useState('');
+    const [scopes, setScopes] = useState('read:user read:email');
+    const [subjectField, setSubjectField] = useState('id');
 
     useEffect(() => {
         if (selectedProviderName === '') return;
@@ -54,6 +58,10 @@ const Add = ({ refresh }: { refresh: () => void }) => {
         setUserUrl(provider?.user_url || '');
         setIcon(provider?.icon || '');
         setName(provider?.name || '');
+        setProtocol('oauth2');
+        setIssuerUrl('');
+        setScopes('read:user read:email');
+        setSubjectField('id');
     }, [selectedProviderName]);
 
     useEffect(() => {
@@ -65,6 +73,10 @@ const Add = ({ refresh }: { refresh: () => void }) => {
             setTokenUrl('');
             setUserUrl('');
             setName('');
+            setProtocol('oauth2');
+            setIssuerUrl('');
+            setScopes('read:user read:email');
+            setSubjectField('id');
         }
     }, [open]);
 
@@ -78,9 +90,13 @@ const Add = ({ refresh }: { refresh: () => void }) => {
             name: formData.get('name') as string,
             provider: formData.get('provider') as string,
             icon: formData.get('icon') as string,
-            authorize_url: formData.get('authorize_url') as string,
-            token_url: formData.get('token_url') as string,
-            userinfo_url: formData.get('userinfo_url') as string,
+            authorize_url: protocol === 'oauth2' ? (formData.get('authorize_url') as string) : '',
+            token_url: protocol === 'oauth2' ? (formData.get('token_url') as string) : '',
+            userinfo_url: protocol === 'oauth2' ? (formData.get('userinfo_url') as string) : '',
+            protocol,
+            issuer_url: protocol === 'oidc' ? issuerUrl : '',
+            scopes,
+            subject_field: protocol === 'oidc' ? 'sub' : subjectField,
             client_id: formData.get('client_id') as string,
             client_secret: formData.get('client_secret') as string,
             skip_2fa: formData.get('skip_2fa') === 'on',
@@ -89,9 +105,13 @@ const Add = ({ refresh }: { refresh: () => void }) => {
         ApiAdminOAuth.add({
             name: data.name,
             icon: data.icon,
+            protocol: data.protocol,
+            issuer_url: data.issuer_url,
             auth_url: data.authorize_url,
             token_url: data.token_url,
             userinfo_url: data.userinfo_url,
+            scopes: data.scopes,
+            subject_field: data.subject_field,
             client_id: data.client_id,
             client_secret: data.client_secret,
             skip_2fa: data.skip_2fa,
@@ -119,7 +139,7 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                     {t('pages.adminOauth.add')}
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className="max-h-[calc(100vh-2rem)] overflow-y-auto sm:max-w-lg">
                 <form onSubmit={onSubmit}>
                     <DialogHeader>
                         <DialogTitle>{t('pages.adminOauth.createTitle')}</DialogTitle>
@@ -135,7 +155,7 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                                 name="name"
                                 value={name}
                                 onChange={(e) => {
-                                    setName(e.target.name);
+                                    setName(e.target.value);
                                 }}
                                 placeholder={'Google'}
                                 required
@@ -181,56 +201,121 @@ const Add = ({ refresh }: { refresh: () => void }) => {
                                     onChange={(e) => setIcon(e.target.value)}
                                     required
                                 />
-                                <Button variant={'outline'}>
+                                <Button variant={'outline'} type="button">
                                     {icon ? <OAuthIcon icon={icon} /> : t('pages.adminOauth.none')}
                                 </Button>
                             </div>
                         </div>
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                {t('pages.adminOauth.authorizeUrl')}
+                                {t('pages.adminOauth.protocol')}
                                 <IsRequired />
                             </Label>
-                            <Input
-                                name="authorize_url"
-                                value={authorizeUrl}
-                                placeholder={'https://example.com/login/oauth/authorize'}
-                                onChange={(e) => {
-                                    setAuthorizeUrl(e.target.value);
+                            <Select
+                                value={protocol}
+                                onValueChange={(value) => {
+                                    const nextProtocol = value as 'oauth2' | 'oidc';
+                                    setProtocol(nextProtocol);
+                                    setScopes(
+                                        nextProtocol === 'oidc'
+                                            ? 'openid profile email'
+                                            : 'read:user read:email'
+                                    );
+                                    setSubjectField(nextProtocol === 'oidc' ? 'sub' : 'id');
                                 }}
-                                required
-                            />
+                            >
+                                <SelectTrigger className="w-full">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="oauth2">OAuth 2.0</SelectItem>
+                                    <SelectItem value="oidc">OpenID Connect</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
+                        {protocol === 'oidc' ? (
+                            <div className="grid gap-3 md:col-span-2">
+                                <Label>
+                                    {t('pages.adminOauth.issuerUrl')}
+                                    <IsRequired />
+                                </Label>
+                                <Input
+                                    name="issuer_url"
+                                    value={issuerUrl}
+                                    placeholder="https://accounts.example.com"
+                                    onChange={(e) => setIssuerUrl(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        ) : (
+                            <>
+                                <div className="grid gap-3 md:col-span-2">
+                                    <Label>
+                                        {t('pages.adminOauth.authorizeUrl')}
+                                        <IsRequired />
+                                    </Label>
+                                    <Input
+                                        name="authorize_url"
+                                        value={authorizeUrl}
+                                        placeholder="https://example.com/login/oauth/authorize"
+                                        onChange={(e) => setAuthorizeUrl(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="grid gap-3 md:col-span-2">
+                                    <Label>
+                                        {t('pages.adminOauth.tokenUrl')}
+                                        <IsRequired />
+                                    </Label>
+                                    <Input
+                                        name="token_url"
+                                        value={tokenUrl}
+                                        placeholder="https://example.com/login/oauth/access_token"
+                                        onChange={(e) => setTokenUrl(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                                <div className="grid gap-3 md:col-span-2">
+                                    <Label>
+                                        {t('pages.adminOauth.userInfoUrl')}
+                                        <IsRequired />
+                                    </Label>
+                                    <Input
+                                        name="userinfo_url"
+                                        value={userUrl}
+                                        placeholder="https://api.example.com/user"
+                                        onChange={(e) => setUserUrl(e.target.value)}
+                                        required
+                                    />
+                                </div>
+                            </>
+                        )}
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
-                                {t('pages.adminOauth.tokenUrl')}
+                                {t('pages.adminOauth.scopes')}
                                 <IsRequired />
                             </Label>
                             <Input
-                                name="token_url"
-                                value={tokenUrl}
-                                placeholder={'https://example.com/login/oauth/access_token'}
-                                onChange={(e) => {
-                                    setTokenUrl(e.target.value);
-                                }}
+                                name="scopes"
+                                value={scopes}
+                                onChange={(e) => setScopes(e.target.value)}
                                 required
                             />
                         </div>
-                        <div className="grid gap-3 md:col-span-2">
-                            <Label>
-                                {t('pages.adminOauth.userInfoUrl')}
-                                <IsRequired />
-                            </Label>
-                            <Input
-                                name="userinfo_url"
-                                value={userUrl}
-                                placeholder={'https://api.example.com/user'}
-                                onChange={(e) => {
-                                    setUserUrl(e.target.value);
-                                }}
-                                required
-                            />
-                        </div>
+                        {protocol === 'oauth2' && (
+                            <div className="grid gap-3 md:col-span-2">
+                                <Label>
+                                    {t('pages.adminOauth.subjectField')}
+                                    <IsRequired />
+                                </Label>
+                                <Input
+                                    name="subject_field"
+                                    value={subjectField}
+                                    onChange={(e) => setSubjectField(e.target.value)}
+                                    required
+                                />
+                            </div>
+                        )}
                         <div className="grid gap-3 md:col-span-2">
                             <Label>
                                 {t('pages.adminOauth.clientId')}
