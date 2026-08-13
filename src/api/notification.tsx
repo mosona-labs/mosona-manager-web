@@ -14,6 +14,10 @@ class ApiNotificationClass extends baseAPI {
         return this.putData<ResponseInterface>('/v1/team/notification', data, false);
     }
 
+    async validate(data: NotificationType) {
+        return this.postData<ResponseInterface>('/v1/team/notification/validate', data, false);
+    }
+
     async test(uri: string) {
         return this.postData<ResponseInterface>('/v1/team/notification/test', { uri });
     }
