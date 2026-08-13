@@ -37,7 +37,7 @@ const ShoutrrrUrlItem = ({
                 className="flex-1"
                 value={url}
                 onChange={(e) => onChange(e.target.value)}
-                placeholder="generic://webhook.site/xxxxxx"
+                placeholder="generic+https://webhook.site/xxxxxx"
             />
             <LoadingButton isLoading={testing} variant="outline" onClick={onTest}>
                 Test

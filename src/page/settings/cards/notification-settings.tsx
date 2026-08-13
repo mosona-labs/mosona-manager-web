@@ -222,27 +222,9 @@ const NotificationSettings = () => {
                                             Telegram
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() =>
-                                                addShoutrrrUrl(
-                                                    'matrix://[username]:[password]@[host]:[port]/[?rooms=!roomID1[,roomAlias2]]'
-                                                )
-                                            }
-                                        >
-                                            Matrix
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
                                             onClick={() => addShoutrrrUrl('discord://[token]@[id]')}
                                         >
                                             Discord
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onClick={() =>
-                                                addShoutrrrUrl(
-                                                    'smtp://[username]:[password]@[host]:[port]/?from=[fromAddress]&to=[recipient1][,recipient2,...]'
-                                                )
-                                            }
-                                        >
-                                            Email
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() =>
