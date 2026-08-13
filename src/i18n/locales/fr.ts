@@ -654,7 +654,13 @@ const fr: typeof en = {
             deleteDesc:
                 'Voulez-vous vraiment supprimer cet utilisateur ? Cette action est irréversible.',
             deleteWarning:
-                'Ce compte possède des équipes, des serveurs et d’autres ressources qui seront également supprimés.',
+                'La suppression est bloquée tant que ce compte possède des équipes. Transférez-les ou supprimez-les d’abord.',
+            deleteTypeHint: 'Saisissez le nom d’utilisateur <b>{{name}}</b> pour confirmer.',
+            deleteNameMismatch: 'Le nom d’utilisateur ne correspond pas',
+            deleteNameMismatchDesc: 'Saisissez le bon nom d’utilisateur pour confirmer.',
+            deleteBlocked: 'L’utilisateur possède des équipes',
+            deleteBlockedDesc: 'Transférez ou supprimez toutes les équipes répertoriées.',
+            ownedTeams: 'Équipes bloquant la suppression',
             deleteSuccess: 'Suppression réussie',
             deleteSuccessDesc: "L'utilisateur a été supprimé avec succès.",
             save: 'Enregistrer les modifications',

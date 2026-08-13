@@ -643,7 +643,13 @@ const ms: typeof en = {
             deleteDesc:
                 'Adakah anda pasti mahu memadam pengguna ini? Tindakan ini tidak boleh dibatalkan.',
             deleteWarning:
-                'Akaun ini memiliki pasukan, pelayan dan sumber lain yang juga akan dipadam.',
+                'Pemadaman disekat semasa akaun ini memiliki pasukan. Pindah milik atau padamkannya dahulu.',
+            deleteTypeHint: 'Taip nama pengguna <b>{{name}}</b> untuk mengesahkan.',
+            deleteNameMismatch: 'Nama pengguna tidak sepadan',
+            deleteNameMismatchDesc: 'Taip nama pengguna yang betul untuk mengesahkan pemadaman.',
+            deleteBlocked: 'Pengguna memiliki pasukan',
+            deleteBlockedDesc: 'Pindah milik atau padam semua pasukan yang disenaraikan.',
+            ownedTeams: 'Pasukan yang menyekat pemadaman',
             deleteSuccess: 'Padam berjaya',
             deleteSuccessDesc: 'Pengguna telah berjaya dipadam.',
             save: 'Simpan Perubahan',

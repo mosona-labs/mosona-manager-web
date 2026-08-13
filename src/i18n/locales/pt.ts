@@ -643,7 +643,13 @@ const pt: typeof en = {
             deleteDesc:
                 'Tem certeza de que deseja excluir este usuário? Esta ação não pode ser desfeita.',
             deleteWarning:
-                'Esta conta possui equipes, servidores e outros recursos que também serão excluídos.',
+                'A exclusão é bloqueada enquanto esta conta possuir equipes. Transfira ou exclua-as primeiro.',
+            deleteTypeHint: 'Digite o usuário <b>{{name}}</b> para confirmar.',
+            deleteNameMismatch: 'O usuário não confere',
+            deleteNameMismatchDesc: 'Digite o usuário correto para confirmar a exclusão.',
+            deleteBlocked: 'O usuário possui equipes',
+            deleteBlockedDesc: 'Transfira ou exclua todas as equipes listadas.',
+            ownedTeams: 'Equipes que impedem a exclusão',
             deleteSuccess: 'Exclusão bem-sucedida',
             deleteSuccessDesc: 'O usuário foi excluído com sucesso.',
             save: 'Salvar alterações',

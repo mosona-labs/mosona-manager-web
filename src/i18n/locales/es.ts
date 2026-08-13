@@ -647,7 +647,13 @@ const es: typeof en = {
             deleteDesc:
                 '¿Seguro que quieres eliminar este usuario? Esta acción no se puede deshacer.',
             deleteWarning:
-                'Esta cuenta posee equipos, servidores y otros recursos que también se eliminarán.',
+                'No se puede eliminar esta cuenta mientras posea equipos. Transfiérelos o elimínalos primero.',
+            deleteTypeHint: 'Escribe el usuario <b>{{name}}</b> para confirmar.',
+            deleteNameMismatch: 'El usuario no coincide',
+            deleteNameMismatchDesc: 'Escribe el usuario correcto para confirmar la eliminación.',
+            deleteBlocked: 'El usuario posee equipos',
+            deleteBlockedDesc: 'Transfiere o elimina todos los equipos de la lista.',
+            ownedTeams: 'Equipos que impiden la eliminación',
             deleteSuccess: 'Eliminación correcta',
             deleteSuccessDesc: 'El usuario se ha eliminado correctamente.',
             save: 'Guardar cambios',

@@ -2,6 +2,11 @@ import type { UserType } from '@/api/user.ts';
 
 import { baseAPI, type ResponseInterface } from '@/api/base.ts';
 
+export interface OwnedTeamSummary {
+    id: number;
+    name: string;
+}
+
 class ApiAdminUserClass extends baseAPI {
     async list(page: number, size: number, search: string, verify: string) {
         return this.getData<
@@ -32,8 +37,10 @@ class ApiAdminUserClass extends baseAPI {
         return this.putData<ResponseInterface>('/admin/users/' + id, user);
     }
 
-    async del(id: number) {
-        return this.deleteData<ResponseInterface>('/admin/users/' + id);
+    async del(id: number, confirmation: string) {
+        return this.deleteData<ResponseInterface<{ teams?: OwnedTeamSummary[] }>>(
+            '/admin/users/' + id + '?confirm=' + encodeURIComponent(confirmation)
+        );
     }
 }
 

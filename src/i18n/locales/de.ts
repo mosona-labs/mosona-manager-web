@@ -645,7 +645,13 @@ const de: typeof en = {
             deleteDesc:
                 'Möchten Sie diesen Benutzer wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
             deleteWarning:
-                'Dieses Konto besitzt Teams, Server und andere Ressourcen, die ebenfalls gelöscht werden.',
+                'Das Löschen ist blockiert, solange dieses Konto Teams besitzt. Übertragen oder löschen Sie diese zuerst.',
+            deleteTypeHint: 'Geben Sie zur Bestätigung den Benutzernamen <b>{{name}}</b> ein.',
+            deleteNameMismatch: 'Benutzername stimmt nicht überein',
+            deleteNameMismatchDesc: 'Geben Sie den korrekten Benutzernamen ein.',
+            deleteBlocked: 'Benutzer besitzt Teams',
+            deleteBlockedDesc: 'Übertragen oder löschen Sie alle aufgeführten Teams.',
+            ownedTeams: 'Teams, die das Löschen blockieren',
             deleteSuccess: 'Löschen erfolgreich',
             deleteSuccessDesc: 'Der Benutzer wurde erfolgreich gelöscht.',
             save: 'Änderungen speichern',
