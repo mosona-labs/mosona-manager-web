@@ -507,6 +507,10 @@ const ru: typeof en = {
             parseError: 'Не удалось разобрать JSON.',
             invalidExport: 'Некорректный файл экспорта команды.',
             invalidEncrypted: 'Некорректный зашифрованный файл экспорта команды.',
+            legacySSHImportTitle: 'Unverified SSH host keys',
+            legacySSHImportDescription: 'This older export contains {{count}} SSH server(s) without pinned host keys.',
+            legacySSHImportRisk: 'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
+            legacySSHImportAccept: 'Accept Risk and Import',
         },
         createTeam: {
             title: 'Новая команда',

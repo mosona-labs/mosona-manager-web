@@ -127,11 +127,16 @@ class ApiTeamClass extends baseAPI {
         );
     }
 
-    async importData(totp_code: string, file: TeamImportFile, export_password?: string) {
+    async importData(
+        totp_code: string,
+        file: TeamImportFile,
+        export_password?: string,
+        trust_legacy_ssh_host_keys = false
+    ) {
         const payload =
             export_password === undefined
-                ? { totp_code, data: file }
-                : { totp_code, export_password, encrypted: file };
+                ? { totp_code, data: file, trust_legacy_ssh_host_keys }
+                : { totp_code, export_password, encrypted: file, trust_legacy_ssh_host_keys };
 
         return this.postData<ResponseInterface>('/v1/team/import', payload, false);
     }

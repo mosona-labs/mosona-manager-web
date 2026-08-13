@@ -499,6 +499,10 @@ const ar: typeof en = {
             parseError: 'تعذّر تحليل JSON.',
             invalidExport: 'ملف تصدير الفريق غير صالح.',
             invalidEncrypted: 'ملف تصدير الفريق المشفّر غير صالح.',
+            legacySSHImportTitle: 'Unverified SSH host keys',
+            legacySSHImportDescription: 'This older export contains {{count}} SSH server(s) without pinned host keys.',
+            legacySSHImportRisk: 'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
+            legacySSHImportAccept: 'Accept Risk and Import',
         },
         createTeam: {
             title: 'فريق جديد',

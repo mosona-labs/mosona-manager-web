@@ -500,6 +500,10 @@ const ko: typeof en = {
             parseError: 'JSON을 파싱할 수 없습니다.',
             invalidExport: '잘못된 팀 내보내기 파일입니다.',
             invalidEncrypted: '잘못된 암호화된 팀 내보내기 파일입니다.',
+            legacySSHImportTitle: 'Unverified SSH host keys',
+            legacySSHImportDescription: 'This older export contains {{count}} SSH server(s) without pinned host keys.',
+            legacySSHImportRisk: 'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
+            legacySSHImportAccept: 'Accept Risk and Import',
         },
         createTeam: {
             title: '새 팀',

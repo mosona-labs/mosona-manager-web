@@ -514,6 +514,10 @@ const es: typeof en = {
             parseError: 'No se pudo analizar el JSON.',
             invalidExport: 'Archivo de exportación de equipo no válido.',
             invalidEncrypted: 'Archivo de exportación cifrado no válido.',
+            legacySSHImportTitle: 'Unverified SSH host keys',
+            legacySSHImportDescription: 'This older export contains {{count}} SSH server(s) without pinned host keys.',
+            legacySSHImportRisk: 'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
+            legacySSHImportAccept: 'Accept Risk and Import',
         },
         createTeam: {
             title: 'Nuevo equipo',

@@ -485,6 +485,10 @@ const zhHK: typeof en = {
             parseError: '無法解析 JSON。',
             invalidExport: '無效的團隊匯出檔案。',
             invalidEncrypted: '無效的加密團隊匯出檔案。',
+            legacySSHImportTitle: 'SSH 主機金鑰未經驗證',
+            legacySSHImportDescription: '此舊版備份包含 {{count}} 台未固定主機金鑰的 SSH 伺服器。',
+            legacySSHImportRisk: '匯入後將預設信任這些主機。在逐台編輯伺服器並確認指紋之前，網絡攻擊者可能冒充這些主機。',
+            legacySSHImportAccept: '接受風險並匯入',
         },
         createTeam: {
             title: '新建團隊',

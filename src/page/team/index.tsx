@@ -1,6 +1,6 @@
 import type { TeamEncryptedExportFile, TeamImportFile, TeamMemberType } from '@/api/team';
 
-import { Download, Plus, Shield, Upload } from 'lucide-react';
+import { AlertTriangle, Download, Plus, Shield, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -59,6 +59,8 @@ const Team = () => {
     const [importFileName, setImportFileName] = useState('');
     const [isExporting, setIsExporting] = useState(false);
     const [isImporting, setIsImporting] = useState(false);
+    const [legacyImportWarningOpen, setLegacyImportWarningOpen] = useState(false);
+    const [legacyImportServers, setLegacyImportServers] = useState<string[]>([]);
     const [enableTOTPOpen, setEnableTOTPOpen] = useState(false);
 
     const [teamName, setTeamName] = useState(team?.name || '');
@@ -225,6 +227,52 @@ const Team = () => {
             });
     };
 
+    const completeImport = (trustLegacySSHHostKeys: boolean) => {
+        if (!importFile) return;
+
+        const encrypted = isEncryptedTeamExport(importFile);
+        setIsImporting(true);
+        ApiTeam.importData(
+            importTOTP.trim(),
+            importFile,
+            encrypted ? importPassword : undefined,
+            trustLegacySSHHostKeys
+        )
+            .then(() => {
+                setLegacyImportWarningOpen(false);
+                setLegacyImportServers([]);
+                setImportOpen(false);
+                setImportTOTP('');
+                setImportPassword('');
+                setImportFile(null);
+                setImportFileName('');
+                notifyServerMutation();
+                Promise.all([refresh(), refreshCategories(), refreshKeys()]).then(() => {
+                    toast.success(t('pages.team.importSuccess'));
+                });
+            })
+            .catch((error) => {
+                if (
+                    !trustLegacySSHHostKeys &&
+                    error?.response?.data?.code ===
+                        'legacy_ssh_host_key_confirmation_required'
+                ) {
+                    const servers = error.response.data.data?.servers;
+                    setLegacyImportServers(
+                        Array.isArray(servers)
+                            ? servers.filter((server): server is string => typeof server === 'string')
+                            : []
+                    );
+                    setLegacyImportWarningOpen(true);
+                    return;
+                }
+                ToastError(error);
+            })
+            .finally(() => {
+                setIsImporting(false);
+            });
+    };
+
     const handleImport = () => {
         if (!user?.totp_enabled) {
             setEnableTOTPOpen(true);
@@ -244,23 +292,7 @@ const Team = () => {
             return;
         }
 
-        setIsImporting(true);
-        ApiTeam.importData(importTOTP.trim(), importFile, encrypted ? importPassword : undefined)
-            .then(() => {
-                setImportOpen(false);
-                setImportTOTP('');
-                setImportPassword('');
-                setImportFile(null);
-                setImportFileName('');
-                notifyServerMutation();
-                Promise.all([refresh(), refreshCategories(), refreshKeys()]).then(() => {
-                    toast.success(t('pages.team.importSuccess'));
-                });
-            })
-            .catch(ToastError)
-            .finally(() => {
-                setIsImporting(false);
-            });
+        completeImport(false);
     };
 
     if (!team) return null;
@@ -643,6 +675,58 @@ const Team = () => {
                                 {t('pages.team.enableTotp')}
                             </Button>
                         )}
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={legacyImportWarningOpen} onOpenChange={setLegacyImportWarningOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-destructive" />
+                            {t('pages.team.legacySSHImportTitle')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('pages.team.legacySSHImportDescription', {
+                                count: legacyImportServers.length,
+                            })}
+                        </DialogDescription>
+                    </DialogHeader>
+                    {legacyImportServers.length > 0 && (
+                        <div className="max-h-40 overflow-y-auto rounded border bg-muted/30 p-3">
+                            <ul className="grid gap-1 text-sm">
+                                {legacyImportServers.map((server, index) => (
+                                    <li key={`${server}-${index}`} className="break-all">
+                                        {server}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                    <p className="text-sm text-destructive">
+                        {t('pages.team.legacySSHImportRisk')}
+                    </p>
+                    <div className="grid gap-2">
+                        <Label htmlFor="team-import-risk-totp">{t('pages.team.totpCode')}</Label>
+                        <Input
+                            id="team-import-risk-totp"
+                            value={importTOTP}
+                            inputMode="numeric"
+                            maxLength={6}
+                            onChange={(e) => setImportTOTP(e.target.value)}
+                        />
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">{t('common.cancel')}</Button>
+                        </DialogClose>
+                        <LoadingButton
+                            variant="destructive"
+                            isLoading={isImporting}
+                            onClick={() => completeImport(true)}
+                        >
+                            {t('pages.team.legacySSHImportAccept')}
+                        </LoadingButton>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>

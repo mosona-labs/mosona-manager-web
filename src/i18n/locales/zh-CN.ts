@@ -484,6 +484,12 @@ const zhCN: typeof en = {
             parseError: '无法解析 JSON。',
             invalidExport: '无效的团队导出文件。',
             invalidEncrypted: '无效的加密团队导出文件。',
+            legacySSHImportTitle: 'SSH 主机密钥未经验证',
+            legacySSHImportDescription:
+                '此旧版备份包含 {{count}} 台未固定主机密钥的 SSH 服务器。',
+            legacySSHImportRisk:
+                '导入后将默认信任这些主机。在逐台编辑服务器并确认指纹之前，网络攻击者可能冒充这些主机。',
+            legacySSHImportAccept: '接受风险并导入',
         },
         createTeam: {
             title: '新建团队',

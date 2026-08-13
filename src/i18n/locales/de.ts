@@ -513,6 +513,10 @@ const de: typeof en = {
             parseError: 'JSON konnte nicht gelesen werden.',
             invalidExport: 'Ungültige Team-Exportdatei.',
             invalidEncrypted: 'Ungültige verschlüsselte Team-Exportdatei.',
+            legacySSHImportTitle: 'Unverified SSH host keys',
+            legacySSHImportDescription: 'This older export contains {{count}} SSH server(s) without pinned host keys.',
+            legacySSHImportRisk: 'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
+            legacySSHImportAccept: 'Accept Risk and Import',
         },
         createTeam: {
             title: 'Neues Team',
