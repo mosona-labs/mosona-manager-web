@@ -58,7 +58,7 @@ const Member = ({
                 onValueChange={(e) => {
                     onChangeRole(parseInt(e));
                 }}
-                disabled={item.id === myUID}
+                disabled={item.id === myUID || isOwner}
             >
                 <SelectTrigger className="w-[180px]">
                     <SelectValue />
@@ -72,7 +72,12 @@ const Member = ({
                 </SelectContent>
             </Select>
         </div>
-        <Button variant="ghost" className="text-red-500" onClick={onRemove}>
+        <Button
+            variant="ghost"
+            className="text-red-500"
+            onClick={onRemove}
+            disabled={item.id === myUID || isOwner}
+        >
             <Trash2 />
         </Button>
     </div>
