@@ -44,6 +44,8 @@ const Edit = ({
     const [isLoading, setIsLoading] = useState(false);
 
     const [password, setPassword] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [isAdmin, setIsAdmin] = useState(user.is_admin ? 'true' : 'false');
 
     const onSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -52,6 +54,7 @@ const Edit = ({
             username: formData.get('username') as string,
             email: formData.get('email') as string,
             password: formData.get('password') as string,
+            current_password: formData.get('current_password') as string,
             verified: formData.get('verified') === 'true',
             is_admin: formData.get('is_admin') === 'true',
         };
@@ -61,6 +64,7 @@ const Edit = ({
             username: data.username,
             email: data.email,
             password: data.password,
+            current_password: data.current_password,
             verified: data.verified,
             is_admin: data.is_admin,
         })
@@ -69,6 +73,8 @@ const Edit = ({
                     description: t('pages.adminUsers.editSuccessDesc'),
                 });
                 refresh();
+                setPassword('');
+                setCurrentPassword('');
                 setOpen(false);
             })
             .catch(ToastError)
@@ -79,7 +85,17 @@ const Edit = ({
 
     return (
         <>
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog
+                open={open}
+                onOpenChange={(nextOpen) => {
+                    setOpen(nextOpen);
+                    if (!nextOpen) {
+                        setPassword('');
+                        setCurrentPassword('');
+                        setIsAdmin(user.is_admin ? 'true' : 'false');
+                    }
+                }}
+            >
                 <DialogContent
                     className="sm:max-w-[425px]"
                     onOpenAutoFocus={(e) => e.preventDefault()}
@@ -131,6 +147,20 @@ const Edit = ({
                                     </Button>
                                 </div>
                             </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor={`edit-current-password-${user.id}`}>
+                                    {t('pages.adminUsers.currentAdminPassword')}
+                                </Label>
+                                <Input
+                                    id={`edit-current-password-${user.id}`}
+                                    name="current_password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    value={currentPassword}
+                                    onChange={(event) => setCurrentPassword(event.target.value)}
+                                    required={password !== '' || isAdmin !== String(user.is_admin)}
+                                />
+                            </div>
                             <div className={'grid gap-3'}>
                                 <Label>{t('pages.adminUsers.verified')}</Label>
                                 <Select
@@ -154,7 +184,8 @@ const Edit = ({
                                 <Label>{t('pages.adminUsers.isAdmin')}</Label>
                                 <Select
                                     name={'is_admin'}
-                                    defaultValue={user.is_admin ? 'true' : 'false'}
+                                    value={isAdmin}
+                                    onValueChange={setIsAdmin}
                                 >
                                     <SelectTrigger className="w-full">
                                         <SelectValue />

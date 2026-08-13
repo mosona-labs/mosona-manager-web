@@ -22,7 +22,11 @@ import { DatePicker } from '../date-picker';
 import { Card, CardContent } from '../ui/card';
 
 import { useUser } from '@/context/useUser';
-import ApiServer from '@/api/server';
+import ApiServer, {
+    getSSHHostKeyConfirmation,
+    type ServerEditRequest,
+    type SSHHostKeyConfirmation,
+} from '@/api/server';
 import { ToastError } from '@/utils/toast';
 import LoadingButton from '@/components/loading-button.tsx';
 import AddKey from '@/page/keychain/components/add.tsx';
@@ -30,6 +34,7 @@ import HelpAgentMode from '@/components/server/help/agent-mode.tsx';
 import HelpAutoRenew from '@/components/server/help/auto-renew.tsx';
 import ReinstallDialog from '@/components/server/reinstall.tsx';
 import { notifyServerMutation } from '@/utils/server-events';
+import SSHHostKeyConfirm from '@/components/server/ssh-host-key-confirm';
 
 const EditServer = ({
     open,
@@ -44,6 +49,9 @@ const EditServer = ({
     const { categories, keys } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [hostKeyConfirmation, setHostKeyConfirmation] = useState<
+        (SSHHostKeyConfirmation & { request: ServerEditRequest }) | null
+    >(null);
 
     const [mode, setMode] = useState<number>();
     const [agentUUID, setAgentUUID] = useState<string>();
@@ -114,46 +122,56 @@ const EditServer = ({
             });
     }, [serverID, open]);
 
-    const handleSubmit = (e?: FormEvent) => {
-        e?.preventDefault();
+    const submitServer = (request: ServerEditRequest) => {
         setIsLoading(true);
 
-        ApiServer.edit(
-            serverID,
-            name,
-            address,
-            port,
-            username,
-            password,
-            keyId,
-            category || 0,
-            allowMonitor,
-            allowTerminal,
-            weight,
-            // Information
-            note,
-            provider,
-            cycle,
-            startTime || null,
-            endTime || null,
-            amount || '',
-            autoRenew,
-            bandwidth,
-            traffic,
-            trafficType,
-            notePublic
-        )
+        ApiServer.edit(serverID, request)
             .then(() => {
+                setHostKeyConfirmation(null);
                 onOpenChange(false);
                 notifyServerMutation();
                 toast.success(t('pages.serverForm.updated'), {
                     description: t('pages.serverForm.changesSoon'),
                 });
             })
-            .catch(ToastError)
+            .catch((error) => {
+                const confirmation = getSSHHostKeyConfirmation(error);
+                if (confirmation) {
+                    setHostKeyConfirmation({ ...confirmation, request });
+                    return;
+                }
+                ToastError(error);
+            })
             .finally(() => {
                 setIsLoading(false);
             });
+    };
+
+    const handleSubmit = (e?: FormEvent) => {
+        e?.preventDefault();
+        submitServer({
+            name,
+            address,
+            port,
+            username,
+            password,
+            key_id: keyId,
+            category: category || 0,
+            allow_monitor: allowMonitor,
+            allow_terminal: allowTerminal,
+            weight,
+            note,
+            provider,
+            cycle,
+            start_time: startTime || null,
+            end_time: endTime || null,
+            amount: amount || '',
+            auto_renew: autoRenew,
+            bandwidth,
+            traffic,
+            traffic_type: trafficType,
+            note_public: notePublic,
+        });
     };
 
     return (
@@ -646,6 +664,21 @@ const EditServer = ({
                     </DialogFooter>
                 </form>
             </DialogContent>
+
+            {hostKeyConfirmation && (
+                <SSHHostKeyConfirm
+                    fingerprint={hostKeyConfirmation.fingerprint}
+                    changed={hostKeyConfirmation.changed}
+                    isLoading={isLoading}
+                    onCancel={() => setHostKeyConfirmation(null)}
+                    onConfirm={() =>
+                        submitServer({
+                            ...hostKeyConfirmation.request,
+                            host_key: hostKeyConfirmation.host_key,
+                        })
+                    }
+                />
+            )}
         </Dialog>
     );
 };

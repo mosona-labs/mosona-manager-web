@@ -337,11 +337,24 @@ export const SessionProvider: React.FC<{ children: React.ReactNode }> = ({ child
                     });
                 };
 
-                websocket.onclose = () => {
+                websocket.onclose = (event) => {
                     console.log('WebSocket disconnected');
                     const latestSession = sessionsRef.current.get(sessionId);
                     if (!latestSession) return;
                     if (latestSession.ws && latestSession.ws !== websocket) return;
+
+                    if (event.code === 1008) {
+                        manualDisconnectRef.current.add(sessionId);
+                        clearReconnectTimer(sessionId);
+                        patchSession(sessionId, (session) => {
+                            session.isConnected = false;
+                            session.ws = null;
+                            session.connectionStatus = 'disconnected';
+                            session.reconnectAttempt = 0;
+                        });
+                        window.location.replace('/');
+                        return;
+                    }
 
                     const decoder = outputDecoderRef.current.get(sessionId);
                     if (decoder) {

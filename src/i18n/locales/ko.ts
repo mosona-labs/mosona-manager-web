@@ -147,8 +147,7 @@ const ko: typeof en = {
             passwordPlaceholder: '키가 암호화된 경우 여기에 비밀번호를 입력하세요',
             importHint: '개인 키 파일을 끌어다 놓거나 선택하여 가져오기',
             editTitle: '키 편집',
-            editDescription:
-                '보안상의 이유로 추가된 키의 내용은 보거나 수정할 수 없습니다.',
+            editDescription: '보안상의 이유로 추가된 키의 내용은 보거나 수정할 수 없습니다.',
             keyNamePlaceholder: '키 이름',
             resetEmpty: '비우기로 초기화',
             keepPassword: '비워 두면 현재 키 비밀번호 유지',
@@ -213,13 +212,11 @@ const ko: typeof en = {
             currentSession: '현재 세션',
             revoke: '취소',
             revokeTitle: '세션 취소',
-            revokeDesc:
-                '이 세션을 취소하시겠습니까? 연결된 장치가 로그아웃됩니다.',
+            revokeDesc: '이 세션을 취소하시겠습니까? 연결된 장치가 로그아웃됩니다.',
             revokeAction: '세션 취소',
             revokeAll: '모두 취소',
             revokeAllTitle: '모든 세션 취소',
-            revokeAllDesc:
-                '모든 세션을 취소하시겠습니까? 모든 장치가 로그아웃됩니다.',
+            revokeAllDesc: '모든 세션을 취소하시겠습니까? 모든 장치가 로그아웃됩니다.',
             oauth: 'OAuth',
             oauthDesc: '연결된 OAuth 제공자 및 애플리케이션을 관리합니다.',
             loadingOauth: '연결된 OAuth 제공자 로딩 중...',
@@ -374,6 +371,13 @@ const ko: typeof en = {
             save: '변경 사항 저장',
             added: '서버가 추가되었습니다',
             updated: '서버가 업데이트되었습니다',
+            sshHostKeyTitle: 'SSH 호스트 키 확인',
+            sshHostKeyDescription:
+                '계속하기 전에 신뢰할 수 있는 경로로 이 SHA-256 지문을 확인하세요.',
+            sshHostKeyChangedTitle: 'SSH 호스트 키가 변경됨',
+            sshHostKeyChangedDescription:
+                '이 지문은 이전에 신뢰한 키와 다릅니다. 서버 키가 의도적으로 변경되었음을 확인한 경우에만 계속하세요.',
+            confirmSSHHostKey: '이 키 신뢰',
             help: '도움말',
             agentModeTitle: 'Agent 모드 소개',
             agentModeDesc: '서버에 Agent를 설치할 때 Agent 모드를 선택할 수 있습니다.',
@@ -392,8 +396,7 @@ const ko: typeof en = {
             autoRenewConditionDesc:
                 '자동 갱신은 유효한 반복 주기가 구성되어 있고(일회성 또는 없음은 지원되지 않음) 종료 시간이 설정된 경우에만 작동합니다.',
             installTitle: '{{mode}} 모드로 Agent 설치',
-            installDesc:
-                '다음 명령을 복사하여 서버에서 실행하면 Agent가 설치됩니다.',
+            installDesc: '다음 명령을 복사하여 서버에서 실행하면 Agent가 설치됩니다.',
             noPreference: '선호 없음',
             useIpv4: 'IPv4 사용',
             useIpv6: 'IPv6 사용',
@@ -431,8 +434,7 @@ const ko: typeof en = {
             userRegistration: '사용자 등록',
             registrationHint:
                 '사용자 자체 등록을 허용하려면 초기화 후 관리자 설정 → 이메일에서 이메일 발신자를 구성하고, 관리자 설정 → 가입 및 로그인에서 활성화 이메일을 사용하세요.',
-            legalRisk:
-                '이 서비스를 알 수 없는 사용자에게 공개하면 법적 위험이 따를 수 있습니다.',
+            legalRisk: '이 서비스를 알 수 없는 사용자에게 공개하면 법적 위험이 따를 수 있습니다.',
             enableRegistration: '사용자 등록 활성화',
             finish: '초기화 완료',
             provideWebsiteUrl: '웹사이트 URL을 입력하세요.',
@@ -480,8 +482,7 @@ const ko: typeof en = {
             exportPasswordHint: '최소 8자. 안전하게 보관하세요. 복구할 수 없습니다.',
             totpCode: 'TOTP 코드',
             totpRequired: 'TOTP가 필요합니다',
-            totpRequiredExport:
-                '민감한 팀 데이터를 내보내기 전에 2단계 인증을 활성화하세요.',
+            totpRequiredExport: '민감한 팀 데이터를 내보내기 전에 2단계 인증을 활성화하세요.',
             totpRequiredImport: '팀 데이터를 가져오기 전에 2단계 인증을 활성화하세요.',
             enableTotp: 'TOTP 활성화',
             importTitle: '팀 데이터 가져오기',
@@ -525,8 +526,7 @@ const ko: typeof en = {
             configDescription:
                 '공유 가능한 상태 페이지를 활성화하고 경로 기반 이름 또는 사용자 지정 도메인을 관리합니다.',
             enable: '공개 페이지 활성화',
-            enableHint:
-                '비활성화하면 기존 링크는 저장되지만 공개 페이지는 제공되지 않습니다.',
+            enableHint: '비활성화하면 기존 링크는 저장되지만 공개 페이지는 제공되지 않습니다.',
             pathName: '경로 이름',
             pathHint: '3-32자, 소문자, 숫자, 하이픈만 사용.',
             clearPath: '경로 이름 지우기',
@@ -546,8 +546,7 @@ const ko: typeof en = {
             copyFailedDesc: '링크를 클립보드에 복사할 수 없습니다.',
             nameInvalid:
                 '3-32자의 소문자, 숫자 또는 하이픈을 사용하세요. 하이픈은 시작이나 끝에 올 수 없습니다.',
-            domainInvalidHost:
-                'https://, 경로, 쿼리, 프래그먼트 또는 @ 없이 호스트만 입력하세요.',
+            domainInvalidHost: 'https://, 경로, 쿼리, 프래그먼트 또는 @ 없이 호스트만 입력하세요.',
             domainInvalid: 'status.example.com과 같은 유효한 호스트 이름을 입력하세요.',
             nameOrDomainRequired:
                 '공개 페이지가 활성화된 경우 이름 또는 도메인 중 하나 이상이 필요합니다.',
@@ -570,10 +569,8 @@ const ko: typeof en = {
             verified: '2FA 확인됨',
             verifiedDesc: '2단계 인증이 확인되었습니다.',
             dialogTitle: '⚠️ 2단계 인증 (2FA)',
-            dialogDescTotp:
-                '고위험 작업입니다. 본인 확인을 위해 TOTP 코드를 입력해 주세요.',
-            dialogDescEmail:
-                '고위험 작업입니다. 본인 확인을 위해 이메일로 인증 코드를 보냅니다.',
+            dialogDescTotp: '고위험 작업입니다. 본인 확인을 위해 TOTP 코드를 입력해 주세요.',
+            dialogDescEmail: '고위험 작업입니다. 본인 확인을 위해 이메일로 인증 코드를 보냅니다.',
         },
         totp: {
             enableTitle: '2단계 인증 (TOTP) 활성화',
@@ -625,12 +622,19 @@ const ko: typeof en = {
             editTitle: '사용자 편집',
             editDesc: '아래 양식을 작성하여 사용자를 편집합니다.',
             keepPassword: '비워 두면 현재 비밀번호 유지',
+            currentAdminPassword: '현재 관리자 비밀번호',
             editSuccess: '편집 성공',
             editSuccessDesc: '사용자가 편집되었습니다.',
             deleteTitle: '사용자 "{{name}}" 삭제',
             deleteDesc: '이 사용자를 삭제하시겠습니까? 이 작업은 취소할 수 없습니다.',
             deleteWarning:
-                '이 계정이 소유한 팀, 서버 및 기타 리소스도 함께 삭제됩니다.',
+                '이 계정이 팀을 소유하는 동안에는 삭제할 수 없습니다. 먼저 이전하거나 삭제하세요.',
+            deleteTypeHint: '확인하려면 사용자 이름 <b>{{name}}</b>을 입력하세요.',
+            deleteNameMismatch: '사용자 이름이 일치하지 않습니다',
+            deleteNameMismatchDesc: '삭제를 확인하려면 올바른 사용자 이름을 입력하세요.',
+            deleteBlocked: '사용자가 팀을 소유하고 있습니다',
+            deleteBlockedDesc: '나열된 모든 팀을 이전하거나 삭제하세요.',
+            ownedTeams: '삭제를 차단하는 소유 팀',
             deleteSuccess: '삭제 성공',
             deleteSuccessDesc: '사용자가 삭제되었습니다.',
             save: '변경 사항 저장',
@@ -645,8 +649,7 @@ const ko: typeof en = {
             faviconHint:
                 '최대 5 MiB의 PNG, JPEG, WebP 또는 GIF 이미지를 업로드하세요. 저장된 파비콘은 서버에서 변환됩니다.',
             baseUrl: '기본 URL',
-            baseUrlHint:
-                '애플리케이션의 기본 URL입니다. 링크, OAuth 및 이메일 생성에 사용됩니다.',
+            baseUrlHint: '애플리케이션의 기본 URL입니다. 링크, OAuth 및 이메일 생성에 사용됩니다.',
             sessionBindIp: '세션 IP 바인딩',
             sessionBindIpTitle: '로그인 IP에 세션 바인딩',
             sessionBindIpDesc:
@@ -691,8 +694,7 @@ const ko: typeof en = {
             enableRegistration: '사용자 등록 활성화',
             enableRegistrationDesc: '새 사용자가 플랫폼에 계정을 등록할 수 있도록 허용합니다.',
             email: '이메일',
-            emailHint:
-                '이메일 구성이 설정되지 않으면 이메일 인증을 활성화할 수 없습니다.',
+            emailHint: '이메일 구성이 설정되지 않으면 이메일 인증을 활성화할 수 없습니다.',
             regVerify: '등록 시 이메일 인증 필요',
             regVerifyDesc: '등록 중 사용자가 이메일 주소를 인증하도록 요구합니다.',
             loginVerify: '로그인 시 이메일 인증 필요',
@@ -720,6 +722,10 @@ const ko: typeof en = {
             icon: '아이콘',
             iconPlaceholder: '예: google, github 또는 https://example.com/icon.png',
             none: '없음',
+            protocol: '프로토콜',
+            issuerUrl: '발급자 URL',
+            scopes: '범위',
+            subjectField: '사용자 식별자 필드',
             authorizeUrl: 'Authorize URL',
             tokenUrl: 'Token URL',
             userInfoUrl: 'User Info URL',
@@ -775,28 +781,23 @@ const ko: typeof en = {
                 },
                 memory_usage: {
                     label: '메모리 사용량',
-                    description:
-                        '지정된 기간 동안 메모리 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 메모리 사용량이 임계값을 초과하면 알림.',
                 },
                 disk_usage: {
                     label: '디스크 사용량',
-                    description:
-                        '지정된 기간 동안 디스크 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 사용량이 임계값을 초과하면 알림.',
                 },
                 read_iops: {
                     label: '디스크 읽기 IOPS',
-                    description:
-                        '지정된 기간 동안 디스크 읽기 IOPS가 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 읽기 IOPS가 임계값을 초과하면 알림.',
                 },
                 write_iops: {
                     label: '디스크 쓰기 IOPS',
-                    description:
-                        '지정된 기간 동안 디스크 쓰기 IOPS가 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 쓰기 IOPS가 임계값을 초과하면 알림.',
                 },
                 bandwidth: {
                     label: '대역폭',
-                    description:
-                        '지정된 기간 동안 대역폭 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 대역폭 사용량이 임계값을 초과하면 알림.',
                 },
                 expiry_reminder: {
                     label: '만료 알림',

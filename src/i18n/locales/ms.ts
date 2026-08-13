@@ -200,7 +200,8 @@ const ms: typeof en = {
             security: 'Keselamatan',
             securityDesc: 'Urus keselamatan akaun dan kaedah pengesahan anda.',
             totp: 'Pengesahan Dua Faktor (TOTP)',
-            totpDesc: 'Tambah lapisan keselamatan tambahan pada akaun anda menggunakan aplikasi pengesah.',
+            totpDesc:
+                'Tambah lapisan keselamatan tambahan pada akaun anda menggunakan aplikasi pengesah.',
             totpDisabled: 'Pengesahan Dua Faktor (TOTP) telah berjaya dilumpuhkan.',
             teams: 'Pasukan',
             teamsDesc: 'Urus pasukan yang anda sertai.',
@@ -279,7 +280,8 @@ const ms: typeof en = {
             diskIo: 'I/O Cakera',
             diskIoDescription: 'Kelajuan baca dan tulis digabungkan merentasi semua cakera',
             bandwidth: 'Lebar Jalur',
-            bandwidthDescription: 'Penggunaan lebar jalur rangkaian untuk semua antara muka rangkaian',
+            bandwidthDescription:
+                'Penggunaan lebar jalur rangkaian untuk semua antara muka rangkaian',
             swapUsage: 'Penggunaan Swap',
             swapDescription: 'Jumlah ruang swap yang digunakan',
             diskUsage: 'Penggunaan {{label}}',
@@ -329,7 +331,8 @@ const ms: typeof en = {
             password: 'Kata laluan',
             key: 'Kunci',
             selectKey: 'Pilih Kunci',
-            passwordHint: 'Kami akan menggunakan storan tersulit untuk melindungi kata laluan anda.',
+            passwordHint:
+                'Kami akan menggunakan storan tersulit untuk melindungi kata laluan anda.',
             keepPassword: 'Kata laluan (Biarkan kosong untuk tidak menukar)',
             agent: 'Agent',
             agentMode: 'Mod Agent',
@@ -374,6 +377,13 @@ const ms: typeof en = {
             save: 'Simpan perubahan',
             added: 'Pelayan berjaya ditambah',
             updated: 'Pelayan berjaya dikemas kini',
+            sshHostKeyTitle: 'Sahkan kunci hos SSH',
+            sshHostKeyDescription:
+                'Sahkan cap jari SHA-256 ini melalui saluran yang dipercayai sebelum meneruskan.',
+            sshHostKeyChangedTitle: 'Kunci hos SSH telah berubah',
+            sshHostKeyChangedDescription:
+                'Cap jari ini berbeza daripada kunci yang dipercayai sebelum ini. Teruskan hanya selepas mengesahkan perubahan tersebut.',
+            confirmSSHHostKey: 'Percayai kunci ini',
             help: 'Bantuan',
             agentModeTitle: 'Pengenalan kepada Mod Agent',
             agentModeDesc: 'Anda boleh memilih mod agent semasa memasang agent pada pelayan anda.',
@@ -405,7 +415,8 @@ const ms: typeof en = {
                 'Semua data yang dikaitkan dengan pelayan ini akan dibuang secara kekal. Untuk mengesahkan, sila taip nama pelayan di bawah.',
             deleteTypeHint: 'Sila taip nama pelayan <b>{{name}}</b> untuk mengesahkan.',
             deleteNameMismatch: 'Nama pelayan tidak sepadan.',
-            deleteNameMismatchDesc: 'Sila taip nama pelayan yang betul untuk mengesahkan pemadaman.',
+            deleteNameMismatchDesc:
+                'Sila taip nama pelayan yang betul untuk mengesahkan pemadaman.',
             deleted: 'Pelayan berjaya dipadam.',
             reinstallTitle: 'Pasang Semula Agent',
             reinstallDesc:
@@ -477,7 +488,8 @@ const ms: typeof en = {
             exportDescription:
                 'Pilih kata laluan eksport untuk menyulitkan fail. Anda memerlukannya semasa mengimport.',
             exportPassword: 'Kata laluan eksport',
-            exportPasswordHint: 'Sekurang-kurangnya 8 aksara. Simpan dengan selamat; tidak boleh dipulihkan.',
+            exportPasswordHint:
+                'Sekurang-kurangnya 8 aksara. Simpan dengan selamat; tidak boleh dipulihkan.',
             totpCode: 'Kod TOTP',
             totpRequired: 'TOTP diperlukan',
             totpRequiredExport:
@@ -625,12 +637,20 @@ const ms: typeof en = {
             editTitle: 'Edit Pengguna',
             editDesc: 'Isi borang di bawah untuk mengedit pengguna.',
             keepPassword: 'Kosongkan untuk mengekalkan kata laluan semasa pengguna',
+            currentAdminPassword: 'Kata laluan pentadbir semasa',
             editSuccess: 'Edit berjaya',
             editSuccessDesc: 'Pengguna telah berjaya diedit.',
             deleteTitle: 'Padam Pengguna "{{name}}"',
-            deleteDesc: 'Adakah anda pasti mahu memadam pengguna ini? Tindakan ini tidak boleh dibatalkan.',
+            deleteDesc:
+                'Adakah anda pasti mahu memadam pengguna ini? Tindakan ini tidak boleh dibatalkan.',
             deleteWarning:
-                'Akaun ini memiliki pasukan, pelayan dan sumber lain yang juga akan dipadam.',
+                'Pemadaman disekat semasa akaun ini memiliki pasukan. Pindah milik atau padamkannya dahulu.',
+            deleteTypeHint: 'Taip nama pengguna <b>{{name}}</b> untuk mengesahkan.',
+            deleteNameMismatch: 'Nama pengguna tidak sepadan',
+            deleteNameMismatchDesc: 'Taip nama pengguna yang betul untuk mengesahkan pemadaman.',
+            deleteBlocked: 'Pengguna memiliki pasukan',
+            deleteBlockedDesc: 'Pindah milik atau padam semua pasukan yang disenaraikan.',
+            ownedTeams: 'Pasukan yang menyekat pemadaman',
             deleteSuccess: 'Padam berjaya',
             deleteSuccessDesc: 'Pengguna telah berjaya dipadam.',
             save: 'Simpan Perubahan',
@@ -645,8 +665,7 @@ const ms: typeof en = {
             faviconHint:
                 'Muat naik imej PNG, JPEG, WebP atau GIF sehingga 5 MiB. Favicon yang disimpan ditukar oleh pelayan.',
             baseUrl: 'URL Asas',
-            baseUrlHint:
-                'URL asas aplikasi anda. Digunakan untuk menjana pautan, OAuth dan e-mel.',
+            baseUrlHint: 'URL asas aplikasi anda. Digunakan untuk menjana pautan, OAuth dan e-mel.',
             sessionBindIp: 'Ikat Sesi ke IP',
             sessionBindIpTitle: 'Ikat sesi ke IP log masuk',
             sessionBindIpDesc:
@@ -657,7 +676,8 @@ const ms: typeof en = {
                 'Apabila didayakan, pelayan akan mempercayai pengepala IP dari proksi songsang atau CDN semasa menentukan IP klien dan protokol.',
             debugMode: 'Mod Nyahpepijat',
             debugModeTitle: 'Dayakan Mod Nyahpepijat',
-            debugModeDesc: 'Apabila didayakan, mesej ralat terperinci dan jejak tindanan akan dipaparkan.',
+            debugModeDesc:
+                'Apabila didayakan, mesej ralat terperinci dan jejak tindanan akan dipaparkan.',
             save: 'Simpan Perubahan',
             updated: 'Tetapan berjaya dikemas kini.',
             cropTitle: 'Potong Favicon',
@@ -678,7 +698,8 @@ const ms: typeof en = {
             useTls: 'Gunakan TLS',
             useTlsDesc: 'Dayakan TLS untuk penghantaran e-mel yang selamat.',
             save: 'Simpan Perubahan',
-            testHint: 'Cuba hantar e-mel ujian selepas menyimpan perubahan untuk mengesahkan tetapan.',
+            testHint:
+                'Cuba hantar e-mel ujian selepas menyimpan perubahan untuk mengesahkan tetapan.',
             testHint2:
                 'Klik butang "Hantar E-mel Ujian" di bawah untuk menghantar e-mel ujian ke alamat e-mel anda.',
             sendTest: 'Hantar E-mel Ujian',
@@ -694,9 +715,11 @@ const ms: typeof en = {
             emailHint:
                 'Jika konfigurasi e-mel tidak disediakan, pengesahan e-mel tidak boleh didayakan.',
             regVerify: 'Pendaftaran Memerlukan Pengesahan E-mel',
-            regVerifyDesc: 'Memerlukan pengguna mengesahkan alamat e-mel mereka semasa pendaftaran.',
+            regVerifyDesc:
+                'Memerlukan pengguna mengesahkan alamat e-mel mereka semasa pendaftaran.',
             loginVerify: 'Log Masuk Memerlukan Pengesahan E-mel',
-            loginVerifyDesc: 'Memerlukan pengguna mengesahkan alamat e-mel mereka semasa log masuk.',
+            loginVerifyDesc:
+                'Memerlukan pengguna mengesahkan alamat e-mel mereka semasa log masuk.',
             captcha: 'Captcha',
             captchaHint:
                 'Buat masa ini hanya Cloudflare Turnstile disokong, lebih banyak penyedia Captcha akan ditambah pada masa hadapan.',
@@ -720,6 +743,10 @@ const ms: typeof en = {
             icon: 'Ikon',
             iconPlaceholder: 'cth. google, github atau https://example.com/icon.png',
             none: 'Tiada',
+            protocol: 'Protokol',
+            issuerUrl: 'URL Pengeluar',
+            scopes: 'Skop',
+            subjectField: 'Medan ID Pengguna',
             authorizeUrl: 'Authorize URL',
             tokenUrl: 'Token URL',
             userInfoUrl: 'User Info URL',
@@ -756,7 +783,8 @@ const ms: typeof en = {
             noAlerts: 'Tiada amaran boleh dikonfigurasi buat masa ini.',
             teamDisabled: 'Amaran pasukan dilumpuhkan',
             teamEnabled: 'Amaran pasukan didayakan',
-            teamServers: 'Pada masa ini terdapat {{count}} pelayan menggunakan tetapan amaran pasukan.',
+            teamServers:
+                'Pada masa ini terdapat {{count}} pelayan menggunakan tetapan amaran pasukan.',
             threshold: 'Ambang',
             window: 'Tetingkap',
             notifyOnce: 'Amaran ini dihantar sekali setiap tetingkap yang sepadan.',
@@ -771,7 +799,8 @@ const ms: typeof en = {
                 },
                 cpu_usage: {
                     label: 'Penggunaan CPU',
-                    description: 'Amaran apabila penggunaan CPU melebihi ambang untuk tetingkap yang diberikan.',
+                    description:
+                        'Amaran apabila penggunaan CPU melebihi ambang untuk tetingkap yang diberikan.',
                 },
                 memory_usage: {
                     label: 'Penggunaan Memori',

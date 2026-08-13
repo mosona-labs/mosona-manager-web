@@ -64,7 +64,7 @@ const NotificationSettings = () => {
     };
 
     const [submitting, setSubmitting] = useState(false);
-    const update = () => {
+    const update = async () => {
         setSubmitting(true);
 
         const data: NotificationType[] = [
@@ -82,16 +82,19 @@ const NotificationSettings = () => {
                 })),
         ];
 
-        ApiNotification.update(data)
-            .then(() => {
-                toast.success(t('common.success'), {
-                    description: t('pages.notification.updated'),
-                });
-            })
-            .catch(ToastError)
-            .finally(() => {
-                setSubmitting(false);
+        try {
+            for (const item of data) {
+                await ApiNotification.validate(item);
+            }
+            await ApiNotification.update(data);
+            toast.success(t('common.success'), {
+                description: t('pages.notification.updated'),
             });
+        } catch (error) {
+            ToastError(error);
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     useEffect(() => {
@@ -222,27 +225,9 @@ const NotificationSettings = () => {
                                             Telegram
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
-                                            onClick={() =>
-                                                addShoutrrrUrl(
-                                                    'matrix://[username]:[password]@[host]:[port]/[?rooms=!roomID1[,roomAlias2]]'
-                                                )
-                                            }
-                                        >
-                                            Matrix
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
                                             onClick={() => addShoutrrrUrl('discord://[token]@[id]')}
                                         >
                                             Discord
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem
-                                            onClick={() =>
-                                                addShoutrrrUrl(
-                                                    'smtp://[username]:[password]@[host]:[port]/?from=[fromAddress]&to=[recipient1][,recipient2,...]'
-                                                )
-                                            }
-                                        >
-                                            Email
                                         </DropdownMenuItem>
                                         <DropdownMenuItem
                                             onClick={() =>

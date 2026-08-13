@@ -203,10 +203,8 @@ const pt: typeof en = {
             security: 'Segurança',
             securityDesc: 'Gerencie a segurança da conta e os métodos de autenticação.',
             totp: 'Autenticação em dois fatores (TOTP)',
-            totpDesc:
-                'Adicione uma camada extra de segurança à sua conta com um app autenticador.',
-            totpDisabled:
-                'A autenticação em dois fatores (TOTP) foi desativada com sucesso.',
+            totpDesc: 'Adicione uma camada extra de segurança à sua conta com um app autenticador.',
+            totpDisabled: 'A autenticação em dois fatores (TOTP) foi desativada com sucesso.',
             teams: 'Equipes',
             teamsDesc: 'Gerencie as equipes das quais você participa.',
             noTeams: 'Você ainda não entrou em nenhuma equipe.',
@@ -340,8 +338,7 @@ const pt: typeof en = {
             agentMode: 'Modo do Agent',
             active: 'Ativo',
             passive: 'Passivo',
-            commandHint:
-                'Após adicionar o servidor, o comando de instalação será gerado.',
+            commandHint: 'Após adicionar o servidor, o comando de instalação será gerado.',
             monitorAccess: 'Acesso de monitoramento',
             terminalAccess: 'Acesso ao terminal',
             display: 'Exibição',
@@ -380,10 +377,16 @@ const pt: typeof en = {
             save: 'Salvar alterações',
             added: 'Servidor adicionado com sucesso',
             updated: 'Servidor atualizado com sucesso',
+            sshHostKeyTitle: 'Confirmar chave de host SSH',
+            sshHostKeyDescription:
+                'Verifique esta impressao digital SHA-256 por um canal confiavel antes de continuar.',
+            sshHostKeyChangedTitle: 'A chave de host SSH foi alterada',
+            sshHostKeyChangedDescription:
+                'Esta impressao digital difere da chave confiavel anterior. Continue somente apos verificar a alteracao.',
+            confirmSSHHostKey: 'Confiar nesta chave',
             help: 'Ajuda',
             agentModeTitle: 'Introdução ao modo Agent',
-            agentModeDesc:
-                'Você pode escolher o modo do Agent ao instalá-lo no seu servidor.',
+            agentModeDesc: 'Você pode escolher o modo do Agent ao instalá-lo no seu servidor.',
             activeModeTitle: 'Modo ativo',
             activeModeDesc:
                 'O Hub se conecta ao Agent. Este modo é adequado para servidores com IP público ou na mesma rede local do Hub do Mosona Manager.',
@@ -412,16 +415,14 @@ const pt: typeof en = {
                 'Todos os dados associados a este servidor serão removidos permanentemente. Para confirmar, digite o nome do servidor abaixo.',
             deleteTypeHint: 'Digite o nome do servidor <b>{{name}}</b> para confirmar.',
             deleteNameMismatch: 'O nome do servidor não confere.',
-            deleteNameMismatchDesc:
-                'Digite o nome correto do servidor para confirmar a exclusão.',
+            deleteNameMismatchDesc: 'Digite o nome correto do servidor para confirmar a exclusão.',
             deleted: 'Servidor excluído com sucesso.',
             reinstallTitle: 'Reinstalar Agent',
             reinstallDesc:
                 'Esta ação marcará o Agent como não instalado, revogará as chaves existentes e gerará um novo conjunto de chaves para uma instalação limpa.',
             reinstallConfirm: 'Confirmar reinstalação',
             reinstallEmpty: 'Vazio',
-            reinstallEmptyDesc:
-                'Informe o IP / Hostname de escuta e a porta para o modo ativo.',
+            reinstallEmptyDesc: 'Informe o IP / Hostname de escuta e a porta para o modo ativo.',
             reinstallSuccess: 'Reinstalação do Agent iniciada com sucesso.',
         },
         init: {
@@ -572,8 +573,7 @@ const pt: typeof en = {
             checking: 'Verificando o status do 2FA...',
             statusError: 'Ocorreu um erro ao verificar o status do 2FA.',
             activateTitle: 'Ativar conta',
-            enterTotp:
-                'Digite o código de 6 dígitos do seu app autenticador para continuar.',
+            enterTotp: 'Digite o código de 6 dígitos do seu app autenticador para continuar.',
             enterEmail: 'Digite o código de 6 dígitos do seu e-mail para continuar.',
             waiting: 'Aguarde {{seconds}}s',
             sendAgain: 'Enviar novamente',
@@ -637,13 +637,20 @@ const pt: typeof en = {
             editTitle: 'Editar usuário',
             editDesc: 'Preencha o formulário abaixo para editar o usuário.',
             keepPassword: 'Deixe vazio para manter a senha atual do usuário',
+            currentAdminPassword: 'Senha atual do administrador',
             editSuccess: 'Edição bem-sucedida',
             editSuccessDesc: 'O usuário foi editado com sucesso.',
             deleteTitle: 'Excluir usuário "{{name}}"',
             deleteDesc:
                 'Tem certeza de que deseja excluir este usuário? Esta ação não pode ser desfeita.',
             deleteWarning:
-                'Esta conta possui equipes, servidores e outros recursos que também serão excluídos.',
+                'A exclusão é bloqueada enquanto esta conta possuir equipes. Transfira ou exclua-as primeiro.',
+            deleteTypeHint: 'Digite o usuário <b>{{name}}</b> para confirmar.',
+            deleteNameMismatch: 'O usuário não confere',
+            deleteNameMismatchDesc: 'Digite o usuário correto para confirmar a exclusão.',
+            deleteBlocked: 'O usuário possui equipes',
+            deleteBlockedDesc: 'Transfira ou exclua todas as equipes listadas.',
+            ownedTeams: 'Equipes que impedem a exclusão',
             deleteSuccess: 'Exclusão bem-sucedida',
             deleteSuccessDesc: 'O usuário foi excluído com sucesso.',
             save: 'Salvar alterações',
@@ -658,8 +665,7 @@ const pt: typeof en = {
             faviconHint:
                 'Envie uma imagem PNG, JPEG, WebP ou GIF de até 5 MiB. O favicon armazenado é convertido pelo servidor.',
             baseUrl: 'URL base',
-            baseUrlHint:
-                'A URL base do seu aplicativo. Usada para gerar links, OAuth e e-mails.',
+            baseUrlHint: 'A URL base do seu aplicativo. Usada para gerar links, OAuth e e-mails.',
             sessionBindIp: 'Vincular sessão ao IP',
             sessionBindIpTitle: 'Vincular sessão ao IP de login',
             sessionBindIpDesc:
@@ -704,8 +710,7 @@ const pt: typeof en = {
             title: 'Registro e login',
             description: 'Gerencie as configurações de registro e login de todos os usuários.',
             enableRegistration: 'Ativar registro de usuários',
-            enableRegistrationDesc:
-                'Permitir que novos usuários se cadastrem na plataforma.',
+            enableRegistrationDesc: 'Permitir que novos usuários se cadastrem na plataforma.',
             email: 'E-mail',
             emailHint:
                 'Se o e-mail não estiver configurado, a verificação por e-mail não poderá ser ativada.',
@@ -724,7 +729,8 @@ const pt: typeof en = {
         },
         adminOauth: {
             title: 'OAuth2',
-            description: 'Gerencie as configurações OAuth de provedores de autenticação de terceiros.',
+            description:
+                'Gerencie as configurações OAuth de provedores de autenticação de terceiros.',
             add: 'Adicionar',
             createTitle: 'Criar provedor de autenticação',
             createDesc: 'Crie um novo provedor de autenticação OAuth2.',
@@ -736,6 +742,10 @@ const pt: typeof en = {
             icon: 'Ícone',
             iconPlaceholder: 'ex.: google, github ou https://example.com/icon.png',
             none: 'Nenhum',
+            protocol: 'Protocolo',
+            issuerUrl: 'URL do emissor',
+            scopes: 'Escopos',
+            subjectField: 'Campo de ID do usuário',
             authorizeUrl: 'URL de autorização',
             tokenUrl: 'URL do token',
             userInfoUrl: 'URL de informações do usuário',
