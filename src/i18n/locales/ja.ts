@@ -634,6 +634,7 @@ const ja: typeof en = {
             editTitle: 'ユーザーを編集',
             editDesc: '以下のフォームに入力してユーザーを編集します。',
             keepPassword: '空のままにするとユーザーの現在のパスワードを保持',
+            currentAdminPassword: '現在の管理者パスワード',
             editSuccess: '編集成功',
             editSuccessDesc: 'ユーザーを編集しました。',
             deleteTitle: 'ユーザー「{{name}}」を削除',

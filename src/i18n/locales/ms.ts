@@ -637,6 +637,7 @@ const ms: typeof en = {
             editTitle: 'Edit Pengguna',
             editDesc: 'Isi borang di bawah untuk mengedit pengguna.',
             keepPassword: 'Kosongkan untuk mengekalkan kata laluan semasa pengguna',
+            currentAdminPassword: 'Kata laluan pentadbir semasa',
             editSuccess: 'Edit berjaya',
             editSuccessDesc: 'Pengguna telah berjaya diedit.',
             deleteTitle: 'Padam Pengguna "{{name}}"',

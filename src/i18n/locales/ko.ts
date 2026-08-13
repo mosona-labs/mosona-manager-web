@@ -622,6 +622,7 @@ const ko: typeof en = {
             editTitle: '사용자 편집',
             editDesc: '아래 양식을 작성하여 사용자를 편집합니다.',
             keepPassword: '비워 두면 현재 비밀번호 유지',
+            currentAdminPassword: '현재 관리자 비밀번호',
             editSuccess: '편집 성공',
             editSuccessDesc: '사용자가 편집되었습니다.',
             deleteTitle: '사용자 "{{name}}" 삭제',

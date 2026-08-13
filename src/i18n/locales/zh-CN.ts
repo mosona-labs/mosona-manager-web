@@ -601,6 +601,7 @@ const zhCN: typeof en = {
             editTitle: '编辑用户',
             editDesc: '填写以下表单以编辑用户。',
             keepPassword: '留空则保留用户当前密码',
+            currentAdminPassword: '当前管理员密码',
             editSuccess: '编辑成功',
             editSuccessDesc: '用户已成功编辑。',
             deleteTitle: '删除用户「{{name}}」',

@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button.tsx';
 import { Input } from '@/components/ui/input.tsx';
+import { Label } from '@/components/ui/label.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
 import ApiAdminUser from '@/api/admin/user.ts';
 import { ToastError } from '@/utils/toast.ts';
@@ -34,6 +35,7 @@ const Del = ({
     const { t } = useTranslation();
     const [isLoading, setIsLoading] = useState(false);
     const [confirmation, setConfirmation] = useState('');
+    const [currentPassword, setCurrentPassword] = useState('');
     const [ownedTeams, setOwnedTeams] = useState<OwnedTeamSummary[]>([]);
 
     const onDelete = () => {
@@ -46,13 +48,14 @@ const Del = ({
 
         setIsLoading(true);
         setOwnedTeams([]);
-        ApiAdminUser.del(user.id, confirmation)
+        ApiAdminUser.del(user.id, confirmation, currentPassword)
             .then(() => {
                 toast.success(t('pages.adminUsers.deleteSuccess'), {
                     description: t('pages.adminUsers.deleteSuccessDesc'),
                 });
                 refresh();
                 setConfirmation('');
+                setCurrentPassword('');
                 setOwnedTeams([]);
                 setOpen(false);
             })
@@ -80,6 +83,7 @@ const Del = ({
                     setOpen(nextOpen);
                     if (!nextOpen) {
                         setConfirmation('');
+                        setCurrentPassword('');
                         setOwnedTeams([]);
                     }
                 }}
@@ -129,6 +133,19 @@ const Del = ({
                             onChange={(event) => setConfirmation(event.target.value)}
                         />
                     </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor={`delete-password-${user.id}`}>
+                            {t('pages.adminUsers.currentAdminPassword')}
+                        </Label>
+                        <Input
+                            id={`delete-password-${user.id}`}
+                            type="password"
+                            autoComplete="current-password"
+                            value={currentPassword}
+                            onChange={(event) => setCurrentPassword(event.target.value)}
+                            required
+                        />
+                    </div>
                     <DialogFooter className={'mt-4'}>
                         <DialogClose asChild>
                             <Button variant="outline">{t('common.cancel')}</Button>
@@ -137,6 +154,7 @@ const Del = ({
                             variant={'destructive'}
                             onClick={onDelete}
                             isLoading={isLoading}
+                            disabled={confirmation !== user.username || currentPassword === ''}
                         >
                             {t('common.delete')}
                         </LoadingButton>

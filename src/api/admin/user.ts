@@ -32,14 +32,19 @@ class ApiAdminUserClass extends baseAPI {
 
     async update(
         id: number,
-        user: Omit<UserType, 'id' | 'created_at' | 'updated_at'> & { password: string }
+        user: Omit<UserType, 'id' | 'created_at' | 'updated_at'> & {
+            password: string;
+            current_password?: string;
+        }
     ) {
         return this.putData<ResponseInterface>('/admin/users/' + id, user);
     }
 
-    async del(id: number, confirmation: string) {
+    async del(id: number, confirmation: string, currentPassword: string) {
         return this.deleteData<ResponseInterface<{ teams?: OwnedTeamSummary[] }>>(
-            '/admin/users/' + id + '?confirm=' + encodeURIComponent(confirmation)
+            '/admin/users/' + id + '?confirm=' + encodeURIComponent(confirmation),
+            true,
+            { current_password: currentPassword }
         );
     }
 }

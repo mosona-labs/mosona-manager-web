@@ -648,6 +648,7 @@ const fr: typeof en = {
             editTitle: "Modifier l'utilisateur",
             editDesc: 'Remplissez le formulaire ci-dessous pour modifier l’utilisateur.',
             keepPassword: "Laisser vide pour conserver le mot de passe actuel de l'utilisateur",
+            currentAdminPassword: "Mot de passe actuel de l'administrateur",
             editSuccess: 'Modification réussie',
             editSuccessDesc: "L'utilisateur a été modifié avec succès.",
             deleteTitle: 'Supprimer l’utilisateur « {{name}} »',

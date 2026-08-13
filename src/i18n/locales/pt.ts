@@ -637,6 +637,7 @@ const pt: typeof en = {
             editTitle: 'Editar usuário',
             editDesc: 'Preencha o formulário abaixo para editar o usuário.',
             keepPassword: 'Deixe vazio para manter a senha atual do usuário',
+            currentAdminPassword: 'Senha atual do administrador',
             editSuccess: 'Edição bem-sucedida',
             editSuccessDesc: 'O usuário foi editado com sucesso.',
             deleteTitle: 'Excluir usuário "{{name}}"',

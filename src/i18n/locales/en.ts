@@ -630,6 +630,7 @@ const en = {
             editTitle: 'Edit User',
             editDesc: 'Fill in the form below to edit the user.',
             keepPassword: "Empty to keep user's current password",
+            currentAdminPassword: 'Current administrator password',
             editSuccess: 'Edit successful',
             editSuccessDesc: 'The user has been edited successfully.',
             deleteTitle: 'Delete User "{{name}}"',

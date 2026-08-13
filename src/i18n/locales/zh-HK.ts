@@ -602,6 +602,7 @@ const zhHK: typeof en = {
             editTitle: '編輯用戶',
             editDesc: '填寫以下表格以編輯用戶。',
             keepPassword: '留空則保留用戶目前密碼',
+            currentAdminPassword: '目前管理員密碼',
             editSuccess: '編輯成功',
             editSuccessDesc: '用戶已成功編輯。',
             deleteTitle: '刪除用戶「{{name}}」',

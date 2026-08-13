@@ -620,6 +620,7 @@ const ar: typeof en = {
             editTitle: 'تعديل المستخدم',
             editDesc: 'عدّل بيانات المستخدم عبر النموذج أدناه.',
             keepPassword: 'اتركه فارغًا للإبقاء على كلمة مرور المستخدم الحالية',
+            currentAdminPassword: 'كلمة مرور المسؤول الحالية',
             editSuccess: 'تم التعديل بنجاح',
             editSuccessDesc: 'تم تعديل المستخدم بنجاح.',
             deleteTitle: 'حذف المستخدم «{{name}}»',

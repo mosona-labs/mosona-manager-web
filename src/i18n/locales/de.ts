@@ -639,6 +639,7 @@ const de: typeof en = {
             editTitle: 'Benutzer bearbeiten',
             editDesc: 'Formular ausfüllen, um den Benutzer zu bearbeiten.',
             keepPassword: 'Leer lassen, um das aktuelle Passwort beizubehalten',
+            currentAdminPassword: 'Aktuelles Administratorpasswort',
             editSuccess: 'Bearbeitung erfolgreich',
             editSuccessDesc: 'Der Benutzer wurde erfolgreich bearbeitet.',
             deleteTitle: 'Benutzer „{{name}}“ löschen',
