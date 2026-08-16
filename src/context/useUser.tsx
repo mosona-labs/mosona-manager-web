@@ -95,24 +95,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     const refreshCategories = async () => {
-        ApiCategory.list()
-            .then((res) => {
-                setCategories(res.data || []);
-            })
-            .catch(() => {
-                setCategories([]);
-            });
+        if (!team) {
+            setCategories([]);
+            return;
+        }
+
+        try {
+            const res = await ApiCategory.list();
+            setCategories(res.data || []);
+        } catch {
+            setCategories([]);
+        }
     };
 
     const refreshKeys = async () => {
+        if (!team) {
+            setKeys([]);
+            return;
+        }
+
         setKeys(undefined);
-        ApiKey.list()
-            .then((res) => {
-                setKeys(res.data || []);
-            })
-            .catch(() => {
-                setKeys([]);
-            });
+        try {
+            const res = await ApiKey.list();
+            setKeys(res.data || []);
+        } catch {
+            setKeys([]);
+        }
     };
 
     // Config
@@ -129,13 +137,24 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refresh().then(() => {
             console.log('User info refreshed');
         });
+    }, []);
+
+    useEffect(() => {
+        if (team === undefined) return;
+
+        if (team === null) {
+            setCategories([]);
+            setKeys([]);
+            return;
+        }
+
         refreshCategories().then(() => {
             console.log('Categories refreshed');
         });
         refreshKeys().then(() => {
             console.log('API Keys refreshed');
         });
-    }, []);
+    }, [team]);
 
     return (
         <UserContext.Provider

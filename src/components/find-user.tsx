@@ -45,6 +45,12 @@ const FindUser = ({
         return () => clearTimeout(timeRef.current);
     }, [email]);
     useEffect(() => {
+        if (!show || !searchEmail.trim()) {
+            setUserResults(undefined);
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
         ApiUser.find(searchEmail)
             .then((data) => {
@@ -54,7 +60,7 @@ const FindUser = ({
             .finally(() => {
                 setLoading(false);
             });
-    }, [searchEmail]);
+    }, [searchEmail, show]);
 
     return (
         <Dialog open={show} onOpenChange={setShow}>
