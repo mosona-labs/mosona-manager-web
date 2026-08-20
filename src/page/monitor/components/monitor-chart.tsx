@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip } from '@/components/ui/chart';
-import { timeFrameWindowSize, windowAverage, windowMax } from '@/utils/avg';
+import { itemsPerWindow, timeFrameWindowSize, windowAverage, windowMax } from '@/utils/avg';
 import {
     Select,
     SelectContent,
@@ -74,10 +74,12 @@ export function MonitorChart({
     const chartData = useMemo(() => {
         if (!data || data.length === 0) return [];
 
-        const windowCount = Math.max(
-            1,
-            Math.floor(data.length / (windowSize ? windowSize : timeFrameWindowSize(timeFrame)))
-        );
+        // windowSize (explicit) wins over the per-timeframe default; both are
+        // "target number of output points". itemsPerWindow converts that to
+        // the number of consecutive samples aggregated into each point, and
+        // returns 1 (keep raw) when the data is already small enough.
+        const targetPoints = windowSize ?? timeFrameWindowSize(timeFrame);
+        const windowCount = itemsPerWindow(data.length, targetPoints);
 
         const seriesByKey: Record<string, { time: number | string; value: number }[]> = {};
         for (const k of keys) {
