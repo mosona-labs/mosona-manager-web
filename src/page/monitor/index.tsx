@@ -367,7 +367,7 @@ const Monitor = () => {
                                     <div className="h-4 w-48 rounded bg-muted-foreground/8 animate-pulse mt-2" />
                                 </div>
                                 <div className="p-6 pt-4">
-                                    <div className="h-[256px] rounded bg-muted-foreground/8 animate-pulse" />
+                                    <div className="h-64 rounded bg-muted-foreground/8 animate-pulse" />
                                 </div>
                             </Card>
                         ))}
