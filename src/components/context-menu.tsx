@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useEffect, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import { cn } from '@/lib/utils';
 
@@ -154,22 +155,28 @@ export function ContextMenu({
                 {children}
             </div>
 
-            {isOpen && (
-                <div
-                    ref={menuRef}
-                    tabIndex={-1}
-                    className="fixed z-50 min-w-[200px] rounded-lg border border-border bg-popover p-1 shadow-lg outline-none"
-                    style={{ left: `${position.x}px`, top: `${position.y}px` }}
-                >
-                    {items.map((item, index) =>
-                        item.separator ? (
-                            <div key={`separator-${index}`} className="my-1 h-px bg-border" />
-                        ) : (
-                            <MenuBtn key={index} item={item} handleItemClick={handleItemClick} />
-                        )
-                    )}
-                </div>
-            )}
+            {isOpen &&
+                createPortal(
+                    <div
+                        ref={menuRef}
+                        tabIndex={-1}
+                        className="fixed z-50 min-w-[200px] rounded-lg border border-border bg-popover p-1 shadow-lg outline-none"
+                        style={{ left: `${position.x}px`, top: `${position.y}px` }}
+                    >
+                        {items.map((item, index) =>
+                            item.separator ? (
+                                <div key={`separator-${index}`} className="my-1 h-px bg-border" />
+                            ) : (
+                                <MenuBtn
+                                    key={index}
+                                    item={item}
+                                    handleItemClick={handleItemClick}
+                                />
+                            )
+                        )}
+                    </div>,
+                    document.body
+                )}
         </MenuTriggerContext.Provider>
     );
 }

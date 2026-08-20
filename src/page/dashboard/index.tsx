@@ -28,6 +28,7 @@ import AddServer from '@/components/server/add';
 import { useUser } from '@/context/useUser';
 import AddCategory from '@/components/category/add';
 import ManageCategory from '@/components/category/manage';
+import { AlertProvider } from '@/page/dashboard/hook/useAlert.tsx';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover.tsx';
 import LayoutBtn from '@/page/dashboard/components/layout-btn.tsx';
@@ -47,9 +48,9 @@ const Dashboard = () => {
 
     const {
         isLoading,
-        time,
         servers,
         statuses,
+        onlineIds,
         total,
         online,
         avgCpu,
@@ -215,7 +216,10 @@ const Dashboard = () => {
     }, [isLoading]);
 
     return (
-        <div className="w-full p-5 h-full overflow-y-auto pb-24 relative">
+        <div
+            data-dashboard-scroll-root
+            className="w-full p-5 h-full overflow-y-auto pb-24 relative"
+        >
             {showSkeleton ? (
                 <div
                     className="absolute inset-5 z-40 pointer-events-none overflow-hidden transition-opacity duration-400"
@@ -631,73 +635,49 @@ const Dashboard = () => {
                 </div>
 
                 {/* Server */}
-                {categoryFilter == null
-                    ? categories?.map((category) => {
-                          const hasServers = !!categoryServerMap[category.id];
+                <AlertProvider>
+                    {categories
+                        ?.filter((c) => categoryFilter == null || c.id === categoryFilter)
+                        .map((category) => {
+                            const hasServers = !!categoryServerMap[category.id];
 
-                          if (!hasServers && isDefaultCategory(category.name)) return null;
+                            if (
+                                categoryFilter == null &&
+                                !hasServers &&
+                                isDefaultCategory(category.name)
+                            )
+                                return null;
 
-                          return hasServers ? (
-                              <CategoryCard
-                                  key={category.id}
-                                  category={category}
-                                  categoryServerMap={categoryServerMap}
-                                  statuses={statuses}
-                                  time={time}
-                                  mounted={mounted}
-                              />
-                          ) : (
-                              <div
-                                  key={category.id}
-                                  style={{
-                                      transition: 'opacity 400ms ease, transform 400ms ease',
-                                      opacity: mounted ? 1 : 0,
-                                      transform: mounted ? 'none' : 'translateY(8px)',
-                                  }}
-                              >
-                                  <div className="mt-4">
-                                      <p className="mt-4 opacity-65">{category.name}</p>
-                                  </div>
-                                  <div className="mt-2">
-                                      <p className="text-sm text-muted-foreground/50">
-                                          No servers in this category.
-                                      </p>
-                                  </div>
-                              </div>
-                          );
-                      })
-                    : categories
-                          ?.filter((c) => c.id === categoryFilter)
-                          .map((category) =>
-                              categoryServerMap[category.id] ? (
-                                  <CategoryCard
-                                      key={category.id}
-                                      category={category}
-                                      categoryServerMap={categoryServerMap}
-                                      statuses={statuses}
-                                      time={time}
-                                      mounted={mounted}
-                                  />
-                              ) : (
-                                  <div
-                                      key={category.id}
-                                      style={{
-                                          transition: 'opacity 400ms ease, transform 400ms ease',
-                                          opacity: mounted ? 1 : 0,
-                                          transform: mounted ? 'none' : 'translateY(8px)',
-                                      }}
-                                  >
-                                      <div className="mt-4">
-                                          <p className="mt-4 opacity-65">{category.name}</p>
-                                      </div>
-                                      <div className="mt-2">
-                                          <p className="text-sm text-muted-foreground/50">
-                                              No servers in this category.
-                                          </p>
-                                      </div>
-                                  </div>
-                              )
-                          )}
+                            return hasServers ? (
+                                <CategoryCard
+                                    key={category.id}
+                                    category={category}
+                                    categoryServerMap={categoryServerMap}
+                                    statuses={statuses}
+                                    onlineIds={onlineIds}
+                                    mounted={mounted}
+                                />
+                            ) : (
+                                <div
+                                    key={category.id}
+                                    style={{
+                                        transition: 'opacity 400ms ease, transform 400ms ease',
+                                        opacity: mounted ? 1 : 0,
+                                        transform: mounted ? 'none' : 'translateY(8px)',
+                                    }}
+                                >
+                                    <div className="mt-4">
+                                        <p className="mt-4 opacity-65">{category.name}</p>
+                                    </div>
+                                    <div className="mt-2">
+                                        <p className="text-sm text-muted-foreground/50">
+                                            No servers in this category.
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                </AlertProvider>
             </div>
         </div>
     );

@@ -19,7 +19,7 @@ import {
     EllipsisVertical,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useMemo, useState, type MouseEvent } from 'react';
+import { useCallback, useEffect, useMemo, useState, memo, type MouseEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Badge } from '@/components/ui/badge.tsx';
@@ -28,7 +28,6 @@ import { useContextMenuTrigger } from '@/components/context-menu';
 import { cn } from '@/lib/utils.ts';
 import { MemoryUnit, NetUnit } from '@/utils/unit.ts';
 import { getOsIconName } from '@/utils/icon.ts';
-import { useUser } from '@/context/useUser.tsx';
 import { formatUptime, getRemainingTime } from '@/utils/time.ts';
 
 const CardMenuTrigger = ({ className }: { className?: string }) => {
@@ -175,16 +174,16 @@ const DiskSection = ({
     );
 };
 
-const ServerStatusCard = ({
+const ServerStatusCard = memo(function ServerStatusCard({
     server,
     layout,
+    showDetails,
 }: {
     server: Server;
     layout: 'list' | 'list2' | 'grid';
-}) => {
+    showDetails: boolean;
+}) {
     const navigator = useNavigate();
-
-    const { config } = useUser();
 
     const rx = useMemo(() => NetUnit(server.networkDown, 'kb'), [server.networkDown]);
     const tx = useMemo(() => NetUnit(server.networkUp, 'kb'), [server.networkUp]);
@@ -239,8 +238,8 @@ const ServerStatusCard = ({
     const [showMoreBtn, setShowMoreBtn] = useState(false);
     const [showMore, setShowMore] = useState(false);
     useEffect(() => {
-        setShowMore(config.dashboardShowDetails);
-    }, [config.dashboardShowDetails]);
+        setShowMore(showDetails);
+    }, [showDetails]);
 
     const monitorPath = `/${server.id}/monitor`;
     const handleCardClick = useCallback(
@@ -624,7 +623,7 @@ const ServerStatusCard = ({
             )}
         </a>
     );
-};
+});
 
 const Tags = ({ server, showUptime }: { server: Server; showUptime?: boolean }) => (
     <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground flex-wrap">
