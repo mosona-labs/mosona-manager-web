@@ -90,10 +90,10 @@ const CategoryCard = ({
     const filterServer = (server: TerminalType): boolean => {
         if (!filter) return true;
         const lowerFilter = filter.toLowerCase();
-        return (
-            server.name.toLowerCase().includes(lowerFilter) ||
-            server.address.toLowerCase().includes(lowerFilter)
-        );
+        // address/username are nullable for agent-mode servers
+        const name = server.name?.toLowerCase() ?? '';
+        const address = server.address?.toLowerCase() ?? '';
+        return name.includes(lowerFilter) || address.includes(lowerFilter);
     };
 
     const filteredServers = categoryServerMap[category.id]?.filter(filterServer) || [];

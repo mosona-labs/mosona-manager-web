@@ -36,7 +36,7 @@ const ServerTerminalCard = ({
                     {
                         serverId: server.id,
                         name: server.name,
-                        os: server.os,
+                        os: server.os ?? '',
                         terminalConfig: {
                             cols: 80,
                             rows: 24,
@@ -50,13 +50,13 @@ const ServerTerminalCard = ({
             }}
         >
             <div className="w-10 shrink-0 p-2 bg-accent rounded-md">
-                <img src={`/icons/${getOsIconName(server.os)}.svg`} alt={server.os} />
+                <img src={`/icons/${getOsIconName(server.os)}.svg`} alt={server.os ?? ''} />
             </div>
             <div className="min-w-0 flex-1">
                 <h3 className="truncate font-mono text-sm font-semibold text-card-foreground">
                     {server.name}
                 </h3>
-                <p className="text-xs text-muted-foreground">{server.username}</p>
+                <p className="text-xs text-muted-foreground">{server.username ?? '--'}</p>
             </div>
             <Button
                 variant="ghost"

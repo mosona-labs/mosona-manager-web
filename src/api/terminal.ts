@@ -2,11 +2,13 @@ import type { ServerMinimalType } from './server';
 
 import { baseAPI, type ResponseInterface } from './base';
 
+// SSH/OS fields come from LEFT JOINs in ListTerminals and are nullable
+// (agent-mode servers have no SSH record); the backend omits them via omitempty.
 export type TerminalType = ServerMinimalType & {
-    username: string;
-    address: string;
-    port: number;
-    os: string;
+    os?: string | null;
+    username?: string | null;
+    address?: string | null;
+    port?: number | null;
 };
 
 class ApiTerminalClass extends baseAPI {
