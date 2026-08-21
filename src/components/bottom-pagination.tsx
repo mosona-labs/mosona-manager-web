@@ -88,7 +88,9 @@ const BottomPagination = ({
 
                     <PaginationItem
                         onClick={() => setPage((p) => Math.min(maxPage, p + 1))}
-                        className={page === maxPage ? 'opacity-40 pointer-events-none' : ''}
+                        className={
+                            maxPage <= 1 || page === maxPage ? 'opacity-40 pointer-events-none' : ''
+                        }
                     >
                         <PaginationNext href="#" />
                     </PaginationItem>

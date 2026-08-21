@@ -14,34 +14,37 @@ export type LogType = {
     user_agent: string;
 };
 
+export type LogListParams = {
+    cursor?: string;
+    pageSize: number;
+    category: string;
+    level: string;
+    email: string;
+    message: string;
+    start: string;
+    end: string;
+};
+
+export type LogListData = {
+    logs: LogType[];
+    next_cursor: string;
+    has_more: boolean;
+};
+
 class ApiLogsClass extends baseAPI {
-    async list(
-        page: number,
-        perPage: number,
-        category: string,
-        level: string,
-        email: string,
-        message: string
-    ) {
-        return this.getData<
-            ResponseInterface<{
-                logs: LogType[];
-                total: number;
-            }>
-        >(
-            '/v1/logs?page=' +
-                page +
-                '&page_size=' +
-                perPage +
-                '&category=' +
-                category +
-                '&level=' +
-                level +
-                '&email=' +
-                email +
-                '&message=' +
-                message
-        );
+    async list(params: LogListParams) {
+        const query = new URLSearchParams({
+            page_size: params.pageSize.toString(),
+            category: params.category,
+            level: params.level,
+            email: params.email,
+            message: params.message,
+            start: params.start,
+            end: params.end,
+        });
+        if (params.cursor) query.set('cursor', params.cursor);
+
+        return this.getData<ResponseInterface<LogListData>>(`/v1/logs?${query.toString()}`);
     }
 }
 

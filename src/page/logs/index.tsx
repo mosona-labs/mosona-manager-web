@@ -1,6 +1,6 @@
 import type { LogType } from '@/api/logs';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import {
     Select,
     SelectContent,
+    SelectGroup,
     SelectItem,
     SelectTrigger,
     SelectValue,
@@ -30,7 +31,6 @@ import {
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { ToastError } from '@/utils/toast.ts';
-import BottomPagination from '@/components/bottom-pagination.tsx';
 import ApiAdminLogs from '@/api/admin/logs.ts';
 import { Button } from '@/components/ui/button.tsx';
 import {
@@ -43,14 +43,28 @@ import {
 } from '@/components/ui/dialog.tsx';
 import { Label } from '@/components/ui/label.tsx';
 import LoadingButton from '@/components/loading-button.tsx';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/components/ui/pagination.tsx';
+
+const millisecondsPerDay = 24 * 60 * 60 * 1000;
 
 const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     const { t } = useTranslation();
     const [page, setPage] = useState(1);
     const [perPage, setPerPage] = useState(20);
+    const [cursor, setCursor] = useState('');
+    const [cursorHistory, setCursorHistory] = useState<string[]>([]);
+    const [nextCursor, setNextCursor] = useState('');
+    const [hasMore, setHasMore] = useState(false);
+    const [rangeDays, setRangeDays] = useState('30');
+    const [rangeEnd, setRangeEnd] = useState(() => new Date().toISOString());
 
     const [logs, setLogs] = useState<Array<LogType>>([]);
-    const [count, setCount] = useState(0);
     const [mounted, setMounted] = useState(false);
 
     const [category, setCategory] = useState('all');
@@ -63,48 +77,82 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
     const [exportOpen, setExportOpen] = useState(false);
     const [exportLimit, setExportLimit] = useState('100');
     const [isExporting, setIsExporting] = useState(false);
+    const requestSequence = useRef(0);
+
+    const resetPagination = useCallback(() => {
+        setPage(1);
+        setCursor('');
+        setCursorHistory([]);
+        setNextCursor('');
+        setHasMore(false);
+        setRangeEnd(new Date().toISOString());
+    }, []);
 
     useEffect(() => {
+        if (inputEmail === email) return;
         const delayDebounceFn = setTimeout(() => {
             setEmail(inputEmail);
+            resetPagination();
         }, 500);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [inputEmail]);
+    }, [email, inputEmail, resetPagination]);
     useEffect(() => {
+        if (inputMessage === message) return;
         const delayDebounceFn = setTimeout(() => {
+            if (inputMessage && Number(rangeDays) > 30) setRangeDays('30');
             setMessage(inputMessage);
+            resetPagination();
         }, 500);
 
         return () => clearTimeout(delayDebounceFn);
-    }, [inputMessage]);
+    }, [inputMessage, message, rangeDays, resetPagination]);
 
     const [isLoading, setIsLoading] = useState(false);
     useEffect(() => {
+        const requestID = ++requestSequence.current;
+        const start = new Date(
+            new Date(rangeEnd).getTime() - Number(rangeDays) * millisecondsPerDay
+        ).toISOString();
         setIsLoading(true);
         (isAdmin ? ApiAdminLogs : ApiLogs)
-            .list(page, perPage, category, level, email, message)
-            .then((data) => {
-                setLogs(data.data.logs);
-                setCount(data.data.total);
+            .list({
+                cursor,
+                pageSize: perPage,
+                category,
+                level,
+                email,
+                message,
+                start,
+                end: rangeEnd,
             })
-            .catch(ToastError)
+            .then((data) => {
+                if (requestID !== requestSequence.current) return;
+                setLogs(data.data.logs);
+                setNextCursor(data.data.next_cursor);
+                setHasMore(data.data.has_more);
+            })
+            .catch((error) => {
+                if (requestID === requestSequence.current) ToastError(error);
+            })
             .finally(() => {
-                setIsLoading(false);
+                if (requestID === requestSequence.current) setIsLoading(false);
             });
-    }, [page, perPage, category, level, email, message]);
+    }, [category, cursor, email, isAdmin, level, message, perPage, rangeDays, rangeEnd]);
 
-    const downloadLogs = (exportedLogs: LogType[], total: number, limit: number) => {
+    const downloadLogs = (exportedLogs: LogType[], limit: number) => {
         const bundle = {
             exported_at: new Date().toISOString(),
             source: isAdmin ? 'admin' : 'team',
-            limit,
-            total,
+            requested_limit: limit,
+            exported_count: exportedLogs.length,
             filters: {
                 category,
                 level,
                 email,
                 message,
+                range_days: Number(rangeDays),
+                range_end: rangeEnd,
             },
             logs: exportedLogs,
         };
@@ -125,16 +173,27 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
 
     const handleExportLogs = () => {
         const limit = parseInt(exportLimit, 10);
-        if (!Number.isFinite(limit) || limit <= 0) {
+        if (!Number.isFinite(limit) || limit <= 0 || limit > 1000) {
             toast.warning(t('pages.logs.invalidCount'));
             return;
         }
 
+        const start = new Date(
+            new Date(rangeEnd).getTime() - Number(rangeDays) * millisecondsPerDay
+        ).toISOString();
         setIsExporting(true);
         (isAdmin ? ApiAdminLogs : ApiLogs)
-            .list(1, limit, category, level, email, message)
+            .list({
+                pageSize: limit,
+                category,
+                level,
+                email,
+                message,
+                start,
+                end: rangeEnd,
+            })
             .then((data) => {
-                downloadLogs(data.data.logs, data.data.total, limit);
+                downloadLogs(data.data.logs, limit);
                 setExportOpen(false);
                 toast.success(t('pages.logs.exported'));
             })
@@ -177,7 +236,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                     </Button>
                 </div>
                 <div
-                    className="flex flex-row gap-3"
+                    className="flex flex-row flex-wrap gap-3"
                     style={{
                         transition: 'opacity 400ms ease, transform 400ms ease',
                         transitionDelay: '80ms',
@@ -189,6 +248,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         value={category}
                         onValueChange={(e) => {
                             setCategory(e);
+                            resetPagination();
                         }}
                     >
                         <SelectTrigger className="w-[180px] border-0">
@@ -228,6 +288,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         value={level}
                         onValueChange={(e) => {
                             setLevel(e);
+                            resetPagination();
                         }}
                     >
                         <SelectTrigger className="w-[180px] border-0">
@@ -243,6 +304,28 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                             </SelectItem>
                             <SelectItem className="text-red-500" value="high">
                                 High
+                            </SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Select
+                        value={rangeDays}
+                        onValueChange={(value) => {
+                            setRangeDays(value);
+                            resetPagination();
+                        }}
+                    >
+                        <SelectTrigger className="w-[180px] border-0">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="1">Last 24 hours</SelectItem>
+                            <SelectItem value="7">Last 7 days</SelectItem>
+                            <SelectItem value="30">Last 30 days</SelectItem>
+                            <SelectItem value="90" disabled={Boolean(inputMessage)}>
+                                Last 90 days
+                            </SelectItem>
+                            <SelectItem value="365" disabled={Boolean(inputMessage)}>
+                                Last 365 days
                             </SelectItem>
                         </SelectContent>
                     </Select>
@@ -325,7 +408,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
 
                                     return (
                                         <TableRow
-                                            key={log.time}
+                                            key={`${log.time}-${index}`}
                                             style={{
                                                 transition:
                                                     'opacity 400ms ease, transform 400ms ease',
@@ -397,13 +480,69 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                         transform: mounted ? 'none' : 'translateY(8px)',
                     }}
                 >
-                    <BottomPagination
-                        count={count}
-                        page={page}
-                        perPage={perPage}
-                        setPerPage={setPerPage}
-                        setPage={setPage}
-                    />
+                    <div className="select-none w-full flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                        <div className="w-[180px]">Page {page}</div>
+                        <Pagination>
+                            <PaginationContent>
+                                <PaginationItem
+                                    className={
+                                        page === 1 || isLoading
+                                            ? 'opacity-40 pointer-events-none'
+                                            : ''
+                                    }
+                                >
+                                    <PaginationPrevious
+                                        href="#"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            const previousCursor =
+                                                cursorHistory[cursorHistory.length - 1];
+                                            setCursor(previousCursor ?? '');
+                                            setCursorHistory((history) => history.slice(0, -1));
+                                            setPage((current) => Math.max(1, current - 1));
+                                        }}
+                                    />
+                                </PaginationItem>
+                                <PaginationItem
+                                    className={
+                                        !hasMore || !nextCursor || isLoading
+                                            ? 'opacity-40 pointer-events-none'
+                                            : ''
+                                    }
+                                >
+                                    <PaginationNext
+                                        href="#"
+                                        onClick={(event) => {
+                                            event.preventDefault();
+                                            setCursorHistory((history) => [...history, cursor]);
+                                            setCursor(nextCursor);
+                                            setPage((current) => current + 1);
+                                        }}
+                                    />
+                                </PaginationItem>
+                            </PaginationContent>
+                        </Pagination>
+                        <Select
+                            value={perPage.toString()}
+                            onValueChange={(value) => {
+                                setPerPage(parseInt(value, 10));
+                                resetPagination();
+                            }}
+                        >
+                            <SelectTrigger className="w-[180px] border-0">
+                                <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectItem value="20">20 Per Page</SelectItem>
+                                    <SelectItem value="50">50 Per Page</SelectItem>
+                                    <SelectItem value="100">100 Per Page</SelectItem>
+                                    <SelectItem value="500">500 Per Page</SelectItem>
+                                    <SelectItem value="1000">1000 Per Page</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
                 </div>
             </div>
             <Dialog open={exportOpen} onOpenChange={setExportOpen}>
@@ -420,6 +559,7 @@ const Logs = ({ isAdmin = false }: { isAdmin?: boolean }) => {
                             id="logs-export-limit"
                             type="number"
                             min={1}
+                            max={1000}
                             step={1}
                             value={exportLimit}
                             onChange={(e) => setExportLimit(e.target.value)}

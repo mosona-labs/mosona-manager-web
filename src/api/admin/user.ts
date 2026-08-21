@@ -9,21 +9,19 @@ export interface OwnedTeamSummary {
 
 class ApiAdminUserClass extends baseAPI {
     async list(page: number, size: number, search: string, verify: string) {
+        const query = new URLSearchParams({
+            page: page.toString(),
+            size: size.toString(),
+            search,
+            verify,
+        });
+
         return this.getData<
             ResponseInterface<{
                 users: UserType[];
                 total: number;
             }>
-        >(
-            '/admin/users/list?page=' +
-                page +
-                '&size=' +
-                size +
-                '&search=' +
-                search +
-                '&verify=' +
-                verify
-        );
+        >(`/admin/users/list?${query.toString()}`);
     }
 
     async add(user: Omit<UserType, 'id' | 'created_at' | 'updated_at'> & { password: string }) {
