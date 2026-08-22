@@ -135,7 +135,29 @@ export function MonitorChart({
         } else if (chartMaxValueUnit === 'other') {
             setMaxValueChart(chartMaxValue);
         }
-        return Array.from(map.values()).sort((a: any, b: any) => a.time - b.time);
+
+        const sorted = Array.from(map.values()).sort((a: any, b: any) => a.time - b.time);
+        if (sorted.length < 3) return sorted;
+        const positiveDiffs: number[] = [];
+        for (let i = 1; i < sorted.length; i++) {
+            const diff = sorted[i].time - sorted[i - 1].time;
+            if (diff > 0) positiveDiffs.push(diff);
+        }
+        if (positiveDiffs.length === 0) return sorted;
+        positiveDiffs.sort((a, b) => a - b);
+
+        const medianDiff = positiveDiffs[Math.floor(positiveDiffs.length / 2)];
+        const gapThreshold = medianDiff * 2.5;
+        const result: any[] = [sorted[0]];
+        for (let i = 1; i < sorted.length; i++) {
+            if (sorted[i].time - sorted[i - 1].time > gapThreshold) {
+                result.push({
+                    time: Math.round((sorted[i - 1].time + sorted[i].time) / 2),
+                });
+            }
+            result.push(sorted[i]);
+        }
+        return result;
     }, [data, mode, timeFrame, keyObj, windowSize, autoUnit, chartMaxValue, chartMaxValueUnit]);
 
     const startTime = useMemo(() => {
@@ -168,6 +190,7 @@ export function MonitorChart({
                     {new Date(label).toLocaleString()}
                 </div>
                 {payload.map((p: any) => {
+                    if (p.value == null) return null;
                     const dataKey = p.dataKey;
                     const keyIndex = keys.indexOf(dataKey);
                     const displayName = names[keyIndex] ?? dataKey;
@@ -223,7 +246,7 @@ export function MonitorChart({
                 <div className="chart-surface">
                     <ChartContainer
                         config={{}}
-                        className={`chart-canvas h-[256px] w-full ${showOverlay ? 'chart-canvas--loading' : ''}`}
+                        className={`chart-canvas h-64 w-full ${showOverlay ? 'chart-canvas--loading' : ''}`}
                     >
                         <AreaChart
                             accessibilityLayer
@@ -281,6 +304,7 @@ export function MonitorChart({
                                         fill={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
                                         fillOpacity={0.4}
                                         stroke={i > 1 ? '#00000000' : `var(--chart-${(i % 6) + 1})`}
+                                        connectNulls={false}
                                         isAnimationActive={false}
                                     />
                                 );
