@@ -335,6 +335,7 @@ const ko: typeof en = {
             commandHint: '서버가 추가되면 설치 명령이 생성됩니다.',
             monitorAccess: '모니터 액세스',
             terminalAccess: '터미널 액세스',
+            publicVisibility: '공개 페이지에 표시',
             display: '표시',
             weight: '가중치 (정렬)',
             privateNote: '메모 (비공개)',

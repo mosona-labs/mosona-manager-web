@@ -338,6 +338,7 @@ const ja: typeof en = {
             commandHint: 'サーバー追加後、インストールコマンドが生成されます。',
             monitorAccess: '監視アクセス',
             terminalAccess: 'ターミナルアクセス',
+            publicVisibility: '公開ページに表示',
             display: '表示',
             weight: 'ウェイト（並び順）',
             privateNote: 'メモ（非公開）',

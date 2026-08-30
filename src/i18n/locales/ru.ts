@@ -339,6 +339,7 @@ const ru: typeof en = {
             commandHint: 'После добавления сервера будет сгенерирована команда установки.',
             monitorAccess: 'Доступ к мониторингу',
             terminalAccess: 'Доступ к терминалу',
+            publicVisibility: 'Показывать на публичной странице',
             display: 'Отображение',
             weight: 'Вес (сортировка)',
             privateNote: 'Заметка (приватная)',

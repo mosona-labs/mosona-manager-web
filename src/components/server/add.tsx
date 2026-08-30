@@ -167,6 +167,7 @@ const AddServer = () => {
         const category_id = category;
         const allow_monitor = formData.get('monitor') === 'on';
         const allow_terminal = formData.get('terminal') === 'on';
+        const public_visible = formData.get('public_visible') === 'on';
         const weight = parseInt(formData.get('weight') as string) || 0;
         // Information
         const note = formData.get('note') as string;
@@ -193,6 +194,7 @@ const AddServer = () => {
             category_id: category_id || 0,
             allow_monitor,
             allow_terminal,
+            public_visible,
             weight,
             note,
             provider,
@@ -476,6 +478,12 @@ const AddServer = () => {
                                             }}
                                         />
                                     </div>
+                                    {enableMonitor && (
+                                        <div className="flex flex-row justify-between gap-3">
+                                            <Label>{t('pages.serverForm.publicVisibility')}</Label>
+                                            <Switch name="public_visible" defaultChecked />
+                                        </div>
+                                    )}
                                     <div className="flex flex-row justify-between gap-3">
                                         <Label>{t('pages.serverForm.terminalAccess')}</Label>
                                         <Switch

@@ -69,6 +69,7 @@ const EditServer = ({
     const [keyId, setKeyId] = useState<number>(0);
     const [allowMonitor, setAllowMonitor] = useState<boolean>(true);
     const [allowTerminal, setAllowTerminal] = useState<boolean>(true);
+    const [publicVisible, setPublicVisible] = useState<boolean>(true);
     const [weight, setWeight] = useState<number>(0);
     const [note, setNote] = useState<string>('');
     const [provider, setProvider] = useState<string>('');
@@ -95,6 +96,7 @@ const EditServer = ({
                 setUsername(data.data.username || 'root');
                 setAllowMonitor(data.data.allow_monitor);
                 setAllowTerminal(data.data.allow_terminal);
+                setPublicVisible(data.data.public_visible ?? true);
                 setWeight(data.data.weight || 0);
                 setNote(data.data.note || '');
                 setProvider(data.data.provider || '');
@@ -159,6 +161,7 @@ const EditServer = ({
             category: category || 0,
             allow_monitor: allowMonitor,
             allow_terminal: allowTerminal,
+            public_visible: allowMonitor && publicVisible,
             weight,
             note,
             provider,
@@ -435,6 +438,15 @@ const EditServer = ({
                                         }}
                                     />
                                 </div>
+                                {allowMonitor && (
+                                    <div className="flex flex-row justify-between gap-3">
+                                        <Label>{t('pages.serverForm.publicVisibility')}</Label>
+                                        <Switch
+                                            checked={publicVisible}
+                                            onCheckedChange={setPublicVisible}
+                                        />
+                                    </div>
+                                )}
                                 <div className="flex flex-row justify-between gap-3">
                                     <Label>{t('pages.serverForm.terminalAccess')}</Label>
                                     <Switch

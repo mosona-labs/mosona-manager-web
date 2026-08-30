@@ -336,6 +336,7 @@ const en = {
             commandHint: 'Once the server is added, the installation command will be generated.',
             monitorAccess: 'Monitor Access',
             terminalAccess: 'Terminal Access',
+            publicVisibility: 'Show on Public Page',
             display: 'Display',
             weight: 'Weight (Sort)',
             privateNote: 'Note (Private)',

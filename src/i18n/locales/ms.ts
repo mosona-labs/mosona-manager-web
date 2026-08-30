@@ -341,6 +341,7 @@ const ms: typeof en = {
             commandHint: 'Selepas pelayan ditambah, arahan pemasangan akan dijana.',
             monitorAccess: 'Akses Monitor',
             terminalAccess: 'Akses Terminal',
+            publicVisibility: 'Papar di Halaman Awam',
             display: 'Paparan',
             weight: 'Pemberat (Isih)',
             privateNote: 'Nota (Peribadi)',

@@ -346,6 +346,7 @@ const fr: typeof en = {
             commandHint: "Une fois le serveur ajouté, la commande d'installation sera générée.",
             monitorAccess: 'Accès à la surveillance',
             terminalAccess: 'Accès au terminal',
+            publicVisibility: 'Afficher sur la page publique',
             display: 'Affichage',
             weight: 'Poids (tri)',
             privateNote: 'Note (privée)',

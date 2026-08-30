@@ -14,6 +14,7 @@ export type ServerFullType = {
     name: string;
     allow_monitor: boolean;
     allow_terminal: boolean;
+    public_visible: boolean;
     weight: number;
     note: string;
     provider: string;
@@ -48,6 +49,7 @@ export type ServerAddRequest = {
     category_id: number;
     allow_monitor: boolean;
     allow_terminal: boolean;
+    public_visible: boolean;
     weight: number;
     // Information
     note: string;
@@ -80,6 +82,7 @@ export type ServerEditRequest = {
     category: number;
     allow_monitor: boolean;
     allow_terminal: boolean;
+    public_visible: boolean;
     weight: number;
     note: string;
     provider: string;

@@ -337,6 +337,7 @@ const ar: typeof en = {
             commandHint: 'بعد إضافة الخادم، سيُنشأ أمر التثبيت.',
             monitorAccess: 'صلاحية المراقبة',
             terminalAccess: 'صلاحية الطرفية',
+            publicVisibility: 'العرض في الصفحة العامة',
             display: 'العرض',
             weight: 'الوزن (الترتيب)',
             privateNote: 'ملاحظة (خاصة)',

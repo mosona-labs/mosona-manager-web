@@ -341,6 +341,7 @@ const pt: typeof en = {
             commandHint: 'Após adicionar o servidor, o comando de instalação será gerado.',
             monitorAccess: 'Acesso de monitoramento',
             terminalAccess: 'Acesso ao terminal',
+            publicVisibility: 'Exibir na página pública',
             display: 'Exibição',
             weight: 'Peso (ordenação)',
             privateNote: 'Nota (privada)',

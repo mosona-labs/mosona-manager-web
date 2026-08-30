@@ -341,6 +341,7 @@ const de: typeof en = {
             commandHint: 'Nach dem Hinzufügen des Servers wird der Installationsbefehl generiert.',
             monitorAccess: 'Monitor-Zugriff',
             terminalAccess: 'Terminal-Zugriff',
+            publicVisibility: 'Auf öffentlicher Seite anzeigen',
             display: 'Anzeige',
             weight: 'Gewichtung (Sortierung)',
             privateNote: 'Notiz (privat)',

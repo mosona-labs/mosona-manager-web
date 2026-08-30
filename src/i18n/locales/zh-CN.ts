@@ -325,6 +325,7 @@ const zhCN: typeof en = {
             commandHint: '添加服务器后将生成安装命令',
             monitorAccess: '监控权限',
             terminalAccess: '终端权限',
+            publicVisibility: '在公开页面显示',
             display: '显示',
             weight: '权重（排序）',
             privateNote: '备注（私有）',

@@ -326,6 +326,7 @@ const zhHK: typeof en = {
             commandHint: '新增伺服器後將產生安裝指令',
             monitorAccess: '監察權限',
             terminalAccess: '終端機權限',
+            publicVisibility: '在公開頁面顯示',
             display: '顯示',
             weight: '權重（排序）',
             privateNote: '備註（私人）',
