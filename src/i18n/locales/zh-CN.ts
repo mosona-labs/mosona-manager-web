@@ -485,11 +485,18 @@ const zhCN: typeof en = {
             invalidExport: '无效的团队导出文件。',
             invalidEncrypted: '无效的加密团队导出文件。',
             legacySSHImportTitle: 'SSH 主机密钥未经验证',
-            legacySSHImportDescription:
-                '此旧版备份包含 {{count}} 台未固定主机密钥的 SSH 服务器。',
+            legacySSHImportDescription: '此旧版备份包含 {{count}} 台未固定主机密钥的 SSH 服务器。',
             legacySSHImportRisk:
                 '导入后将默认信任这些主机。在逐台编辑服务器并确认指纹之前，网络攻击者可能冒充这些主机。',
             legacySSHImportAccept: '接受风险并导入',
+            unreadableCredentialTitle: '服务器凭据无法读取',
+            unreadableCredentialDescription:
+                '服务器“{{name}}”的{{credential}}无法使用 Hub 加密密钥解密。',
+            unreadableCredentialHint:
+                '请先在该服务器上修复凭据（重新录入，或重装 Agent），或选择跳过无法读取的服务器继续导出。被跳过的服务器不会包含在备份文件中。',
+            unreadableCredentialSkip: '跳过无法读取的服务器并导出',
+            credentialSshPassword: 'SSH 密码',
+            credentialAgentKey: 'Agent 私钥',
         },
         createTeam: {
             title: '新建团队',

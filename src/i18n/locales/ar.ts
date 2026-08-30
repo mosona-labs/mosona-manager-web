@@ -500,9 +500,19 @@ const ar: typeof en = {
             invalidExport: 'ملف تصدير الفريق غير صالح.',
             invalidEncrypted: 'ملف تصدير الفريق المشفّر غير صالح.',
             legacySSHImportTitle: 'Unverified SSH host keys',
-            legacySSHImportDescription: 'This older export contains {{count}} SSH server(s) without pinned host keys.',
-            legacySSHImportRisk: 'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
+            legacySSHImportDescription:
+                'This older export contains {{count}} SSH server(s) without pinned host keys.',
+            legacySSHImportRisk:
+                'These hosts will be trusted by default after import. A network attacker could impersonate them until you edit each server and confirm its fingerprint.',
             legacySSHImportAccept: 'Accept Risk and Import',
+            unreadableCredentialTitle: 'Unreadable server credential',
+            unreadableCredentialDescription:
+                'The {{credential}} of server "{{name}}" cannot be decrypted with the Hub encryption key.',
+            unreadableCredentialHint:
+                'Repair it on that server — re-enter the credential or reinstall the Agent — or export while skipping unreadable servers. Skipped servers are omitted from the backup file.',
+            unreadableCredentialSkip: 'Skip Unreadable and Export',
+            credentialSshPassword: 'SSH password',
+            credentialAgentKey: 'Agent private key',
         },
         createTeam: {
             title: 'فريق جديد',

@@ -487,8 +487,17 @@ const zhHK: typeof en = {
             invalidEncrypted: '無效的加密團隊匯出檔案。',
             legacySSHImportTitle: 'SSH 主機金鑰未經驗證',
             legacySSHImportDescription: '此舊版備份包含 {{count}} 台未固定主機金鑰的 SSH 伺服器。',
-            legacySSHImportRisk: '匯入後將預設信任這些主機。在逐台編輯伺服器並確認指紋之前，網絡攻擊者可能冒充這些主機。',
+            legacySSHImportRisk:
+                '匯入後將預設信任這些主機。在逐台編輯伺服器並確認指紋之前，網絡攻擊者可能冒充這些主機。',
             legacySSHImportAccept: '接受風險並匯入',
+            unreadableCredentialTitle: '伺服器憑證無法讀取',
+            unreadableCredentialDescription:
+                '伺服器「{{name}}」的{{credential}}無法使用 Hub 加密金鑰解密。',
+            unreadableCredentialHint:
+                '請先在該伺服器上修復憑證（重新輸入，或重裝 Agent），或選擇跳過無法讀取的伺服器繼續匯出。被跳過的伺服器不會包含在備份檔案中。',
+            unreadableCredentialSkip: '跳過無法讀取的伺服器並匯出',
+            credentialSshPassword: 'SSH 密碼',
+            credentialAgentKey: 'Agent 私鑰',
         },
         createTeam: {
             title: '新建團隊',

@@ -119,10 +119,10 @@ class ApiTeamClass extends baseAPI {
         );
     }
 
-    async exportData(totp_code: string, export_password: string) {
+    async exportData(totp_code: string, export_password: string, skip_unreadable_servers = false) {
         return this.postData<ResponseInterface<TeamEncryptedExportFile>>(
             '/v1/team/export',
-            { totp_code, export_password },
+            { totp_code, export_password, skip_unreadable_servers },
             false
         );
     }

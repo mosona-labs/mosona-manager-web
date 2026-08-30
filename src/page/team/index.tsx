@@ -61,6 +61,12 @@ const Team = () => {
     const [isImporting, setIsImporting] = useState(false);
     const [legacyImportWarningOpen, setLegacyImportWarningOpen] = useState(false);
     const [legacyImportServers, setLegacyImportServers] = useState<string[]>([]);
+    const [unreadableExportOpen, setUnreadableExportOpen] = useState(false);
+    const [unreadableCredential, setUnreadableCredential] = useState<{
+        server_id: number;
+        server_name: string;
+        credential: string;
+    } | null>(null);
     const [enableTOTPOpen, setEnableTOTPOpen] = useState(false);
 
     const [teamName, setTeamName] = useState(team?.name || '');
@@ -166,7 +172,18 @@ const Team = () => {
         URL.revokeObjectURL(url);
     };
 
-    const handleExport = () => {
+    const credentialLabel = (credential: string) => {
+        switch (credential) {
+            case 'ssh_password':
+                return t('pages.team.credentialSshPassword');
+            case 'active_agent_private_key':
+                return t('pages.team.credentialAgentKey');
+            default:
+                return credential;
+        }
+    };
+
+    const handleExport = (skipUnreadableServers = false) => {
         if (!user?.totp_enabled) {
             setEnableTOTPOpen(true);
             return;
@@ -181,15 +198,34 @@ const Team = () => {
         }
 
         setIsExporting(true);
-        ApiTeam.exportData(exportTOTP.trim(), exportPassword)
+        ApiTeam.exportData(exportTOTP.trim(), exportPassword, skipUnreadableServers)
             .then((res) => {
                 downloadEncryptedExport(res.data);
                 setExportOpen(false);
+                setUnreadableExportOpen(false);
+                setUnreadableCredential(null);
                 setExportTOTP('');
                 setExportPassword('');
                 toast.success(t('pages.team.exportSuccess'));
             })
-            .catch(ToastError)
+            .catch((error) => {
+                if (
+                    !skipUnreadableServers &&
+                    error?.response?.data?.code === 'unreadable_server_credential'
+                ) {
+                    const data = error.response.data.data;
+                    if (data && typeof data.server_name === 'string') {
+                        setUnreadableCredential({
+                            server_id: Number(data.server_id),
+                            server_name: data.server_name,
+                            credential: typeof data.credential === 'string' ? data.credential : '',
+                        });
+                        setUnreadableExportOpen(true);
+                        return;
+                    }
+                }
+                ToastError(error);
+            })
             .finally(() => {
                 setIsExporting(false);
             });
@@ -254,13 +290,14 @@ const Team = () => {
             .catch((error) => {
                 if (
                     !trustLegacySSHHostKeys &&
-                    error?.response?.data?.code ===
-                        'legacy_ssh_host_key_confirmation_required'
+                    error?.response?.data?.code === 'legacy_ssh_host_key_confirmation_required'
                 ) {
                     const servers = error.response.data.data?.servers;
                     setLegacyImportServers(
                         Array.isArray(servers)
-                            ? servers.filter((server): server is string => typeof server === 'string')
+                            ? servers.filter(
+                                  (server): server is string => typeof server === 'string'
+                              )
                             : []
                     );
                     setLegacyImportWarningOpen(true);
@@ -579,7 +616,7 @@ const Team = () => {
                             <Button variant="outline">{t('common.cancel')}</Button>
                         </DialogClose>
                         {user?.totp_enabled ? (
-                            <LoadingButton isLoading={isExporting} onClick={handleExport}>
+                            <LoadingButton isLoading={isExporting} onClick={() => handleExport()}>
                                 {t('pages.team.export')}
                             </LoadingButton>
                         ) : (
@@ -726,6 +763,34 @@ const Team = () => {
                             onClick={() => completeImport(true)}
                         >
                             {t('pages.team.legacySSHImportAccept')}
+                        </LoadingButton>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={unreadableExportOpen} onOpenChange={setUnreadableExportOpen}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-2">
+                            <AlertTriangle className="h-5 w-5 text-destructive" />
+                            {t('pages.team.unreadableCredentialTitle')}
+                        </DialogTitle>
+                        <DialogDescription>
+                            {t('pages.team.unreadableCredentialDescription', {
+                                credential: credentialLabel(unreadableCredential?.credential || ''),
+                                name: unreadableCredential?.server_name || '',
+                            })}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <p className="text-sm text-muted-foreground">
+                        {t('pages.team.unreadableCredentialHint')}
+                    </p>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button variant="outline">{t('common.cancel')}</Button>
+                        </DialogClose>
+                        <LoadingButton isLoading={isExporting} onClick={() => handleExport(true)}>
+                            {t('pages.team.unreadableCredentialSkip')}
                         </LoadingButton>
                     </DialogFooter>
                 </DialogContent>
