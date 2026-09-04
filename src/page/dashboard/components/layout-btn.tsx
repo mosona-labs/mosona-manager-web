@@ -5,7 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { useUser } from '@/context/useUser';
 
-const LayoutBtn = () => {
+const LayoutBtn = ({
+    variant = 'outline',
+}: {
+    variant?:
+        | 'link'
+        | 'default'
+        | 'destructive'
+        | 'outline'
+        | 'secondary'
+        | 'ghost'
+        | null
+        | undefined;
+}) => {
     const { t } = useTranslation();
     const { config, updateConfig } = useUser();
 
@@ -13,7 +25,8 @@ const LayoutBtn = () => {
         <Tooltip>
             <TooltipTrigger asChild>
                 <Button
-                    variant="outline"
+                    variant={variant}
+                    className={variant == 'ghost' ? 'border-e' : ''}
                     onClick={() => {
                         updateConfig({
                             dashboardLayout:

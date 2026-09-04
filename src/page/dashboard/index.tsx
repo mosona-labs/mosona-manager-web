@@ -395,7 +395,7 @@ const Dashboard = () => {
                                 <p className="text-xs md:text-sm text-muted-foreground line-clamp-1">
                                     {t('pages.dashboard.networkTraffic')}
                                 </p>
-                                <div className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-[2rem]">
+                                <div className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-8">
                                     <div className={'flex flex-row items-center gap-1'}>
                                         <ArrowUp className="h-3 w-3 2xl:h-4 2xl:w-4" />
                                         {isLoading ? '--' : MemoryUnit(sumTX, 'kb') + '/s'}
@@ -444,7 +444,7 @@ const Dashboard = () => {
                                             {item.label}
                                         </p>
                                         {item.bandwidthTotal ? (
-                                            <div className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-[2rem]">
+                                            <div className="text-xs 2xl:text-sm font-semibold text-card-foreground flex flex-col mt-1 -mb-1 2xl:my-0 2xl:flex-row 2xl:items-center 2xl:gap-1 h-8">
                                                 <div className="flex flex-row items-center gap-1">
                                                     <ArrowUp className="h-3 w-3 2xl:h-4 2xl:w-4" />
                                                     {isLoading
@@ -608,11 +608,12 @@ const Dashboard = () => {
                         </div>
                     </div>
                     <div className="flex-row justify-end gap-2 hidden sm:flex">
-                        <ButtonGroup>
+                        <ButtonGroup className="border rounded-lg">
                             <Tooltip>
                                 <TooltipTrigger asChild>
                                     <Button
-                                        variant="outline"
+                                        variant="ghost"
+                                        className="border-e"
                                         onClick={() =>
                                             setShowAllOverviewCards((visible) => !visible)
                                         }
@@ -628,8 +629,8 @@ const Dashboard = () => {
                                     )}
                                 </TooltipContent>
                             </Tooltip>
-                            <LayoutBtn />
-                            <DetailBtn />
+                            <LayoutBtn variant="ghost" />
+                            <DetailBtn variant="ghost" />
                         </ButtonGroup>
                     </div>
                 </div>
