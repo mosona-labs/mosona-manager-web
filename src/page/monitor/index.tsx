@@ -110,31 +110,44 @@ const Monitor = () => {
         setDefaultMode(timeFrame === 'real-time' ? 'raw' : config.defaultMonitorMode);
     }, [config.defaultMonitorMode, timeFrame]);
 
-    const realTimeChart = useRef<boolean>(false);
     const chartRequestRef = useRef(0);
-    const realtime = (id: string, updateRealtimeChart = realTimeChart.current) => {
+    const realtimeRequestRef = useRef(0);
+    const realtime = (id: string, updateRealtimeChart: boolean, requestGeneration: number) => {
         ApiMonitor.realtime(parseInt(id))
             .then((data) => {
-                setRealTimeStatus(data.data);
-                syncNowTime(data.data.time);
+                if (requestGeneration !== realtimeRequestRef.current) {
+                    return;
+                }
 
-                if (updateRealtimeChart)
-                    setStatuses((prev) => {
-                        if (!prev) return [data.data];
-                        const newStatuses = [...prev, data.data];
-                        if (newStatuses.length > 60) {
-                            newStatuses.shift();
-                        }
-                        setStatus(data.data);
-                        return newStatuses;
-                    });
+                setRealTimeStatus(data.data);
+
+                const statusTime = new Date(data.data.time).getTime();
+                const hasValidStatusTime = Number.isFinite(statusTime) && statusTime > 0;
+                if (!hasValidStatusTime || !updateRealtimeChart) {
+                    return;
+                }
+
+                syncNowTime(data.data.time);
+                setStatus(data.data);
+
+                setStatuses((prev) => {
+                    if (!prev) return [data.data];
+                    const newStatuses = [...prev, data.data];
+                    if (newStatuses.length > 60) {
+                        newStatuses.shift();
+                    }
+                    return newStatuses;
+                });
             })
             .catch((err) => {
+                if (requestGeneration !== realtimeRequestRef.current) {
+                    return;
+                }
                 console.error('Failed to fetch monitor real-time data:', err);
                 ToastError(err);
             })
             .finally(() => {
-                if (updateRealtimeChart) {
+                if (updateRealtimeChart && requestGeneration === realtimeRequestRef.current) {
                     setChartLoading(false);
                 }
             });
@@ -171,6 +184,9 @@ const Monitor = () => {
 
     useEffect(() => {
         if (!id) return;
+        const realtimeRequestGeneration = ++realtimeRequestRef.current;
+        const updateRealtimeChart = timeFrame === 'real-time';
+
         ApiMonitor.get(parseInt(id))
             .then((data) => {
                 setServer(data.data.info);
@@ -182,28 +198,31 @@ const Monitor = () => {
                 ToastError(err);
             });
 
-        realTimeChart.current = timeFrame === 'real-time';
         const shouldOverlayCharts = hasInitialLoadedRef.current;
 
         let interval: number;
         interval = setInterval(() => {
-            realtime(id);
+            realtime(id, updateRealtimeChart, realtimeRequestGeneration);
         }, 3000);
 
-        if (timeFrame === 'real-time') {
+        if (updateRealtimeChart) {
+            chartRequestRef.current++;
             setStatuses(undefined);
             if (shouldOverlayCharts) {
                 setChartLoading(true);
             }
-            realtime(id, true);
+            realtime(id, true, realtimeRequestGeneration);
             if (autoRefreshRef.current) {
                 clearInterval(autoRefreshRef.current);
             }
         } else {
-            realtime(id, false);
+            realtime(id, false, realtimeRequestGeneration);
             chart(id, timeFrame, shouldOverlayCharts);
         }
         return () => {
+            if (realtimeRequestRef.current === realtimeRequestGeneration) {
+                realtimeRequestRef.current++;
+            }
             if (interval) clearInterval(interval);
             if (autoRefreshRef.current) {
                 clearInterval(autoRefreshRef.current);
@@ -541,7 +560,7 @@ const Monitor = () => {
                                 ? MemoryUnit(realTimeStatus.mem_total_mb, 'mb')
                                 : t('pages.monitor.na')}{' '}
                             (
-                            {realTimeStatus
+                            {realTimeStatus && realTimeStatus.mem_total_mb > 0
                                 ? parseFloat(
                                       (
                                           (realTimeStatus.mem_used_mb /
