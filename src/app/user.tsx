@@ -89,9 +89,10 @@ const User = ({ adminMode = false }: { adminMode?: boolean }) => {
                             navigator('/token');
                             setIsOpen(false);
                         }}
+                        disabled
                     >
                         <Cable />
-                        API
+                        API (Coming Soon)
                     </Button>
                     <Button
                         variant={'ghost'}

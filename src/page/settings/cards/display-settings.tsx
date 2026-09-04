@@ -1,5 +1,6 @@
 import { TvMinimal } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 import {
     Card,
@@ -20,6 +21,7 @@ import {
 } from '@/components/ui/select.tsx';
 import { useUser } from '@/context/useUser.tsx';
 import EnableCard from '@/components/enable-card.tsx';
+import LoadingButton from '@/components/loading-button';
 
 const DisplaySettings = () => {
     const { t } = useTranslation();
@@ -185,6 +187,19 @@ const DisplaySettings = () => {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
+                </div>
+                <div className="border-t"></div>
+                <div>
+                    <LoadingButton
+                        onClick={() => {
+                            toast.success(t('common.success'), {
+                                description:
+                                    'Settings in Display Settings apply right away. This button is mainly there so you can confirm that the settings will be saved.',
+                            });
+                        }}
+                    >
+                        Save Changes
+                    </LoadingButton>
                 </div>
             </CardContent>
         </Card>
