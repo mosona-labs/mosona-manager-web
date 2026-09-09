@@ -7,12 +7,11 @@ export type OAuthPublicType = {
 };
 
 class ApiAuthClass extends baseAPI {
-    async login(email: string, password: string, remember_me: boolean, otp?: string) {
-        return this.postData<ResponseInterface<string>>('/auth/login', {
+    async login(email: string, password: string, remember_me: boolean) {
+        return this.postData<ResponseInterface>('/auth/login', {
             email,
             password,
             remember_me,
-            otp,
         });
     }
 
