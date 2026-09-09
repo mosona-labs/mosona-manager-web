@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
@@ -16,13 +17,14 @@ const ShoutrrrUrlItem = ({
     onChange: (newUrl: string) => void;
     onDelete: () => void;
 }) => {
+    const { t } = useTranslation();
     const [testing, setTesting] = useState(false);
     const onTest = () => {
         setTesting(true);
         ApiNotification.test(url)
             .then(() => {
-                toast.success('Test notification sent successfully.', {
-                    description: 'Please check your notification receiver.',
+                toast.success(t('pages.notification.testSent'), {
+                    description: t('pages.notification.testSentDesc'),
                 });
             })
             .catch(ToastError)
@@ -40,10 +42,10 @@ const ShoutrrrUrlItem = ({
                 placeholder="generic+https://webhook.site/xxxxxx"
             />
             <LoadingButton isLoading={testing} variant="outline" onClick={onTest}>
-                Test
+                {t('pages.notification.test')}
             </LoadingButton>
             <Button variant="destructive" onClick={onDelete}>
-                Delete
+                {t('common.delete')}
             </Button>
         </div>
     );

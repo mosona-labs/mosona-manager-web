@@ -127,7 +127,7 @@ const NotificationSettings = () => {
                 <CardDescription>
                     {t('pages.notification.description')}
                     <br />
-                    Right-click a card in the Monitor Dashboard to add an alert.
+                    {t('pages.notification.alertHint')}
                 </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4 w-full">
@@ -135,10 +135,9 @@ const NotificationSettings = () => {
                 <div className={'grid gap-1'}>
                     <h2 className={'font-semibold'}>{t('pages.notification.email')}</h2>
                     <p className={'text-sm text-muted-foreground'}>
-                        Configure email notifications to receive alerts directly in your inbox.
+                        {t('pages.notification.emailDesc')}
                         <br />
-                        Before configuring alerts, make sure this instance has a global email
-                        configuration; otherwise, alerts cannot be sent.
+                        {t('pages.notification.emailPrerequisite')}
                     </p>
                     <div className={'grid gap-3 mt-2 text-xs'}>
                         <Label>{t('pages.notification.addresses')}</Label>
@@ -162,7 +161,7 @@ const NotificationSettings = () => {
                                 className={
                                     'outline-none placeholder:text-muted-foreground flex-1 text-sm'
                                 }
-                                placeholder={'Enter email address and press enter'}
+                                placeholder={t('pages.notification.emailPlaceholder')}
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyDown={handleKeyDown}
@@ -212,7 +211,7 @@ const NotificationSettings = () => {
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button size={'sm'} variant={'outline'} onClick={() => {}}>
-                                        <Plus /> Add URL
+                                        <Plus /> {t('pages.notification.addUrl')}
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent className="w-52" align="start">
@@ -250,7 +249,7 @@ const NotificationSettings = () => {
                                             Teams
                                         </DropdownMenuItem>
                                         <DropdownMenuItem onClick={() => addShoutrrrUrl('')}>
-                                            Custom URL
+                                            {t('pages.notification.customUrl')}
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                 </DropdownMenuContent>
@@ -261,7 +260,7 @@ const NotificationSettings = () => {
                 <div className={'border-t'} />
                 <div>
                     <LoadingButton isLoading={submitting} onClick={update}>
-                        Save Changes
+                        {t('common.save')}
                     </LoadingButton>
                 </div>
             </CardContent>
