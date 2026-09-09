@@ -267,9 +267,11 @@ const ko: typeof en = {
             invalidEmail: '잘못된 이메일 주소입니다.',
             validEmail: '유효한 이메일 주소를 입력하세요.',
             updated: '알림 설정이 업데이트되었습니다.',
-            alertHint: '모니터 대시보드에서 카드를 마우스 오른쪽 버튼으로 클릭하여 알림을 추가합니다.',
+            alertHint:
+                '모니터 대시보드에서 카드를 마우스 오른쪽 버튼으로 클릭하여 알림을 추가합니다.',
             emailDesc: '이메일 알림을 구성하여 알림을 받은 편지함으로 바로 전달합니다.',
-            emailPrerequisite: '알림을 구성하기 전에 이 인스턴스에 전역 이메일 구성이 있는지 확인하세요. 그렇지 않으면 알림을 보낼 수 없습니다.',
+            emailPrerequisite:
+                '알림을 구성하기 전에 이 인스턴스에 전역 이메일 구성이 있는지 확인하세요. 그렇지 않으면 알림을 보낼 수 없습니다.',
             emailPlaceholder: '이메일 주소를 입력하고 Enter를 누르세요',
             addUrl: 'URL 추가',
             customUrl: '사용자 지정 URL',

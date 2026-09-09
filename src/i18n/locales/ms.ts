@@ -272,8 +272,10 @@ const ms: typeof en = {
             validEmail: 'Sila masukkan alamat e-mel yang sah.',
             updated: 'Tetapan pemberitahuan berjaya dikemas kini.',
             alertHint: 'Klik kanan kad di Papan Pemantauan untuk menambah amaran.',
-            emailDesc: 'Konfigurasikan pemberitahuan e-mel untuk menerima amaran terus ke peti masuk anda.',
-            emailPrerequisite: 'Sebelum mengkonfigurasi amaran, pastikan tika ini mempunyai konfigurasi e-mel global; jika tidak, amaran tidak dapat dihantar.',
+            emailDesc:
+                'Konfigurasikan pemberitahuan e-mel untuk menerima amaran terus ke peti masuk anda.',
+            emailPrerequisite:
+                'Sebelum mengkonfigurasi amaran, pastikan tika ini mempunyai konfigurasi e-mel global; jika tidak, amaran tidak dapat dihantar.',
             emailPlaceholder: 'Masukkan alamat e-mel dan tekan Enter',
             addUrl: 'Tambah URL',
             customUrl: 'URL tersuai',

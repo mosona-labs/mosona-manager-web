@@ -273,9 +273,12 @@ const de: typeof en = {
             invalidEmail: 'Ungültige E-Mail-Adresse.',
             validEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
             updated: 'Benachrichtigungseinstellungen erfolgreich aktualisiert.',
-            alertHint: 'Klicken Sie im Monitor-Dashboard mit der rechten Maustaste auf eine Karte, um einen Alarm hinzuzufügen.',
-            emailDesc: 'Konfigurieren Sie E-Mail-Benachrichtigungen, um Alarme direkt in Ihrem Postfach zu erhalten.',
-            emailPrerequisite: 'Stellen Sie vor der Konfiguration von Alarmen sicher, dass diese Instanz eine globale E-Mail-Konfiguration hat, sonst können keine Alarme gesendet werden.',
+            alertHint:
+                'Klicken Sie im Monitor-Dashboard mit der rechten Maustaste auf eine Karte, um einen Alarm hinzuzufügen.',
+            emailDesc:
+                'Konfigurieren Sie E-Mail-Benachrichtigungen, um Alarme direkt in Ihrem Postfach zu erhalten.',
+            emailPrerequisite:
+                'Stellen Sie vor der Konfiguration von Alarmen sicher, dass diese Instanz eine globale E-Mail-Konfiguration hat, sonst können keine Alarme gesendet werden.',
             emailPlaceholder: 'E-Mail-Adresse eingeben und Eingabetaste drücken',
             addUrl: 'URL hinzufügen',
             customUrl: 'Benutzerdefinierte URL',
@@ -291,7 +294,8 @@ const de: typeof en = {
             diskIo: 'Festplatten-I/O',
             diskIoDescription: 'Aggregierte Lese- und Schreibgeschwindigkeit aller Festplatten',
             diskIops: 'Festplatten-IOPS',
-            diskIopsDescription: 'Aggregierte Lese- und Schreibvorgänge pro Sekunde aller Festplatten',
+            diskIopsDescription:
+                'Aggregierte Lese- und Schreibvorgänge pro Sekunde aller Festplatten',
             bandwidth: 'Bandbreite',
             bandwidthDescription: 'Netzwerkbandbreite aller Netzwerkschnittstellen',
             swapUsage: 'Swap-Nutzung',

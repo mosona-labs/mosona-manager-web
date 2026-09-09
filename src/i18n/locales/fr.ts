@@ -277,9 +277,12 @@ const fr: typeof en = {
             invalidEmail: 'Adresse e-mail invalide.',
             validEmail: 'Veuillez saisir une adresse e-mail valide.',
             updated: 'Paramètres de notification mis à jour avec succès.',
-            alertHint: 'Faites un clic droit sur une carte du tableau de bord de surveillance pour ajouter une alerte.',
-            emailDesc: 'Configurez les notifications par e-mail pour recevoir les alertes directement dans votre boîte de réception.',
-            emailPrerequisite: 'Avant de configurer des alertes, assurez-vous que cette instance dispose d’une configuration e-mail globale, sinon les alertes ne peuvent pas être envoyées.',
+            alertHint:
+                'Faites un clic droit sur une carte du tableau de bord de surveillance pour ajouter une alerte.',
+            emailDesc:
+                'Configurez les notifications par e-mail pour recevoir les alertes directement dans votre boîte de réception.',
+            emailPrerequisite:
+                'Avant de configurer des alertes, assurez-vous que cette instance dispose d’une configuration e-mail globale, sinon les alertes ne peuvent pas être envoyées.',
             emailPlaceholder: 'Saisissez une adresse e-mail et appuyez sur Entrée',
             addUrl: 'Ajouter une URL',
             customUrl: 'URL personnalisée',
@@ -295,7 +298,8 @@ const fr: typeof en = {
             diskIo: 'E/S disque',
             diskIoDescription: 'Vitesse de lecture et d’écriture agrégée sur tous les disques',
             diskIops: 'IOPS disque',
-            diskIopsDescription: 'Opérations de lecture et d’écriture agrégées par seconde sur tous les disques',
+            diskIopsDescription:
+                'Opérations de lecture et d’écriture agrégées par seconde sur tous les disques',
             bandwidth: 'Bande passante',
             bandwidthDescription:
                 'Utilisation de la bande passante pour toutes les interfaces réseau',

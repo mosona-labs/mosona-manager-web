@@ -273,9 +273,12 @@ const pt: typeof en = {
             invalidEmail: 'Endereço de e-mail inválido.',
             validEmail: 'Digite um endereço de e-mail válido.',
             updated: 'Configurações de notificação atualizadas com sucesso.',
-            alertHint: 'Clique com o botão direito em um cartão do painel de monitoramento para adicionar um alerta.',
-            emailDesc: 'Configure notificações por e-mail para receber alertas diretamente na sua caixa de entrada.',
-            emailPrerequisite: 'Antes de configurar alertas, verifique se esta instância possui uma configuração global de e-mail; caso contrário, os alertas não poderão ser enviados.',
+            alertHint:
+                'Clique com o botão direito em um cartão do painel de monitoramento para adicionar um alerta.',
+            emailDesc:
+                'Configure notificações por e-mail para receber alertas diretamente na sua caixa de entrada.',
+            emailPrerequisite:
+                'Antes de configurar alertas, verifique se esta instância possui uma configuração global de e-mail; caso contrário, os alertas não poderão ser enviados.',
             emailPlaceholder: 'Digite o e-mail e pressione Enter',
             addUrl: 'Adicionar URL',
             customUrl: 'URL personalizada',
@@ -291,7 +294,8 @@ const pt: typeof en = {
             diskIo: 'I/O de disco',
             diskIoDescription: 'Velocidade agregada de leitura e gravação de todos os discos',
             diskIops: 'IOPS de disco',
-            diskIopsDescription: 'Operações agregadas de leitura e gravação por segundo de todos os discos',
+            diskIopsDescription:
+                'Operações agregadas de leitura e gravação por segundo de todos os discos',
             bandwidth: 'Largura de banda',
             bandwidthDescription: 'Uso de largura de banda de todas as interfaces de rede',
             swapUsage: 'Uso de swap',

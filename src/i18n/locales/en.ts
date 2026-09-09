@@ -270,7 +270,8 @@ const en = {
             updated: 'Notification settings updated successfully.',
             alertHint: 'Right-click a card in the Monitor Dashboard to add an alert.',
             emailDesc: 'Configure email notifications to receive alerts directly in your inbox.',
-            emailPrerequisite: 'Before configuring alerts, make sure this instance has a global email configuration; otherwise, alerts cannot be sent.',
+            emailPrerequisite:
+                'Before configuring alerts, make sure this instance has a global email configuration; otherwise, alerts cannot be sent.',
             emailPlaceholder: 'Enter email address and press enter',
             addUrl: 'Add URL',
             customUrl: 'Custom URL',

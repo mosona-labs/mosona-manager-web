@@ -77,11 +77,7 @@ const isNearVirtualViewport = (root: Element, element: Element) => {
     );
 };
 
-const observeNearViewport = (
-    root: Element,
-    element: Element,
-    callback: VisibilityCallback
-) => {
+const observeNearViewport = (root: Element, element: Element, callback: VisibilityCallback) => {
     let bucket = visibilityObservers.get(root);
     if (!bucket) {
         const callbacks = new Map<Element, VisibilityCallback>();
