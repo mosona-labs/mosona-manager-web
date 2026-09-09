@@ -74,14 +74,14 @@ const AgentInstall = ({
     if (!allow_terminal) {
         script.push('--no-terminal');
     }
+    if (mode === 'passive' && ipPreference !== 'none') {
+        script.push(`--${ipPreference}`);
+    }
     script.push(
         mode === 'active'
             ? `${agent_uid} ${public_key} ${host} ${port}`
             : `"${hub}" "${enroll_token}"`
     );
-    if (mode === 'passive' && ipPreference !== 'none') {
-        script.push(`--${ipPreference}`);
-    }
 
     return (
         <Dialog open={open}>
