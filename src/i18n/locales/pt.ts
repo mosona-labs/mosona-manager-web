@@ -799,8 +799,7 @@ const pt: typeof en = {
             noAlerts: 'Nenhum alerta configurável disponível no momento.',
             teamDisabled: 'Alerta da equipe desativado',
             teamEnabled: 'Alerta da equipe ativado',
-            teamServers:
-                'Atualmente há {{count}} servidores usando as configurações de alerta da equipe.',
+            teamServers: 'Configurações de alerta de equipe atualizadas em {{count}} servidores.',
             threshold: 'Limite',
             window: 'Janela',
             notifyOnce: 'Este alerta é enviado uma vez por janela correspondente.',

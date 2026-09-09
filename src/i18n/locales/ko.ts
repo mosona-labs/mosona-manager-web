@@ -779,7 +779,7 @@ const ko: typeof en = {
             noAlerts: '현재 구성 가능한 알림이 없습니다.',
             teamDisabled: '팀 알림 비활성화됨',
             teamEnabled: '팀 알림 활성화됨',
-            teamServers: '현재 {{count}}대의 서버가 팀 알림 설정을 사용 중입니다.',
+            teamServers: '{{count}}대의 서버에 팀 알림 설정을 적용했습니다.',
             threshold: '임계값',
             window: '기간',
             notifyOnce: '이 알림은 일치하는 기간당 한 번 전송됩니다.',

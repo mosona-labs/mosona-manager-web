@@ -800,8 +800,7 @@ const ms: typeof en = {
             noAlerts: 'Tiada amaran boleh dikonfigurasi buat masa ini.',
             teamDisabled: 'Amaran pasukan dilumpuhkan',
             teamEnabled: 'Amaran pasukan didayakan',
-            teamServers:
-                'Pada masa ini terdapat {{count}} pelayan menggunakan tetapan amaran pasukan.',
+            teamServers: 'Tetapan amaran pasukan dikemas kini pada {{count}} pelayan.',
             threshold: 'Ambang',
             window: 'Tetingkap',
             notifyOnce: 'Amaran ini dihantar sekali setiap tetingkap yang sepadan.',

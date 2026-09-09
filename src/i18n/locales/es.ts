@@ -804,8 +804,7 @@ const es: typeof en = {
             noAlerts: 'No hay alertas configurables disponibles en este momento.',
             teamDisabled: 'Alerta de equipo desactivada',
             teamEnabled: 'Alerta de equipo activada',
-            teamServers:
-                'Actualmente hay {{count}} servidores usando la configuración de alertas del equipo.',
+            teamServers: 'Se actualizó la configuración de alertas de equipo en {{count}} servidores.',
             threshold: 'Umbral',
             window: 'Ventana',
             notifyOnce: 'Esta alerta se envía una vez por cada ventana coincidente.',

@@ -792,7 +792,7 @@ const ja: typeof en = {
             noAlerts: '現在設定可能なアラートはありません。',
             teamDisabled: 'チームアラート無効',
             teamEnabled: 'チームアラート有効',
-            teamServers: '現在 {{count}} 台のサーバーがチームアラート設定を使用しています。',
+            teamServers: '{{count}} 台のサーバーのチームアラート設定を更新しました。',
             threshold: 'しきい値',
             window: 'ウィンドウ',
             notifyOnce: 'このアラートは一致するウィンドウごとに1回送信されます。',

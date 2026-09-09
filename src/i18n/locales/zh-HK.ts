@@ -751,7 +751,7 @@ const zhHK: typeof en = {
             noAlerts: '目前沒有可設定的警示。',
             teamDisabled: '團隊警示已停用',
             teamEnabled: '團隊警示已啟用',
-            teamServers: '目前有 {{count}} 台伺服器使用團隊警示設定。',
+            teamServers: '已更新 {{count}} 台伺服器的團隊警示設定。',
             threshold: '門檻值',
             window: '時段',
             notifyOnce: '此警示在每個符合條件的時段內只傳送一次。',

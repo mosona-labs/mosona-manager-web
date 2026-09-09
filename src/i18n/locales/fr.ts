@@ -815,8 +815,7 @@ const fr: typeof en = {
             noAlerts: "Aucune alerte configurable n'est disponible pour le moment.",
             teamDisabled: "Alerte d'équipe désactivée",
             teamEnabled: "Alerte d'équipe activée",
-            teamServers:
-                'Il y a actuellement {{count}} serveurs qui utilisent les paramètres d’alerte de l’équipe.',
+            teamServers: 'Paramètres d’alerte d’équipe mis à jour sur {{count}} serveurs.',
             threshold: 'Seuil',
             window: 'Fenêtre',
             notifyOnce: 'Cette alerte est envoyée une seule fois par fenêtre correspondante.',

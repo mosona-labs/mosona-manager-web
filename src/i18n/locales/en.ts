@@ -789,7 +789,7 @@ const en = {
             noAlerts: 'No configurable alerts are available right now.',
             teamDisabled: 'Team alert disabled',
             teamEnabled: 'Team alert enabled',
-            teamServers: 'There are currently {{count}} servers using the team alert settings.',
+            teamServers: 'Updated team alert settings on {{count}} servers.',
             threshold: 'Threshold',
             window: 'Window',
             notifyOnce: 'This alert is sent once per matching window.',

@@ -803,7 +803,7 @@ const de: typeof en = {
             noAlerts: 'Derzeit sind keine konfigurierbaren Alarme verfügbar.',
             teamDisabled: 'Team-Alarm deaktiviert',
             teamEnabled: 'Team-Alarm aktiviert',
-            teamServers: 'Derzeit nutzen {{count}} Server die Team-Alarm-Einstellungen.',
+            teamServers: 'Team-Alarm-Einstellungen auf {{count}} Servern aktualisiert.',
             threshold: 'Schwellenwert',
             window: 'Zeitfenster',
             notifyOnce: 'Dieser Alarm wird einmal pro passendem Zeitfenster gesendet.',

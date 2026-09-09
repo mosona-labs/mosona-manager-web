@@ -749,7 +749,7 @@ const zhCN: typeof en = {
             noAlerts: '当前没有可配置的告警。',
             teamDisabled: '团队告警已禁用',
             teamEnabled: '团队告警已启用',
-            teamServers: '当前有 {{count}} 台服务器使用团队告警设置。',
+            teamServers: '已更新 {{count}} 台服务器的团队告警设置。',
             threshold: '阈值',
             window: '窗口',
             notifyOnce: '此告警在每个匹配窗口内仅发送一次。',
