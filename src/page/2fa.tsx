@@ -54,7 +54,13 @@ const TwoFA = () => {
             })
             .catch((err) => {
                 ToastError(err);
-                setError(err.response.data.msg || t('pages.twofa.statusError'));
+                // A 400 "error" here means no pending 2FA session exists:
+                // go back to sign-in instead of showing a dead error page.
+                if (err?.response?.status === 400 && err?.response?.data?.code === 'error') {
+                    window.location.href = '/auth';
+                    return;
+                }
+                setError(err?.response?.data?.msg || t('pages.twofa.statusError'));
             });
     }, []);
 

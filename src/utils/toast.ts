@@ -1,15 +1,17 @@
 import { toast } from 'sonner';
 
 const ToastError = (err: any) => {
-    if (err.response.data.code) {
-        const status = err.response.data.code as string;
-        if (status == 'err' || status == 'error')
+    // Network errors/timeouts have no response payload at all.
+    const code = err?.response?.data?.code;
+    const msg = err?.response?.data?.msg;
+    if (code) {
+        if (code == 'err' || code == 'error')
             toast.error('Error', {
-                description: err.response.data.msg,
+                description: msg,
             });
         else
-            toast.warning(status.substring(0, 1).toUpperCase() + status.substring(1), {
-                description: err.response.data.msg,
+            toast.warning(code.substring(0, 1).toUpperCase() + code.substring(1), {
+                description: msg,
             });
     } else {
         toast.warning('Connection Error', {
