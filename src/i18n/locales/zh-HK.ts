@@ -266,6 +266,8 @@ const zhHK: typeof en = {
             memoryDescription: '系統記憶體使用概覽',
             diskIo: '磁碟 I/O',
             diskIoDescription: '所有磁碟的匯總讀取和寫入速度',
+            diskIops: '磁碟 IOPS',
+            diskIopsDescription: '所有磁碟的每秒讀寫操作次數',
             bandwidth: '頻寬',
             bandwidthDescription: '所有網絡介面的頻寬使用情況',
             swapUsage: '交換空間使用率',

@@ -279,6 +279,8 @@ const ms: typeof en = {
             memoryDescription: 'Gambaran keseluruhan penggunaan memori sistem',
             diskIo: 'I/O Cakera',
             diskIoDescription: 'Kelajuan baca dan tulis digabungkan merentasi semua cakera',
+            diskIops: 'IOPS Cakera',
+            diskIopsDescription: 'Jumlah operasi baca dan tulis sesaat merentasi semua cakera',
             bandwidth: 'Lebar Jalur',
             bandwidthDescription:
                 'Penggunaan lebar jalur rangkaian untuk semua antara muka rangkaian',

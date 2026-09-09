@@ -285,6 +285,8 @@ const fr: typeof en = {
             memoryDescription: 'Aperçu de la consommation mémoire du système',
             diskIo: 'E/S disque',
             diskIoDescription: 'Vitesse de lecture et d’écriture agrégée sur tous les disques',
+            diskIops: 'IOPS disque',
+            diskIopsDescription: 'Opérations de lecture et d’écriture agrégées par seconde sur tous les disques',
             bandwidth: 'Bande passante',
             bandwidthDescription:
                 'Utilisation de la bande passante pour toutes les interfaces réseau',

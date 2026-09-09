@@ -281,6 +281,8 @@ const pt: typeof en = {
             memoryDescription: 'Visão geral do consumo de memória do sistema',
             diskIo: 'I/O de disco',
             diskIoDescription: 'Velocidade agregada de leitura e gravação de todos os discos',
+            diskIops: 'IOPS de disco',
+            diskIopsDescription: 'Operações agregadas de leitura e gravação por segundo de todos os discos',
             bandwidth: 'Largura de banda',
             bandwidthDescription: 'Uso de largura de banda de todas as interfaces de rede',
             swapUsage: 'Uso de swap',

@@ -779,17 +779,27 @@ const Monitor = () => {
                         nowTime={nowTime}
                         title={t('pages.monitor.diskIo')}
                         description={t('pages.monitor.diskIoDescription')}
-                        keyName={['Read', 'Write', 'Read IOPS', 'Write IOPS']}
+                        keyName={['Read', 'Write']}
                         keyUnit={['/s', '/s']}
                         autoUnit={'kb'}
-                        keyObj={[
-                            'disk_read_kib_s',
-                            'disk_write_kib_s',
-                            'disk_read_iops',
-                            'disk_write_iops',
-                        ]}
+                        keyObj={['disk_read_kib_s', 'disk_write_kib_s']}
                         yWidth={46}
                         colorClass={'blue-yellow'}
+                        loading={chartLoading}
+                    />
+                    <MonitorChart
+                        data={statuses || []}
+                        defaultMode={defaultMode}
+                        enableModeSwitch={timeFrame !== 'real-time'}
+                        timeFrame={timeFrame}
+                        nowTime={nowTime}
+                        title={t('pages.monitor.diskIops')}
+                        description={t('pages.monitor.diskIopsDescription')}
+                        keyName={['Read', 'Write']}
+                        keyUnit={[' IOPS', ' IOPS']}
+                        keyObj={['disk_read_iops', 'disk_write_iops']}
+                        yWidth={46}
+                        colorClass={'orange'}
                         loading={chartLoading}
                     />
                     <MonitorChart

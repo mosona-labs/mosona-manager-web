@@ -266,6 +266,8 @@ const zhCN: typeof en = {
             memoryDescription: '系统内存消耗概览',
             diskIo: '磁盘 I/O',
             diskIoDescription: '所有磁盘的汇总读取和写入速度',
+            diskIops: '磁盘 IOPS',
+            diskIopsDescription: '所有磁盘的每秒读写操作次数',
             bandwidth: '带宽',
             bandwidthDescription: '所有网络接口的网络带宽使用情况',
             swapUsage: '交换空间使用率',

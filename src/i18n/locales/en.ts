@@ -276,6 +276,8 @@ const en = {
             memoryDescription: 'System memory consumption overview',
             diskIo: 'Disk I/O',
             diskIoDescription: 'Aggregated read and write speed across all disks',
+            diskIops: 'Disk IOPS',
+            diskIopsDescription: 'Aggregated read and write operations per second across all disks',
             bandwidth: 'Bandwidth',
             bandwidthDescription: 'Network bandwidth usage for all network interfaces',
             swapUsage: 'Swap Usage',

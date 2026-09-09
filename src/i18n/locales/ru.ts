@@ -279,6 +279,8 @@ const ru: typeof en = {
             memoryDescription: 'Обзор потребления системной памяти',
             diskIo: 'Дисковый I/O',
             diskIoDescription: 'Суммарная скорость чтения и записи по всем дискам',
+            diskIops: 'IOPS диска',
+            diskIopsDescription: 'Суммарное количество операций чтения и записи в секунду по всем дискам',
             bandwidth: 'Пропускная способность',
             bandwidthDescription: 'Использование сетевой пропускной способности всеми интерфейсами',
             swapUsage: 'Использование swap',

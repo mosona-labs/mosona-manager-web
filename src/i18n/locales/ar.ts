@@ -277,6 +277,8 @@ const ar: typeof en = {
             memoryDescription: 'نظرة عامة على استهلاك ذاكرة النظام',
             diskIo: 'I/O القرص',
             diskIoDescription: 'سرعة القراءة والكتابة المجمّعة عبر جميع الأقراص',
+            diskIops: 'IOPS القرص',
+            diskIopsDescription: 'عمليات القراءة والكتابة المجمّعة في الثانية عبر جميع الأقراص',
             bandwidth: 'عرض النطاق',
             bandwidthDescription: 'استخدام عرض النطاق لجميع واجهات الشبكة',
             swapUsage: 'استخدام Swap',

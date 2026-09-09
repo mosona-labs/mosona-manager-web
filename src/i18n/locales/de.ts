@@ -281,6 +281,8 @@ const de: typeof en = {
             memoryDescription: 'Übersicht über den Systemspeicherverbrauch',
             diskIo: 'Festplatten-I/O',
             diskIoDescription: 'Aggregierte Lese- und Schreibgeschwindigkeit aller Festplatten',
+            diskIops: 'Festplatten-IOPS',
+            diskIopsDescription: 'Aggregierte Lese- und Schreibvorgänge pro Sekunde aller Festplatten',
             bandwidth: 'Bandbreite',
             bandwidthDescription: 'Netzwerkbandbreite aller Netzwerkschnittstellen',
             swapUsage: 'Swap-Nutzung',

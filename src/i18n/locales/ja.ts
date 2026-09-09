@@ -278,6 +278,8 @@ const ja: typeof en = {
             memoryDescription: 'システムメモリ消費の概要',
             diskIo: 'ディスク I/O',
             diskIoDescription: '全ディスクの読み書き速度の集計',
+            diskIops: 'ディスク IOPS',
+            diskIopsDescription: '全ディスクの毎秒読み書き操作数',
             bandwidth: '帯域幅',
             bandwidthDescription: '全ネットワークインターフェースの帯域幅使用量',
             swapUsage: 'スワップ使用率',

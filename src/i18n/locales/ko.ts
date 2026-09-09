@@ -275,6 +275,8 @@ const ko: typeof en = {
             memoryDescription: '시스템 메모리 소비 개요',
             diskIo: '디스크 I/O',
             diskIoDescription: '모든 디스크의 집계된 읽기/쓰기 속도',
+            diskIops: '디스크 IOPS',
+            diskIopsDescription: '모든 디스크의 초당 읽기/쓰기 작업 수',
             bandwidth: '대역폭',
             bandwidthDescription: '모든 네트워크 인터페이스의 네트워크 대역폭 사용량',
             swapUsage: '스왑 사용량',
