@@ -67,12 +67,13 @@ const SignIn = () => {
             setLoading(true);
             ApiAuth.login(String(data.email), String(data.password), Boolean(data.remember))
                 .then((res) => {
+                    // A null response means the base layer already redirected
+                    // (e.g. 2FA required); don't toast success in that case.
+                    if (!res) return;
                     toast.success(t('common.success'), {
                         description: t('auth.signedIn'),
                     });
-                    if (res.code === '2fa_required' || res.code === 'verify') {
-                        navigate('/2fa');
-                    } else navigate(jumpTarget ? jumpTarget : '/');
+                    navigate(jumpTarget ? jumpTarget : '/');
                 })
                 .catch(ToastError)
                 .finally(() => {
