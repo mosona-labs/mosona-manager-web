@@ -454,13 +454,13 @@ const ServerStatusCard = memo(function ServerStatusCard({
                         <div className="flex items-center">
                             <div className="flex items-center gap-1 text-success">
                                 <ArrowUp className="h-3 w-3" />
-                                <span className="font-mono">{rx.value}</span>
-                                <span className="text-muted-foreground">{rx.unit}/s</span>
+                                <span className="font-mono">{tx.value}</span>
+                                <span className="text-muted-foreground">{tx.unit}/s</span>
                             </div>
                             <div className="flex items-center gap-1 text-info ms-3">
                                 <ArrowDown className="h-3 w-3" />
-                                <span className="font-mono">{tx.value}</span>
-                                <span className="text-muted-foreground">{tx.unit}/s</span>
+                                <span className="font-mono">{rx.value}</span>
+                                <span className="text-muted-foreground">{rx.unit}/s</span>
                             </div>
                             <div
                                 className={cn(
@@ -600,13 +600,13 @@ const ServerStatusCard = memo(function ServerStatusCard({
                             <div className="flex text-sm items-end flex-col justify-end w-28">
                                 <div className="flex items-center justify-center gap-1 text-success">
                                     <ArrowUp className="h-3 w-3" />
-                                    <span className="font-mono">{rx.value}</span>
-                                    <span className="text-muted-foreground">{rx.unit}/s</span>
+                                    <span className="font-mono">{tx.value}</span>
+                                    <span className="text-muted-foreground">{tx.unit}/s</span>
                                 </div>
                                 <div className="flex items-center gap-1 text-info ms-3">
                                     <ArrowDown className="h-3 w-3" />
-                                    <span className="font-mono">{tx.value}</span>
-                                    <span className="text-muted-foreground">{tx.unit}/s</span>
+                                    <span className="font-mono">{rx.value}</span>
+                                    <span className="text-muted-foreground">{rx.unit}/s</span>
                                 </div>
                             </div>
                         </div>
@@ -779,13 +779,13 @@ const Details = ({
                 <div className="flex items-center">
                     <div className="flex items-center gap-1 text-success">
                         <ArrowUp className="h-3 w-3" />
-                        <span className="font-mono">{rxTotal.value}</span>
-                        <span className="text-muted-foreground">{rxTotal.unit}</span>
+                        <span className="font-mono">{txTotal.value}</span>
+                        <span className="text-muted-foreground">{txTotal.unit}</span>
                     </div>
                     <div className="flex items-center gap-1 text-info ms-3">
                         <ArrowDown className="h-3 w-3" />
-                        <span className="font-mono">{txTotal.value}</span>
-                        <span className="text-muted-foreground">{txTotal.unit}</span>
+                        <span className="font-mono">{rxTotal.value}</span>
+                        <span className="text-muted-foreground">{rxTotal.unit}</span>
                     </div>
                 </div>
             </div>
