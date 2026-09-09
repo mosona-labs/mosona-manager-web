@@ -209,8 +209,9 @@ export default function useMonitors() {
     // Overview statistics, derived instead of mirrored into state.
     const { total, online, avgCpu, avgMemory, sumRX, sumTX } = useMemo(() => {
         let visibleCount = 0;
-        let withStatusCount = 0;
         let onlineCount = 0;
+        let cpuCount = 0;
+        let memCount = 0;
         let cpuAcc = 0;
         let memAcc = 0;
         let rxAcc = 0;
@@ -226,11 +227,15 @@ export default function useMonitors() {
             const status = statuses[server.id];
             if (!status) continue;
 
-            withStatusCount++;
             if (nowMs - new Date(status.time).getTime() < ONLINE_THRESHOLD_MS) {
                 onlineCount++;
                 cpuAcc = cpuAcc + status.cpu;
-                memAcc = memAcc + (status.mem_used_mb / status.mem_total_mb) * 100;
+                cpuCount++;
+                // Skip zero totals (not reported) so the memory average stays finite.
+                if (status.mem_total_mb > 0) {
+                    memAcc = memAcc + (status.mem_used_mb / status.mem_total_mb) * 100;
+                    memCount++;
+                }
                 rxAcc = rxAcc + status.rx_kib_s;
                 txAcc = txAcc + status.tx_kib_s;
             }
@@ -239,8 +244,8 @@ export default function useMonitors() {
         return {
             total: visibleCount,
             online: onlineCount,
-            avgCpu: withStatusCount > 0 ? cpuAcc / withStatusCount : 0,
-            avgMemory: withStatusCount > 0 ? memAcc / withStatusCount : 0,
+            avgCpu: cpuCount > 0 ? cpuAcc / cpuCount : 0,
+            avgMemory: memCount > 0 ? memAcc / memCount : 0,
             sumRX: rxAcc,
             sumTX: txAcc,
         };
