@@ -64,7 +64,7 @@ const AgentInstall = ({
     const useSudo = sudo ? 'sudo ' : '';
     const script = [
         os === 'windows'
-            ? `curl -L -o ${binaryName} ${downloadUrl} && ./${binaryName} install`
+            ? `curl -L -o ${binaryName} ${downloadUrl} && .\\${binaryName} install`
             : `curl -L -o ${binaryName} ${downloadUrl} && ${useSudo}chmod +x ./${binaryName} && ${useSudo}./${binaryName} install`,
         mode === 'active' ? 'active' : `passive`,
     ];
@@ -79,7 +79,7 @@ const AgentInstall = ({
     }
     script.push(
         mode === 'active'
-            ? `${agent_uid} ${public_key} ${host} ${port}`
+            ? `"${agent_uid}" "${public_key}" "${host}" ${port}`
             : `"${hub}" "${enroll_token}"`
     );
 
