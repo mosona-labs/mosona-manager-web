@@ -638,8 +638,8 @@ const Monitor = () => {
                             <span>{t('pages.monitor.tcpConnections')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {realTimeStatus?.tcp_total
-                                ? realTimeStatus?.tcp_total
+                            {realTimeStatus?.tcp_total != null
+                                ? realTimeStatus.tcp_total
                                 : t('pages.monitor.na')}
                         </div>
                     </div>
@@ -649,8 +649,8 @@ const Monitor = () => {
                             <span>{t('pages.monitor.udpConnections')}</span>
                         </div>
                         <div className="font-mono text-lg">
-                            {realTimeStatus?.udp_total
-                                ? realTimeStatus?.udp_total
+                            {realTimeStatus?.udp_total != null
+                                ? realTimeStatus.udp_total
                                 : t('pages.monitor.na')}
                         </div>
                     </div>
