@@ -31,7 +31,9 @@ const NotificationSettings = () => {
     const [inputValue, setInputValue] = useState('');
 
     const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // Mirror the backend's mail.ParseAddress: a dotless local domain
+        // (user@nas) is valid, so only require a non-empty local part and host.
+        const emailRegex = /^[^\s@]+@[^\s@]+$/;
         const test = emailRegex.test(email);
         if (!test) {
             toast.warning(t('pages.notification.invalidEmail'), {
