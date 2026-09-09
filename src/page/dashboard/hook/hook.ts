@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import axios from 'axios';
 import { toast } from 'sonner';
 
 import { type MonitorType, type ServerStatusType } from '@/api/monitor.ts';
@@ -328,7 +329,27 @@ export default function useMonitors() {
                 setIsLoading(true);
                 eventSource.close();
                 reconnectInterval.current = setTimeout(() => {
-                    subscribe();
+                    // EventSource cannot surface response codes, so probe the
+                    // session before retrying: stop the reconnect loop once the
+                    // login has expired instead of hammering the server.
+                    void axios
+                        .get('/api/v1/user/me')
+                        .then((res) => {
+                            if (res.data?.code === 'login') {
+                                window.location.href =
+                                    '/auth?jump=' + window.location.pathname + window.location.hash;
+                            } else {
+                                subscribe();
+                            }
+                        })
+                        .catch((err) => {
+                            if (err?.response?.data?.code === 'login') {
+                                window.location.href =
+                                    '/auth?jump=' + window.location.pathname + window.location.hash;
+                            } else {
+                                subscribe();
+                            }
+                        });
                 }, SSE_RECONNECT_DELAY_MS);
             }, SSE_STALE_TIMEOUT_MS);
         };
