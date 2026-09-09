@@ -764,27 +764,27 @@ const zhCN: typeof en = {
                 },
                 cpu_usage: {
                     label: 'CPU 使用率',
-                    description: '当 CPU 使用率在指定窗口内超过阈值时告警。',
+                    description: '当 CPU 使用率在指定窗口内达到阈值时告警。',
                 },
                 memory_usage: {
                     label: '内存使用率',
-                    description: '当内存使用率在指定窗口内超过阈值时告警。',
+                    description: '当内存使用率在指定窗口内达到阈值时告警。',
                 },
                 disk_usage: {
                     label: '磁盘使用率',
-                    description: '当磁盘使用率在指定窗口内超过阈值时告警。',
+                    description: '当磁盘使用率在指定窗口内达到阈值时告警。',
                 },
                 read_iops: {
                     label: '磁盘读取 IOPS',
-                    description: '当磁盘读取 IOPS 在指定窗口内超过阈值时告警。',
+                    description: '当磁盘读取 IOPS 在指定窗口内达到阈值时告警。',
                 },
                 write_iops: {
                     label: '磁盘写入 IOPS',
-                    description: '当磁盘写入 IOPS 在指定窗口内超过阈值时告警。',
+                    description: '当磁盘写入 IOPS 在指定窗口内达到阈值时告警。',
                 },
                 bandwidth: {
                     label: '带宽',
-                    description: '当带宽使用在指定窗口内超过阈值时告警。',
+                    description: '当带宽使用在指定窗口内达到阈值时告警。',
                 },
                 expiry_reminder: {
                     label: '到期提醒',

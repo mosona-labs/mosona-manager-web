@@ -804,32 +804,32 @@ const en = {
                 },
                 cpu_usage: {
                     label: 'CPU Usage',
-                    description: 'Alert when CPU usage exceeds the threshold for the given window.',
+                    description: 'Alert when CPU usage reaches the threshold for the given window.',
                 },
                 memory_usage: {
                     label: 'Memory Usage',
                     description:
-                        'Alert when memory usage exceeds the threshold for the given window.',
+                        'Alert when memory usage reaches the threshold for the given window.',
                 },
                 disk_usage: {
                     label: 'Disk Usage',
                     description:
-                        'Alert when disk usage exceeds the threshold for the given window.',
+                        'Alert when disk usage reaches the threshold for the given window.',
                 },
                 read_iops: {
                     label: 'Disk Read IOPS',
                     description:
-                        'Alert when disk read IOPS exceeds the threshold for the given window.',
+                        'Alert when disk read IOPS reaches the threshold for the given window.',
                 },
                 write_iops: {
                     label: 'Disk Write IOPS',
                     description:
-                        'Alert when disk write IOPS exceeds the threshold for the given window.',
+                        'Alert when disk write IOPS reaches the threshold for the given window.',
                 },
                 bandwidth: {
                     label: 'Bandwidth',
                     description:
-                        'Alert when bandwidth usage exceeds the threshold for the given window.',
+                        'Alert when bandwidth usage reaches the threshold for the given window.',
                 },
                 expiry_reminder: {
                     label: 'Expiry Reminder',

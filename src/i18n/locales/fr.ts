@@ -832,32 +832,32 @@ const fr: typeof en = {
                 cpu_usage: {
                     label: 'Utilisation du CPU',
                     description:
-                        "Alerte lorsque l'utilisation du CPU dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation du CPU atteint le seuil pendant la fenêtre donnée.",
                 },
                 memory_usage: {
                     label: 'Utilisation de la mémoire',
                     description:
-                        "Alerte lorsque l'utilisation de la mémoire dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation de la mémoire atteint le seuil pendant la fenêtre donnée.",
                 },
                 disk_usage: {
                     label: 'Utilisation du disque',
                     description:
-                        "Alerte lorsque l'utilisation du disque dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation du disque atteint le seuil pendant la fenêtre donnée.",
                 },
                 read_iops: {
                     label: 'IOPS de lecture disque',
                     description:
-                        'Alerte lorsque les IOPS de lecture disque dépassent le seuil pendant la fenêtre donnée.',
+                        'Alerte lorsque les IOPS de lecture disque atteignent le seuil pendant la fenêtre donnée.',
                 },
                 write_iops: {
                     label: 'IOPS d’écriture disque',
                     description:
-                        "Alerte lorsque les IOPS d'écriture disque dépassent le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque les IOPS d'écriture disque atteignent le seuil pendant la fenêtre donnée.",
                 },
                 bandwidth: {
                     label: 'Bande passante',
                     description:
-                        "Alerte lorsque l'utilisation de la bande passante dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation de la bande passante atteint le seuil pendant la fenêtre donnée.",
                 },
                 expiry_reminder: {
                     label: "Rappel d'expiration",

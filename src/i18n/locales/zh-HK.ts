@@ -766,27 +766,27 @@ const zhHK: typeof en = {
                 },
                 cpu_usage: {
                     label: 'CPU 使用率',
-                    description: '當 CPU 使用率在指定時段內超過門檻值時發出警示。',
+                    description: '當 CPU 使用率在指定時段內達到門檻值時發出警示。',
                 },
                 memory_usage: {
                     label: '記憶體使用率',
-                    description: '當記憶體使用率在指定時段內超過門檻值時發出警示。',
+                    description: '當記憶體使用率在指定時段內達到門檻值時發出警示。',
                 },
                 disk_usage: {
                     label: '磁碟使用率',
-                    description: '當磁碟使用率在指定時段內超過門檻值時發出警示。',
+                    description: '當磁碟使用率在指定時段內達到門檻值時發出警示。',
                 },
                 read_iops: {
                     label: '磁碟讀取 IOPS',
-                    description: '當磁碟讀取 IOPS 在指定時段內超過門檻值時發出警示。',
+                    description: '當磁碟讀取 IOPS 在指定時段內達到門檻值時發出警示。',
                 },
                 write_iops: {
                     label: '磁碟寫入 IOPS',
-                    description: '當磁碟寫入 IOPS 在指定時段內超過門檻值時發出警示。',
+                    description: '當磁碟寫入 IOPS 在指定時段內達到門檻值時發出警示。',
                 },
                 bandwidth: {
                     label: '頻寬',
-                    description: '當頻寬使用在指定時段內超過門檻值時發出警示。',
+                    description: '當頻寬使用在指定時段內達到門檻值時發出警示。',
                 },
                 expiry_reminder: {
                     label: '到期提醒',

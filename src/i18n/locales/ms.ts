@@ -816,32 +816,32 @@ const ms: typeof en = {
                 cpu_usage: {
                     label: 'Penggunaan CPU',
                     description:
-                        'Amaran apabila penggunaan CPU melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan CPU mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 memory_usage: {
                     label: 'Penggunaan Memori',
                     description:
-                        'Amaran apabila penggunaan memori melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan memori mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 disk_usage: {
                     label: 'Penggunaan Cakera',
                     description:
-                        'Amaran apabila penggunaan cakera melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan cakera mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 read_iops: {
                     label: 'IOPS Baca Cakera',
                     description:
-                        'Amaran apabila IOPS baca cakera melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila IOPS baca cakera mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 write_iops: {
                     label: 'IOPS Tulis Cakera',
                     description:
-                        'Amaran apabila IOPS tulis cakera melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila IOPS tulis cakera mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 bandwidth: {
                     label: 'Lebar Jalur',
                     description:
-                        'Amaran apabila penggunaan lebar jalur melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan lebar jalur mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 expiry_reminder: {
                     label: 'Peringatan Tamat Tempoh',

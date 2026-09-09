@@ -794,27 +794,27 @@ const ko: typeof en = {
                 },
                 cpu_usage: {
                     label: 'CPU 사용량',
-                    description: '지정된 기간 동안 CPU 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 CPU 사용량이 임계값에 도달하면 알림.',
                 },
                 memory_usage: {
                     label: '메모리 사용량',
-                    description: '지정된 기간 동안 메모리 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 메모리 사용량이 임계값에 도달하면 알림.',
                 },
                 disk_usage: {
                     label: '디스크 사용량',
-                    description: '지정된 기간 동안 디스크 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 사용량이 임계값에 도달하면 알림.',
                 },
                 read_iops: {
                     label: '디스크 읽기 IOPS',
-                    description: '지정된 기간 동안 디스크 읽기 IOPS가 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 읽기 IOPS가 임계값에 도달하면 알림.',
                 },
                 write_iops: {
                     label: '디스크 쓰기 IOPS',
-                    description: '지정된 기간 동안 디스크 쓰기 IOPS가 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 쓰기 IOPS가 임계값에 도달하면 알림.',
                 },
                 bandwidth: {
                     label: '대역폭',
-                    description: '지정된 기간 동안 대역폭 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 대역폭 사용량이 임계값에 도달하면 알림.',
                 },
                 expiry_reminder: {
                     label: '만료 알림',

@@ -820,32 +820,32 @@ const es: typeof en = {
                 cpu_usage: {
                     label: 'Uso de CPU',
                     description:
-                        'Alerta cuando el uso de CPU supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de CPU alcanza el umbral durante la ventana indicada.',
                 },
                 memory_usage: {
                     label: 'Uso de memoria',
                     description:
-                        'Alerta cuando el uso de memoria supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de memoria alcanza el umbral durante la ventana indicada.',
                 },
                 disk_usage: {
                     label: 'Uso de disco',
                     description:
-                        'Alerta cuando el uso de disco supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de disco alcanza el umbral durante la ventana indicada.',
                 },
                 read_iops: {
                     label: 'IOPS de lectura de disco',
                     description:
-                        'Alerta cuando las IOPS de lectura superan el umbral durante la ventana indicada.',
+                        'Alerta cuando las IOPS de lectura alcanzan el umbral durante la ventana indicada.',
                 },
                 write_iops: {
                     label: 'IOPS de escritura de disco',
                     description:
-                        'Alerta cuando las IOPS de escritura superan el umbral durante la ventana indicada.',
+                        'Alerta cuando las IOPS de escritura alcanzan el umbral durante la ventana indicada.',
                 },
                 bandwidth: {
                     label: 'Ancho de banda',
                     description:
-                        'Alerta cuando el uso de ancho de banda supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de ancho de banda alcanza el umbral durante la ventana indicada.',
                 },
                 expiry_reminder: {
                     label: 'Recordatorio de caducidad',

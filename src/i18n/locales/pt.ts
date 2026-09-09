@@ -815,32 +815,32 @@ const pt: typeof en = {
                 cpu_usage: {
                     label: 'Uso de CPU',
                     description:
-                        'Alerta quando o uso de CPU excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de CPU atinge o limite durante a janela indicada.',
                 },
                 memory_usage: {
                     label: 'Uso de memória',
                     description:
-                        'Alerta quando o uso de memória excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de memória atinge o limite durante a janela indicada.',
                 },
                 disk_usage: {
                     label: 'Uso de disco',
                     description:
-                        'Alerta quando o uso de disco excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de disco atinge o limite durante a janela indicada.',
                 },
                 read_iops: {
                     label: 'IOPS de leitura de disco',
                     description:
-                        'Alerta quando as IOPS de leitura do disco excedem o limite durante a janela indicada.',
+                        'Alerta quando as IOPS de leitura do disco atingem o limite durante a janela indicada.',
                 },
                 write_iops: {
                     label: 'IOPS de gravação de disco',
                     description:
-                        'Alerta quando as IOPS de gravação do disco excedem o limite durante a janela indicada.',
+                        'Alerta quando as IOPS de gravação do disco atingem o limite durante a janela indicada.',
                 },
                 bandwidth: {
                     label: 'Largura de banda',
                     description:
-                        'Alerta quando o uso de largura de banda excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de largura de banda atinge o limite durante a janela indicada.',
                 },
                 expiry_reminder: {
                     label: 'Lembrete de expiração',

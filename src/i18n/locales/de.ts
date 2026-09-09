@@ -819,32 +819,32 @@ const de: typeof en = {
                 cpu_usage: {
                     label: 'CPU-Auslastung',
                     description:
-                        'Alarm, wenn die CPU-Auslastung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die CPU-Auslastung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 memory_usage: {
                     label: 'Speicherauslastung',
                     description:
-                        'Alarm, wenn die Speicherauslastung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die Speicherauslastung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 disk_usage: {
                     label: 'Festplattennutzung',
                     description:
-                        'Alarm, wenn die Festplattennutzung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die Festplattennutzung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 read_iops: {
                     label: 'Festplatten-Lese-IOPS',
                     description:
-                        'Alarm, wenn die Lese-IOPS im Zeitfenster den Schwellenwert überschreiten.',
+                        'Alarm, wenn die Lese-IOPS im Zeitfenster den Schwellenwert erreichen.',
                 },
                 write_iops: {
                     label: 'Festplatten-Schreib-IOPS',
                     description:
-                        'Alarm, wenn die Schreib-IOPS im Zeitfenster den Schwellenwert überschreiten.',
+                        'Alarm, wenn die Schreib-IOPS im Zeitfenster den Schwellenwert erreichen.',
                 },
                 bandwidth: {
                     label: 'Bandbreite',
                     description:
-                        'Alarm, wenn die Bandbreitennutzung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die Bandbreitennutzung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 expiry_reminder: {
                     label: 'Ablauf-Erinnerung',
