@@ -9,6 +9,7 @@ import {
     HardDrive,
     HardDriveDownloadIcon,
     HardDriveUploadIcon,
+    LogIn,
     MemoryStick,
     ServerIcon,
 } from 'lucide-react';
@@ -149,6 +150,8 @@ const getAlertIcon = (item: string) => {
             return <EthernetPort size={16} />;
         case 'expiry_reminder':
             return <ClockAlert size={16} />;
+        case 'ssh_login':
+            return <LogIn size={16} />;
         default:
             return <CircleHelp size={16} />;
     }

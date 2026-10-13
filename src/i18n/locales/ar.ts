@@ -813,6 +813,10 @@ const ar: typeof en = {
                     label: 'تذكير بانتهاء الصلاحية',
                     description: 'تذكير قبل بلوغ وقت انتهاء فوترة الخادم.',
                 },
+                ssh_login: {
+                    label: 'تسجيل دخول SSH',
+                    description: 'إشعار عند تسجيل أي مستخدم الدخول إلى الخادم عبر SSH.',
+                },
             },
         },
         contextMenu: {

@@ -851,6 +851,10 @@ const es: typeof en = {
                     description:
                         'Te recuerda antes de que se alcance la fecha de finalización de facturación del servidor.',
                 },
+                ssh_login: {
+                    label: 'Inicio de sesión SSH',
+                    description: 'Notifica cuando un usuario inicia sesión en el servidor por SSH.',
+                },
             },
         },
         contextMenu: {

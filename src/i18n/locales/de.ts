@@ -848,6 +848,11 @@ const de: typeof en = {
                     label: 'Ablauf-Erinnerung',
                     description: 'Erinnerung vor Erreichen der Abrechnungs-Endzeit des Servers.',
                 },
+                ssh_login: {
+                    label: 'SSH-Anmeldung',
+                    description:
+                        'Benachrichtigt, wenn sich ein Benutzer per SSH am Server anmeldet.',
+                },
             },
         },
         contextMenu: {

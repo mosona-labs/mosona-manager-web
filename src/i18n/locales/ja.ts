@@ -838,6 +838,10 @@ const ja: typeof en = {
                     label: '期限リマインダー',
                     description: 'サーバーの請求終了時刻の前にリマインドします。',
                 },
+                ssh_login: {
+                    label: 'SSHログイン',
+                    description: 'ユーザーがSSHでサーバーにログインしたときに通知します。',
+                },
             },
         },
         contextMenu: {

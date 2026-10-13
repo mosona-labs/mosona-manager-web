@@ -846,6 +846,10 @@ const pt: typeof en = {
                     description:
                         'Lembra você antes de atingir a data de término do faturamento do servidor.',
                 },
+                ssh_login: {
+                    label: 'Login SSH',
+                    description: 'Notifica quando um usuário faz login no servidor via SSH.',
+                },
             },
         },
         contextMenu: {

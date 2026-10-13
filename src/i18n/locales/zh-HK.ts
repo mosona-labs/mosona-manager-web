@@ -790,6 +790,10 @@ const zhHK: typeof en = {
                     label: '到期提醒',
                     description: '在伺服器帳單結束時間到達前提醒你。',
                 },
+                ssh_login: {
+                    label: 'SSH 登入',
+                    description: '當有使用者透過 SSH 登入伺服器時通知你。',
+                },
             },
         },
         contextMenu: {

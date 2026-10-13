@@ -833,6 +833,10 @@ const en = {
                     label: 'Expiry Reminder',
                     description: 'Remind you before the server billing end time is reached.',
                 },
+                ssh_login: {
+                    label: 'SSH Login',
+                    description: 'Notify when a user logs into the server via SSH.',
+                },
             },
         },
         contextMenu: {

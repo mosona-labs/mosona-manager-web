@@ -818,6 +818,10 @@ const ko: typeof en = {
                     label: '만료 알림',
                     description: '서버 결제 종료 시간에 도달하기 전에 알려 줍니다.',
                 },
+                ssh_login: {
+                    label: 'SSH 로그인',
+                    description: '사용자가 SSH로 서버에 로그인하면 알려 줍니다.',
+                },
             },
         },
         contextMenu: {

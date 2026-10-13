@@ -863,6 +863,11 @@ const fr: typeof en = {
                     description:
                         'Vous rappelle avant que la date de fin de facturation du serveur ne soit atteinte.',
                 },
+                ssh_login: {
+                    label: 'Connexion SSH',
+                    description:
+                        "Vous avertit lorsqu'un utilisateur se connecte au serveur via SSH.",
+                },
             },
         },
         contextMenu: {

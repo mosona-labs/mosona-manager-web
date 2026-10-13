@@ -788,6 +788,10 @@ const zhCN: typeof en = {
                     label: '到期提醒',
                     description: '在服务器账单结束时间到达前提醒你。',
                 },
+                ssh_login: {
+                    label: 'SSH 登录',
+                    description: '当有用户通过 SSH 登录服务器时通知你。',
+                },
             },
         },
         contextMenu: {

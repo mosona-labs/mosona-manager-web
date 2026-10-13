@@ -846,6 +846,10 @@ const ms: typeof en = {
                     label: 'Peringatan Tamat Tempoh',
                     description: 'Ingatkan anda sebelum masa tamat pengebilan pelayan dicapai.',
                 },
+                ssh_login: {
+                    label: 'Log Masuk SSH',
+                    description: 'Maklumkan apabila pengguna log masuk ke pelayan melalui SSH.',
+                },
             },
         },
         contextMenu: {
