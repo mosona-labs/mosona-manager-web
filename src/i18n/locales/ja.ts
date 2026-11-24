@@ -181,6 +181,12 @@ const ja: typeof en = {
             exported: 'ログをエクスポートしました。',
         },
         profile: {
+            totpDisableTitle: '二要素認証を無効にする',
+            totpDisableDescription: 'ログイン時に認証アプリのコードが不要になります。',
+            currentPassword: '現在のパスワード',
+            totpCode: '認証アプリのコード',
+            totpDisableConfirm: 'TOTP を無効にする',
+            totpDisableRetry: '試行回数が多すぎます。{{seconds}} 秒後に再試行してください。',
             title: 'プロフィール',
             description: '個人プロフィール、アカウント設定、セッションを管理',
             memberSince: '{{date}} からメンバー',

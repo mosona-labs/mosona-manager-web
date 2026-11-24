@@ -187,6 +187,13 @@ const fr: typeof en = {
             exported: 'Journaux exportés avec succès.',
         },
         profile: {
+            totpDisableTitle: 'Désactiver la double authentification',
+            totpDisableDescription:
+                'Votre compte ne demandera plus de code de votre application à la connexion.',
+            currentPassword: 'Mot de passe actuel',
+            totpCode: 'Code de l’application d’authentification',
+            totpDisableConfirm: 'Désactiver TOTP',
+            totpDisableRetry: 'Trop de tentatives. Réessayez dans {{seconds}} secondes.',
             title: 'Profil',
             description: 'Gérez votre profil personnel, les paramètres du compte et les sessions',
             memberSince: 'Membre depuis le {{date}}',

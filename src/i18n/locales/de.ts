@@ -184,6 +184,13 @@ const de: typeof en = {
             exported: 'Protokolle erfolgreich exportiert.',
         },
         profile: {
+            totpDisableTitle: 'Zwei-Faktor-Authentifizierung deaktivieren',
+            totpDisableDescription:
+                'Bei der Anmeldung wird kein Code der Authentifizierungs-App mehr verlangt.',
+            currentPassword: 'Aktuelles Passwort',
+            totpCode: 'Authentifizierungscode',
+            totpDisableConfirm: 'TOTP deaktivieren',
+            totpDisableRetry: 'Zu viele Versuche. In {{seconds}} Sekunden erneut versuchen.',
             title: 'Profil',
             description: 'Persönliches Profil, Kontoeinstellungen und Sitzungen verwalten',
             memberSince: 'Mitglied seit {{date}}',

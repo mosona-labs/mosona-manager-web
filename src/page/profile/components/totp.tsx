@@ -1,13 +1,11 @@
 import { useState } from 'react';
-import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 
 import { Switch } from '@/components/ui/switch.tsx';
 import { useUser } from '@/context/useUser.tsx';
 import { ToastError } from '@/utils/toast.ts';
 import EnableTOTP from '@/components/totp/enable.tsx';
-import ApiUser from '@/api/user.ts';
-import TwoFA from '@/components/2fa.tsx';
+import DisableTOTP from '@/components/totp/disable.tsx';
 
 const TOTPCard = () => {
     const { t } = useTranslation();
@@ -25,23 +23,10 @@ const TOTPCard = () => {
                 setLocked(false);
             });
 
-    const [tfaOpen, setTFAOpen] = useState(false);
-    const disableTOTP = (code?: string) => {
-        setLocked(true);
-        ApiUser.disableTOTP(code)
-            .then(() => {
-                toast.success(t('common.success'), {
-                    description: t('pages.profile.totpDisabled'),
-                });
-                callback().then();
-            })
-            .catch((err) => {
-                if (err.response.data.code === 'verify') {
-                    setTFAOpen(true);
-                } else ToastError(err);
-
-                setLocked(false);
-            });
+    const [openDisableTOTP, setOpenDisableTOTP] = useState(false);
+    const setDisableOpen = (open: boolean) => {
+        setOpenDisableTOTP(open);
+        if (!open) setLocked(false);
     };
 
     return (
@@ -57,21 +42,14 @@ const TOTPCard = () => {
                 onCheckedChange={(v) => {
                     setLocked(true);
                     if (v) setOpenEnableTOTP(true);
-                    else disableTOTP();
+                    else setOpenDisableTOTP(true);
                 }}
                 disabled={locked}
             />
 
             {/*Enable*/}
             <EnableTOTP open={openEnableTOTP} setOpen={setOpenEnableTOTP} callback={callback} />
-            {/*2FA*/}
-            <TwoFA
-                open={tfaOpen}
-                setOpen={setTFAOpen}
-                callback={(code) => {
-                    disableTOTP(code);
-                }}
-            />
+            {openDisableTOTP && <DisableTOTP open setOpen={setDisableOpen} callback={callback} />}
         </div>
     );
 };

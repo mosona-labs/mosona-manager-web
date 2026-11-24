@@ -180,6 +180,12 @@ const ar: typeof en = {
             exported: 'تم تصدير السجلات بنجاح.',
         },
         profile: {
+            totpDisableTitle: 'تعطيل المصادقة الثنائية',
+            totpDisableDescription: 'لن يتطلب حسابك رمز تطبيق المصادقة عند تسجيل الدخول.',
+            currentPassword: 'كلمة المرور الحالية',
+            totpCode: 'رمز تطبيق المصادقة',
+            totpDisableConfirm: 'تعطيل TOTP',
+            totpDisableRetry: 'محاولات كثيرة جدًا. أعد المحاولة بعد {{seconds}} ثانية.',
             title: 'الملف الشخصي',
             description: 'إدارة ملفك الشخصي وإعدادات الحساب والجلسات',
             memberSince: 'عضو منذ {{date}}',

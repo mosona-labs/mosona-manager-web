@@ -179,6 +179,13 @@ const en = {
             exported: 'Logs exported successfully.',
         },
         profile: {
+            totpDisableTitle: 'Disable Two-Factor Authentication',
+            totpDisableDescription:
+                'Your account will no longer require an authenticator code at sign-in.',
+            currentPassword: 'Current password',
+            totpCode: 'Authenticator code',
+            totpDisableConfirm: 'Disable TOTP',
+            totpDisableRetry: 'Too many attempts. Try again in {{seconds}} seconds.',
             title: 'Profile',
             description: 'Manage your personal profile, account settings and sessions',
             memberSince: 'Member since {{date}}',

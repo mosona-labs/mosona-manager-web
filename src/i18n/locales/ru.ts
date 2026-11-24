@@ -181,6 +181,13 @@ const ru: typeof en = {
             exported: 'Журналы успешно экспортированы.',
         },
         profile: {
+            totpDisableTitle: 'Отключить двухфакторную аутентификацию',
+            totpDisableDescription:
+                'При входе больше не потребуется код из приложения аутентификации.',
+            currentPassword: 'Текущий пароль',
+            totpCode: 'Код из приложения аутентификации',
+            totpDisableConfirm: 'Отключить TOTP',
+            totpDisableRetry: 'Слишком много попыток. Повторите через {{seconds}} сек.',
             title: 'Профиль',
             description: 'Управление личным профилем, настройками аккаунта и сеансами',
             memberSince: 'Участник с {{date}}',

@@ -174,6 +174,12 @@ const zhHK: typeof en = {
             exported: '日誌匯出成功',
         },
         profile: {
+            totpDisableTitle: '停用雙因素認證',
+            totpDisableDescription: '停用後，登入帳戶將不再要求驗證器驗證碼。',
+            currentPassword: '目前密碼',
+            totpCode: '驗證器驗證碼',
+            totpDisableConfirm: '停用 TOTP',
+            totpDisableRetry: '嘗試次數過多，請在 {{seconds}} 秒後再試。',
             title: '個人檔案',
             description: '管理個人檔案、帳戶設定和工作階段',
             memberSince: '加入於 {{date}}',

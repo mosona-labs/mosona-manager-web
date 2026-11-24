@@ -180,6 +180,12 @@ const ko: typeof en = {
             exported: '로그를 성공적으로 내보냈습니다.',
         },
         profile: {
+            totpDisableTitle: '2단계 인증 비활성화',
+            totpDisableDescription: '로그인할 때 인증 앱의 코드가 더 이상 필요하지 않습니다.',
+            currentPassword: '현재 비밀번호',
+            totpCode: '인증 앱 코드',
+            totpDisableConfirm: 'TOTP 비활성화',
+            totpDisableRetry: '시도 횟수가 너무 많습니다. {{seconds}}초 후에 다시 시도하세요.',
             title: '프로필',
             description: '개인 프로필, 계정 설정 및 세션을 관리합니다',
             memberSince: '{{date}}부터 회원',

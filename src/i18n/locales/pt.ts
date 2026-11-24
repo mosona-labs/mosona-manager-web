@@ -184,6 +184,13 @@ const pt: typeof en = {
             exported: 'Logs exportados com sucesso.',
         },
         profile: {
+            totpDisableTitle: 'Desativar a autenticação de dois fatores',
+            totpDisableDescription:
+                'A sua conta deixará de exigir um código do autenticador ao iniciar sessão.',
+            currentPassword: 'Palavra-passe atual',
+            totpCode: 'Código do autenticador',
+            totpDisableConfirm: 'Desativar TOTP',
+            totpDisableRetry: 'Demasiadas tentativas. Tente novamente em {{seconds}} segundos.',
             title: 'Perfil',
             description: 'Gerencie seu perfil pessoal, configurações da conta e sessões',
             memberSince: 'Membro desde {{date}}',

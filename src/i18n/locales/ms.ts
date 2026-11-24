@@ -181,6 +181,13 @@ const ms: typeof en = {
             exported: 'Log berjaya dieksport.',
         },
         profile: {
+            totpDisableTitle: 'Nyahaktifkan pengesahan dua faktor',
+            totpDisableDescription:
+                'Akaun anda tidak lagi memerlukan kod pengesah semasa log masuk.',
+            currentPassword: 'Kata laluan semasa',
+            totpCode: 'Kod pengesah',
+            totpDisableConfirm: 'Nyahaktifkan TOTP',
+            totpDisableRetry: 'Terlalu banyak percubaan. Cuba lagi dalam {{seconds}} saat.',
             title: 'Profil',
             description: 'Urus profil peribadi, tetapan akaun dan sesi anda',
             memberSince: 'Ahli sejak {{date}}',

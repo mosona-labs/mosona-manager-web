@@ -101,8 +101,11 @@ class ApiUserClass extends baseAPI {
     async confirmTOTP(secret: string, code: string) {
         return this.postData<ResponseInterface>('/v1/user/totp/confirm', { secret, code });
     }
-    async disableTOTP(code?: string) {
-        return this.postData<ResponseInterface>('/v1/user/totp/disable', { v_code: code });
+    async disableTOTP(currentPassword: string, code: string) {
+        return this.postData<ResponseInterface>('/v1/user/totp/disable', {
+            current_password: currentPassword,
+            v_code: code,
+        });
     }
 }
 

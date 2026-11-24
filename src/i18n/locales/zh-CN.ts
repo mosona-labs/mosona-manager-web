@@ -174,6 +174,12 @@ const zhCN: typeof en = {
             exported: '日志导出成功',
         },
         profile: {
+            totpDisableTitle: '禁用双因素认证',
+            totpDisableDescription: '禁用后，登录账户将不再要求身份验证器验证码。',
+            currentPassword: '当前密码',
+            totpCode: '身份验证器验证码',
+            totpDisableConfirm: '禁用 TOTP',
+            totpDisableRetry: '尝试次数过多，请在 {{seconds}} 秒后重试。',
             title: '个人资料',
             description: '管理个人资料、账户设置和会话',
             memberSince: '加入于 {{date}}',
