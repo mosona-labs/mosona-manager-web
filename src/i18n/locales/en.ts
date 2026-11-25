@@ -275,6 +275,16 @@ const en = {
             invalidEmail: 'Invalid email address.',
             validEmail: 'Please enter a valid email address.',
             updated: 'Notification settings updated successfully.',
+            alertHint: 'Right-click a card in the Monitor Dashboard to add an alert.',
+            emailDesc: 'Configure email notifications to receive alerts directly in your inbox.',
+            emailPrerequisite:
+                'Before configuring alerts, make sure this instance has a global email configuration; otherwise, alerts cannot be sent.',
+            emailPlaceholder: 'Enter email address and press enter',
+            addUrl: 'Add URL',
+            customUrl: 'Custom URL',
+            test: 'Test',
+            testSent: 'Test notification sent successfully.',
+            testSentDesc: 'Please check your notification receiver.',
         },
         monitor: {
             cpuUsage: 'CPU Usage',
@@ -283,6 +293,8 @@ const en = {
             memoryDescription: 'System memory consumption overview',
             diskIo: 'Disk I/O',
             diskIoDescription: 'Aggregated read and write speed across all disks',
+            diskIops: 'Disk IOPS',
+            diskIopsDescription: 'Aggregated read and write operations per second across all disks',
             bandwidth: 'Bandwidth',
             bandwidthDescription: 'Network bandwidth usage for all network interfaces',
             swapUsage: 'Swap Usage',
@@ -794,7 +806,7 @@ const en = {
             noAlerts: 'No configurable alerts are available right now.',
             teamDisabled: 'Team alert disabled',
             teamEnabled: 'Team alert enabled',
-            teamServers: 'There are currently {{count}} servers using the team alert settings.',
+            teamServers: 'Updated team alert settings on {{count}} servers.',
             threshold: 'Threshold',
             window: 'Window',
             notifyOnce: 'This alert is sent once per matching window.',
@@ -809,32 +821,32 @@ const en = {
                 },
                 cpu_usage: {
                     label: 'CPU Usage',
-                    description: 'Alert when CPU usage exceeds the threshold for the given window.',
+                    description: 'Alert when CPU usage reaches the threshold for the given window.',
                 },
                 memory_usage: {
                     label: 'Memory Usage',
                     description:
-                        'Alert when memory usage exceeds the threshold for the given window.',
+                        'Alert when memory usage reaches the threshold for the given window.',
                 },
                 disk_usage: {
                     label: 'Disk Usage',
                     description:
-                        'Alert when disk usage exceeds the threshold for the given window.',
+                        'Alert when disk usage reaches the threshold for the given window.',
                 },
                 read_iops: {
                     label: 'Disk Read IOPS',
                     description:
-                        'Alert when disk read IOPS exceeds the threshold for the given window.',
+                        'Alert when disk read IOPS reaches the threshold for the given window.',
                 },
                 write_iops: {
                     label: 'Disk Write IOPS',
                     description:
-                        'Alert when disk write IOPS exceeds the threshold for the given window.',
+                        'Alert when disk write IOPS reaches the threshold for the given window.',
                 },
                 bandwidth: {
                     label: 'Bandwidth',
                     description:
-                        'Alert when bandwidth usage exceeds the threshold for the given window.',
+                        'Alert when bandwidth usage reaches the threshold for the given window.',
                 },
                 expiry_reminder: {
                     label: 'Expiry Reminder',

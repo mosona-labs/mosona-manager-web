@@ -281,6 +281,18 @@ const es: typeof en = {
             invalidEmail: 'Dirección de correo no válida.',
             validEmail: 'Introduce una dirección de correo válida.',
             updated: 'Ajustes de notificación actualizados.',
+            alertHint:
+                'Haga clic derecho en una tarjeta del panel de monitoreo para añadir una alerta.',
+            emailDesc:
+                'Configure notificaciones por correo electrónico para recibir alertas directamente en su bandeja de entrada.',
+            emailPrerequisite:
+                'Antes de configurar alertas, asegúrese de que esta instancia tenga una configuración global de correo electrónico; de lo contrario, no se podrán enviar alertas.',
+            emailPlaceholder: 'Ingrese el correo electrónico y presione Enter',
+            addUrl: 'Añadir URL',
+            customUrl: 'URL personalizada',
+            test: 'Probar',
+            testSent: 'Notificación de prueba enviada correctamente.',
+            testSentDesc: 'Verifique su receptor de notificaciones.',
         },
         monitor: {
             cpuUsage: 'Uso de CPU',
@@ -289,6 +301,9 @@ const es: typeof en = {
             memoryDescription: 'Resumen del consumo de memoria del sistema',
             diskIo: 'E/S de disco',
             diskIoDescription: 'Velocidad agregada de lectura y escritura de todos los discos',
+            diskIops: 'IOPS de disco',
+            diskIopsDescription:
+                'Operaciones agregadas de lectura y escritura por segundo de todos los discos',
             bandwidth: 'Ancho de banda',
             bandwidthDescription: 'Uso del ancho de banda de todas las interfaces de red',
             swapUsage: 'Uso de intercambio',
@@ -810,7 +825,7 @@ const es: typeof en = {
             teamDisabled: 'Alerta de equipo desactivada',
             teamEnabled: 'Alerta de equipo activada',
             teamServers:
-                'Actualmente hay {{count}} servidores usando la configuración de alertas del equipo.',
+                'Se actualizó la configuración de alertas de equipo en {{count}} servidores.',
             threshold: 'Umbral',
             window: 'Ventana',
             notifyOnce: 'Esta alerta se envía una vez por cada ventana coincidente.',
@@ -826,32 +841,32 @@ const es: typeof en = {
                 cpu_usage: {
                     label: 'Uso de CPU',
                     description:
-                        'Alerta cuando el uso de CPU supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de CPU alcanza el umbral durante la ventana indicada.',
                 },
                 memory_usage: {
                     label: 'Uso de memoria',
                     description:
-                        'Alerta cuando el uso de memoria supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de memoria alcanza el umbral durante la ventana indicada.',
                 },
                 disk_usage: {
                     label: 'Uso de disco',
                     description:
-                        'Alerta cuando el uso de disco supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de disco alcanza el umbral durante la ventana indicada.',
                 },
                 read_iops: {
                     label: 'IOPS de lectura de disco',
                     description:
-                        'Alerta cuando las IOPS de lectura superan el umbral durante la ventana indicada.',
+                        'Alerta cuando las IOPS de lectura alcanzan el umbral durante la ventana indicada.',
                 },
                 write_iops: {
                     label: 'IOPS de escritura de disco',
                     description:
-                        'Alerta cuando las IOPS de escritura superan el umbral durante la ventana indicada.',
+                        'Alerta cuando las IOPS de escritura alcanzan el umbral durante la ventana indicada.',
                 },
                 bandwidth: {
                     label: 'Ancho de banda',
                     description:
-                        'Alerta cuando el uso de ancho de banda supera el umbral durante la ventana indicada.',
+                        'Alerta cuando el uso de ancho de banda alcanza el umbral durante la ventana indicada.',
                 },
                 expiry_reminder: {
                     label: 'Recordatorio de caducidad',

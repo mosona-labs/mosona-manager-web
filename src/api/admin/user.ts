@@ -25,7 +25,7 @@ class ApiAdminUserClass extends baseAPI {
     }
 
     async add(user: Omit<UserType, 'id' | 'created_at' | 'updated_at'> & { password: string }) {
-        return this.postData<ResponseInterface<{ id: number }>>('/admin/users', user);
+        return this.postData<ResponseInterface>('/admin/users', user);
     }
 
     async update(

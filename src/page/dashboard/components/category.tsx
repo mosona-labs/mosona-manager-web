@@ -77,11 +77,7 @@ const isNearVirtualViewport = (root: Element, element: Element) => {
     );
 };
 
-const observeNearViewport = (
-    root: Element,
-    element: Element,
-    callback: VisibilityCallback
-) => {
+const observeNearViewport = (root: Element, element: Element, callback: VisibilityCallback) => {
     let bucket = visibilityObservers.get(root);
     if (!bucket) {
         const callbacks = new Map<Element, VisibilityCallback>();
@@ -294,10 +290,10 @@ const MonitorCard = memo(
                 swap_total: info.swap_total_mb || 0,
                 disks,
                 uptime: formatUptime(server.open_time),
-                networkUp: info.rx_kib_s || 0,
-                networkDown: info.tx_kib_s || 0,
-                networkUpTotal: info.rx_total_mb || 0,
-                networkDownTotal: info.tx_total_mb || 0,
+                networkUp: info.tx_kib_s || 0,
+                networkDown: info.rx_kib_s || 0,
+                networkUpTotal: info.tx_total_mb || 0,
+                networkDownTotal: info.rx_total_mb || 0,
                 diskReadKibS: info.disk_read_kib_s || 0,
                 diskWriteKibS: info.disk_write_kib_s || 0,
                 diskReadIOPS: info.disk_read_iops || 0,

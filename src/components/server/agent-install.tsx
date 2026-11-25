@@ -64,7 +64,7 @@ const AgentInstall = ({
     const useSudo = sudo ? 'sudo ' : '';
     const script = [
         os === 'windows'
-            ? `curl -L -o ${binaryName} ${downloadUrl} && ./${binaryName} install`
+            ? `curl -L -o ${binaryName} ${downloadUrl} && .\\${binaryName} install`
             : `curl -L -o ${binaryName} ${downloadUrl} && ${useSudo}chmod +x ./${binaryName} && ${useSudo}./${binaryName} install`,
         mode === 'active' ? 'active' : `passive`,
     ];
@@ -74,14 +74,14 @@ const AgentInstall = ({
     if (!allow_terminal) {
         script.push('--no-terminal');
     }
-    script.push(
-        mode === 'active'
-            ? `${agent_uid} ${public_key} ${host} ${port}`
-            : `"${hub}" "${enroll_token}"`
-    );
     if (mode === 'passive' && ipPreference !== 'none') {
         script.push(`--${ipPreference}`);
     }
+    script.push(
+        mode === 'active'
+            ? `"${agent_uid}" "${public_key}" "${host}" ${port}`
+            : `"${hub}" "${enroll_token}"`
+    );
 
     return (
         <Dialog open={open}>

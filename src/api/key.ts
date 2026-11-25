@@ -13,7 +13,7 @@ class ApiKeyClass extends baseAPI {
     }
 
     async add(name: string, content: string, password: string) {
-        return this.postData<ResponseInterface<{ id: number }>>('/v1/key', {
+        return this.postData<ResponseInterface>('/v1/key', {
             name,
             content,
             password,

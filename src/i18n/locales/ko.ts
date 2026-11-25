@@ -273,6 +273,17 @@ const ko: typeof en = {
             invalidEmail: '잘못된 이메일 주소입니다.',
             validEmail: '유효한 이메일 주소를 입력하세요.',
             updated: '알림 설정이 업데이트되었습니다.',
+            alertHint:
+                '모니터 대시보드에서 카드를 마우스 오른쪽 버튼으로 클릭하여 알림을 추가합니다.',
+            emailDesc: '이메일 알림을 구성하여 알림을 받은 편지함으로 바로 전달합니다.',
+            emailPrerequisite:
+                '알림을 구성하기 전에 이 인스턴스에 전역 이메일 구성이 있는지 확인하세요. 그렇지 않으면 알림을 보낼 수 없습니다.',
+            emailPlaceholder: '이메일 주소를 입력하고 Enter를 누르세요',
+            addUrl: 'URL 추가',
+            customUrl: '사용자 지정 URL',
+            test: '테스트',
+            testSent: '테스트 알림을 성공적으로 보냈습니다.',
+            testSentDesc: '알림 수신 측을 확인하세요.',
         },
         monitor: {
             cpuUsage: 'CPU 사용량',
@@ -281,6 +292,8 @@ const ko: typeof en = {
             memoryDescription: '시스템 메모리 소비 개요',
             diskIo: '디스크 I/O',
             diskIoDescription: '모든 디스크의 집계된 읽기/쓰기 속도',
+            diskIops: '디스크 IOPS',
+            diskIopsDescription: '모든 디스크의 초당 읽기/쓰기 작업 수',
             bandwidth: '대역폭',
             bandwidthDescription: '모든 네트워크 인터페이스의 네트워크 대역폭 사용량',
             swapUsage: '스왑 사용량',
@@ -783,7 +796,7 @@ const ko: typeof en = {
             noAlerts: '현재 구성 가능한 알림이 없습니다.',
             teamDisabled: '팀 알림 비활성화됨',
             teamEnabled: '팀 알림 활성화됨',
-            teamServers: '현재 {{count}}대의 서버가 팀 알림 설정을 사용 중입니다.',
+            teamServers: '{{count}}대의 서버에 팀 알림 설정을 적용했습니다.',
             threshold: '임계값',
             window: '기간',
             notifyOnce: '이 알림은 일치하는 기간당 한 번 전송됩니다.',
@@ -798,27 +811,27 @@ const ko: typeof en = {
                 },
                 cpu_usage: {
                     label: 'CPU 사용량',
-                    description: '지정된 기간 동안 CPU 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 CPU 사용량이 임계값에 도달하면 알림.',
                 },
                 memory_usage: {
                     label: '메모리 사용량',
-                    description: '지정된 기간 동안 메모리 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 메모리 사용량이 임계값에 도달하면 알림.',
                 },
                 disk_usage: {
                     label: '디스크 사용량',
-                    description: '지정된 기간 동안 디스크 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 사용량이 임계값에 도달하면 알림.',
                 },
                 read_iops: {
                     label: '디스크 읽기 IOPS',
-                    description: '지정된 기간 동안 디스크 읽기 IOPS가 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 읽기 IOPS가 임계값에 도달하면 알림.',
                 },
                 write_iops: {
                     label: '디스크 쓰기 IOPS',
-                    description: '지정된 기간 동안 디스크 쓰기 IOPS가 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 디스크 쓰기 IOPS가 임계값에 도달하면 알림.',
                 },
                 bandwidth: {
                     label: '대역폭',
-                    description: '지정된 기간 동안 대역폭 사용량이 임계값을 초과하면 알림.',
+                    description: '지정된 기간 동안 대역폭 사용량이 임계값에 도달하면 알림.',
                 },
                 expiry_reminder: {
                     label: '만료 알림',

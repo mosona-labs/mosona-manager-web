@@ -62,7 +62,6 @@ export const createMockSnapshot = (count: number): MockSnapshot => {
                 start_time: new Date(Date.now() - rand(1, 90) * 86400000).toISOString(),
                 end_time: new Date(Date.now() + rand(1, 300) * 86400000).toISOString(),
                 amount: String(Math.round(rand(3, 30))),
-                auto_renew: i % 2 === 0,
                 bandwidth: '1Gbps',
                 traffic: '1TB',
                 traffic_type: 0,

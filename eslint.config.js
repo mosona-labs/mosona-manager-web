@@ -8,6 +8,10 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
     {
+        // `eslint .` would otherwise crawl the minified build output and hang.
+        ignores: ['dist/'],
+    },
+    {
         files: ['**/*.{js,jsx,ts,tsx}'],
         languageOptions: {
             parser: tsParser,

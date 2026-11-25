@@ -12,7 +12,7 @@ class ApiCategoryClass extends baseAPI {
     }
 
     async create(name: string) {
-        return this.postData<ResponseInterface<CategoryType>>('/v1/category', { name });
+        return this.postData<ResponseInterface>('/v1/category', { name });
     }
 
     async update(id: number, name: string) {

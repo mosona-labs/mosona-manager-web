@@ -280,6 +280,18 @@ const de: typeof en = {
             invalidEmail: 'Ungültige E-Mail-Adresse.',
             validEmail: 'Bitte geben Sie eine gültige E-Mail-Adresse ein.',
             updated: 'Benachrichtigungseinstellungen erfolgreich aktualisiert.',
+            alertHint:
+                'Klicken Sie im Monitor-Dashboard mit der rechten Maustaste auf eine Karte, um einen Alarm hinzuzufügen.',
+            emailDesc:
+                'Konfigurieren Sie E-Mail-Benachrichtigungen, um Alarme direkt in Ihrem Postfach zu erhalten.',
+            emailPrerequisite:
+                'Stellen Sie vor der Konfiguration von Alarmen sicher, dass diese Instanz eine globale E-Mail-Konfiguration hat, sonst können keine Alarme gesendet werden.',
+            emailPlaceholder: 'E-Mail-Adresse eingeben und Eingabetaste drücken',
+            addUrl: 'URL hinzufügen',
+            customUrl: 'Benutzerdefinierte URL',
+            test: 'Testen',
+            testSent: 'Testbenachrichtigung erfolgreich gesendet.',
+            testSentDesc: 'Bitte prüfen Sie Ihren Nachrichtenempfänger.',
         },
         monitor: {
             cpuUsage: 'CPU-Auslastung',
@@ -288,6 +300,9 @@ const de: typeof en = {
             memoryDescription: 'Übersicht über den Systemspeicherverbrauch',
             diskIo: 'Festplatten-I/O',
             diskIoDescription: 'Aggregierte Lese- und Schreibgeschwindigkeit aller Festplatten',
+            diskIops: 'Festplatten-IOPS',
+            diskIopsDescription:
+                'Aggregierte Lese- und Schreibvorgänge pro Sekunde aller Festplatten',
             bandwidth: 'Bandbreite',
             bandwidthDescription: 'Netzwerkbandbreite aller Netzwerkschnittstellen',
             swapUsage: 'Swap-Nutzung',
@@ -808,7 +823,7 @@ const de: typeof en = {
             noAlerts: 'Derzeit sind keine konfigurierbaren Alarme verfügbar.',
             teamDisabled: 'Team-Alarm deaktiviert',
             teamEnabled: 'Team-Alarm aktiviert',
-            teamServers: 'Derzeit nutzen {{count}} Server die Team-Alarm-Einstellungen.',
+            teamServers: 'Team-Alarm-Einstellungen auf {{count}} Servern aktualisiert.',
             threshold: 'Schwellenwert',
             window: 'Zeitfenster',
             notifyOnce: 'Dieser Alarm wird einmal pro passendem Zeitfenster gesendet.',
@@ -824,32 +839,32 @@ const de: typeof en = {
                 cpu_usage: {
                     label: 'CPU-Auslastung',
                     description:
-                        'Alarm, wenn die CPU-Auslastung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die CPU-Auslastung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 memory_usage: {
                     label: 'Speicherauslastung',
                     description:
-                        'Alarm, wenn die Speicherauslastung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die Speicherauslastung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 disk_usage: {
                     label: 'Festplattennutzung',
                     description:
-                        'Alarm, wenn die Festplattennutzung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die Festplattennutzung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 read_iops: {
                     label: 'Festplatten-Lese-IOPS',
                     description:
-                        'Alarm, wenn die Lese-IOPS im Zeitfenster den Schwellenwert überschreiten.',
+                        'Alarm, wenn die Lese-IOPS im Zeitfenster den Schwellenwert erreichen.',
                 },
                 write_iops: {
                     label: 'Festplatten-Schreib-IOPS',
                     description:
-                        'Alarm, wenn die Schreib-IOPS im Zeitfenster den Schwellenwert überschreiten.',
+                        'Alarm, wenn die Schreib-IOPS im Zeitfenster den Schwellenwert erreichen.',
                 },
                 bandwidth: {
                     label: 'Bandbreite',
                     description:
-                        'Alarm, wenn die Bandbreitennutzung im Zeitfenster den Schwellenwert überschreitet.',
+                        'Alarm, wenn die Bandbreitennutzung im Zeitfenster den Schwellenwert erreicht.',
                 },
                 expiry_reminder: {
                     label: 'Ablauf-Erinnerung',

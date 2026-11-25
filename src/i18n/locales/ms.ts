@@ -278,6 +278,17 @@ const ms: typeof en = {
             invalidEmail: 'Alamat e-mel tidak sah.',
             validEmail: 'Sila masukkan alamat e-mel yang sah.',
             updated: 'Tetapan pemberitahuan berjaya dikemas kini.',
+            alertHint: 'Klik kanan kad di Papan Pemantauan untuk menambah amaran.',
+            emailDesc:
+                'Konfigurasikan pemberitahuan e-mel untuk menerima amaran terus ke peti masuk anda.',
+            emailPrerequisite:
+                'Sebelum mengkonfigurasi amaran, pastikan tika ini mempunyai konfigurasi e-mel global; jika tidak, amaran tidak dapat dihantar.',
+            emailPlaceholder: 'Masukkan alamat e-mel dan tekan Enter',
+            addUrl: 'Tambah URL',
+            customUrl: 'URL tersuai',
+            test: 'Uji',
+            testSent: 'Pemberitahuan ujian berjaya dihantar.',
+            testSentDesc: 'Sila semak penerima pemberitahuan anda.',
         },
         monitor: {
             cpuUsage: 'Penggunaan CPU',
@@ -286,6 +297,8 @@ const ms: typeof en = {
             memoryDescription: 'Gambaran keseluruhan penggunaan memori sistem',
             diskIo: 'I/O Cakera',
             diskIoDescription: 'Kelajuan baca dan tulis digabungkan merentasi semua cakera',
+            diskIops: 'IOPS Cakera',
+            diskIopsDescription: 'Jumlah operasi baca dan tulis sesaat merentasi semua cakera',
             bandwidth: 'Lebar Jalur',
             bandwidthDescription:
                 'Penggunaan lebar jalur rangkaian untuk semua antara muka rangkaian',
@@ -805,8 +818,7 @@ const ms: typeof en = {
             noAlerts: 'Tiada amaran boleh dikonfigurasi buat masa ini.',
             teamDisabled: 'Amaran pasukan dilumpuhkan',
             teamEnabled: 'Amaran pasukan didayakan',
-            teamServers:
-                'Pada masa ini terdapat {{count}} pelayan menggunakan tetapan amaran pasukan.',
+            teamServers: 'Tetapan amaran pasukan dikemas kini pada {{count}} pelayan.',
             threshold: 'Ambang',
             window: 'Tetingkap',
             notifyOnce: 'Amaran ini dihantar sekali setiap tetingkap yang sepadan.',
@@ -822,32 +834,32 @@ const ms: typeof en = {
                 cpu_usage: {
                     label: 'Penggunaan CPU',
                     description:
-                        'Amaran apabila penggunaan CPU melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan CPU mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 memory_usage: {
                     label: 'Penggunaan Memori',
                     description:
-                        'Amaran apabila penggunaan memori melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan memori mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 disk_usage: {
                     label: 'Penggunaan Cakera',
                     description:
-                        'Amaran apabila penggunaan cakera melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan cakera mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 read_iops: {
                     label: 'IOPS Baca Cakera',
                     description:
-                        'Amaran apabila IOPS baca cakera melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila IOPS baca cakera mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 write_iops: {
                     label: 'IOPS Tulis Cakera',
                     description:
-                        'Amaran apabila IOPS tulis cakera melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila IOPS tulis cakera mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 bandwidth: {
                     label: 'Lebar Jalur',
                     description:
-                        'Amaran apabila penggunaan lebar jalur melebihi ambang untuk tetingkap yang diberikan.',
+                        'Amaran apabila penggunaan lebar jalur mencapai ambang untuk tetingkap yang diberikan.',
                 },
                 expiry_reminder: {
                     label: 'Peringatan Tamat Tempoh',

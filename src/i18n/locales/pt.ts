@@ -280,6 +280,18 @@ const pt: typeof en = {
             invalidEmail: 'Endereço de e-mail inválido.',
             validEmail: 'Digite um endereço de e-mail válido.',
             updated: 'Configurações de notificação atualizadas com sucesso.',
+            alertHint:
+                'Clique com o botão direito em um cartão do painel de monitoramento para adicionar um alerta.',
+            emailDesc:
+                'Configure notificações por e-mail para receber alertas diretamente na sua caixa de entrada.',
+            emailPrerequisite:
+                'Antes de configurar alertas, verifique se esta instância possui uma configuração global de e-mail; caso contrário, os alertas não poderão ser enviados.',
+            emailPlaceholder: 'Digite o e-mail e pressione Enter',
+            addUrl: 'Adicionar URL',
+            customUrl: 'URL personalizada',
+            test: 'Testar',
+            testSent: 'Notificação de teste enviada com sucesso.',
+            testSentDesc: 'Verifique o seu receptor de notificações.',
         },
         monitor: {
             cpuUsage: 'Uso de CPU',
@@ -288,6 +300,9 @@ const pt: typeof en = {
             memoryDescription: 'Visão geral do consumo de memória do sistema',
             diskIo: 'I/O de disco',
             diskIoDescription: 'Velocidade agregada de leitura e gravação de todos os discos',
+            diskIops: 'IOPS de disco',
+            diskIopsDescription:
+                'Operações agregadas de leitura e gravação por segundo de todos os discos',
             bandwidth: 'Largura de banda',
             bandwidthDescription: 'Uso de largura de banda de todas as interfaces de rede',
             swapUsage: 'Uso de swap',
@@ -804,8 +819,7 @@ const pt: typeof en = {
             noAlerts: 'Nenhum alerta configurável disponível no momento.',
             teamDisabled: 'Alerta da equipe desativado',
             teamEnabled: 'Alerta da equipe ativado',
-            teamServers:
-                'Atualmente há {{count}} servidores usando as configurações de alerta da equipe.',
+            teamServers: 'Configurações de alerta de equipe atualizadas em {{count}} servidores.',
             threshold: 'Limite',
             window: 'Janela',
             notifyOnce: 'Este alerta é enviado uma vez por janela correspondente.',
@@ -821,32 +835,32 @@ const pt: typeof en = {
                 cpu_usage: {
                     label: 'Uso de CPU',
                     description:
-                        'Alerta quando o uso de CPU excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de CPU atinge o limite durante a janela indicada.',
                 },
                 memory_usage: {
                     label: 'Uso de memória',
                     description:
-                        'Alerta quando o uso de memória excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de memória atinge o limite durante a janela indicada.',
                 },
                 disk_usage: {
                     label: 'Uso de disco',
                     description:
-                        'Alerta quando o uso de disco excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de disco atinge o limite durante a janela indicada.',
                 },
                 read_iops: {
                     label: 'IOPS de leitura de disco',
                     description:
-                        'Alerta quando as IOPS de leitura do disco excedem o limite durante a janela indicada.',
+                        'Alerta quando as IOPS de leitura do disco atingem o limite durante a janela indicada.',
                 },
                 write_iops: {
                     label: 'IOPS de gravação de disco',
                     description:
-                        'Alerta quando as IOPS de gravação do disco excedem o limite durante a janela indicada.',
+                        'Alerta quando as IOPS de gravação do disco atingem o limite durante a janela indicada.',
                 },
                 bandwidth: {
                     label: 'Largura de banda',
                     description:
-                        'Alerta quando o uso de largura de banda excede o limite durante a janela indicada.',
+                        'Alerta quando o uso de largura de banda atinge o limite durante a janela indicada.',
                 },
                 expiry_reminder: {
                     label: 'Lembrete de expiração',

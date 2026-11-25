@@ -276,6 +276,16 @@ const ja: typeof en = {
             invalidEmail: '無効なメールアドレスです。',
             validEmail: '有効なメールアドレスを入力してください。',
             updated: '通知設定を更新しました。',
+            alertHint: '監視ダッシュボードでカードを右クリックするとアラートを追加できます。',
+            emailDesc: 'メール通知を設定すると、アラートが受信箱に直接届きます。',
+            emailPrerequisite:
+                'アラートを設定する前に、このインスタンスにグローバルなメール設定があることを確認してください。ない場合、アラートを送信できません。',
+            emailPlaceholder: 'メールアドレスを入力して Enter を押してください',
+            addUrl: 'URL を追加',
+            customUrl: 'カスタム URL',
+            test: 'テスト',
+            testSent: 'テスト通知を送信しました。',
+            testSentDesc: '通知の受信側を確認してください。',
         },
         monitor: {
             cpuUsage: 'CPU使用率',
@@ -284,6 +294,8 @@ const ja: typeof en = {
             memoryDescription: 'システムメモリ消費の概要',
             diskIo: 'ディスク I/O',
             diskIoDescription: '全ディスクの読み書き速度の集計',
+            diskIops: 'ディスク IOPS',
+            diskIopsDescription: '全ディスクの毎秒読み書き操作数',
             bandwidth: '帯域幅',
             bandwidthDescription: '全ネットワークインターフェースの帯域幅使用量',
             swapUsage: 'スワップ使用率',
@@ -796,7 +808,7 @@ const ja: typeof en = {
             noAlerts: '現在設定可能なアラートはありません。',
             teamDisabled: 'チームアラート無効',
             teamEnabled: 'チームアラート有効',
-            teamServers: '現在 {{count}} 台のサーバーがチームアラート設定を使用しています。',
+            teamServers: '{{count}} 台のサーバーのチームアラート設定を更新しました。',
             threshold: 'しきい値',
             window: 'ウィンドウ',
             notifyOnce: 'このアラートは一致するウィンドウごとに1回送信されます。',
@@ -813,32 +825,32 @@ const ja: typeof en = {
                 cpu_usage: {
                     label: 'CPU使用率',
                     description:
-                        '指定ウィンドウでCPU使用率がしきい値を超えたときにアラートします。',
+                        '指定ウィンドウでCPU使用率がしきい値に達したときにアラートします。',
                 },
                 memory_usage: {
                     label: 'メモリ使用率',
                     description:
-                        '指定ウィンドウでメモリ使用率がしきい値を超えたときにアラートします。',
+                        '指定ウィンドウでメモリ使用率がしきい値に達したときにアラートします。',
                 },
                 disk_usage: {
                     label: 'ディスク使用率',
                     description:
-                        '指定ウィンドウでディスク使用率がしきい値を超えたときにアラートします。',
+                        '指定ウィンドウでディスク使用率がしきい値に達したときにアラートします。',
                 },
                 read_iops: {
                     label: 'ディスク読み取り IOPS',
                     description:
-                        '指定ウィンドウでディスク読み取りIOPSがしきい値を超えたときにアラートします。',
+                        '指定ウィンドウでディスク読み取りIOPSがしきい値に達したときにアラートします。',
                 },
                 write_iops: {
                     label: 'ディスク書き込み IOPS',
                     description:
-                        '指定ウィンドウでディスク書き込みIOPSがしきい値を超えたときにアラートします。',
+                        '指定ウィンドウでディスク書き込みIOPSがしきい値に達したときにアラートします。',
                 },
                 bandwidth: {
                     label: '帯域幅',
                     description:
-                        '指定ウィンドウで帯域幅使用量がしきい値を超えたときにアラートします。',
+                        '指定ウィンドウで帯域幅使用量がしきい値に達したときにアラートします。',
                 },
                 expiry_reminder: {
                     label: '期限リマインダー',

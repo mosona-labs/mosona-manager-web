@@ -284,6 +284,18 @@ const fr: typeof en = {
             invalidEmail: 'Adresse e-mail invalide.',
             validEmail: 'Veuillez saisir une adresse e-mail valide.',
             updated: 'Paramètres de notification mis à jour avec succès.',
+            alertHint:
+                'Faites un clic droit sur une carte du tableau de bord de surveillance pour ajouter une alerte.',
+            emailDesc:
+                'Configurez les notifications par e-mail pour recevoir les alertes directement dans votre boîte de réception.',
+            emailPrerequisite:
+                'Avant de configurer des alertes, assurez-vous que cette instance dispose d’une configuration e-mail globale, sinon les alertes ne peuvent pas être envoyées.',
+            emailPlaceholder: 'Saisissez une adresse e-mail et appuyez sur Entrée',
+            addUrl: 'Ajouter une URL',
+            customUrl: 'URL personnalisée',
+            test: 'Tester',
+            testSent: 'Notification de test envoyée avec succès.',
+            testSentDesc: 'Veuillez vérifier votre récepteur de notifications.',
         },
         monitor: {
             cpuUsage: 'Utilisation du CPU',
@@ -292,6 +304,9 @@ const fr: typeof en = {
             memoryDescription: 'Aperçu de la consommation mémoire du système',
             diskIo: 'E/S disque',
             diskIoDescription: 'Vitesse de lecture et d’écriture agrégée sur tous les disques',
+            diskIops: 'IOPS disque',
+            diskIopsDescription:
+                'Opérations de lecture et d’écriture agrégées par seconde sur tous les disques',
             bandwidth: 'Bande passante',
             bandwidthDescription:
                 'Utilisation de la bande passante pour toutes les interfaces réseau',
@@ -820,8 +835,7 @@ const fr: typeof en = {
             noAlerts: "Aucune alerte configurable n'est disponible pour le moment.",
             teamDisabled: "Alerte d'équipe désactivée",
             teamEnabled: "Alerte d'équipe activée",
-            teamServers:
-                'Il y a actuellement {{count}} serveurs qui utilisent les paramètres d’alerte de l’équipe.',
+            teamServers: 'Paramètres d’alerte d’équipe mis à jour sur {{count}} serveurs.',
             threshold: 'Seuil',
             window: 'Fenêtre',
             notifyOnce: 'Cette alerte est envoyée une seule fois par fenêtre correspondante.',
@@ -838,32 +852,32 @@ const fr: typeof en = {
                 cpu_usage: {
                     label: 'Utilisation du CPU',
                     description:
-                        "Alerte lorsque l'utilisation du CPU dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation du CPU atteint le seuil pendant la fenêtre donnée.",
                 },
                 memory_usage: {
                     label: 'Utilisation de la mémoire',
                     description:
-                        "Alerte lorsque l'utilisation de la mémoire dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation de la mémoire atteint le seuil pendant la fenêtre donnée.",
                 },
                 disk_usage: {
                     label: 'Utilisation du disque',
                     description:
-                        "Alerte lorsque l'utilisation du disque dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation du disque atteint le seuil pendant la fenêtre donnée.",
                 },
                 read_iops: {
                     label: 'IOPS de lecture disque',
                     description:
-                        'Alerte lorsque les IOPS de lecture disque dépassent le seuil pendant la fenêtre donnée.',
+                        'Alerte lorsque les IOPS de lecture disque atteignent le seuil pendant la fenêtre donnée.',
                 },
                 write_iops: {
                     label: 'IOPS d’écriture disque',
                     description:
-                        "Alerte lorsque les IOPS d'écriture disque dépassent le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque les IOPS d'écriture disque atteignent le seuil pendant la fenêtre donnée.",
                 },
                 bandwidth: {
                     label: 'Bande passante',
                     description:
-                        "Alerte lorsque l'utilisation de la bande passante dépasse le seuil pendant la fenêtre donnée.",
+                        "Alerte lorsque l'utilisation de la bande passante atteint le seuil pendant la fenêtre donnée.",
                 },
                 expiry_reminder: {
                     label: "Rappel d'expiration",

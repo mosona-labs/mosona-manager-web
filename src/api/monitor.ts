@@ -17,7 +17,6 @@ export type MonitorType = {
     start_time: string;
     end_time: string;
     amount: string;
-    auto_renew: boolean;
     bandwidth: string;
     traffic: string;
     traffic_type: number;
